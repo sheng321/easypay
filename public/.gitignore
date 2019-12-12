@@ -1,4 +1,1 @@
-/.idea
-/.vscode
-.env
-.DS_Store
+nginx.htaccess
