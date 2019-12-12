@@ -117,7 +117,6 @@ class UserController extends BaseController
      */
     public function __single($user)
     {
-
         if($user['single_key'] !== session('user_info.single_key')){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '账号在其它设备登入，强制退出！', 'url' => url('@user/login/logout')];
             __log( session('user_info.nickname').' 账号在其它设备登入，强制退出！');
