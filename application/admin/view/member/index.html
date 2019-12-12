@@ -299,21 +299,26 @@
             {field: 'create_by_username', title: '创建人', align: 'center'},
             {field: 'create_at', title: '创建时间', align: 'center', minWidth: 150},
         ]], true,'username');
+
+
+        /**
+         * 监听字段值编辑
+         */
+        $.form.editFieldTree('currentTable', '{:url("$thisRequest")}');
+
+
+
+        /**
+         * 修改状态
+         */
+        $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
+        $.form.switch('modifySingle', '{:url("$thisClass/single")}');
+        $.form.switch('modifyGoogle', '{:url("$thisClass/google")}');
     });
 
 
-    /**
-     * 修改状态
-     */
-    $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
-    $.form.switch('modifySingle', '{:url("$thisClass/single")}');
-    $.form.switch('modifyGoogle', '{:url("$thisClass/google")}');
 
 
-    /**
-     * 监听字段值编辑
-     */
-    $.form.editFieldTree('currentTable', '{:url("$thisRequest")}');
 
 
 

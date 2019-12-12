@@ -49,11 +49,11 @@ class UserController extends BaseController
 
         $user =  \app\common\model\Umember::quickGet(session('user_info.id'));
         $this->UserInfo = cache('UserInfo');
-
+        //判断是否异常用户
         $this->__checkLock($user);
 
         //是否单点登入
-        if( isset($this->UserInfo['single']) && $this->UserInfo['single'] == '1'){
+        if( isset($user['is_single']) && $user['is_single'] == '1'){
             $this->__single($user);
         }
 
@@ -117,6 +117,7 @@ class UserController extends BaseController
      */
     public function __single($user)
     {
+
         if($user['single_key'] !== session('user_info.single_key')){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '账号在其它设备登入，强制退出！', 'url' => url('@user/login/logout')];
             __log( session('user_info.nickname').' 账号在其它设备登入，强制退出！');
