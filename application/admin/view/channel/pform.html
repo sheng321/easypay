@@ -1,0 +1,174 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+    <br>
+    {if !empty($auth)}
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">所属通道</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input" value = "{$auth.title|default=''}"   readonly   >
+        </div>
+    </div>
+    {/if}
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">产品名称</label>
+        <div class="layui-input-block">
+            <input type="text"  name="title"  lay-verify="required"  class="layui-input" value = "{if !empty($auth)}{$auth.title|default=''}  {else}{$data.title|default=''}{/if}" placeholder="请输入通道产品名称"  >
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">支付编码</label>
+        <div class="layui-input-block">
+            <input type="text"   name="code"   class="layui-input" lay-verify="required" value="{$data.code|default=''}" placeholder="请输入支付编码">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">关联产品</label>
+        <div class="layui-input-block">
+            <select id="p_id" class="p_id" lay-filter="p_id"  name="p_id" lay-verify="required"   >
+                <option value="">请选择支付产品</option>
+                {foreach $product as $k => $vo}
+                    {eq name='$k' value='$data.p_id|default=0'}
+                    <option selected value="{$k|default=''}">{$vo|default=''}</option>
+                    {else}
+                    <option value="{$k|default=''}">{$vo|default=''}</option>
+                    {/eq}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">成本费率</label>
+        <div class="layui-input-block">
+            <input type="text"    name="c_rate"   class="layui-input"    value="{$data.c_rate|default=''}" placeholder="请输入成本费率">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">对外费率</label>
+        <div class="layui-input-block">
+            <input type="text"    name="s_rate"   class="layui-input"  value="{$data.s_rate|default=''}" placeholder="请输入指定对外费率">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">最低限额</label>
+        <div class="layui-input-block">
+            <input type="text"   name="min_amount"  class="layui-input"  value="{$data.min_amount|default=''}" placeholder="请输入最低限额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">最高限额</label>
+        <div class="layui-input-block">
+            <input type="text"    name="max_amount"     class="layui-input"  value="{$data.max_amount|default=''}" placeholder="请输入最高限额">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">固定金额</label>
+        <div class="layui-input-block">
+            <input type="text"   name="f_amount"   class="layui-input"  value="{$data.f_amount|default=''}" placeholder="请输入固定金额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">排除金额</label>
+        <div class="layui-input-block">
+            <input type="text"    name="ex_amount"   class="layui-input"  value="{$data.ex_amount|default=''}" placeholder="请输入排除金额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">固定倍数</label>
+        <div class="layui-input-block">
+            <input type="text"   name="f_multiple"   class="layui-input"  value="{$data.f_multiple|default=''}" placeholder="请输入固定倍数">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">固定尾数</label>
+        <div class="layui-input-block">
+            <input type="text"  name="f_num"    class="layui-input" value="{$data.f_num|default=''}" placeholder="请输入固定尾数">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">产品限额</label>
+        <div class="layui-input-block">
+            <input type="text"   name="limit_money"   class="layui-input"  value="{$data.limit_money|default=''}" placeholder="请输入支付产品限额">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">金额类型</label>
+        <div class="layui-input-block">
+            <input type="radio" name="mtype" value="0" title="都可以" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
+            <input type="radio" name="mtype" value="1" title="整数" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只接受整数</div></div>
+            <input type="radio" name="mtype" value="2" title="小数" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只接受小数</div></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">访问</label>
+        <div class="layui-input-block">
+            <input type="radio" name="visit" value="0" title="都可以" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
+            <input type="radio" name="visit" value="1" title="只允许PC端" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许PC端</div></div>
+            <input type="radio" name="visit" value="2" title="只允许手机端" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许手机端</div></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="开启" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>开启</div></div>
+            <input type="radio" name="status" value="0" title="禁用" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁用</div></div>
+        </div>
+    </div>
+
+    {:token('__token__', 'sha1')}
+    {if !empty($auth)}
+    <input type="hidden"   name="pid"  value="{$auth.id|default=''}">
+    {/if}
+
+    {if !empty($data)}
+    <input type="hidden"   name="id"  value="{$data.id|default=''}">
+    <input type="hidden"   name="pid"  value="{$data.pid|default=''}">
+    <input type="hidden"   name="verson"  value="{$data.verson+1}">
+    {/if}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+
+    /**
+     * 添加、编辑
+     */
+
+    $.form.on('submitBtn', "{if empty($data)}{:url('@admin/channel/product')}{else/}{:url('@admin/channel/product_edit')}{/if}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+
+</script>
+{/block}

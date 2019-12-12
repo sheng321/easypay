@@ -1,0 +1,42 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/admin/layuiadmin/style/template.css" media="all">
+<base target="framename" />
+{/block}
+
+{block name="cotent"}
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card layadmin-serach-main">
+                <div class="layui-card-header">
+                    <p style="font-size: 18px;">
+                        <span style="color: #01AAED">关键词</span> 查询到
+                        <strong>{$data.num}</strong> 个结果
+                    </p>
+                </div>
+                <div class="layui-card-body">
+
+                    <ul class="layadmin-serach-list layui-text">
+
+                        {foreach $data.data as $val}
+                            <li>
+                                <div class="layui-serachlist-text">
+                                    <h3><a data-href="{$val.href}" data-title="{$val.title}"  >{$val.title}</a></h3>
+                                    <p>{$val.str}</p>
+                                </div>
+                            </li>
+                        {/foreach}
+
+
+                    </ul>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

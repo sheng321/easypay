@@ -1,0 +1,143 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--顶部操作栏--开始-->
+    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">通道分组名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="title" class="layui-input" placeholder="请输入权限通道分组名称"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">通道分组状态</label>
+            <div class="layui-input-inline">
+                <select id="status" class="status" lay-filter="status">
+                    <option value="">请选择通道分组状态</option>
+                    {foreach $status as $vo}
+                    <option value="{$vo.id|default=''}">{$vo.title|default=''}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+        </div>
+
+        {if auth("$thisClass/add")}
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add")}' data-title="添加">添加</a>
+        </div>
+        {/if}
+
+        {if auth("$thisClass/del")}
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-danger layui-btn-normal   layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
+        </div>
+        {/if}
+
+    </blockquote>
+    <!--顶部操作栏--结束-->
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+    <!--表单模板绑定--开始-->
+    <script type="text/html" id="mode">
+        {{#  if(d.mode == '0'){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-danger  "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}&&p_id={{d.p_id}}' data-title="接口模式---通道：{{d.title}}---模式：{{d.product}}">没有通道</a>
+        {{#  } else if(d.mode == '1'){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-warm  " data-width="100%"  data-open='{:url("$thisClass/mode")}?id={{d.id}}&&p_id={{d.p_id}}' data-title="接口模式---通道：{{d.title}}---模式：{{d.product}}">单独</a>
+        {{#  } else { }}
+        <a class="layui-btn layui-btn-xs" data-width="100%"  data-open='{:url("$thisClass/mode")}?id={{d.id}}&p_id={{d.p_id}}' data-title="接口模式---通道：{{d.title}}---模式：{{d.product}}">轮询（{{d.mode}}）</a>
+        {{#  } }}
+    </script>
+
+
+    <script type="text/html" id="checkStatus">
+        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
+    </script>
+
+    <script type="text/html" id="limit">
+
+        {{#  if(d.max_amount !== ''){ }}
+        <span >最低： {{d.min_amount}}最高：{{d.max_amount}}</span>
+        {{#  } }}
+
+        {{#  if(d.f_amount !== ''){ }}
+        <span > 固定金额：{{d.f_amount}}</span>
+        {{#  } }}
+
+
+    </script>
+
+    <!--表单模板绑定--结束-->
+
+    <!--表单操作栏--开始-->
+    <script type="text/html" id="currentTableBar">
+
+        {if auth("$thisClass/edit")}
+        <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改信息">编辑</a>
+        {/if}
+
+        {if auth("$thisClass/del")}
+        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
+        {/if}
+
+    </script>
+    <!--表单操作栏--结束-->
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {type: "checkbox", fixed: "left", width: 30,},
+        {field: 'sort', title: '排序', width: 80, edit: 'text', align: "center", sort: true},
+        {field: 'title', title: '名称', minWidth: 50, align: 'center', sort: true},
+        {field: 'product', title: '支付产品', minWidth: 50, align: 'center', sort: true},
+        {field: 'mode', title: '接口模式', minWidth: 80, align: "center", templet: '#mode',},
+
+        {field: 'limit_money', title: '分组单笔限额', minWidth: 20, align: "center", templet: '#limit',style:'background-color: #009688; color: #fff;'},
+
+        {field: 'remark', title: '备注信息', edit: 'text', maxWidth: 100, align: "center", style: 'background-color: #009688; color: #fff;', sort: true},
+
+        {field: 'status', title: '启用状态', width: 100, templet: '#checkStatus', unresize: true, align: "center"},
+        /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
+        {title: '操作', maxWidth: 110, templet: '#currentTableBar',  align: "center"},
+        /**{/if}**/
+        {field: 'update_at', title: '最新更新时间', align: 'center', sort: true},
+    ]]);
+
+    /**
+     * 日期范围
+     */
+    $.laydate.range('create_at');
+
+    /**
+     * 监听字段值编辑
+     */
+    $.form.editField('currentTable', '{:url("$thisRequest")}');
+
+    /**
+     * 修改状态
+     */
+    $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
+    $.form.switch('modifyCli', '{:url("$thisClass/cli")}');
+</script>
+{/block}

@@ -1,0 +1,126 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+    <br>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">上级菜单</label>
+        <div class="layui-input-block">
+            <select id="pid"  name="pid"  class="pid" lay-filter="pid">
+                {foreach up_menu as $vo }
+                {eq name='$vo.id' value='$menu.pid|default=0'}
+                <option selected value="{$vo.id|default=''}">{$vo.title|raw|default=''}</option>
+                {else}
+                <option value="{$vo.id|default=''}">{$vo.title|raw|default=''}</option>
+                {/eq}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">菜单名称</label>
+        <div class="layui-input-block">
+            <input type="text" id="title"  name="title"   class="layui-input" lay-verify="title" lay-verify="required" value="{$menu.title|default=''}" placeholder="请输入菜单名称">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">菜单链接</label>
+        <div class="layui-input-block">
+            <input type="text" id="href"  name="href"   class="layui-input" lay-verify="href" value="{$menu.href|default='#'}" placeholder="请输入菜单链接">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row">
+        <div class="magb15 layui-col-md4 layui-col-xs12">
+            <label class="layui-form-label">图标编码</label>
+            <div class="layui-input-block">
+                <input type="text" id="icon"  name="icon"   class="layui-input" lay-verify="icon" value="{$menu.icon|default=''}" placeholder="请输入图标编码">
+            </div>
+        </div>
+
+        <div class="magb15 layui-col-md4 layui-col-xs12">
+            <label class="layui-form-label">选择图标</label>
+            <div class="layui-input-block">
+                <input type="text" id="iconPicker"     lay-filter="iconPicker" class="layui-input"   value="layui-icon-{$menu.icon|default=''}"   >
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-row">
+        <div class="magb15 layui-col-md4 layui-col-xs12">
+            <label class="layui-form-label">菜单排序</label>
+            <div class="layui-input-block">
+                <input type="text" id="sort"  name="sort"   class="layui-input" lay-verify="sort" value="{$menu.sort|default='0'}" placeholder="请输入排序">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea id="remark"  name="remark"   placeholder="请输入备注信息" class="layui-textarea">{$menu.remark|default=''}</textarea>
+        </div>
+    </div>
+
+    {if !empty($menu)}
+    <input type="hidden" class="id"  name="id"   id="id" value="{$menu.id|default=''}">
+    {/if}
+
+    {if !empty($Think.get.type)}
+    <input type="hidden" name="type" value="{$Think.get.type|default='0'}">
+    {/if}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm"  id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script type="text/javascript"     >
+    layui.extend({
+        iconPicker: "/static/js/lay-module/iconPicker/iconPicker",
+    }).use([ 'jquery','iconPicker'], function () {
+        var iconPicker = layui.iconPicker,
+            $ = layui.jquery;
+
+        iconPicker.render({
+            // 选择器，推荐使用input
+            elem: '#iconPicker',
+            // 数据类型：fontClass/unicode，推荐使用fontClass
+            type: 'fontClass',
+            // 是否开启搜索：true/false
+            search: true,
+            // 是否开启分页
+            page: false,
+            // 每页显示数量，默认12
+            limit: 140,
+            // 点击回调
+            click: function (data) {
+                var icon = data.icon;
+                $('#icon').attr('value', icon.substr(11,11 + icon.length));
+            }
+        });
+
+
+
+        /**
+         * 添加、编辑
+         */
+
+        $.form.on('submitBtn', "{if empty($menu.id)}{:url('@admin/menu/add')}{else/}{:url('@admin/menu/edit')}{/if}", function (res) {
+            $.msg.success(res.msg, function () {
+                $.tool.reload('open');
+            });
+            return false;
+        },true);
+
+
+
+    })
+
+</script>
+{/block}

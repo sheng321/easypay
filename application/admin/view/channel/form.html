@@ -1,0 +1,148 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+    <br>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">通道名称</label>
+        <div class="layui-input-block">
+            <input type="text"  name="title"  lay-verify="required"   class="layui-input"  value="{$auth.title|default=''}" placeholder="请输入通道名称">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">关联控制器</label>
+        <div class="layui-input-block">
+            <input type="text"   name="code"   class="layui-input" lay-verify="required" value="{$auth.code|default=''}" placeholder="请输入关联控制器">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">商户号</label>
+        <div class="layui-input-block">
+            <input type="text"   name="mch_id"   class="layui-input"  value="{$auth.mch_id|default=''}" placeholder="请输入MCHID">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">证书密钥</label>
+        <div class="layui-input-block">
+            <input type="text"   name="signkey"   class="layui-input"  value="{$auth.signkey|default=''}" placeholder="请输入证书密钥">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">自定义密钥</label>
+        <div class="layui-input-block">
+            <textarea  name="secretkey"  placeholder="请输入 字段名|字段值,一行只输入一个密钥" class="layui-textarea">{$auth.secretkey|default=''}</textarea>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">网关地址</label>
+        <div class="layui-input-block">
+            <input type="text"   name="gateway"   class="layui-input"  value="{$auth.gateway|default=''}" placeholder="请输入网关地址">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">通道限额</label>
+        <div class="layui-input-block">
+            <input type="text"   name="limit_money"   class="layui-input"  value="{$auth.limit_money|default=''}" placeholder="请输入通道限额">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">支付方式</label>
+        <div class="layui-input-block">
+            {foreach $product as $k => $vo}
+              {if !empty($auth['p_id']) }
+
+                    <input type="checkbox" name="p_id[]" title="{$vo|default=''}" value="{$k}"
+                           {foreach $auth['p_id'] as  $vo1}
+                              {if $k == $vo1} checked="checked" {/if}
+                           {/foreach}
+                     ><div class="layui-unselect layui-form-checkbox"><span>{$vo|default=''}</span><i class="layui-icon layui-icon-ok"></i></div>
+
+            {else/}
+            <input type="checkbox" name="p_id[]" title="{$vo|default=''}"  value="{$k}"  ><div class="layui-unselect layui-form-checkbox"><span>{$vo|default=''}</span><i class="layui-icon layui-icon-ok"></i></div>
+            {/if}
+         {/foreach}
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">结算方式</label>
+        <div class="layui-input-block">
+            <input type="radio" name="account" value="0" title="T0" checked="checked"  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>T0</div></div>
+            <input type="radio" name="account" value="1" title="T1"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>T1</div></div>
+
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">禁国外IP</label>
+        <div class="layui-input-block">
+            <input type="radio" name="forbid" value="0" title="禁止" checked="checked"  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁止</div></div>
+            <input type="radio" name="forbid" value="1" title="不禁止"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>不禁止</div></div>
+
+        </div>
+    </div>
+
+
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="开启" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>开启</div></div>
+            <input type="radio" name="status" value="0" title="禁用" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁用</div></div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">回调IP</label>
+        <div class="layui-input-block">
+            <textarea  name="back_ip"  placeholder="请输入回调IP,一行只输入一个IP" class="layui-textarea">{$auth.back_ip|default='*'}</textarea>
+        </div>
+    </div>
+
+
+    {:token('__token__', 'sha1')}
+    {if !empty($auth)}
+    <input type="hidden"   name="id"  value="{$auth.id|default=''}">
+    <input type="hidden"   name="verson"  value="{$auth.verson+1}">
+    {/if}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+
+    /**
+     * 添加、编辑
+     */
+
+    $.form.on('submitBtn', "{if empty($auth)}{:url('@admin/channel/add')}{else/}{:url('@admin/channel/edit')}{/if}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+
+</script>
+{/block}

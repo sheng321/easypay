@@ -1,0 +1,79 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+    <br>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">分组名称</label>
+        <div class="layui-input-block">
+            <input type="text"  name="title"  lay-verify="required"   class="layui-input"  value="{$auth.title|default=''}" placeholder="请输入通道分组名称">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">关联产品</label>
+        <div class="layui-input-block">
+            <select id="p_id" class="p_id" lay-filter="p_id"  name="p_id" lay-verify="required"   >
+                <option value="">请选择支付产品</option>
+                {foreach $product as $k => $vo}
+                {eq name='$k' value='$data.p_id|default=0'}
+                <option selected value="{$k|default=''}">{$vo|default=''}</option>
+                {else}
+                <option value="{$k|default=''}">{$vo|default=''}</option>
+                {/eq}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="开启" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>开启</div></div>
+            <input type="radio" name="status" value="0" title="禁用" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁用</div></div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea  name="remark"  placeholder="请输入备注信息" class="layui-textarea">{$auth.remark|default=''}</textarea>
+        </div>
+    </div>
+
+
+    {:token('__token__', 'sha1')}
+    {if !empty($auth)}
+    <input type="hidden"   name="id"  value="{$auth.id|default=''}">
+    <input type="hidden"   name="verson"  value="{$auth.verson+1}">
+    {/if}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script      >
+
+    /**
+     * 添加、编辑
+     */
+
+    $.form.on('submitBtn', "{if empty($auth)}{:url('@admin/cgroup/add')}{else/}{:url('@admin/cgroup/edit')}{/if}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+
+</script>
+{/block}

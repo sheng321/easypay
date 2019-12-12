@@ -1,0 +1,42 @@
+<ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+
+    <li data-name="get" class="layui-nav-item">
+        <a href="javascript:;" lay-href="{:url('@admin/index/welcome')}" lay-tips="授权" lay-direction="2">
+            <i class="layui-icon layui-icon-console"></i>
+            <cite>控制台</cite>
+        </a>
+    </li>
+
+    {foreach menu_view as $vo}
+    <!--{if !empty($vo['children'])}-->
+    <li data-name="{$vo.icon|default=''}" class="layui-nav-item">
+        <a href="javascript:;"  {if empty($vo['children'])} lay-href="{$vo.href|default=''}"  {/if}    lay-tips="{$vo.title|default=''}" lay-direction="2">
+            <i class="layui-icon layui-icon-{$vo.icon|default=''}"></i>
+            <cite>{$vo.title|default=''}</cite>
+        </a>
+
+        <dl class="layui-nav-child">
+            {foreach $vo['children'] as $vo1}
+            <dd class="layui-nav-itemed">
+                <a href="javascript:;"   {if empty($vo1['children'])} lay-href="{$vo1.href|default=''}"  {/if}  >
+                    <i class="layui-icon layui-icon-{$vo1.icon|default=''}"></i>
+                    {$vo1.title|default=''}
+                </a>
+                <!--{if !empty($vo1['children'])}-->
+                <dl class="layui-nav-child">
+                    {foreach $vo1['children'] as $vo2}
+                    <dd><a lay-href="{$vo2.href|default=''}">{$vo2.title|default=''}</a></dd>
+                    {/foreach}
+                </dl>
+                <!--{/if}-->
+            </dd>
+            {/foreach}
+
+        </dl>
+
+    </li>
+    <!--{/if}-->
+    {/foreach}
+
+
+</ul>

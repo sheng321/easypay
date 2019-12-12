@@ -1,0 +1,178 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--顶部操作栏--开始-->
+    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">通道名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="title" class="layui-input" placeholder="请输入通道名称"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm"  data-search-top="currentTableId">置顶</a>
+        </div>
+
+        {if auth("$thisClass/add")}
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-check-all='{:url("$thisClass/confirm")}?pid={$Think.get.id}' data-title="确认保存选择通道"   data-table-id="currentTableId"  >保存选择通道</a>
+        </div>
+        {/if}
+
+
+
+    </blockquote>
+    <!--顶部操作栏--结束-->
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+
+    <!--表单模板绑定--开始-->
+    <script type="text/html" id="mode">
+        <td data-field="concurrent" data-key="1-0-3" data-edit="text" align="center" style="background-color: #009688; color: #fff;" data-minwidth="20" class="" title="0"><div class="layui-table-cell laytable-cell-1-0-3">0</div></td>
+    </script>
+
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+    ;layui.use(['laydate', 'form', 'layer', 'table', 'laytpl', 'jquery'], function () {
+        var table = layui.table,
+            $ = layui.jquery;
+
+        // 当前页面Bogy对象
+        var $body = $('body');
+
+
+        $.form.table = function (elem, url, cols, isPage = true, skin = 'line', size = '', isTool = true) {
+            if (!isPage) {
+                var data = {
+                    elem: '#' + elem + 'Table',
+                    url: url,
+                    cellMinWidth: 95,
+                    page: false,
+                    height: "full-80",
+                    limits: [1000],
+                    limit: 1000,
+                    id: elem + 'TableId',
+                    cols: cols,
+                    done: function (res) {
+
+                        $('tr').each(function(index, element){
+                            var id = index -1;
+                            if(id >=0 && id < $('tr').length -3){
+                                if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
+                                    $(element).find('td').each(function(index1, element1){
+                                        $(element1).removeAttr("data-edit");
+                                        $(element1).removeAttr("style");
+                                    });
+                                }
+                            }
+                        });
+
+
+                    }
+                };
+         }
+            if (skin != '') data.skin = skin;
+            if (size != '') data.size = size;
+            if (size == 'lg') data.limit = 10;
+            if (!isTool) data.height = "full-20";
+            table.render(data);
+        }
+
+
+
+        /**
+         * 生成表单
+         */
+        $.form.table('current', '{:url("$thisRequest")}?type=ajax&p_id={$Think.get.p_id}&g_id={$Think.get.id}', [[
+            {type: "checkbox",fixed: "left", width: 30,},
+            {field: 'title', title: '通道名称', minWidth: 20, align: 'center'},
+            {field: 'weight',title: '权重',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;'},
+            {field: 'concurrent', title: '并发',edit: 'text',minWidth: 20,align: "center",style: 'background-color: #009688; color: #fff;'},
+            {field: 'c_rate', title: '成本费率',edit: 'text', maxWidth: 50, align: 'center', style: 'background-color: #009688; color: #fff;'},
+            {field: 's_rate', title: '对外费率',edit: 'text', maxWidth: 50, align: 'center', style: 'background-color: #009688; color: #fff;'},
+            {field: 'min_amount', title: '最低', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;'},
+            {field: 'max_amount', title: '最高', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;'},
+            {field: 'f_amount', title: '固定金额', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;'},
+            {field: 'limit_money', title: '当日限额', edit: 'text',minWidth: 20, align: "center", style: 'background-color: #009688; color: #fff;'},
+
+            {field: 'remark',title: '备注信息', edit: 'text',minWidth: 80, align: "center",style: 'background-color: #009688; color: #fff;'},
+        ]], false);
+
+
+        /**
+         * 监听字段值编辑
+         */
+        $.form.editField('currentTable', '{:url("$thisRequest")}?g_id={$Think.get.id}');
+
+
+        /**
+         * 注册 data-check-all 事件
+         */
+        $body.on('click', '[data-check-all]', function () {
+            var url = $(this).attr('data-check-all');
+            var checkStatus = table.checkStatus($(this).attr('data-table-id')),
+                data = checkStatus.data,
+                id = [];
+
+                for (let i in data) {
+                    id.push(data[i].id);
+                }
+                $.msg.confirm($(this).attr('data-title'), function () {
+                    $.request.get(url, {id: id}, function (res) {
+                        $.msg.success(res.msg, function () {
+                            $.tool.reload();
+                        })
+                    })
+                });
+
+            return false;
+        });
+
+
+        /**
+         * 注册 data-search-top 事件
+         * 用于表格搜索
+         */
+        $body.on('click', '[data-search-top]', function () {
+            var searchData = Object();
+            var searchInput = $('#searchBlock div div input');
+            var searchSelect = $('#searchBlock div div select');
+            $.each(searchInput, function (i, obj) {
+                id = $(obj).attr('id');
+                if (id != undefined) {
+                    searchData[id] = $("#" + id).val();
+                }
+            });
+            $.each(searchSelect, function (i, obj) {
+                id = $(obj).attr('id');
+                if (id != undefined) {
+                    searchData[id] = $("#" + id).val();
+                }
+            });
+            $.request.get('{:url("$thisClass/top")}?id={$Think.get.id}', {search: searchData}, function (res) {
+                $.msg.success(res.msg, function () {
+                    $.tool.reload();
+                })
+            });
+            return false;
+        });
+
+
+    });
+</script>
+{/block}

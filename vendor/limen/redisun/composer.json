@@ -1,0 +1,33 @@
+{
+  "name": "limen/redisun",
+  "description": "Make redis manipulations easy. Unify commands for all data types.",
+  "type": "library",
+  "keywords": [
+    "redis",
+    "lua",
+    "eval",
+    "sql",
+    "orm"
+  ],
+  "homepage": "https://github.com/limen/redisun",
+  "authors": [
+    {
+      "name": "LI Mengxiang",
+      "email": "limengxiang876@gmail.com",
+      "homepage": "https://github.com/limen"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=5.5",
+    "predis/predis": "^1.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "Limen\\Redisun\\": "src/"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+---------------------------------------------------------------
+
+[2019-12-06T16:25:09+08:00] 127.0.0.1 GET www.test1.com/user.php/login?username=admin&password=123456&googlecode=123456&geetest_challenge=98dce83da57b0395e163467c9dae521b63&geetest_validate=283f927aebedeff3972a4d6a888fa105&geetest_seccode=283f927aebedeff3972a4d6a888fa105%7Cjordan
+[ info ] {"geetest_seccode":"283f927aebedeff3972a4d6a888fa105|jordan"}
+---------------------------------------------------------------
+
+[2019-12-06T18:17:59+08:00] 127.0.0.1 GET www.test1.com/user.php/Login/startGeetest.html?t=1575627478910&callback=jQuery224008774683527759164_1575627478867&_=1575627478868
+[ info ] {"callback":"jQuery224008774683527759164_1575627478867"}
+---------------------------------------------------------------
+
+[2019-12-06T18:18:00+08:00] 127.0.0.1 GET www.test1.com/user.php/Login/startGeetest.html?t=1575627480405&callback=jQuery22405310395527439364_1575627480383&_=1575627480384
+[ info ] {"callback":"jQuery22405310395527439364_1575627480383"}

@@ -1,0 +1,74 @@
+{extend name="user@public/basic" /}
+{block name="style"}{/block}
+
+{block name="cotent"}
+
+<form class="layui-form" >
+    <br>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">管理账号</label>
+        <div class="layui-input-block">
+            <input type="text" id="username"  name="username" class="layui-input username" lay-verify="required" value="{$user.username|default=''}" placeholder="请输入管理账号" readonly>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">昵称</label>
+        <div class="layui-input-block">
+            <input type="text" id="nickname"  name="nickname"   class="layui-input phone" value="{$user.nickname|default=''}" placeholder="请输入昵称">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">手机</label>
+        <div class="layui-input-block">
+            <input type="text" id="phone"    name="phone"   class="layui-input phone" value="{$user.phone|default=''}" placeholder="请输入手机">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">QQ</label>
+        <div class="layui-input-block">
+            <input type="text" id="qq"  name="qq"      class="layui-input qq" value="{$user.qq|default=''}" placeholder="请输入QQ">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-block">
+            <input type="email" id="mail"   name="mail"      class="layui-input mail" value="{$user.mail|default=''}" placeholder="请输入邮箱">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入备注信息" id="remark"   name="remark"       class="layui-textarea remark">{$user.remark|default=''}</textarea>
+        </div>
+    </div>
+
+    {:token('__token__', 'sha1')}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"  >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+
+<script     >
+    /**
+     * 添加、编辑
+     */
+    $.form.on('submitBtn', '{:url("$thisRequest")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload();
+        });
+        return false;
+    },true);
+
+
+</script>
+{/block}

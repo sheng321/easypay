@@ -1,0 +1,385 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--顶部操作栏--开始-->
+    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">通道名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="title" class="layui-input" placeholder="请输入通道名称"    />
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">通道编码</label>
+            <div class="layui-input-inline">
+                <input type="text" id="code" class="layui-input" placeholder="请输入通道编码"    />
+            </div>
+        </div>
+
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">通道状态</label>
+            <div class="layui-input-inline">
+                <select id="status" class="status" lay-filter="status">
+                    <option value="">请选择通道状态</option>
+                    {foreach $status as $vo}
+                    <option value="{$vo.id|default=''}">{$vo.title|default=''}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm" data-search-tree="currentTableId">搜索</a>
+        </div>
+
+        {if auth("$thisClass/add")}
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add")}' data-title="添加">添加</a>
+        </div>
+        {/if}
+
+        {if auth("$thisClass/del")}
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-danger layui-btn-normal   layui-btn-sm" data-title="确定批量删除？" data-del-all-tree='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
+        </div>
+        {/if}
+
+    </blockquote>
+    <!--顶部操作栏--结束-->
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+    <!--表单模板绑定--开始-->
+    <script type="text/html" id="limit">
+
+        {{#  if(d.max_amount !== ''){ }}
+        <span >最低： {{d.min_amount}}最高：{{d.max_amount}}</span>
+        {{#  } }}
+
+        {{#  if(d.f_amount !== ''){ }}
+        <span > 固定金额：{{d.f_amount}}</span>
+        {{#  } }}
+
+        {{#  if(d.ex_amount !== ''){ }}
+        <span >排除金额：{{d.ex_amount}}</span>
+        {{#  } }}
+
+        {{#  if(d.f_multiple !== ''){ }}
+        <span >固定倍数：{{d.f_multiple}}</span>
+        {{#  } }}
+
+
+        {{#  if(d.f_num !== ''){ }}
+        <span class="layui-btn  layui-btn-warm  layui-btn-xs">固定尾数：{{d.f_num}}</span>
+        {{#  } }}
+
+    </script>
+
+
+    <script type="text/html" id="checkStatus">
+        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
+    </script>
+
+
+    <script type="text/html" id="checkMobile">
+
+        {{# if (d.pid != '0') { }}
+
+        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.visit}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyMobile" {{ d.visit == 1 ? '' : 'checked' }}>
+
+        {{# } }}
+    </script>
+
+
+    <script type="text/html" id="checkTop">
+        {{# if (d.pid == '0') { }}
+        <a class="layui-btn layui-btn-normal  layui-btn-xs "  data-check='{:url("$thisClass/top")}?id={{d.id}}&sort=2' data-title="置顶">置顶</a>
+        <a class="layui-btn layui-btn-danger  layui-btn-xs " data-check='{:url("$thisClass/top")}?id={{d.id}}&sort=0' data-title="置后">置后</a>
+        {{# } }}
+
+    </script>
+
+    <!--表单模板绑定--结束-->
+
+    <!--表单操作栏--开始-->
+    <script type="text/html" id="currentTableBar">
+
+
+        {if auth("$thisClass/product")}
+
+        {{# if (d.pid == '0') { }}
+        <a class="layui-btn layui-btn-normal layui-btn-xs" value="{{d.id}}" data-open='{:url("$thisClass/product")}?pid={{d.id}}' data-title="添加支付产品">添加支付产品</a>
+        {{# } else { }}
+        <a class="layui-btn layui-btn-xs color-99admin-gray" value="{{d.id}}">添加产品</a>
+        {{# } }}
+
+        {/if}
+
+
+
+
+        {if auth("$thisClass/edit")}
+
+            {{# if (d.pid == '0') { }}
+            <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改信息">编辑</a>
+            {{# } else { }}
+            <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/product_edit")}?id={{d.id}}' data-title="修改信息">编辑</a>
+            {{# } }}
+
+        {/if}
+
+        {if auth("$thisClass/del")}
+        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
+        {/if}
+
+    </script>
+    <!--表单操作栏--结束-->
+</form>
+{/block}
+
+{block name="script"}
+
+<script type="text/javascript"       >
+
+    layui.extend({
+        treeGrid: "/static/js/lay-module/treeGrid/treeGrid",
+    }).use([ 'jquery','treeGrid'], function () {
+        var treeGrid = layui.treeGrid,
+            $ = layui.jquery;
+
+
+
+        /**
+         * 注册 data-search-tree 事件
+         * 用于表格搜索
+         */
+        $('body').on('click', '[data-search-tree]', function () {
+            var searchData = Object();
+            var searchInput = $('#searchBlock div div input');
+            var searchSelect = $('#searchBlock div div select');
+            $.each(searchInput, function (i, obj) {
+                id = $(obj).attr('id');
+                if (id != undefined) {
+                    searchData[id] = $("#" + id).val();
+                }
+            });
+
+            $.each(searchSelect, function (i, obj) {
+                id = $(obj).attr('id');
+                if (id != undefined) {
+                    searchData[id] = $("#" + id).val();
+                }
+            });
+
+            $.form.searchTree($(this).attr('data-search-tree'), searchData);
+            return false;
+        });
+        /**
+         * 批量删除
+         * 注册 data-del-all-tree 事件
+         */
+        $('body').on('click', '[data-del-all-tree]', function () {
+            var url = $(this).attr('data-del-all-tree');
+            var checkStatus = treeGrid.checkStatus($(this).attr('data-table-id')),
+                data = checkStatus.data,
+                id = [];
+
+            if (data.length > 0) {
+                for (let i in data) {
+                    id.push(data[i].id);
+                }
+
+                $.msg.confirm($(this).attr('data-title'), function () {
+                    $.request.get(url, {id: id}, function (res) {
+                        $.msg.success(res.msg, function () {
+                            $.tool.reload();
+                        })
+                    })
+                });
+            } else {
+                $.msg.error('请选择需要删除的信息!');
+            }
+            return false;
+        });
+
+
+
+        /**
+         * 生成树形表单
+         * @param elem 绑定表单id
+         * @param url 链接
+         * @param cols 表单渲染
+         * @param page 表单渲染
+         */
+        $.form.tableTree = function (elem, url, cols, isPage = true, skin = 'line', size = '', isTool = true) {
+            if (!isPage) {
+                var data = {
+                    id: elem + 'TableId'
+                    , elem: '#' + elem + 'Table'
+                    , url: url
+                    , method: 'get'
+                    , cellMinWidth: 95
+                    , idField: 'id'//必須字段
+                    , treeId: 'id'//树形id字段名称
+                    , treeUpId: 'pid'//树形父id字段名称
+                    , treeShowName: 'title'//以树形式显示的字段
+                    , height: "full-80"
+                    , isFilter: false
+                    , iconOpen: true//是否显示图标【默认显示】
+                    , isOpenDefault: true//节点默认是展开还是折叠【默认展开】
+                    , loading: true
+                    , cols: cols
+                    , isPage: false
+                    , parseData: function (res) {
+                        return res;
+                    }
+                };
+            } else {
+                var data = {
+                    id: elem + 'TableId'
+                    , elem: '#' + elem + 'Table'
+                    , url: url
+                    , method: 'get'
+                    , cellMinWidth: 95
+                    , idField: 'id'//必須字段
+                    , treeId: 'id'//树形id字段名称
+                    , treeUpId: 'pid'//树形父id字段名称
+                    , treeShowName: 'title'//以树形式显示的字段
+                    , height: "full-80"
+                    , isFilter: false
+                    , iconOpen: true//是否显示图标【默认显示】
+                    , isOpenDefault: true//节点默认是展开还是折叠【默认展开】
+                    , loading: true
+                    , limits: [10, 15, 20, 25, 50, 100]
+                    , limit: 10
+                    , cols: cols
+                    , isPage: true
+                    , parseData: function (res) {
+                        return res;
+                    }
+                };
+            }
+
+            if (skin != '') data.skin = skin;
+            if (size != '') data.size = size;
+            if (size == 'lg') data.limit = 10;
+            if (!isTool) data.height = "full-40";
+
+            treeGrid.render(data);
+        }
+
+        $.form.searchTree = function (TableId, search, page = 1) {
+            console.log('搜索内容');
+            console.log(search);
+            var loading = $.msg.loading();
+            if (!page) {
+                var data = {
+                    where: {search: search}
+                };
+            } else {
+                var data = {
+                    page: {curr: page},
+                    where: {search: search}
+                };
+            }
+            if (!$.tool.isEmptyArray(search)) {
+                treeGrid.reload(TableId, data);
+                $.msg.close(loading);
+                $.msg.success('查询成功！');
+            } else {
+                $.msg.close(loading);
+                $.tool.reload();
+            }
+        }
+
+
+
+        /**
+         * 修改表单字段值
+         * @param tableName table名称
+         * @param url 链接
+         */
+        $.form.editFieldTree = function (tableName, url) {
+            treeGrid.on('edit(' + tableName + ')', function (obj) {
+                var value = obj.value //修改后的值
+                    , data = obj.data //所在行所有键值
+                    , field = obj.field; //字段名称
+                $.request.post(url, {
+                    id: data.id,
+                    field: field,
+                    value: value,
+                }, function (res) {
+                    $.msg.success(res.msg);
+                }, true);
+                return false;
+            });
+        }
+
+        /***************************淫荡分割线*********************************/
+
+        /**
+         * 生成表单
+         */
+        $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
+
+            {type: "checkbox", fixed: "left", width: 30,},
+            //{field: 'sort', title: '排序', width: 80, edit: 'text', align: "center", sort: true},
+            {field: 'top', title: '置顶', width: 60, templet: '#checkTop',  align: "center"},
+            {field: 'title', title: '通道名称', minWidth: 200, align: 'center'},
+            {field: 'code', title: '编码', maxWidth: 50, align: 'center'},
+            {field: 'c_rate', title: '成本费率', maxWidth: 50, align: 'center'},
+            {field: 'c_rate', title: '对外费率', maxWidth: 50, align: 'center'},
+
+            {field: 'min_amount', title: '单笔限额',  minWidth: 100, align: "center", templet: '#limit',style:'background-color: #009688; color: #fff;'},
+            {field: 'limit_money', title: '当日限额',  minWidth: 100, align: "center", },
+            {field: 'remark', title: '备注信息', edit: 'text', maxWidth: 100, align: "center", style: 'background-color: #009688; color: #fff;'},
+
+            {field: 'status', title: '移动端', width: 80, templet: '#checkMobile', unresize: true, align: "center"},
+            {field: 'status', title: '启用状态', width: 80, templet: '#checkStatus', unresize: true, align: "center"},
+
+            /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
+            {title: '操作', maxWidth: 110, templet: '#currentTableBar',  align: "center"},
+            /**{/if}**/
+            {field: 'update_at', title: '最新更新时间', align: 'center' },
+
+
+        ]], true);
+
+        /**
+         * 日期范围
+         */
+        $.laydate.range('create_at');
+
+        /**
+         * 监听字段值编辑
+         */
+        $.form.editFieldTree('currentTable', '{:url("$thisRequest")}');
+
+        /**
+         * 修改状态
+         */
+        $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
+
+        $.form.switch('modifyTop', '{:url("$thisClass/top")}');
+        $.form.switch('modifyMobile', '{:url("$thisClass/mobile")}');
+
+    });
+
+
+</script>
+
+
+
+{/block}

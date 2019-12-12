@@ -1,0 +1,24 @@
+---------------------------------------------------------------
+
+[2019-12-07T12:35:04+08:00] 127.0.0.1 GET www.test1.com/admin.php/log/user.html?type=ajax&page=1&limit=15&search%5Busername%5D=test&search%5Bremark%5D=&search%5Burl%5D=&search%5Bip%5D=&search%5Bcreate_at%5D=2019-11-30+-+2019-12-07
+[ info ] {"create_at":"20191130  20191207"}
+---------------------------------------------------------------
+
+[2019-12-07T12:37:04+08:00] 127.0.0.1 GET www.test1.com/admin.php/log/user.html?type=ajax&page=1&limit=15&search%5Busername%5D=&search%5Buid%5D=&search%5Btitle%5D=&search%5Bremark%5D=&search%5Burl%5D=&search%5Bip%5D=&search%5Bcreate_at%5D=2019-11-30+-+2019-12-07
+[ info ] {"create_at":"20191130  20191207"}
+---------------------------------------------------------------
+
+[2019-12-07T13:33:57+08:00] 127.0.0.1 GET www.test1.com/admin.php/log/user.html?type=ajax&page=1&limit=15&search%5Busername%5D=&search%5Buid%5D=&search%5Btitle%5D=&search%5Bremark%5D=&search%5Burl%5D=&search%5Bip%5D=&search%5Bcreate_at%5D=2019-11-30+-+2019-12-07
+[ info ] {"create_at":"20191130  20191207"}
+---------------------------------------------------------------
+
+[2019-12-07T13:35:05+08:00] 127.0.0.1 GET www.test1.com/admin.php/log/user.html?type=ajax&page=1&limit=15&search%5Busername%5D=&search%5Buid%5D=20100002&search%5Btitle%5D=&search%5Bremark%5D=&search%5Burl%5D=&search%5Bip%5D=&search%5Bcreate_at%5D=2019-11-30+-+2019-12-07
+[ info ] {"create_at":"20191130  20191207"}
+---------------------------------------------------------------
+
+[2019-12-07T13:35:18+08:00] 127.0.0.1 GET www.test1.com/admin.php/log/user.html?type=ajax&page=1&limit=15&search%5Busername%5D=&search%5Buid%5D=20100002&search%5Btitle%5D=&search%5Bremark%5D=&search%5Burl%5D=&search%5Bip%5D=&search%5Bcreate_at%5D=2019-11-30+-+2019-12-07
+[ info ] {"create_at":"20191130  20191207"}
+---------------------------------------------------------------
+
+[2019-12-07T14:35:49+08:00] 127.0.0.1 POST www.test1.com/admin.php/menu/edit.html
+[ info ] {"title":"user/user/changepwd"}
