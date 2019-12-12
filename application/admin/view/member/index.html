@@ -72,7 +72,7 @@
 
 
     <script type="text/html" id="checkGoogle">
-        <input type="checkbox" name="{{d.id}}" value="{{d.google_token}}" lay-skin="switch" lay-text="启用|已重置" lay-filter="modifyGoogle" {{ d.google_token == 1 ? 'checked' : '' }}>
+        <input type="checkbox" name="{{d.id}}" value="{{d.google_token}}" lay-skin="switch" lay-text="启用|未绑定" lay-filter="modifyGoogle" {{ d.google_token == 1 ? 'checked' : '' }}>
     </script>
 
     <!--表单模板绑定--结束-->
@@ -305,7 +305,6 @@
          * 监听字段值编辑
          */
         $.form.editFieldTree('currentTable', '{:url("$thisRequest")}');
-
 
 
         /**
