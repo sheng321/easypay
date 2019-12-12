@@ -84,7 +84,7 @@ class UserController extends BaseController
         $user1 = session('user_info');
         //判断是否登录
         if (empty($user1)) {
-            $data = ['type' => 'error', 'code' => 0, 'msg' => '抱歉，请重新登录！', 'url' => url('@user/login/logout')];
+            $data = ['type' => 'error', 'code' => 0, 'msg' => '抱歉，请重新登录！', 'url' => url('@user/login/index')];
             exceptions($data);
         }
     }
@@ -92,7 +92,7 @@ class UserController extends BaseController
 
     public function __checkLock($user)
     {
-        if($user['status'] == 0){
+        if(!isset($user['status']) || $user['status'] != 1){
             $data = ['status' => 'error', 'code' => 0, 'msg' => '账号已被冻结，强制退出！', 'url' => url('@user/login/logout')];
             __log( session('user_info.nickname').' 账号已被冻结，强制退出！');
             session('user_info', null);
