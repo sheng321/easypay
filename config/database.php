@@ -22,19 +22,8 @@ return [
     // 密码
     'password'        => \think\facade\Env::get('database.password'),
 
-
-  //  'hostname'        => '103.115.144.62',
-    // 数据库名
-    //'database'        => 'test123',
-    // 用户名
-    //'username'        => 'test123',
-    // 密码
-    //'password'        => 'WnAmS7ysbkr6j6YN',
-
-
-
     // 端口
-    'hostport'        => '3306',
+    'hostport'        => \think\facade\Env::get('database.hostport'),
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数
