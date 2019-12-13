@@ -200,12 +200,13 @@ class Channel  extends AdminController
             }
 
             foreach ($p_id as $k => $val){
-                $data['p_id'] = json_encode([$val]);
-                $data['pid'] = $this->model->id;
+                $data[$k]['p_id'] = json_encode([$val]);
+                $data[$k]['pid'] = $this->model->id;
                 //添加支付产品
-                $data['title'] = $post['title'];
-                $this->model->create($data);
+                $data[$k]['title'] = $post['title'];
+
             }
+           if(!empty($data)) $this->model->saveAll($data);
             $this->model->commit();
             empty($msg) && $msg = '添加成功!';
             return __success($msg);

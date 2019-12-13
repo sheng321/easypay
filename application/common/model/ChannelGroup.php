@@ -174,13 +174,13 @@ class ChannelGroup extends ModelService {
      */
     public static function idArr() {
 
-        \think\facade\Cache::remember('productIdArr', function () {
+        \think\facade\Cache::remember('ChannelGroupIdArr', function () {
             $data = self::column('id,title');
-            \think\facade\Cache::tag('ChannelGroup')->set('productIdArr',$data,3600);
-            return \think\facade\Cache::get('productIdArr');
+            \think\facade\Cache::tag('ChannelGroup')->set('ChannelGroupIdArr',$data,3600);
+            return \think\facade\Cache::get('ChannelGroupIdArr');
         });
 
-        return \think\facade\Cache::get('productIdArr');
+        return \think\facade\Cache::get('ChannelGroupIdArr');
     }
 
 

@@ -12,23 +12,33 @@
     <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">通道分组名称</label>
+            <label class="layui-form-label-99admin">用户等级名称</label>
             <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入通道分组名称"/>
+                <input type="text" id="title" class="layui-input" placeholder="请输入权限用户等级名称"/>
             </div>
         </div>
 
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-sm"  data-search-top="currentTableId">置顶</a>
+            <label class="layui-form-label-99admin">用户等级状态</label>
+            <div class="layui-input-inline">
+                <select id="status" class="status" lay-filter="status">
+                    <option value="">请选择用户等级状态</option>
+                    {foreach $status as $vo}
+                    <option value="{$vo.id|default=''}">{$vo.title|default=''}</option>
+                    {/foreach}
+                </select>
+            </div>
         </div>
 
-        {if auth("$thisClass/add")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-check-all='{:url("$thisClass/confirm")}?pid={$Think.get.id}' data-title="确认保存选择通道分组"   data-table-id="currentTableId"  >保存选择通道分组</a>
+            <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+        </div>
+
+        {if auth("$thisClass/del")}
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-danger layui-btn-normal   layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
         </div>
         {/if}
-
-
 
     </blockquote>
     <!--顶部操作栏--结束-->
@@ -37,12 +47,23 @@
     <table id="currentTable" lay-filter="currentTable"></table>
     <!--主表单渲染--结束-->
 
-
     <!--表单模板绑定--开始-->
-    <script type="text/html" id="mode">
-        <td data-field="concurrent" data-key="1-0-3" data-edit="text" align="center" style="background-color: #009688; color: #fff;" data-minwidth="20" class="" title="0"><div class="layui-table-cell laytable-cell-1-0-3">0</div></td>
+
+    <script type="text/html" id="checkStatus">
+        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
     </script>
 
+
+    <!--表单模板绑定--结束-->
+
+    <!--表单操作栏--开始-->
+    <script type="text/html" id="currentTableBar">
+        {if auth("$thisClass/del")}
+        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
+        {/if}
+
+    </script>
+    <!--表单操作栏--结束-->
 </form>
 {/block}
 
@@ -67,24 +88,10 @@
                     id: elem + 'TableId',
                     cols: cols,
                     done: function (res) {
-                        $('tr').each(function(index, element){
-                            var id = index -1;
-                            if(id >=0 && id < $('tr').length -3){
-                                if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
-                                    $(element).find('td').each(function(index1, element1){
-                                        $(element1).removeAttr("data-edit");
-                                        $(element1).removeAttr("style");
-                                    });
-                                }
-                            }
-                        });
-
                         merge(res);
-
-
                     }
                 };
-         }
+            }
             if (skin != '') data.skin = skin;
             if (size != '') data.size = size;
             if (size == 'lg') data.limit = 10;
@@ -96,72 +103,40 @@
         /**
          * 生成表单
          */
-        $.form.table('current', '{:url("$thisRequest")}?type=ajax&id={$Think.get.id}', [[
-            {type: "checkbox",fixed: "left", minWidth: 20,},
+        $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+            {type: "checkbox", fixed: "left", width: 30,},
+            {field: 'level', title: '用户等级名称', minWidth: 20, align: 'center'},
             {field: 'product', title: '支付产品', minWidth: 20, align: 'center'},
-            {field: 'code', title: '支付编码', minWidth: 20, align: 'center'},
-            {field: 'title', title: '通道分组名称', minWidth: 20, align: 'center'},
-            {field: 'remark',title: '备注',minWidth: 20, align: "center"},
-        ]], false);
+            {
+                field: 'rate',
+                title: '费率',
+                minWidth: 20,
+                align: 'center',
+                edit: 'text',
+                style: 'background-color: #009688; color: #fff;'
+            },
+            {field: 'update_at', title: '最新更新时间', minWidth: 20, align: 'center', sort: true},
+            {field: 'status', title: '启用状态', minWidth: 20, templet: '#checkStatus', unresize: true, align: "center"},
+            /**{if auth("$thisClass/del")}**/
+            {title: '操作', minWidth: 20, templet: '#currentTableBar', fixed: "right", align: "center"},
+            /**{/if}**/
+        ]],false);
 
+        /**
+         * 日期范围
+         */
+        $.laydate.range('create_at');
 
         /**
          * 监听字段值编辑
          */
-        $.form.editField('currentTable', '{:url("$thisRequest")}?g_id={$Think.get.id}');
-
-
-        /**
-         * 注册 data-check-all 事件
-         */
-        $body.on('click', '[data-check-all]', function () {
-            var url = $(this).attr('data-check-all');
-            var checkStatus = table.checkStatus($(this).attr('data-table-id')),
-                data = checkStatus.data,
-                id = [];
-
-                for (let i in data) {
-                    id.push(data[i].id);
-                }
-                $.msg.confirm($(this).attr('data-title'), function () {
-                    $.request.get(url, {id: id}, function (res) {
-                        $.msg.success(res.msg, function () {
-                            $.tool.reload();
-                        })
-                    })
-                });
-
-            return false;
-        });
-
+        $.form.editField('currentTable', '{:url("$thisRequest")}');
 
         /**
-         * 注册 data-search-top 事件
-         * 用于表格搜索
+         * 修改状态
          */
-        $body.on('click', '[data-search-top]', function () {
-            var searchData = Object();
-            var searchInput = $('#searchBlock div div input');
-            var searchSelect = $('#searchBlock div div select');
-            $.each(searchInput, function (i, obj) {
-                id = $(obj).attr('id');
-                if (id != undefined) {
-                    searchData[id] = $("#" + id).val();
-                }
-            });
-            $.each(searchSelect, function (i, obj) {
-                id = $(obj).attr('id');
-                if (id != undefined) {
-                    searchData[id] = $("#" + id).val();
-                }
-            });
-            $.request.get('{:url("$thisClass/top")}?id={$Think.get.id}', {search: searchData}, function (res) {
-                $.msg.success(res.msg, function () {
-                    $.tool.reload();
-                })
-            });
-            return false;
-        });
+        $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
+        $.form.switch('modifyCli', '{:url("$thisClass/cli")}');
 
 
 
@@ -208,9 +183,7 @@
                 }
                 for(var j=startIndex;j<indexPoint[i];j++){
                     //以第一列产生的区域分割点为基准，执行后面6列合并逻辑
-                    mergeSomeRows(1,startIndex,indexPoint[i],trArr,data,'product');
-                    mergeSomeRows(2,startIndex,indexPoint[i],trArr,data,'code');
-
+                    mergeSomeRows(1,startIndex,indexPoint[i],trArr,data,'level');
                 }
             }
         }

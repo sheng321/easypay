@@ -1,0 +1,136 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+    <br>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">产品名称</label>
+        <div class="layui-input-block">
+            <input type="text"  name="title"  lay-verify="required"   class="layui-input"  value="{$auth.title|default=''}" placeholder="请输入支付产品名称">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">支付编码</label>
+        <div class="layui-input-block">
+            <input type="text"   name="code"   class="layui-input" lay-verify="required" value="{$auth.code|default=''}" placeholder="请输入支付编码">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">运营费率</label>
+        <div class="layui-input-block">
+            <input type="text"    name="p_rate"   class="layui-input"  value="{$auth.p_rate|default=''}" placeholder="请输入运营费率">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">最低限额</label>
+        <div class="layui-input-block">
+            <input type="text"   name="min_amount"  class="layui-input"  value="{$auth.min_amount|default=''}" placeholder="请输入最低限额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">最高限额</label>
+        <div class="layui-input-block">
+            <input type="text"    name="max_amount"     class="layui-input"  value="{$auth.max_amount|default=''}" placeholder="请输入最高限额">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">固定金额</label>
+        <div class="layui-input-block">
+            <input type="text"   name="f_amount"   class="layui-input"  value="{$auth.f_amount|default=''}" placeholder="请输入固定金额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">排除金额</label>
+        <div class="layui-input-block">
+            <input type="text"    name="ex_amount"   class="layui-input"  value="{$auth.ex_amount|default=''}" placeholder="请输入排除金额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">固定倍数</label>
+        <div class="layui-input-block">
+            <input type="text"   name="f_multiple"   class="layui-input"  value="{$auth.f_multiple|default=''}" placeholder="请输入固定倍数">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">固定尾数</label>
+        <div class="layui-input-block">
+            <input type="text"  name="f_num"    class="layui-input" value="{$auth.f_num|default=''}" placeholder="请输入固定尾数">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">金额类型</label>
+        <div class="layui-input-block">
+            <input type="radio" name="mtype" value="0" title="都可以" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
+            <input type="radio" name="mtype" value="1" title="整数" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>整数</div></div>
+            <input type="radio" name="mtype" value="2" title="小数" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>小数</div></div>
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">商户端</label>
+        <div class="layui-input-block">
+            <input type="radio" name="cli" value="0" title="显示" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>显示</div></div>
+            <input type="radio" name="cli" value="1" title="隐藏" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>隐藏</div></div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="开启" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>开启</div></div>
+            <input type="radio" name="status" value="0" title="禁用" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁用</div></div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea  name="remark"  placeholder="请输入备注信息" class="layui-textarea">{$auth.remark|default=''}</textarea>
+        </div>
+    </div>
+
+
+    {:token('__token__', 'sha1')}
+    {if !empty($auth)}
+    <input type="hidden"   name="id"  value="{$auth.id|default=''}">
+    <input type="hidden"   name="verson"  value="{$auth.verson+1}">
+    {/if}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script      >
+
+    /**
+     * 添加、编辑
+     */
+    $.form.on('submitBtn', "{if empty($auth)}{:url('@admin/product/add')}{else/}{:url('@admin/product/edit')}{/if}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+
+</script>
+{/block}

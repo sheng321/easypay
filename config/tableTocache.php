@@ -30,5 +30,8 @@ return [
     'PayProduct'=>[
         'PayProduct',
     ],
+    'Ulevel'=>[
+        'Ulevel',
+    ],
 
 ];

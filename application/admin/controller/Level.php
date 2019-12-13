@@ -5,6 +5,7 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 
+
 /**用户等级
  * Class Level
  * @package app\admin\controller
@@ -76,19 +77,44 @@ class Level extends AdminController {
 
             return $this->form();
         } else {
-            $post = $this->request->only('title,remark,l_rate');
+            $post = $this->request->only('title,remark');
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Level.add');
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
-            return $this->model->__add($post);
+            //使用事物保存数据
+            $this->model->startTrans();
+            $channel = $this->model->save($post);
+
+            if (!$channel || !$this->model->id ) {
+                $this->model->rollback();
+
+                empty($msg) && $msg = '数据有误，请稍后再试！!';
+                return __error($msg);
+            }
+
+            $p_id = \app\common\model\PayProduct::column('id');
+            foreach ($p_id as $k => $val){
+                //添加用户等级费率
+                $data[$k]['type'] = 0;
+                $data[$k]['p_id'] = $val;
+                $data[$k]['uid'] = $this->model->id;
+            }
+           if(!empty($data)) model('app\common\model\SysRate')->saveAll($data);
+
+            $this->model->commit();
+            empty($msg) && $msg = '添加成功!';
+            return __success($msg);
+
         }
+
+
     }
 
     /**
-     * 修改管理员信息
+     * 修改等级
      * @return mixed|string|\think\response\Json
      */
     public function edit() {
@@ -107,16 +133,52 @@ class Level extends AdminController {
 
             return $this->form();
         } else {
-            $post = $this->request->only('id,title,remark,l_rate');
+            $post = $this->request->only('id,title,remark');
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Level.edit');
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
-            return $this->model->__edit($post);
+            $result = $this->model->__edit($post);
+
+            $res1 = json_decode($result->getContent(),true);
+            if($res1['code'] == 1){
+                $p_id = \app\common\model\PayProduct::column('id');
+                $p_id1 = \app\common\model\SysRate::where('uid', $post['id'])->column('p_id');
+
+                $intersection = array_diff($p_id,$p_id1);
+                $data = [];
+                foreach ($intersection as $k => $val){
+                    $data1['p_id'] = $val;
+                    $data1['uid'] =   $post['id'];
+                    $data[] = $data1;
+                }
+
+                //添加支付产品
+                if(!empty($data)) model('app\common\model\SysRate')->saveAll($data);
+            }
+
+
+            return $result;
+
         }
     }
+
+
+
+    /**
+     * 获取所有已创建的通道分组费率
+     * @param $uid
+     * @return array
+     */
+    public function get_subpro($uid) {
+        //获取所有已创建的支付产品
+        $p_id = md5('app\common\model\SysRate')->where('uid', $uid)->column('p_id');
+        return $p_id;
+    }
+
+
 
     /**
      * 表单模板

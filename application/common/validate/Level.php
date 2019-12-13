@@ -1,16 +1,5 @@
 <?php
 
-// +----------------------------------------------------------------------
-// | Think.Admin
-// +----------------------------------------------------------------------
-// | 版权所有 2014~2017 广州楚才信息科技有限公司 [ http://www.cuci.cc ]
-// +----------------------------------------------------------------------
-// | 官方网站: http://think.ctolog.com
-// +----------------------------------------------------------------------
-// | 开源协议 ( https://mit-license.org )
-// +----------------------------------------------------------------------
-// | github开源项目：https://github.com/zoujingli/Think.Admin
-// +----------------------------------------------------------------------
 
 namespace app\common\validate;
 
@@ -32,7 +21,7 @@ class Level extends Validate {
         'node_id' => 'require',
         'field'   => 'require',
         'value'   => 'require|max:30',
-        'l_rate'   => 'require|float',
+
     ];
 
     /**
@@ -47,8 +36,6 @@ class Level extends Validate {
         'value.require' => '修改值必须',
         'value.max'     => '修改值最多不能超过30个字符',
         'title.max'     => '权限角色名称最多不能超过30个字符',
-        'l_rate.float'     => '费率必须为小数',
-
     ];
 
     /**
@@ -57,7 +44,7 @@ class Level extends Validate {
      */
     protected $scene = [
         //添加用户等级
-        'add'        => ['title','remark','l_rate'],
+        'add'        => ['title','remark'],
 
         //授权
         'authorize'  => ['auth_id, node_id'],
@@ -77,7 +64,7 @@ class Level extends Validate {
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id', 'remark', 'title','l_rate'])
+        return $this->only(['id', 'remark', 'title'])
             ->remove('id', 'checkAuthId');
     }
 
