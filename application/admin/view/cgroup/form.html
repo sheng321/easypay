@@ -18,7 +18,7 @@
             <select id="p_id" class="p_id" lay-filter="p_id"  name="p_id" lay-verify="required"   >
                 <option value="">请选择支付产品</option>
                 {foreach $product as $k => $vo}
-                {eq name='$k' value='$data.p_id|default=0'}
+                {eq name='$k' value='$auth.p_id|default=0'}
                 <option selected value="{$k|default=''}">{$vo|default=''}</option>
                 {else}
                 <option value="{$k|default=''}">{$vo|default=''}</option>
