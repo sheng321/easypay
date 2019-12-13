@@ -1,0 +1,52 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+    <br>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">用户等级角色</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" class="layui-input" lay-verify="required" value="{$auth.title|default=''}" placeholder="请输入系统角色">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea name="remark" placeholder="请输入备注信息" class="layui-textarea">{$auth.remark|default=''}</textarea>
+        </div>
+    </div>
+
+    {if !empty($auth)}
+    <input type="hidden" name="id" value="{$auth.id|default=''}">
+    {/if}
+
+    
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+
+    /**
+     * 添加、编辑
+     */
+
+    $.form.on('submitBtn', "{if empty($auth)}{:url('@admin/level/add')}{else/}{:url('@admin/level/edit')}{/if}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+    
+
+</script>
+{/block}
