@@ -55,8 +55,6 @@ class ChannelGroup extends ModelService {
         //产品列表
         $product = \app\common\model\PayProduct::idArr();
 
-
-
         //统计通道单笔限额
         $res = model('\app\common\model\Channel')->where([['pid','>',0],
             ['status','=',1]])->field(['id','min_amount','max_amount','f_amount'])->select()->toArray();
@@ -110,6 +108,65 @@ class ChannelGroup extends ModelService {
 
         return $list;
     }
+
+
+
+    /**
+     * 商户获取通道分组列表信息
+     * @param int $page  当前页
+     * @param int $limit 每页显示数量
+     * @return array
+     */
+    public function uList($page = 1, $limit = 10, $search = []) {
+        $where = [
+            ['status','=',1],
+        ];
+
+        $field = ['id','update_at','remark','title','status','sort','verson','p_id','mode','is_true'];
+        $count = $this->where($where)->count();
+        $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc','update_at'=>'desc'])->select();
+        empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+
+        if(!empty($search['channel'])){
+            $channel = $search['channel'];
+        }else{
+            $channel = [];
+        }
+
+        //支付产品
+        $product = \app\common\model\PayProduct::idArr();
+        $code = \app\common\model\PayProduct::idCode();
+
+        foreach ($data as $k => $val){
+
+           $data[$k]['LAY_CHECKED'] = false;
+            if(isset($channel[$val['p_id']]) &&  in_array($val['id'], $channel[$val['p_id']])){
+                $data[$k]['LAY_CHECKED'] = true;
+            }
+
+            $data[$k]['product'] = $product[$val['p_id']]; //支付产品
+            $data[$k]['code'] = $code[$val['p_id']]; //支付产品
+        }
+
+        $info = [
+            'limit'        => $limit,
+            'page_current' => $page,
+            'page_sum'     => ceil($count / $limit),
+        ];
+        $list = [
+            'code'  => 0,
+            'msg'   => $msg,
+            'count' => $count,
+            'info'  => $info,
+            'data'  => $data,
+        ];
+
+        return $list;
+    }
+
+
+
 
     /**
      * ID与支付名称数组

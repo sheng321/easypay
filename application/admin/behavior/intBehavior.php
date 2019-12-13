@@ -95,7 +95,7 @@ class intBehavior extends Controller
 
 
                 //数组
-                if($k == 'filterRules'  || $k == 'sort'  ){
+                if($k == 'filterRules' || $k == 'sort'  ){
                     $v = str_replace("[","",$v);
                     $v = str_replace("]","",$v);
                 }

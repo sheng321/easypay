@@ -85,6 +85,22 @@ class PayProduct extends ModelService {
     }
 
 
+    /**
+     * ID与支付编码数组
+     * @param array $modules
+     */
+    public static function idCode() {
+
+        \think\facade\Cache::remember('idCode', function () {
+            $data = self::column('id,code');
+            \think\facade\Cache::tag('PayProduct')->set('idCode',$data,3600);
+            return \think\facade\Cache::get('idCode');
+        });
+
+        return \think\facade\Cache::get('idCode');
+    }
+
+
 
 
 

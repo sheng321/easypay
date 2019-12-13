@@ -157,6 +157,119 @@ class Level extends AdminController {
         }
     }
 
+
+
+    //选择通道
+    public function mode()
+    {
+        if (!$this->request->isPost()) {
+
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 1000);
+                $search = (array)$this->request->get('search', []);
+
+               $id =  $this->request->get('id', 0);
+                $channel =  $this->model->where('id', $id)->value('channel_id');
+                $search['channel'] = json_decode($channel,true);
+
+                return json(model('app\common\model\ChannelGroup')->uList($page, $limit, $search));
+            }
+
+
+            //基础数据
+            $basic_data = [
+                'title'  => '选择通道列表',
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->post();
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            if (true !== $validate) return __error($validate);
+
+            //权重 和 并发 编辑
+            if($post['field'] == 'weight' || $post['field'] == 'concurrent'){
+
+                if(!is_numeric($post['value'])){
+                    return __error('请输入数字！');
+                }
+
+
+                $data[$post['field']] = json_decode($this->model->where('id', $this->request->get('g_id'))->value($post['field']),true);
+                if(empty($data[$post['field']])) $data[$post['field']] = [];
+                $data[$post['field']][$post['id']] = $post['value'];
+
+                $data2['id'] = $this->request->get('g_id');
+                $data2['field'] = $post['field'];
+                $data2['value'] = json_encode($data[$post['field']]);
+
+
+                //保存数据,返回结果
+                return $this->model->editField($data2);
+            }else{
+
+                //保存数据,返回结果
+                return model('app\common\model\Channel')->editField($post);
+            }
+
+        }
+
+
+    }
+
+
+    /**
+     * 确认保存通道分组
+     * @return \think\response\Json
+     * @throws \Exception
+     */
+    public function confirm() {
+        $get = $this->request->get();
+
+        $mode = [];
+        //验证数据
+        if (isset($get['id'])) {
+            if (!is_array($get['id'])) {
+                $validate = $this->validate($get, 'app\common\validate\ChannelGroup.channel');
+                if (true !== $validate) return __error($validate);
+                $mode[] = $get['id'];
+            }else{
+                foreach ($get['id'] as $k => $val){
+                    $data['id'] = $val;
+                    $validate = $this->validate($data, 'app\common\validate\ChannelGroup.channel');
+                    if (true !== $validate){
+                        unset($get['id'][$k]);
+                        continue;
+                    }
+                    $mode[] = $val;
+                }
+            }
+
+        }
+
+        if(empty($get['pid'])) return __error('请选择通道分组！');
+        $mode1 = [];
+       if(!empty($mode)){
+           $arr =  model('app\common\model\ChannelGroup')->where('id','in',$mode)->column('id,p_id','id');
+           foreach ($arr as $k => $v){
+               $mode1[$v][] = $k;
+           }
+       }
+
+        $data['id'] = $get['pid'];
+        $data['channel_id'] = json_encode($mode1);
+
+        //执行更新操作操作
+        $update = $this->model->__edit($data,'保存成功');
+        return $update;
+    }
+
+
+
     /**
      * 更改等级状态
      * @return \think\response\Json
@@ -178,73 +291,61 @@ class Level extends AdminController {
         return $update;
     }
 
+
     /**
-     * 授权信息
-     * @return mixed|string|\think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
+     * 顶置
+     * @return \think\response\Json
      */
-    public function authorize() {
-        if (!$this->request->isPost()) {
+    public function top() {
+        $get = $this->request->get();
 
-            //查找所需授权等级
-            $auth = $this->model->where('id', $this->request->get('id'))->find();
-            if (empty($auth)) return msg_error('暂无数据，请重新刷新页面！');
-
-            $node = model('app\common\model\SysNode')->where(['is_auth' => 1])->order('node asc')->select();
-
-            $auth_node = model('app\common\model\UlevelNode')->where(['auth' => $auth['id']])->select();
-
-            $type = $this->request->get('type',0);
-
-            foreach ($node as $k=> &$vo) {
-                if($type == 0  && strpos($vo['node'],'user') === 0 ){
-                    unset($node[$k]);
-                    continue;
-                }
-                if($type == 1  && strpos($vo['node'],'admin') === 0 ){
-                    unset($node[$k]);
-                    continue;
-                }
-
-                $i = 0;
-                foreach ($auth_node as $al) {
-                    $vo['id'] == $al['node'] && $i++;
-                }
-                $i == 0 ? $vo['is_checked'] = false : $vo['is_checked'] = true;
+        $data = [];
+        //没有数据就把所有选中的前置
+        if(empty($get['search']['title']) && !empty($get['id'])){
+            $mode = json_decode($this->model->where(['id'=>$get['id']])->value('channel_id'),true);
+            $mode1 = [];
+            foreach ($mode as $k=>$v){
+                $mode1[] = $k;
             }
-
-
-            //基础数据
-            $basic_data = [
-                'title' => '等级授权',
-                'auth'  => $auth,
-                'node'  => $node,
-            ];
-            $this->assign($basic_data);
-
-            return $this->fetch();
-        } else {
-            $post = $this->request->post();
-            empty($post['node_id']) && $post['node_id'] = [];
-
-            //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Auth.authorize');
-            if (true !== $validate) return __error($validate);
-
-            $insertAll = [];
-            foreach ($post['node_id'] as $vo) {
-                $insertAll[] = [
-                    'auth' => $post['auth_id'],
-                    'node' => $vo,
-                ];
-            }
-
-            //清空旧数据
-            model('app\common\model\UlevelNode')->where(['auth' => $post['auth_id']])->delete();
-            //保存数据,返回结果
-            return model('app\common\model\UlevelNode')->authorize($insertAll);
+            if(!empty($mode)) $data = $mode1;
         }
+
+
+        $model = model('app\common\model\ChannelGroup');
+        if(!empty($get['search']['title'])){
+            $title = trim($get['search']['title']);
+            $id =  $model->where([
+                ['title','like',"{$title}%"],
+                ['status','=',1],
+            ])->column('p_id');
+
+            if(!empty($id))  $data = $id;
+        }
+
+        $update = [];
+
+        $ids = $model->where([['p_id','in',$data]])->column('id');
+        foreach ($ids as $k1 => $v2){
+            $update[$k1]['id'] = $v2;
+            $update[$k1]['sort'] = 1;
+        }
+
+
+        //使用事物保存数据
+        $model->startTrans();
+        $save = $model->saveAll($update);
+        if (!$save) {
+            $model->rollback();
+            empty($msg) && $msg = '数据有误，请稍后再试！';
+            return __error($msg);
+        }
+        $model->commit();
+
+        empty($msg) && $msg = '顶置成功！';
+        return __success($msg);
+
     }
+
+
+
 }

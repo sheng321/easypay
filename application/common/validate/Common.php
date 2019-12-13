@@ -22,8 +22,8 @@ class Common extends Validate {
         'ip' => 'require|ip',
         'word' => 'require|checkWord',//口令
 
-        'param' => 'chsAlphaNum|max:255',//验证某个字段的值只能是汉字、字母、数字和下划线_及破折号-
-        'param_k' => 'require|alphaDash|max:20',//验证某个字段的值是否为字母和数字，下划线_及破折号-
+        'param' => 'chsDash|max:255',//验证某个字段的值只能是汉字、字母、数字和下划线_及破折号-
+        'param_k' => 'require|alphaDash|max:20',
 
         'google'=>'require|length:6|number|verifyGoogle',
 

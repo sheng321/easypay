@@ -113,10 +113,10 @@
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 30,},
-        {field: 'sort', title: '排序', width: 80, edit: 'text', align: "center", sort: true},
+        {field: 'sort', title: '排序', minWidth: 20, edit: 'text', align: "center", sort: true},
         {field: 'title', title: '名称', minWidth: 50, align: 'center', sort: true},
         {field: 'product', title: '支付产品', minWidth: 50, align: 'center', sort: true},
-        {field: 'mode', title: '接口模式', minWidth: 80, align: "center", templet: '#mode',},
+        {field: 'mode', title: '接口模式', minWidth: 20, align: "center", templet: '#mode',},
 
         {field: 'limit_money', title: '分组单笔限额', minWidth: 20, align: "center", templet: '#limit',style:'background-color: #009688; color: #fff;'},
 

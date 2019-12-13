@@ -317,7 +317,10 @@ class Cgroup  extends AdminController
         return $update;
     }
 
-
+    /**
+     * 顶置
+     * @return \think\response\Json
+     */
     public function top() {
         $get = $this->request->get();
 

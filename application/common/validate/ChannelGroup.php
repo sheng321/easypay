@@ -79,6 +79,16 @@ class ChannelGroup extends Validate {
             ->remove('id', 'checkProductId');
     }
 
+    /**用户添加通道分组
+     * @return $this
+     */
+    public function sceneChannel() {
+        return $this->only(['id'])
+            ->remove('id', 'checkProductId')
+            ->remove('id', 'checkVer');
+    }
+
+
     /**
      * 检测ID是否存在
      * @param $value

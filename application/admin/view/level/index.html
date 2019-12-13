@@ -48,11 +48,23 @@
     <!--表单模板绑定--结束-->
 
     <!--表单操作栏--开始-->
-    <script type="text/html" id="currentTableBar">
+    <script type="text/html" id="mode">
 
-        {if auth("$thisClass/authorize")}
-        <a class="layui-btn layui-btn-xs layui-btn-green" data-open='{:url("$thisClass/authorize")}?id={{d.id}}&type={{d.type}}' data-title="用户等级授权">授权</a>
-        {/if}
+
+
+        {{#  if(d.mode == '0'){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-danger "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---用户等级：{{d.title}}">没有通道</a>
+
+        {{#  } else { }}
+        <a class="layui-btn layui-btn-xs layui-btn-green "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---用户等级：{{d.title}}">通道（{{d.mode}}）</a>
+        {{#  } }}
+
+
+    </script>
+
+
+
+    <script type="text/html" id="currentTableBar">
 
         {if auth("$thisClass/edit")}
         <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改菜单信息">编辑</a>
@@ -78,7 +90,9 @@
 
         {field: 'title', title: '用户等级名称', minWidth: 20, align: 'center', sort: true},
         {field: 'l_rate', title: '等级费率',edit: 'text', minWidth: 20, align: 'center', sort: true, style: 'background-color: #009688; color: #fff;',},
-        {field: 'remark', title: '备注信息', edit: 'text', minWidth: 20, align: "center", style: 'background-color: #009688; color: #fff;', sort: true},
+
+        {field: 'mode', title: '选择通道', minWidth: 20, align: "center", templet: '#mode',},
+        {field: 'remark', title: '备注信息', edit: 'text', minWidth: 20, align: "center", style: 'background-color: #009688; color: #fff;'},
         /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
         {title: '操作', minWidth: 110, templet: '#currentTableBar', fixed: "right", align: "center"},
         /**{/if}**/
