@@ -32,6 +32,7 @@ class Level extends Validate {
         'node_id' => 'require',
         'field'   => 'require',
         'value'   => 'require|max:30',
+        'l_rate'   => 'require|float',
     ];
 
     /**
@@ -46,6 +47,8 @@ class Level extends Validate {
         'value.require' => '修改值必须',
         'value.max'     => '修改值最多不能超过30个字符',
         'title.max'     => '权限角色名称最多不能超过30个字符',
+        'l_rate.float'     => '费率必须为小数',
+
     ];
 
     /**
@@ -54,7 +57,7 @@ class Level extends Validate {
      */
     protected $scene = [
         //添加用户等级
-        'add'        => ['title','remark'],
+        'add'        => ['title','remark','l_rate'],
 
         //授权
         'authorize'  => ['auth_id, node_id'],
@@ -67,14 +70,14 @@ class Level extends Validate {
 
         //更改角色状态
         'status'     => ['id'],
-    ];
 
+    ];
     /**
      * 自定义验证场景
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id', 'remark', 'title'])
+        return $this->only(['id', 'remark', 'title','l_rate'])
             ->remove('id', 'checkAuthId');
     }
 

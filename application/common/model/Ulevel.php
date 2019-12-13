@@ -60,7 +60,7 @@ class Ulevel extends ModelService {
 
         $where = search($search,$searchField,$where);
 
-        $field = 'id, title, remark, channel_id,create_at';
+        $field = 'id, title, remark, channel_id,l_rate,create_at';
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['create_at desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';

@@ -76,8 +76,9 @@
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 50,},
 
-        {field: 'title', title: '用户等级名称', minWidth: 200, align: 'center', sort: true},
-        {field: 'remark', title: '备注信息', edit: 'text', minWidth: 200, align: "center", style: 'background-color: #009688; color: #fff;', sort: true},
+        {field: 'title', title: '用户等级名称', minWidth: 20, align: 'center', sort: true},
+        {field: 'l_rate', title: '等级费率',edit: 'text', minWidth: 20, align: 'center', sort: true, style: 'background-color: #009688; color: #fff;',},
+        {field: 'remark', title: '备注信息', edit: 'text', minWidth: 20, align: "center", style: 'background-color: #009688; color: #fff;', sort: true},
         /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
         {title: '操作', minWidth: 110, templet: '#currentTableBar', fixed: "right", align: "center"},
         /**{/if}**/

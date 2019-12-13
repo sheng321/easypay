@@ -5,7 +5,10 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 
-
+/**用户等级
+ * Class Level
+ * @package app\admin\controller
+ */
 class Level extends AdminController {
 
     /**
@@ -73,7 +76,7 @@ class Level extends AdminController {
 
             return $this->form();
         } else {
-            $post = $this->request->only('title,remark');
+            $post = $this->request->only('title,remark,l_rate');
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Level.add');
@@ -104,7 +107,7 @@ class Level extends AdminController {
 
             return $this->form();
         } else {
-            $post = $this->request->only('id,title,remark');
+            $post = $this->request->only('id,title,remark,l_rate');
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Level.edit');
