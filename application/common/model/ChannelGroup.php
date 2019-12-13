@@ -45,7 +45,7 @@ class ChannelGroup extends ModelService {
         $where = search($search,$searchField,$where);
 
 
-        $field = ['id','update_at','remark','title','status','sort','verson','p_id','mode'];
+        $field = ['id','update_at','remark','title','status','sort','verson','p_id','mode','is_true'];
 
         $count = $this->where($where)->count();
 

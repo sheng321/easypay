@@ -57,44 +57,6 @@ class Level extends AdminController {
         }
     }
 
-    /**
-     * 商户等级
-     * @return mixed|\think\response\Json
-     */
-    public function user() {
-        if (!$this->request->isPost()) {
-
-            //ajax访问获取数据
-            if ($this->request->get('type') == 'ajax') {
-                $page = $this->request->get('page', 1);
-                $limit = $this->request->get('limit', 10);
-                $search = (array)$this->request->get('search', []);
-                $search['type'] = 1;
-                return json($this->model->authList($page, $limit, $search));
-            }
-
-            //基础数据
-            $basic_data = [
-                'title'  => '商户等级列表',
-                'data'   => '',
-                'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
-            ];
-
-            return $this->fetch('', $basic_data);
-        } else {
-            $post = $this->request->post();
-
-            //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
-            if (true !== $validate) return __error($validate);
-
-            //保存数据,返回结果
-            return $this->model->editField($post);
-        }
-    }
-
-
-
 
     /**
      * 添加等级
@@ -114,7 +76,7 @@ class Level extends AdminController {
             $post = $this->request->only('title,remark');
 
             //验证数据
-            $validate = $this->validate($post, 'app\common\validate\level.add');
+            $validate = $this->validate($post, 'app\common\validate\Level.add');
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
@@ -142,10 +104,10 @@ class Level extends AdminController {
 
             return $this->form();
         } else {
-            $post = $this->request->post();
+            $post = $this->request->only('id,title,remark');
 
             //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Auth.edit');
+            $validate = $this->validate($post, 'app\common\validate\Level.edit');
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果

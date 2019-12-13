@@ -30,7 +30,6 @@ class ChannelGroup extends Validate {
         'remark'  => 'max:250',
         'field'   => 'require',
         'value'   => 'require|max:30',
-
         'p_id'   => 'require',
 
     ];
@@ -67,6 +66,7 @@ class ChannelGroup extends Validate {
 
         //更改角色状态
         'status'     => ['id'],
+        'istrue'     => ['id'],
         'cli'     => ['id'],
     ];
 
