@@ -47,6 +47,26 @@
         </div>
     </div>
 
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">所属代理</label>
+        <div class="layui-input-inline">
+            <select name="a_id" class="status" lay-filter="status">
+                <option value="">默认平台</option>
+                {foreach $agent as $vo}
+                <option value="{$vo.uid|default=''}">{$vo.profile.agent_level}级 {$vo.uid}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">类别</label>
+        <div class="layui-input-block">
+            <input type="radio" name="who" value="0" title="普通商户" checked="checked"  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>普通商户</div></div>
+            <input type="radio" name="who" value="2" title="代理" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>代理</div></div>
+        </div>
+    </div>
 
     <div class="layui-form-item layui-row">
         <label class="layui-form-label">用户权限</label>
@@ -55,6 +75,15 @@
             <input type="checkbox"  name="auth_id[]" class="layui-input auth_id" value="{$vo.id|default=''}" lay-skin="primary" title="{$vo.title|default=''}" {eq name='$vo.is_checked|default=false' value='true' }checked{/eq}>
             {/foreach}
 
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row">
+        <label class="layui-form-label">用户分组</label>
+        <div class="layui-input-block">
+            {foreach $group as $vo}
+            <input type="radio" name="group_id" value="{$vo.id}" title="{$vo.title}"   ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>{$vo.title}</div></div>
+            {/foreach}
         </div>
     </div>
 
@@ -85,7 +114,6 @@
     /**
      * 添加、编辑
      */
-
     $.form.on('submitBtn', "{if empty($user)}{:url('@admin/member/add')}{else/}{:url('@admin/member/edit')}{/if}", function (res) {
         $.msg.success(res.msg, function () {
             $.tool.reload('open');

@@ -57,6 +57,7 @@ class Common extends Validate {
     protected $scene = [
         //修改字段值
         'edit_field' => ['id', 'field', 'value'],
+        'edit_rate' => ['id', 'field', 'value'],
         'check_ip' => ['ip'],
         'check_word' => ['word'],
         'check_param' => ['param','param_k'],
@@ -74,6 +75,29 @@ class Common extends Validate {
             ->remove('value', 'require');
     }
 
+
+    public function sceneEdit_rate()
+    {
+        return $this->only(['id','field','value'])
+            ->remove('value', 'require')
+            ->append('value', 'float')
+            ->append('value', 'checkRate');
+    }
+
+
+    /** 验证费率
+     * @param $value
+     * @param $rule
+     * @param array $data
+     * @return bool|string
+     */
+    public function checkRate($value, $rule, $data = [])
+    {
+        if($value > 0.7)   return '费率输入异常：'.$value;
+        return true;
+    }
+
+
     /**验证口令
      * @param $value
      * @param $rule
@@ -82,7 +106,7 @@ class Common extends Validate {
      */
     public function checkWord($value, $rule, $data = [])
     {
-       $word = \think\facade\Config::get('word.');
+        $word = \think\facade\Config::get('word.');
 
         if(empty($word[$data['id']])) return '暂无权限口令，请稍后再试！';
         $w1 = md5($word[$data['id']]);

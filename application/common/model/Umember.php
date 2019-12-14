@@ -6,13 +6,11 @@ use app\common\service\UserService;
 
 class Umember extends UserService {
 
-
     /**
      * 绑定数据表
      * @var string
      */
     protected $table = 'cm_member';
-
 
     /**
      * redis (复制的时候不要少数组参数)
@@ -25,11 +23,6 @@ class Umember extends UserService {
         'key'=> "String:table:Umember:id:{id}:username:{username}",
         'keyArr'=> ['id','username'],
     ];
-
-
-
-
-    protected $append = ['auth'];//追加输出字段
 
 
     protected $insert = [ 'create_by','uid'];
@@ -47,6 +40,84 @@ class Umember extends UserService {
     }
 
 
+    /**
+     * 追加输出属性和金额
+     * @param $val
+     * @param $data
+     * @return mixed
+     */
+    protected function getUidAttr($val,$data)
+    {
+       $append =  $this->append;
+       if(empty($append)) $append = [];
+        $append[] = 'profile';
+        $append[] = 'money';
+       $this->append = $append; //追加输出字段
+       return $val;
+    }
+
+    /**
+     * 追加输出权限
+     * @param $val
+     * @param $data
+     * @return mixed
+     */
+    protected function getAuth_idAttr($val,$data)
+    {
+        $append =  $this->append;
+        if(empty($append)) $append = [];
+        $append[] = 'auth';
+        $this->append = $append; //追加输出字段
+        return $val;
+    }
+
+
+
+
+
+    /**
+     * 属性
+     * @param $val
+     * @param $data
+     * @return mixed|string
+     */
+    protected function getProfileAttr($val,$data)
+    {
+        if(isset($data['uid'])){
+           $Uprofile =  model('app\common\model\Uprofile');
+            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,agent_level,a_id,pay_pwd')->find();
+            if(empty($find)){
+                $Uprofile->save(['uid'=>$data['uid']]);
+                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,agent_level,a_id,pay_pwd')->find();
+            }
+
+            $data = $find->toArray();
+            return $data;
+        }
+    }
+
+    /**
+     * 金额
+     * @param $val
+     * @param $data
+     * @return mixed|string
+     */
+    protected function getMoneyAttr($val,$data)
+    {
+        if(isset($data['uid'])){
+            $Umoney =  model('app\common\model\Umoney');
+            $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,status')->find();
+            if(empty($find)){
+                $Umoney->save(['uid'=>$data['uid']]);
+                $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,status')->find();
+            }
+
+            $data =   $find->toArray();
+            return $data;
+        }
+    }
+
+
     //所属权限名称
     protected function getAuthAttr($val,$data)
     {
@@ -59,8 +130,8 @@ class Umember extends UserService {
 
             return $title;
         }
-
     }
+
 
 
 
@@ -144,7 +215,7 @@ class Umember extends UserService {
             }
         }
 
-        $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single,u_rate';
+        $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single';
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) {

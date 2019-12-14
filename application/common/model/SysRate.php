@@ -39,19 +39,24 @@ class SysRate extends ModelService {
     public function aList($page = 1, $limit = 10, $search = [], $where = []) {
         
         //搜索条件
-        $searchField['like'] = ['title'];
-        $searchField['eq'] = ['type'];
+        $searchField['eq'] = ['type','uid','status'];
 
         $where = search($search,$searchField,$where);
 
-
-        $level =  \app\common\model\Ulevel::idArr();
+        $type = $search['type'];
+        if($type == 0){
+            $level =  \app\common\model\Ulevel::idArr();
+        }elseif($search['type'] == 1){
+            $level =  [];
+        }
         $product =  \app\common\model\PayProduct::idArr();
 
         $field = 'id, uid, type,rate,update_at,p_id';
         $count = $this->where($where)->count();
-        $data = $this->where($where)->field($field)->page($page, $limit)->order(['create_at desc'])->select()->each(function ($item, $key) use ($level,$product) {
-            $item['level'] = $level[$item['uid']];
+        $data = $this->where($where)->field($field)->page($page, $limit)->order(['uid desc','update_at desc'])->select()->each(function ($item, $key) use ($level,$product,$type) {
+            if($type == 0){
+                $item['level'] = $level[$item['uid']];
+            }
             $item['product'] = $product[$item['p_id']];
         });
 

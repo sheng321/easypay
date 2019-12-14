@@ -43,13 +43,13 @@ class Level extends Validate {
      * @var array
      */
     protected $scene = [
-        //添加用户等级
+        //添加用户分组
         'add'        => ['title','remark'],
 
         //授权
         'authorize'  => ['auth_id, node_id'],
 
-        //修改用户等级字段值
+        //修改用户分组字段值
         'edit_field' => ['id', 'field', 'value'],
 
         //删除角色

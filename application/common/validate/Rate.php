@@ -1,13 +1,4 @@
 <?php
-// +----------------------------------------------------------------------
-// | 99PHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2018~2020 https://www.99php.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: Mr.Chung <chung@99php.cn >
-// +----------------------------------------------------------------------
 
 namespace app\common\validate;
 
@@ -27,7 +18,7 @@ class Rate extends Validate {
      */
     protected $rule = [
         'id'           => 'require|number',
-        'rate'         => 'float',
+        'uid'     => 'require|number|token|checkUid',
     ];
 
     /**
@@ -36,7 +27,6 @@ class Rate extends Validate {
      */
     protected $message = [
         'id.require'        => '编号必须',
-        'rate.float'        => '费率必须浮点数',
     ];
 
     /**
@@ -44,59 +34,33 @@ class Rate extends Validate {
      * @var array
      */
     protected $scene = [
-        //添加商户
-        'add'           => ['id'],
+        //添加费率
+        'add'           => ['uid'],
 
-        //修改商户
-        'edit'          => ['id'],
-
-        //删除商户
+        //删除费率
         'del'           => ['id'],
 
-        //更改商户状态
+        //更改费率状态
         'status'        => ['id'],
-
     ];
 
-
-
-
     /**
-     * 检测删除时用户ID
-     * @param       $value
-     * @param       $rule
+     * 检测Uid
+     * @param $value
+     * @param $rule
      * @param array $data
-     * @return bool|string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
+     * @return bool
      */
-    protected function checkDelId($value, $rule, $data = []) {
-        $user = \app\common\model\Umember::where(['id' => $value])->find();
+    function checkUid($value, $rule, $data = []){
+        $user = \app\common\model\Umember::where(['uid' => $value])->find();
         if (empty($user)) return '暂无账户数据，请稍后再试！';
         if ($user['status'] == 3) return '该账户已被删除，不可操作！';
-
         return true;
     }
 
-    /**
-     * 检测启用或者禁用时的用户ID
-     * @param       $value
-     * @param       $rule
-     * @param array $data
-     * @return bool|string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    protected function checkOperateId($value, $rule, $data = []) {
-        $user = \app\common\model\Umember::quickGet($data['id']);
-        if (empty($user)) return '暂无账户数据，请稍后再试！';
-        if ($user['status'] == 0) return '该账户已被冻结，请联系客服！';
-        if ($user['status'] == 3) return '该账户已被删除，不可操作！';
 
-        return true;
-    }
+
+
 
 
 

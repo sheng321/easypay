@@ -43,7 +43,7 @@
 
         {if auth("$thisClass/add")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/add")}' data-title="添加商户">添加</a>
+            <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/add")}' data-title="添加商户或者代理">添加</a>
         </div>
         {/if}
 
@@ -277,7 +277,7 @@
             {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
             {field: 'username', title: '用户名', minWidth: 80, align: "center"},
             {field: 'nickname', title: '昵称',  minWidth: 80, align: "center"},
-            {field: 'u_rate', title: '费率',  minWidth: 80, align: "center"},
+
             {field: 'remark', title: '备注',  minWidth: 80, edit: 'text', align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
             {field: 'auth_title', title: '权限配置',  minWidth: 80, align: "center"},
             {field: 'phone', title: '用户手机', align: 'center'},

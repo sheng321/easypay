@@ -12,9 +12,9 @@
     <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">用户等级名称</label>
+            <label class="layui-form-label-99admin">用户分组名称</label>
             <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入权限用户等级名称"/>
+                <input type="text" id="title" class="layui-input" placeholder="请输入权限用户分组名称"/>
             </div>
         </div>
 
@@ -53,10 +53,10 @@
 
 
         {{#  if(d.mode == '0'){ }}
-        <a class="layui-btn layui-btn-xs layui-btn-danger "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---用户等级：{{d.title}}">没有通道</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---用户分组：{{d.title}}">没有通道</a>
 
         {{#  } else { }}
-        <a class="layui-btn layui-btn-xs layui-btn-green "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---用户等级：{{d.title}}">通道（{{d.mode}}）</a>
+        <a class="layui-btn layui-btn-xs layui-btn-green "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---用户分组：{{d.title}}">通道（{{d.mode}}）</a>
         {{#  } }}
 
 
@@ -88,7 +88,7 @@
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 50,},
 
-        {field: 'title', title: '用户等级名称', minWidth: 20, align: 'center', sort: true},
+        {field: 'title', title: '用户分组名称', minWidth: 20, align: 'center', sort: true},
         {field: 'l_rate', title: '等级费率',edit: 'text', minWidth: 20, align: 'center', sort: true, style: 'background-color: #009688; color: #fff;',},
 
         {field: 'mode', title: '选择通道', minWidth: 20, align: "center", templet: '#mode',},

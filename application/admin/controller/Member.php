@@ -86,37 +86,71 @@ class Member extends AdminController {
         }
     }
 
-
     /**
-     * 添加商户
+     * 添加商户或者代理
      * @return mixed
      */
     public function add() {
+
         if (!$this->request->isPost()) {
+            $agent = $this->model->where([
+                ['who','=','2'],
+                ['status','=','1']
+            ])->field('uid,id')->select()->toArray();
+
+            $group =   \app\common\model\Ulevel::field('id,title')->select()->toArray();
 
             //基础数据
             $basic_data = [
-                'title' => '添加商户',
-                'auth'  => model('app\common\model\SysAuth')->getList(1),
+                'title' => '添加商户或者代理',
+                'auth'  => model('app\common\model\SysAuth')->getList(1),//权限组
+                'group'  => $group,//用户分组
+                'agent'  => $agent,//所有的代理
             ];
             $this->assign($basic_data);
 
             return $this->form();
         } else {
-            $post = $this->request->post();
-            !isset($post['auth_id']) && $post['auth_id'] = [];
+
+            $member = $this->request->only('username,password,password1,nickname,phone,qq,who,remark,auth_id');
+            $profile = $this->request->only('a_id,group_id');
+
+            !isset($member['auth_id']) && $member['auth_id'] = [];
             //数组转json
-            $post['auth_id'] = json_encode($post['auth_id']);
+            $member['auth_id'] = json_encode($member['auth_id']);
 
             //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Umember.add');
+            $validate = $this->validate($member, 'app\common\validate\Umember.add');
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
-            $post['password'] = password($post['password']);
-            $post['status'] = 1;
-            return $this->model->__add($post);
+            $member['password'] = password($member['password']);
+            $member['status'] = 1;
+
+            //保存数据,返回结果
+            //使用事物保存数据
+            $this->model->startTrans();
+            $result = $this->model->save($member);
+
+            if (!$result || !$this->model->id ) {
+                $this->model->rollback();
+                empty($msg) && $msg = '数据有误，请稍后再试!';
+                return __error($msg);
+            }
+            $this->model->commit();
+            $find = $this->model->field('uid')->get($this->model->id);
+
+            if(!empty($profile)){
+                $profile['id'] = $find['profile']['id'];
+                $profile['uid'] = $find['profile']['uid'];
+                model('\app\common\model\Uprofile')->__edit($profile);
+            }
+
+            empty($msg) && $msg = '添加成功!';
+            return __success($msg);
+
         }
+
     }
 
     /**
@@ -170,7 +204,7 @@ class Member extends AdminController {
      * 表单模板
      * @return mixed
      */
-    protected function form() {
+    protected function form(){
         return $this->fetch('form');
     }
 

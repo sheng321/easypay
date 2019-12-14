@@ -1,20 +1,11 @@
 <?php
-// +----------------------------------------------------------------------
-// | 99PHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2018~2020 https://www.99php.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: Mr.Chung <chung@99php.cn >
-// +----------------------------------------------------------------------
 
 namespace app\common\model;
 
 use app\common\service\ModelService;
 
 /**
- * 用户等级模型
+ * 用户分组模型
  * Class Auth
  * @package app\common\model
  */
@@ -25,6 +16,7 @@ class Ulevel extends ModelService {
      * @var string
      */
     protected $table = 'cm_member_level';
+
 
 
     /**
@@ -45,7 +37,7 @@ class Ulevel extends ModelService {
     }
 
     /**
-     * 用户等级列表
+     * 用户分组列表
      * @param int $page
      * @param int $limit
      * @param array $search

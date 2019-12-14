@@ -39,6 +39,13 @@ class Rate extends AdminController {
                 $limit = $this->request->get('limit', 10);
                 $search = (array)$this->request->get('search', []);
                 $search['type'] = 0;
+
+                if(!empty($search['title'])){
+                    $uid =  model('app\common\model\Ulevel')->where([['title','like','%'.$search['title'].'%']])->value('id');
+                    if(!empty($uid)) $search['uid'] = $uid;
+                    unset($search['title']);
+                }
+
                 return json($this->model->aList($page, $limit, $search));
             }
 
@@ -54,7 +61,7 @@ class Rate extends AdminController {
             $post = $this->request->post();
 
             //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
@@ -75,12 +82,18 @@ class Rate extends AdminController {
                 $limit = $this->request->get('limit', 10);
                 $search = (array)$this->request->get('search', []);
                 $search['type'] = 1;
+
+                if(!empty($search['title'])){
+                    $search['uid'] = $search['title'];
+                    unset($search['title']);
+                }
+
                 return json($this->model->aList($page, $limit, $search));
             }
 
             //基础数据
             $basic_data = [
-                'title'  => '系统费率列表',
+                'title'  => '个人用户费率列表',
                 'data'   => '',
                 'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
             ];
@@ -90,7 +103,7 @@ class Rate extends AdminController {
             $post = $this->request->post();
 
             //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
@@ -114,51 +127,45 @@ class Rate extends AdminController {
 
             return $this->form();
         } else {
-            $post = $this->request->only('title,remark,l_rate');
+            $post = $this->request->only('uid,__token__');
 
             //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Level.add');
+            $validate = $this->validate($post, 'app\common\validate\Rate.add');
             if (true !== $validate) return __error($validate);
 
-            //保存数据,返回结果
-            return $this->model->__add($post);
+
+            $p_id = \app\common\model\PayProduct::column('id');
+            $p_id1 = \app\common\model\SysRate::where([
+                [ 'uid','=',$post['uid']],
+                [ 'type','=',1]
+            ])->column('p_id');
+
+            $intersection = array_diff($p_id,$p_id1);
+
+            if(empty($intersection))  return __error("已添加，请勿重复操作");
+
+            $data = [];
+            foreach ($intersection as $k => $val){
+                $data1['p_id'] = $val;
+                $data1['uid'] =   $post['uid'];
+                $data1['type'] =  1;
+                $data[] = $data1;
+            }
+
+            //使用事物保存数据
+            $this->model->startTrans();
+            $save = $this->model->saveAll($data);
+            if (!$save) {
+                $this->model->rollback();
+                $msg = '数据有误，请稍后再试！!';
+                return __error($msg);
+            }
+            $this->model->commit();
+            empty($msg) && $msg = '添加成功!';
+            return __success($msg);
         }
 
     }
-
-    /**
-     * 修改费率
-     * @return mixed|string|\think\response\Json
-     */
-    public function edit() {
-        if (!$this->request->isPost()) {
-
-            //查找所需修改费率
-            $auth = $this->model->where('id', $this->request->get('id'))->find();
-            if (empty($auth)) return msg_error('暂无数据，请重新刷新页面！');
-
-            //基础数据
-            $basic_data = [
-                'title' => '修改费率信息',
-                'auth'  => $auth,
-            ];
-            $this->assign($basic_data);
-
-            return $this->form();
-        } else {
-            $post = $this->request->only('id,title,remark,l_rate');
-
-            //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Level.edit');
-            if (true !== $validate) return __error($validate);
-
-            //保存数据,返回结果
-            $result = $this->model->__edit($post);
-
-            return $result;
-        }
-    }
-
 
 
     /**
@@ -181,23 +188,17 @@ class Rate extends AdminController {
         if (!is_array($get['id'])) {
             $validate = $this->validate($get, 'app\common\validate\Rate.del');
             if (true !== $validate) return __error($validate);
+        }else{
+            foreach ($get['id'] as $k => $val){
+                $data['id'] = $val;
+                $validate = $this->validate($data, 'app\common\validate\Rate.del');
+                if (true !== $validate) unset($get['id'][$k]);
+            }
         }
 
-        //执行更新操作操作
-        if (!is_array($get['id'])) {
-            $del = $this->model->where('id', $get['id'])->delete();
-            model('app\common\model\SysRateNode')->where('auth', $get['id'])->delete();
-        } else {
-            $del = $this->model->whereIn('id', $get['id'])->delete();
-            model('app\common\model\SysRateNode')->whereIn('auth', $get['id'])->delete();
-        }
-
-        if ($del >= 1) {
-
-            return __success('删除成功！');
-        } else {
-            return __error('数据有误，请刷新重试！');
-        }
+        //执行操作
+        $del = $this->model->__del($get);
+        return $del;
     }
 
 

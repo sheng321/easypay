@@ -78,10 +78,7 @@
                                 }
                             }
                         });
-
                         merge(res);
-
-
                     }
                 };
          }
@@ -98,9 +95,10 @@
          */
         $.form.table('current', '{:url("$thisRequest")}?type=ajax&id={$Think.get.id}', [[
             {type: "checkbox",fixed: "left", minWidth: 20,},
+            {field: 'title', title: '通道分组名称', minWidth: 20, align: 'center'},
             {field: 'product', title: '支付产品', minWidth: 20, align: 'center'},
             {field: 'code', title: '支付编码', minWidth: 20, align: 'center'},
-            {field: 'title', title: '通道分组名称', minWidth: 20, align: 'center'},
+
             {field: 'remark',title: '备注',minWidth: 20, align: "center"},
         ]], false);
 
@@ -208,8 +206,8 @@
                 }
                 for(var j=startIndex;j<indexPoint[i];j++){
                     //以第一列产生的区域分割点为基准，执行后面6列合并逻辑
-                    mergeSomeRows(1,startIndex,indexPoint[i],trArr,data,'product');
-                    mergeSomeRows(2,startIndex,indexPoint[i],trArr,data,'code');
+                    mergeSomeRows(2,startIndex,indexPoint[i],trArr,data,'product');
+                    mergeSomeRows(3,startIndex,indexPoint[i],trArr,data,'code');
 
                 }
             }

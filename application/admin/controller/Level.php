@@ -6,7 +6,7 @@ namespace app\admin\controller;
 use app\common\controller\AdminController;
 
 
-/**用户等级
+/**用户分组
  * Class Level
  * @package app\admin\controller
  */
@@ -97,7 +97,7 @@ class Level extends AdminController {
 
             $p_id = \app\common\model\PayProduct::column('id');
             foreach ($p_id as $k => $val){
-                //添加用户等级费率
+                //添加用户分组费率
                 $data[$k]['type'] = 0;
                 $data[$k]['p_id'] = $val;
                 $data[$k]['uid'] = $this->model->id;
@@ -165,18 +165,6 @@ class Level extends AdminController {
         }
     }
 
-
-
-    /**
-     * 获取所有已创建的通道分组费率
-     * @param $uid
-     * @return array
-     */
-    public function get_subpro($uid) {
-        //获取所有已创建的支付产品
-        $p_id = md5('app\common\model\SysRate')->where('uid', $uid)->column('p_id');
-        return $p_id;
-    }
 
 
 
