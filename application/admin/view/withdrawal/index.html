@@ -1,0 +1,131 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--顶部操作栏--开始-->
+    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">商户号</label>
+            <div class="layui-input-inline">
+                <input type="text" id="mch_id" class="layui-input" placeholder="请输入商户号"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">订单号</label>
+            <div class="layui-input-inline">
+                <input type="text" id="system_sn" class="layui-input" placeholder="请输入订单号"/>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">状态</label>
+            <div class="layui-input-inline">
+                <select id="status" class="status" lay-filter="status">
+                    <option value="">请选择</option>
+                    <option value="1">未处理</option>
+                    <option value="2">处理中</option>
+                    <option value="3">已完成</option>
+                    <option value="4">失败退款</option>
+                   
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">创建时间</label>
+            <div class="layui-input-inline">
+                <input type="text" id="create_time" class="layui-input " placeholder="请选择创建时间">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+        </div>
+
+       
+
+    </blockquote>
+    <!--顶部操作栏--结束-->
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+    <script type="text/html" id="checkStatus">
+        {{# if (d.status == '1') { }}
+        <div>未处理</div>
+        {{# } else if(d.status == 2) { }}  
+        <div style="color:#1E9FFF;">处理中</div>
+        {{# } else if(d.status == 3) { }}  
+        <div style="color:#0ac933;">已完成</div>
+        {{# } else { }}  
+        <div style="color:red;">失败,已退款</div>
+        {{# } }}  
+    </script>
+
+    <!--表单操作栏--开始-->
+    <script type="text/html" id="currentTableBar">
+        
+   
+        {{# if (d.status == '1') { }}
+        <a class="layui-btn layui-btn-xs layui-btn-green"  data-title="确认要此操作？" data-del='{:url("$thisClass/is_lock")}?id={{d.id}}&type=1' >锁定</a>
+        {{# } else if(d.status == 2) { }}  
+        <a class="layui-btn layui-btn-xs" style="background-color:#c2c2c2;"  data-title="确认要此操作？" data-del='{:url("$thisClass/is_lock")}?id={{d.id}}&type=2' >解除</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal"  data-title="确认要此操作？" data-del='{:url("$thisClass/is_lock")}?id={{d.id}}&type=3' >出款</a>
+        <a class="layui-btn layui-btn-xs"  data-title="确认要此操作？" data-del='{:url("$thisClass/refund")}?id={{d.id}}&type=4' >退款</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
+        {{# } else { }}  
+        {{# if(d.status == 1 || d.status == 2) { }}  
+        <a class="layui-btn layui-btn-xs"  data-title="确认要此操作？" data-del='{:url("$thisClass/refund")}?id={{d.id}}&type=4' >退款</a>
+        {{# } }}  
+        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
+        {{# } }}  
+        
+
+    </script>
+    <!--表单操作栏--结束-->
+</form>
+{/block}
+
+{block name="script"}
+<script>
+
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {field: 'id', title: 'ID', minWidth: 80, align: "center"},
+        {field: 'system_sn', title: '订单号',  minWidth: 80, align: "center"},
+        {field: 'mch_id', title: '商户号',  minWidth: 120,  align: "center"},
+        {field: 'channel', title: '出款渠道', minWidth: 120,edit: 'text',  unresize: true, align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
+        {field: 'lock_name', title: '锁定人', unresize: true, align: "center"},
+        {title: '操作', minWidth: 180, templet: '#currentTableBar',  align: "center"},
+        {field: 'status', title: '状态',templet: '#checkStatus', align: 'center'},
+        {field: 'total_fee', title: '手续费', align: 'center'},
+        {field: 'total_amount', title: '申请金额',  minWidth: 100, align: "center"},
+        {field: 'actual_amount', title: '实际到账', align: 'center'},
+        {field: 'card_number', title: '银行卡号', minWidth: 20, unresize: true, align: "center"},
+        {field: 'account_name', title: '开户人', align: 'center'},
+        {field: 'bank_name', title: '银行名称', minWidth: 80,  unresize: true, align: "center"},
+        {field: 'location', title: '开卡地址', minWidth: 80,unresize: true, align: "center"},
+        {field: 'create_time', title: '申请时间', minWidth: 80, unresize: true, align: "center"},
+        {field: 'update_time', title: '更新时间', minWidth: 80, unresize: true, align: "center"},
+    ]]);
+
+    /**
+     * 日期范围
+     */
+    $.laydate.range('create_time',7);
+    /**
+     * 监听字段值编辑
+     */
+     $.form.editField('currentTable', '{:url("$thisRequest")}');
+
+  
+</script>
+{/block}
