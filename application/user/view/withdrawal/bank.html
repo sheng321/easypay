@@ -1,0 +1,88 @@
+{extend name="user@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+{block name="cotent"}
+
+<!--  搜索-->
+<form class="layui-form">
+<blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">商户号</label>
+        <div class="layui-input-inline">
+            <input type="text" id="mch_id" class="layui-input" placeholder="请输入商户号"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">创建时间</label>
+        <div class="layui-input-inline">
+            <input type="text" id="create_time" class="layui-input " placeholder="请选择创建时间">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+    </div>
+
+    {if auth("$thisClass/add")}
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/saveBark")}' data-title="添加管理员">添加</a>
+    </div>
+    {/if}
+
+    {if auth("$thisClass/del")}
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/delBank")}' data-table-id="currentTableId">删除</a>
+    </div>
+    {/if}
+</blockquote>
+
+<!-- end --->
+<table id="currentTable" lay-filter="currentTable"></table>
+<script type="text/html" id="currentTableBar">
+
+    {if auth("$thisClass/edit")}
+    <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/saveBark")}?id={{d.id}}' data-title="修改信息">编辑</a>
+    {/if}
+
+    {if auth("$thisClass/del")}
+    <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/delBank")}?id={{d.id}}'>删除</a>
+    {/if}
+
+</script>
+</form>
+{/block}
+{block name="script"}
+<script>
+
+
+$.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {type: "checkbox", fixed: "left", width: 50,},
+        {field: 'id', title: '排序', width: 50, edit: 'text', align: "center", sort: true},
+        {field: 'mch_id', title: '商户号', minWidth: 100, align: 'center', sort: true},
+        {field: 'account_name', title: '开户人', minWidth: 100, align: 'center', sort: true},
+        {field: 'card_number', title: '银行卡号', minWidth: 200, align: "center", sort: true},
+        {field: 'bank_name', title: '开户银行', align: 'center', sort: true},
+        {field: 'branch_name', title: '所在支行', width: 200, templet: '#checkStatus', unresize: true, align: "center"},
+        {field: 'location', title: '开户地址', width: 300, templet: '#checkStatus', unresize: true, align: "center"},
+        /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
+        {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"},
+        /**{/if}**/
+    ]]);
+    /**
+     * 日期范围
+     */
+     $.laydate.range('create_time',7);
+
+
+
+
+
+
+
+
+</script>
+{/block}
