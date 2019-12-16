@@ -123,14 +123,18 @@ class Umember extends UserService {
     {
         if(isset($data['auth_id'])){
             $id = json_decode($data['auth_id']);
-            if(empty($id)) return '无权限';
+            if(empty($id)) return '暂无权限信息';
 
-            $title = \app\common\model\SysAuth::where('id','in',$id)->value('title');
-            if(is_array($title)) return  implode('|',$title);
+            $title = \app\common\model\SysAuth::where([
+                ['id','in',$id],
+                ['status','=',1],
+            ])->value('title');
+            if(is_array($title)) return  implode(',',$title);
 
             return $title;
         }
     }
+
 
 
 
@@ -214,15 +218,10 @@ class Umember extends UserService {
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) {
-                list($auth_id_list, $auth_title) = [json_decode($item['auth_id'], true), ''];
 
-                foreach ($auth_id_list as $auth_id) {
-                    $title = model('SysAuth')->where(['id' => $auth_id, 'status' => 1])->value('title');
-                    $auth_title = empty($auth_title) ? $title : "{$auth_title}，{$title}";
-                }
+                $item['auth_title'] =  $item['auth'];
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
-                empty($auth_title) ? $item['auth_title'] = '暂无权限信息' : $item['auth_title'] = $auth_title;
-                $item['id'] == 1 && $item['auth_title'] = '不受权限控制';
+
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
             });
@@ -268,24 +267,26 @@ class Umember extends UserService {
         $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
 
-        $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single,agent_ level';
+        $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single';
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) {
-                list($auth_id_list, $auth_title) = [json_decode($item['auth_id'], true), ''];
 
-                foreach ($auth_id_list as $auth_id) {
-                    $title = model('SysAuth')->where(['id' => $auth_id, 'status' => 1])->value('title');
-                    $auth_title = empty($auth_title) ? $title : "{$auth_title}，{$title}";
-                }
+                dump($item['auth']);
+
+               // $item['auth_title'] =  $item['auth'];
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
-                empty($auth_title) ? $item['auth_title'] = '暂无权限信息' : $item['auth_title'] = $auth_title;
-                $item['id'] == 1 && $item['auth_title'] = '不受权限控制';
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
             });
 
+
+        halt($data);
+
+
+
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
         $info = [
             'limit'        => $limit,
             'page_current' => $page,

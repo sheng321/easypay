@@ -64,7 +64,7 @@ class Member extends AdminController {
                 $page = $this->request->get('page', 1);
                 $limit = $this->request->get('limit', 10);
                 $search = (array)$this->request->get('search', []);
-                return json($this->model->aList($page, $limit, $search));
+                return json($this->model->bList($page, $limit, $search));
             }
 
             //基础数据
@@ -141,9 +141,16 @@ class Member extends AdminController {
             $find = $this->model->field('uid')->get($this->model->id);
 
             if(!empty($profile)){
+                $Uprofile =  model('\app\common\model\Uprofile');
+                if($member['who'] == 2){
+                    $agent_level = 0;
+                   if(!empty($profile['a_id'])) $agent_level  = $Uprofile->where('uid',$profile['a_id'])->value('agent_level');
+                    $profile['agent_level'] = $agent_level + 1;
+                }
+
                 $profile['id'] = $find['profile']['id'];
                 $profile['uid'] = $find['profile']['uid'];
-                model('\app\common\model\Uprofile')->__edit($profile);
+                $Uprofile->__edit($profile);
             }
 
             empty($msg) && $msg = '添加成功!';
