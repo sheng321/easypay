@@ -12,6 +12,5 @@ $arr2 = array_column($arr, 'name');
 $tempArr = array_column($arr, null, 'value');
 
 
-
-111111111111111111
+2222222222
 
