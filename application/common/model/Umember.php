@@ -191,7 +191,7 @@ class Umember extends UserService {
 
 
     /**
-     * 获取用户列表信息
+     * 获取普通列表信息
      * @param int $page  当前页
      * @param int $limit 每页显示数量
      * @return array
@@ -201,19 +201,14 @@ class Umember extends UserService {
      */
     public function aList($page = 1, $limit = 10, $search = []) {
         $where = [
-            ['who', 'in', [0,1,2,3]]
+            ['who', 'in', [0,1]]
         ];
         //搜索条件
-        foreach ($search as $key => $value) {
-            if ($key == 'status' && $value != '') {
-                $where[] = [$key, '=', $value];
-            } elseif ($key == 'create_at' && $value != '') {
-                $value_list = explode(" - ", $value);
-                $where[] = [$key, 'BETWEEN', ["{$value_list[0]} 00:00:00", "{$value_list[1]} 23:59:59"]];
-            } else {
-                !empty($value) && $where[] = [$key, 'LIKE', '%' . $value . '%'];
-            }
-        }
+        $searchField['like'] = ['username'];
+        $searchField['eq'] = ['phone','qq','status'];
+        $searchField['time'] = ['create_at'];
+        $where = search($search,$searchField,$where);
+
 
         $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single';
         $count = $this->where($where)->count();
@@ -233,6 +228,9 @@ class Umember extends UserService {
             });
 
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+
+
         $info = [
             'limit'        => $limit,
             'page_current' => $page,
@@ -263,17 +261,12 @@ class Umember extends UserService {
         $where = [
             ['who', 'in', [2,3]]
         ];
+
         //搜索条件
-        foreach ($search as $key => $value) {
-            if ($key == 'status' && $value != '') {
-                $where[] = [$key, '=', $value];
-            } elseif ($key == 'create_at' && $value != '') {
-                $value_list = explode(" - ", $value);
-                $where[] = [$key, 'BETWEEN', ["{$value_list[0]} 00:00:00", "{$value_list[1]} 23:59:59"]];
-            } else {
-                !empty($value) && $where[] = [$key, 'LIKE', '%' . $value . '%'];
-            }
-        }
+        $searchField['like'] = ['username'];
+        $searchField['eq'] = ['phone','qq','status'];
+        $searchField['time'] = ['create_at'];
+        $where = search($search,$searchField,$where);
 
         $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single,agent_ level';
         $count = $this->where($where)->count();
