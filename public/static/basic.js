@@ -505,7 +505,27 @@
         });
         return false;
     });
-
+    /**
+     * 单个删除
+     * 注册 data-del 事件
+     */
+    $body.on('click', '[data-prompt]', function () {
+       
+        var url = $(this).attr('data-prompt');
+        var text = $(this).attr('data-text');
+        $.msg.confirm($(this).attr('data-title'), function () {
+            layer.prompt({title: text, formType: 2}, function(text, index){
+                layer.close(index);
+                url += '&text='+text;
+                $.request.get(url, {}, function (res) {
+                    $.msg.success(res.msg, function () {
+                        $.tool.reload();
+                    })
+                })
+              });
+        });
+        return false;
+    });
     /**
      * 单个刷新
      * 注册 data-check 事件

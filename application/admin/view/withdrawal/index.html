@@ -76,15 +76,15 @@
         
    
         {{# if (d.status == '1') { }}
-        <a class="layui-btn layui-btn-xs layui-btn-green"  data-title="确认要此操作？" data-del='{:url("$thisClass/is_lock")}?id={{d.id}}&type=1' >锁定</a>
+        <a class="layui-btn layui-btn-xs layui-btn-green"  data-title="确认要此操作？" data-del='{:url("$thisClass/with_save")}?id={{d.id}}&type=1' >锁定</a>
         {{# } else if(d.status == 2) { }}  
-        <a class="layui-btn layui-btn-xs" style="background-color:#c2c2c2;"  data-title="确认要此操作？" data-del='{:url("$thisClass/is_lock")}?id={{d.id}}&type=2' >解除</a>
-        <a class="layui-btn layui-btn-xs layui-btn-normal"  data-title="确认要此操作？" data-del='{:url("$thisClass/is_lock")}?id={{d.id}}&type=3' >出款</a>
-        <a class="layui-btn layui-btn-xs"  data-title="确认要此操作？" data-del='{:url("$thisClass/refund")}?id={{d.id}}&type=4' >退款</a>
+        <a class="layui-btn layui-btn-xs" style="background-color:#c2c2c2;"  data-title="确认要此操作？" data-del='{:url("$thisClass/with_save")}?id={{d.id}}&type=2' >解除</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal"  data-text="请填写三方单号" data-title="确认要此操作？" data-prompt='{:url("$thisClass/with_save")}?id={{d.id}}&type=3' >出款</a>
+        <a class="layui-btn layui-btn-xs" data-text="请填写退款理由" data-title='确认退款吗' data-prompt='{:url("$thisClass/with_save")}?id={{d.id}}&type=4' >退款</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
         {{# } else { }}  
         {{# if(d.status == 1 || d.status == 2) { }}  
-        <a class="layui-btn layui-btn-xs"  data-title="确认要此操作？" data-del='{:url("$thisClass/refund")}?id={{d.id}}&type=4' >退款</a>
+        <a class="layui-btn layui-btn-xs"  data-title="确认要此操作？" data-del='{:url("$thisClass/with_save")}?id={{d.id}}&type=4' >退款</a>
         {{# } }}  
         <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
         {{# } }}  

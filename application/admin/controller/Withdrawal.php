@@ -42,39 +42,15 @@ class Withdrawal extends AdminController {
         }
     }
     /**
-     * Undocumented 锁定/解锁
+     * Undocumented 锁定/解锁 出款/退款
      *
      * @return boolean
      */
-    public function is_lock(){
+    public function with_save(){
         $data = $this->request->param();
         $info = $this->model->where("id",$data['id'])->find();
         if(!$info) return __error("数据不存在");
-        if($info->status == 3 || $info->status==4) return __error("状态不对");
-        if($data['type'] == 1){//锁定
-            $info->is_lock = 1;
-            $info->status = 2;
-            $info->lock_name = $this->user->username;
-        }else{//解除
-            if($info->lock_name != $this->user->username){
-                return __error('只能由账号【'.$info->lock_name.'】来解除');
-            }
-            $info->is_lock = 2;
-            $info->status = 1;
-            $info->lock_name = '';
-            $info->channel = '';
-        }
-        $info->save();
-        return __success('操作成功');
-    }
-    /**
-     * Undocumented 出款/退款/删除
-     *
-     * @return void
-     */
-    public function refund(){
-        
-        $id = $this->request->param('id');
+        return $this->model->saveWith($data,$info,$this->user->username);
     }
 
 

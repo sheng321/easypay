@@ -24,7 +24,17 @@ class Umoney extends ModelService {
      * 绑定的数据表
      * @var string
      */
-    protected $table = 'cm_member_money';
+    protected $table = 'cm_member_monney';
+    /**
+     * Undocumented 获取余额
+     *
+     * @param [type] $mch
+     * @return void
+     */
+    public static function get_amount($mch){
 
+        return Umoney::where("uid",$mch)->value("balance");
+        
+    }
 
 }

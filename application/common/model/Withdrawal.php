@@ -5,6 +5,28 @@ namespace app\common\model;
 use app\common\service\UserService;
 use think\Db;
 class Withdrawal extends UserService {
+    
+    
+    public static function init()
+    {
+        self::event('after_write', function ($withdrawal) {
+            if(!empty($withdrawal->mch_id)){
+                $balance = \app\common\model\Umoney::get_amount($withdrawal->mch_id);
+                if($withdrawal->status == 1){//商户申请提现
+                    //商户减余额
+                    Db::name("member_monney")->where("uid",$withdrawal->mch_id)->setDec('balance',$withdrawal->actual_amount);
+                    //插入日志
+                    Db::name("mch_record")->insert(array('mch_id'=>$withdrawal->mch_id,'before_balance'=>$balance,'change'=>$withdrawal->actual_amount,'type'=>1,'balance'=>\app\common\model\Umoney::get_amount($withdrawal->mch_id),'remark'=>'申请提现,减：'.$withdrawal->actual_amount));
+                    //插入日志
+                }elseif($withdrawal->status == 4){//后台退款
+                     //商户加余额
+                    Db::name("member_monney")->where("uid",$withdrawal->mch_id)->setInc('balance',$withdrawal->actual_amount);
+                    //插入日志
+                    Db::name("mch_record")->insert(array('mch_id'=>$withdrawal->mch_id,'before_balance'=>$balance,'change'=>$withdrawal->actual_amount,'balance'=>\app\common\model\Umoney::get_amount($withdrawal->mch_id),'type'=>2,'remark'=>'提现失败退款：加'.$withdrawal->actual_amount)); 
+                }
+            }
+        });
+    }
     /**
      * Undocumented 分页获取所有记录数
      *
@@ -71,10 +93,6 @@ class Withdrawal extends UserService {
                 "actual_amount" => $data['total_amount']-$total_fee,//实际到账
                 "create_time" =>date("Y-m-d H:i:s",time())
             ]);
-            //余额减少
-           // Db::name("member_monney")->where("uid",$mch)->setDec("balance",$data['total_amount']);
-            //冻结增加
-            //Db::name("member_monney")->where("uid",$mch)->setInc("freeze",$data['total_amount']);
             $this->commit();//事务提交
         } catch (\Exception $e) {
             // 回滚事务
@@ -83,7 +101,54 @@ class Withdrawal extends UserService {
         }
         return true;
     }
-
+    /**
+     * Undocumented 锁定/解除 出款/退款
+     *
+     * @param [int] $type 类型1-4
+     * @param [obj] $info 数据
+     * @param [type] $user_name 登录账号
+     * @return void
+     */
+    public function saveWith($data,$info,$user_name){
+        switch ($data['type']) {
+            case '1'://锁定
+                $info->is_lock = 1;
+                $info->status = 2;
+                $info->lock_name = $user_name;
+                break;
+            case '2'://解除
+                if($info->lock_name != $user_name){
+                    return __error('只能由账号【'.$info->lock_name.'】来解除');
+                }
+                $info->is_lock = 2;
+                $info->status = 1;
+                $info->lock_name = '';
+                $info->channel = '';
+                break;
+            case '3'://出款
+                if($info->is_lock != 1){
+                    return __error('请先锁定');
+                }
+                if($info->status == 3 || $info->status == 4){
+                    return __error('订单状态不对');
+                }
+                $info->status = 3;
+                $info->remark = $data['text'];//备注
+                break;
+            default://退款
+                if($info->is_lock != 1){
+                    return __error('请先锁定');
+                }
+                if($info->status == 3 || $info->status == 4){
+                    return __error('订单状态不对');
+                }
+                $info->status = 4;
+                $info->remark = $data['text'];//备注
+                break;
+        }
+        $info->save();
+        return __success('操作成功');
+    }
 
 
 
