@@ -36,6 +36,21 @@
             });
             return index;
         };
+        this.confirm = function (msg, ok, no) {
+            var index = layer.confirm(msg, {title: '操作确认', btn: ['确认', '取消']}, function () {
+                typeof ok === 'function' && ok.call(this);
+            }, function () {
+                typeof no === 'function' && no.call(this);
+                self.close(index);
+            });
+            return index;
+        };
+
+
+
+
+
+
         // 显示成功类型的消息
         this.success = function (msg, callback) {
             if (callback == undefined) {
@@ -719,6 +734,9 @@
     function request(type, url, data, callback, isReload = false) {
         //$.msg.loading('正在加载，请稍等！');
 
+
+       var fag = true;
+
         if(!$.isEmptyObject(window.word)){
             for (var i in window.word) {
                 if(!$.tool.isEmpty(window.word[i]) && url.indexOf(window.word[i]) > -1){
@@ -761,48 +779,50 @@
                                 }
                             });
 
-                            return false
                         }
                     });
+                    fag = false;
+                    break;
                 }
             }
         }
 
-        $.ajax({
-            url: url,
-            type: type,
-            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-            dataType: "json",
-            data: data,
-            timeout: 60000,
-            success: function (res) {
-                log_ajax(type, url, data, res);
-                $.msg.close();
-                if (res.code == 1) {
-                    callback(res);
-                } else {
+        if(fag){
+            $.ajax({
+                url: url,
+                type: type,
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                dataType: "json",
+                data: data,
+                timeout: 60000,
+                success: function (res) {
+                    log_ajax(type, url, data, res);
+                    $.msg.close();
+                    if (res.code == 1) {
+                        callback(res);
+                    } else {
+                        if (isReload == true) {
+                            $.msg.error(res.msg, function () {
+                                $.tool.reload();
+                            });
+                        } else {
+                            $.msg.error(res.msg);
+                        }
+                    }
+                },
+                error: function (xhr, textstatus, thrown) {
+                    console.log(xhr);
+
                     if (isReload == true) {
-                        $.msg.error(res.msg, function () {
-                            $.tool.reload();
+                        $.msg.error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！', function () {
+                            //   $.tool.reload();
                         });
                     } else {
-                        $.msg.error(res.msg);
+                        $.msg.error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！');
                     }
                 }
-            },
-            error: function (xhr, textstatus, thrown) {
-                console.log(xhr);
-
-                if (isReload == true) {
-                    $.msg.error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！', function () {
-                        //   $.tool.reload();
-                    });
-                } else {
-                    $.msg.error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！');
-                }
-            }
-        });
-
+            });
+        }
     }
 
     /**

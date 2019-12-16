@@ -38,7 +38,7 @@
         </div>
 
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+            <a class="layui-btn layui-btn-sm" data-search-tree="currentTableId">搜索</a>
         </div>
 
         {if auth("$thisClass/add")}
@@ -49,7 +49,7 @@
 
         {if auth("$thisClass/del")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
+            <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all-tree='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
         </div>
         {/if}
 
