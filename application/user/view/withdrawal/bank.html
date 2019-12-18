@@ -66,11 +66,9 @@ $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'account_name', title: '开户人', minWidth: 100, align: 'center', sort: true},
         {field: 'card_number', title: '银行卡号', minWidth: 200, align: "center", sort: true},
         {field: 'bank_name', title: '开户银行', align: 'center', sort: true},
-        {field: 'branch_name', title: '所在支行', width: 200, templet: '#checkStatus', unresize: true, align: "center"},
-        {field: 'location', title: '开户地址', width: 300, templet: '#checkStatus', unresize: true, align: "center"},
-        /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
-        {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"},
-        /**{/if}**/
+        {field: 'branch_name', title: '所在支行', width: 200,  unresize: true, align: "center"},
+        {field: 'location', title: '开户地址', width: 260, unresize: true, align: "center"},
+        {title: '操作', minWidth: 60, templet: '#currentTableBar', fixed: "right", align: "center"},
     ]]);
     /**
      * 日期范围

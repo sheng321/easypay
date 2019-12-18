@@ -60,7 +60,7 @@ class UserController extends BaseController
 
         //绑定谷歌
         if( isset($this->UserInfo['UserGoole']) && $this->UserInfo['UserGoole'] == '1'){
-            $this->__google($user);
+            //$this->__google($user);
         }
 
 

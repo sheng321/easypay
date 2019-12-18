@@ -109,8 +109,8 @@ class Login extends BaseController
 
                 $data1['google_token'] = $login['user']['google_token'];
                 $data1['google'] = $post['googlecode'];
-                $validate1 = $this->validate($data1, 'app\common\validate\common.google');
-                if (true !== $validate1) return __error($validate1);
+               // $validate1 = $this->validate($data1, 'app\common\validate\common.google');
+                //if (true !== $validate1) return __error($validate1);
             }
 
 

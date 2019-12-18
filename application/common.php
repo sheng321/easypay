@@ -153,8 +153,14 @@ if (!function_exists('getIdbyTitle')) {
     }
 }
 
+if (!function_exists('getOrderId')) {
 
+    function getOrderId($prefix = 'H'){
 
+        return $prefix.date('YmdHis', time()) . substr(microtime(), 2, 4) . sprintf('%03d', rand(1000, 9999));
+    
+    }
+}
 
 if (!function_exists('getIdbyName')) {
     /**

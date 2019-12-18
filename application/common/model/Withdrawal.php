@@ -14,15 +14,15 @@ class Withdrawal extends UserService {
                 $balance = \app\common\model\Umoney::get_amount($withdrawal->mch_id);
                 if($withdrawal->status == 1){//商户申请提现
                     //商户减余额
-                    Db::name("member_monney")->where("uid",$withdrawal->mch_id)->setDec('balance',$withdrawal->actual_amount);
+                    Db::name("member_monney")->where("uid",$withdrawal->mch_id)->setDec('balance',$withdrawal->total_amount);
                     //插入日志
-                    Db::name("mch_record")->insert(array('mch_id'=>$withdrawal->mch_id,'before_balance'=>$balance,'change'=>$withdrawal->actual_amount,'type'=>1,'balance'=>\app\common\model\Umoney::get_amount($withdrawal->mch_id),'remark'=>'申请提现,减：'.$withdrawal->actual_amount));
+                    Db::name("mch_record")->insert(array('mch_id'=>$withdrawal->mch_id,'before_balance'=>$balance,'change'=>$withdrawal->total_amount,'type'=>1,'balance'=>\app\common\model\Umoney::get_amount($withdrawal->mch_id),'remark'=>'申请提现,减：'.$withdrawal->actual_amount));
                     //插入日志
                 }elseif($withdrawal->status == 4){//后台退款
                      //商户加余额
-                    Db::name("member_monney")->where("uid",$withdrawal->mch_id)->setInc('balance',$withdrawal->actual_amount);
+                    Db::name("member_monney")->where("uid",$withdrawal->mch_id)->setInc('balance',$withdrawal->total_amount);
                     //插入日志
-                    Db::name("mch_record")->insert(array('mch_id'=>$withdrawal->mch_id,'before_balance'=>$balance,'change'=>$withdrawal->actual_amount,'balance'=>\app\common\model\Umoney::get_amount($withdrawal->mch_id),'type'=>2,'remark'=>'提现失败退款：加'.$withdrawal->actual_amount)); 
+                    Db::name("mch_record")->insert(array('mch_id'=>$withdrawal->mch_id,'before_balance'=>$balance,'change'=>$withdrawal->total_amount,'balance'=>\app\common\model\Umoney::get_amount($withdrawal->mch_id),'type'=>2,'remark'=>'提现失败退款,加：'.$withdrawal->actual_amount)); 
                 }
             }
         });
@@ -90,6 +90,7 @@ class Withdrawal extends UserService {
                 "bank_card_id" => $data['bank_card_id'], //银行卡ID
                 "total_amount" => $data['total_amount'], //申请金额
                 "total_fee" => $total_fee, //手续费
+                "status" => 1, // 商户号
                 "actual_amount" => $data['total_amount']-$total_fee,//实际到账
                 "create_time" =>date("Y-m-d H:i:s",time())
             ]);
