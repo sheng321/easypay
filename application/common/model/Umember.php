@@ -31,12 +31,18 @@ class Umember extends UserService {
      * 商户号
      * @return int|mixed
      */
-    protected function setUidAttr()
+    protected function setUidAttr($value,$data)
     {
-      $uid = $this->limit(1)->order(['uid'=>'desc'])->value('uid');
+        if(isset($data['pid']) && isset($data['who']) && ($data['who'] == 1 ||$data['who'] == 3) ){
+            //添加员工的情况
+            $uid = $this->where(['id'=>$data['pid']])->value('uid');
+        }else{
+            $uid = $this->limit(1)->order(['uid'=>'desc'])->value('uid');
+            if(empty($uid)) $uid = 20100000;
+            $uid =  $uid+1;
+        }
 
-      if(empty($uid)) $uid = 20100000;
-      return $uid+1;
+      return $uid;
     }
 
 

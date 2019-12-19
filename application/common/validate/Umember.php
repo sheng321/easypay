@@ -38,6 +38,7 @@ class Umember extends Validate {
         'qq'           => 'number',
         'remark'       => 'max:250',
         'google_token'       => 'require|length:17|token|checkGoogle',
+
     ];
 
     /**
@@ -61,6 +62,7 @@ class Umember extends Validate {
 
         'google_token.require'        => '绑定谷歌失败，请联系商户',
         'google_token.length'        => '绑定谷歌失败，请联系商户',
+
     ];
 
     /**
@@ -70,6 +72,7 @@ class Umember extends Validate {
     protected $scene = [
         //添加商户
         'add'           => ['username', 'password', 'password1', 'phone', 'mail', 'auth_id', 'qq', 'remark'],
+
 
         //修改商户
         'edit'          => ['username', 'phone', 'mail', 'auth_id', 'qq', 'remark'],
@@ -96,7 +99,21 @@ class Umember extends Validate {
      * @return User
      */
     public function sceneAdd() {
-        return $this->only([ 'phone', 'qq'])
+        return $this->only([ 'username', 'password', 'password1', 'phone', 'mail', 'auth_id', 'qq', 'remark'])
+            ->remove('phone', 'require')
+            ->remove('qq', 'require');
+    }
+
+    /**
+     * 添加员工
+     * @return $this
+     */
+    public function sceneAdd_staff() {
+        return $this->only([ 'username', 'password', 'password1', 'phone', 'mail', 'auth_id', 'qq', 'remark','who','pid'])
+            ->append('pid', 'require')
+            ->append('who', 'require')
+            ->append('who', 'in:1,3')
+            ->append('pid', 'checkPid')
             ->remove('phone', 'require')
             ->remove('qq', 'require');
     }
@@ -134,6 +151,20 @@ class Umember extends Validate {
         return $this->only(['password', 'password1','id', 'old_password'])
             ->append('password', 'token')
             ->append('id', 'checkOperateId');
+    }
+
+
+
+
+    /**
+     * 添加员工时检测PId
+     */
+    protected function checkPid($value, $rule, $data = []) {
+        $user = \app\common\model\Umember::where(['id' => $value])->find();
+        if (empty($user)) return '暂无上级账户数据，请稍后再试！';
+        if ($user['status'] == 3) return '该账户已被删除，不可操作！';
+        if ($user['who'] == 1 || $user['who'] == 3) return '上级账户是员工，不可操作！';
+        return true;
     }
 
 

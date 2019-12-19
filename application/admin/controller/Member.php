@@ -90,7 +90,7 @@ class Member extends AdminController {
      * 添加商户或者代理
      * @return mixed
      */
-    public function add() {
+    public function add(){
 
         if (!$this->request->isPost()) {
             $agent = $this->model->where([
@@ -160,6 +160,49 @@ class Member extends AdminController {
 
     }
 
+
+
+    /**
+     * 添加员工
+     * @return mixed
+     */
+    public function add_staff(){
+
+        if (!$this->request->isPost()) {
+
+            //基础数据
+            $basic_data = [
+                'title' => '添加商户或者代理',
+                'auth'  => model('app\common\model\SysAuth')->getList(1),//权限组
+            ];
+            $this->assign($basic_data);
+            return $this->staff();
+        } else {
+            $member = $this->request->only('username,password,password1,nickname,phone,qq,who,remark,auth_id,pid,who');
+
+            !isset($member['auth_id']) && $member['auth_id'] = [];
+            //数组转json
+            $member['auth_id'] = json_encode($member['auth_id']);
+
+            //验证数据
+            $validate = $this->validate($member, 'app\common\validate\Umember.add_staff');
+            if (true !== $validate) return __error($validate);
+
+            //保存数据,返回结果
+            $member['password'] = password($member['password']);
+            $member['status'] = 1;
+            $result = $this->model->__add($member);
+            return $result;
+
+        }
+
+    }
+
+
+
+
+
+
     /**
      * 修改商户信息
      * @return mixed|string|\think\response\Json
@@ -213,6 +256,9 @@ class Member extends AdminController {
      */
     protected function form(){
         return $this->fetch('form');
+    }
+    protected function staff(){
+        return $this->fetch('staff');
     }
 
     /**

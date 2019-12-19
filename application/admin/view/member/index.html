@@ -88,6 +88,12 @@
     <!--表单操作栏--开始-->
     <script type="text/html" id="currentTableBar">
 
+        {if auth("$thisClass/add_staff")}
+            {{# if (d.who == 0 || d.who == 2 ) { }}
+            <a class="layui-btn layui-btn-xs" style="background-color: #2C9DD5"    value="{{d.id}}" data-open='{:url("$thisClass/add_staff")}?pid={{d.id}}&type=1' data-title="添加员工">添加员工</a>
+            {{# } }}
+        {/if}
+
         {if auth("$thisClass/edit_password")}
         <a class="layui-btn layui-btn-xs layui-btn-green" data-open='{:url("$thisClass/edit_password")}?id={{d.id}}' data-title="修改商户密码">修改密码</a>
         {/if}
