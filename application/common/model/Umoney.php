@@ -24,7 +24,7 @@ class Umoney extends ModelService {
      * 绑定的数据表
      * @var string
      */
-    protected $table = 'cm_member_monney';
+    protected $table = 'cm_member_money';
     /**
      * Undocumented 获取余额
      *
