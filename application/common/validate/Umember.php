@@ -75,7 +75,7 @@ class Umember extends Validate {
 
 
         //修改商户
-        'edit'          => ['username', 'phone', 'mail', 'auth_id', 'qq', 'remark'],
+        'edit'          => ['id','username', 'phone', 'mail', 'auth_id', 'qq', 'remark'],
 
         //修改登录密码
         'edit_password' => ['id', 'password', 'password1'],
@@ -124,7 +124,7 @@ class Umember extends Validate {
      * @return User
      */
     public function sceneEdit() {
-        return $this->only([ 'phone', 'qq','mail', 'auth_id'])
+        return $this->only(['id','username', 'phone', 'mail', 'auth_id', 'qq', 'remark'])
             ->remove('phone', 'require')
             ->remove('phone', 'checkPhone')
             ->remove('qq', 'require');

@@ -90,7 +90,7 @@
 
         {if auth("$thisClass/add_staff")}
             {{# if (d.who == 0 || d.who == 2 ) { }}
-            <a class="layui-btn layui-btn-xs" style="background-color: #2C9DD5"    value="{{d.id}}" data-open='{:url("$thisClass/add_staff")}?pid={{d.id}}&type=1' data-title="添加员工">添加员工</a>
+            <a class="layui-btn layui-btn-xs" style="background-color: #2C9DD5"    value="{{d.id}}" data-open='{:url("$thisClass/add_staff")}?pid={{d.id}}&type=1' data-title="添加商户员工">添加员工</a>
             {{# } }}
         {/if}
 
@@ -99,7 +99,12 @@
         {/if}
 
         {if auth("$thisClass/edit")}
-        <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改商户信息">编辑</a>
+            {{# if (d.who == 1 || d.who == 3 ) { }}
+                <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm  " data-open='{:url("$thisClass/edit_staff")}?id={{d.id}}' data-title="修改商户员工信息">编辑员工信息</a>
+            {{# } else { }}
+                <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改商户信息">编辑</a>
+            {{# } }}
+
         {/if}
 
         {if auth("$thisClass/del")}
@@ -149,6 +154,9 @@
                     , isPage: false
                     , parseData: function (res) {
                         return res;
+                    },
+                    done: function (res) {
+                        merge(res);
                     }
                 };
             } else {
@@ -172,8 +180,12 @@
                     , cols: cols
                     , isPage: true
                     , parseData: function (res) {
-                        return res;
+                       // return res;
+                    },
+                    done: function (res) {
+                        merge(res);
                     }
+
                 };
             }
 
@@ -282,7 +294,90 @@
             return false;
         });
 
-/*************************************淫荡分割线***************************************************************/
+
+        function merge(res) {
+            //初始化分割点
+            var indexPoint = [0];
+            var data = res.data;
+            var mergeIndex = 0;//定位需要添加合并属性的行数
+            var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+            //列名集合["orderNumber","reagentName","chineseVulgo","component","specifications","componentShelf","remarks"];
+            /**
+             * 执行第一列，已序号分组为准，产生分割点并保存
+             */
+            var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+            for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                var tdCurArr = trArr.eq(i).find("td").eq(0);//获取当前行的当前列
+                var tdPreArr = trArr.eq(mergeIndex).find("td").eq(0);//获取相同列的第一列
+                // console.log(k);
+                if (data[i].orderNumber === data[i - 1].orderNumber) { //后一行的值与前一行的值做比较，相同就需要合并
+                    mark += 1;
+                    //相同列的第一列增加rowspan属性
+                    tdPreArr.each(function () {
+                        $(this).attr("rowspan", mark);
+                    });
+                    //当前行隐藏
+                    tdCurArr.each(function () {
+                        $(this).css("display", "none");
+                    });
+                }else {
+                    //保存分割点
+                    indexPoint.push(i)
+                    mergeIndex = i;
+                    mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                }
+            }
+            //补全最后一个分割点
+            indexPoint.push(res.data.length)
+            // console.log("合并索引点集合：",indexPoint)
+//依据拿到的分割点，对其他6列进行合并处理
+            for(var i = 0;i<indexPoint.length;i++){
+                var startIndex=0;
+                if(i!=0){
+                    startIndex = indexPoint[i-1];
+                }
+                for(var j=startIndex;j<indexPoint[i];j++){
+                    //以第一列产生的区域分割点为基准，执行后面6列合并逻辑
+                    mergeSomeRows(1,startIndex,indexPoint[i],trArr,data,'uid');
+                }
+            }
+        }
+
+
+        /**
+         *
+         * @param colIndex:table中列索引
+         * @param startIndex：合并单元格起始索引
+         * @param endIndex：合并单元格结束索引
+         * @param trArr：单列单元格元素集合
+         * @param data：后端返回数据集合
+         * @param colName：当前列字段名
+         */
+        function mergeSomeRows(colIndex,startIndex,endIndex,trArr,data,colName){
+            var mark = 1;
+            for(var j=startIndex+1;j<endIndex;j++){
+                ++mark;
+                var tdCurArr = trArr.eq(j).find("td").eq(colIndex);//获取当前行的当前列
+                var tdPreArr = trArr.eq(startIndex).find("td").eq(colIndex);//获取相同列的第一列
+                if (data[j][colName] === data[j - 1][colName]) { //后一行的值与前一行的值做比较，相同就需要合并
+                    //相同列的第一列增加rowspan属性
+                    tdPreArr.each(function () {
+                        $(this).attr("rowspan", mark);
+                    });
+                    //当前行隐藏
+                    tdCurArr.each(function () {
+                        $(this).css("display", "none");
+                    });
+                }else {
+                    mark=1;
+                    startIndex=j;
+                }
+            }
+
+        }
+
+
+        /*************************************淫荡分割线***************************************************************/
         /**
          * 生成表单
          */
@@ -312,11 +407,11 @@
             /**{/if}**/
 
             /**{if auth("$thisClass/edit_password") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
-            {title: '操作', minWidth: 110, templet: '#currentTableBar', align: "center"},
+            {title: '操作', minWidth: 200, templet: '#currentTableBar', align: "center"},
             /**{/if}**/
             {field: 'create_by_username', title: '创建人', align: 'center'},
             {field: 'create_at', title: '创建时间', align: 'center', minWidth: 150},
-        ]], true,'username');
+        ]], 'username',true);
 
 
         /**

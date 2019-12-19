@@ -13,7 +13,7 @@ class SysAdmin extends AdminService {
     protected function getAuthAttr($val,$data)
     {
         if($data['id'] == 1) return '超级管理员';
-        $id = json_decode($data['auth_id']);
+        $id = json_decode($data['auth_id'],true);
         if(empty($id)) return '无权限';
 
         $title = \app\common\model\SysAuth::where('id','in',$id)->value('title');

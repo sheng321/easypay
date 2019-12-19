@@ -79,8 +79,6 @@ class Umember extends UserService {
 
 
 
-
-
     /**
      * 属性
      * @param $val
@@ -91,10 +89,10 @@ class Umember extends UserService {
     {
         if(isset($data['uid'])){
            $Uprofile =  model('app\common\model\Uprofile');
-            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,agent_level,a_id,pay_pwd')->find();
+            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,agent_level,a_id,pay_pwd,group_id')->find();
             if(empty($find)){
                 $Uprofile->save(['uid'=>$data['uid']]);
-                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,agent_level,a_id,pay_pwd')->find();
+                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,agent_level,a_id,pay_pwd,group_id')->find();
             }
 
             $data = $find->toArray();
@@ -128,13 +126,13 @@ class Umember extends UserService {
     protected function getAuthAttr($val,$data)
     {
         if(isset($data['auth_id'])){
-            $id = json_decode($data['auth_id']);
+            $id = json_decode($data['auth_id'],true);
             if(empty($id)) return '暂无权限信息';
 
             $title = \app\common\model\SysAuth::where([
                 ['id','in',$id],
                 ['status','=',1],
-            ])->value('title');
+            ])->column('title','id');
             if(is_array($title)) return  implode(',',$title);
 
             return $title;
@@ -224,10 +222,8 @@ class Umember extends UserService {
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) {
-
                 $item['auth_title'] =  $item['auth'];
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
-
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
             });
@@ -404,7 +400,7 @@ class Umember extends UserService {
             $users = self::field('id,auth_id')->all();
             $data = array();
             foreach ($users as $k => $val){
-                $auth = explode('|',$val['auth']);
+                $auth = explode('|',$val['auth_id']);
                 foreach ($auth as $v1){
                     if(empty($v1)) continue;
                     $data[$v1][] = $val['id'];

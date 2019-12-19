@@ -172,7 +172,7 @@ class Member extends AdminController {
 
             //基础数据
             $basic_data = [
-                'title' => '添加商户或者代理',
+                'title' => '添加员工',
                 'auth'  => model('app\common\model\SysAuth')->getList(1),//权限组
             ];
             $this->assign($basic_data);
@@ -195,12 +195,7 @@ class Member extends AdminController {
             return $result;
 
         }
-
     }
-
-
-
-
 
 
     /**
@@ -210,6 +205,12 @@ class Member extends AdminController {
     public function edit() {
         if (!$this->request->isPost()) {
 
+            $agent = $this->model->where([
+                ['who','=','2'],
+                ['status','=','1']
+            ])->field('uid,id')->select()->toArray();
+
+            $group =   \app\common\model\Ulevel::field('id,title')->select()->toArray();
             //查找所需修改用户
             $Member = $this->model->where('id', $this->request->get('id'))->find();
             if (empty($Member)) return msg_error('暂无数据，请重新刷新页面！');
@@ -224,22 +225,91 @@ class Member extends AdminController {
                 $auth[$k]['is_checked'] = $is_checked;
             }
 
+            foreach ($group as $k => $val) {
+                $is_checked = false;
+                if($Member['profile']['group_id'] == $val['id']) $is_checked = true;
+                $group[$k]['group_checked'] = $is_checked;
+            }
+
+            foreach ($agent as $k => $val) {
+                $is_checked = false;
+                if($Member['profile']['a_id'] == $val['uid']) $is_checked = true;
+                $agent[$k]['agent_checked'] = $is_checked;
+            }
+
             //基础数据
             $basic_data = [
                 'title' => '修改商户信息',
-                'user'  => $Member->hidden(['password']),
+                'user'  => $Member->hidden(['password','who','pid','is_single','single_key','google_token']),
                 'auth'  => $auth,
+                'group'  => $group,//用户分组
+                'agent'  => $agent,//所有的代理
             ];
             $this->assign($basic_data);
 
             return $this->form();
         } else {
+
+
+
+            $post = $this->request->only('username,nickname,phone,qq,who,remark,auth_id,id');
+            $profile = $this->request->only('a_id,group_id');
+            $pid = $this->request->post('pid','0');
+
+
+            !isset($post['auth_id']) && $post['auth_id'] = [];
+            $post['auth_id'] = json_encode($post['auth_id']); //数组转json
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Umember.edit');
+            if (true !== $validate) return __error($validate);
+
+            $res = $this->model->__edit($post);
+
+            if(!empty($profile)){
+                $profile['id'] = $pid;
+                model('\app\common\model\Uprofile')->__edit($profile);
+            }
+            return  $res;
+        }
+    }
+
+
+    /**
+     * 员工
+     * @return mixed|string|\think\response\Json
+     */
+    public function edit_staff() {
+        if (!$this->request->isPost()) {
+
+            //查找所需修改用户
+            $Member = $this->model->where('id', $this->request->get('id','0'))->find();
+            if (empty($Member)) return msg_error('暂无数据，请重新刷新页面！');
+
+            $auth = model('app\common\model\SysAuth')->getList(1)->toArray();
+
+            $auth_id = json_decode($Member['auth_id'], true);
+
+            foreach ($auth as $k => $val) {
+                $is_checked = false;
+                foreach ($auth_id as $k_1) $val['id'] == $k_1 && $is_checked = true;
+                $auth[$k]['is_checked'] = $is_checked;
+            }
+
+            //基础数据
+            $basic_data = [
+                'title' => '修改商户员工信息',
+                'user'  => $Member->hidden(['password','who','pid','is_single','single_key','google_token']),
+                'auth'  => $auth,
+            ];
+            $this->assign($basic_data);
+
+            return $this->staff();
+        } else {
             $post = $this->request->post();
 
             !isset($post['auth_id']) && $post['auth_id'] = [];
-
             $post['auth_id'] = json_encode($post['auth_id']); //数组转json
-
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Umember.edit');
@@ -249,6 +319,7 @@ class Member extends AdminController {
 
         }
     }
+
 
     /**
      * 表单模板
