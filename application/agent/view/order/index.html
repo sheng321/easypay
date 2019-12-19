@@ -1,0 +1,102 @@
+{extend name="user@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+{block name="cotent"}
+<!--  搜索-->
+<form class="layui-form">
+<blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">支付类型</label>
+        <div class="layui-input-inline">
+            <select id="status" class="status" lay-filter="status">
+                <option value="">请选择支付类型</option>
+                <option value="1">22222</option>
+                <option value="1">11111</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">支付状态</label>
+        <div class="layui-input-inline">
+            <select id="status" class="status" lay-filter="status">
+                <option value="">请选择</option>
+                <option value="1">待支付</option>
+                <option value="2">已完成</option>
+                <option value="3">已关闭</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">通知状态</label>
+        <div class="layui-input-inline">
+            <select id="status" class="status" lay-filter="status">
+                <option value="">请选择通知状态</option>
+                <option value="1">已通知</option>
+                <option value="2">未通知</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">商户单号/系统单号</label>
+        <div class="layui-input-inline">
+            <input type="text" id="system_sn" class="layui-input" placeholder="请输入商户单号/系统单号"/>
+        </div>
+    </div>
+    
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">创建时间</label>
+        <div class="layui-input-inline">
+            <input type="text" id="create_time" class="layui-input " placeholder="请选择创建时间">
+        </div>
+    </div>
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+    </div>
+</blockquote>
+<script type="text/html" id="payStatus">
+    {{# if (d.status == '1') { }}
+    <div style="color:#1E9FFF;">待支付</div>
+    {{# } else if(d.status == 2) { }}  
+    <div style="color:#0ac933;">已支付</div>
+    {{# } else { }}  
+    <div style="color:red;">已关闭</div>
+    {{# } }}  
+</script>
+<script type="text/html" id="notice">
+    {{# if (d.notice == '1') { }}
+    <div style="color:#0ac933;">已通知</div>
+    {{# } else { }}  
+    <div style="color:red;">未通知</div>
+    {{# } }}  
+</script>
+
+<!-- end --->
+<table id="currentTable" lay-filter="currentTable"></table>
+
+</form>
+{/block}
+{block name="script"}
+<script>
+
+$.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        
+        {field: 'id', title: 'ID', width: 50, edit: 'text', align: "center"},
+        {field: 'total_amount', title: '商户单号',  align: 'center'},
+        {field: 'total_fee', title: '系统单号',  align: "center"},
+        {field: 'actual_amount', title: '提交金额',align: 'center'},
+        {field: 'card_number', title: '实际支付',  unresize: true, align: "center"},
+        {field: 'bank_name', title: '支付类型',  unresize: true, align: "center"},
+        {field: 'actual_amount', title: '支付状态',templet: '#payStatus',align: 'center'},
+        {field: 'actual_amount', title: '通知状态',templet: '#notice',align: 'center'},
+        {field: 'location', title: '创建时间', unresize: true, align: "center"},
+        {field: 'status', title: '支付时间',  unresize: true, align: "center"},
+    ]]);
+    /**
+     * 日期范围
+     */
+     $.laydate.range('create_time',7);
+
+</script>
+{/block}

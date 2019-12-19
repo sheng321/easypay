@@ -1,0 +1,52 @@
+{extend name="user@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{/block}
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+</br>
+    <input type="hidden" name="bank_id" value="{$info.id|default=''}">
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">银行卡号</label>
+        <div class="layui-input-block">
+            <select id="bank_card_id"  lay-filter="bank_card_id"  name="bank_card_id" lay-verify="required">
+                <option value="">请选择银行卡</option>
+                {volist name="bank" id="vo"}
+                <option value="{$vo.id}">{$vo.card_number}========[{$vo.bank_name}]========[{$vo.account_name}]</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">提现金额</label>
+        <div class="layui-input-block">
+            <input type="text" name="total_amount" onkeyup="value=value.replace(/[^\d.]/g,'')" class="layui-input" lay-verify="required" value="" placeholder="例如：100">
+        </div>
+    </div>
+    {:token('__token__', 'sha1')}
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+
+<script>
+    
+   
+    /**
+     * 添加
+     */
+    $.form.on('submitBtn', "{:url('@user/withdrawal/addWithdrawal')}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+
+</script>
+{/block}

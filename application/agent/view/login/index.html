@@ -1,0 +1,334 @@
+{__NOLAYOUT__}<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{$title|default='商户管理'}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="__LAYUI__/css/layui.css" media="all">
+    <script type="text/javascript"      src="__STATIC__/common.js"></script>
+
+
+    <style>
+        html, body {width: 100%;height: 100%;overflow: hidden}
+        body {background: #009688;}
+        body:after {content:'';background-repeat:no-repeat;background-size:cover;-webkit-filter:blur(3px);-moz-filter:blur(3px);-o-filter:blur(3px);-ms-filter:blur(3px);filter:blur(3px);position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;}
+        .layui-container {width: 100%;height: 100%;overflow: hidden}
+        .admin-login-background {width:360px;height:300px;position:absolute;left:50%;top:40%;margin-left:-180px;margin-top:-100px;}
+        .logo-title {text-align:center;letter-spacing:2px;padding:14px 0;}
+        .logo-title h1 {color:#009688;font-size:25px;font-weight:bold;}
+        .login-form {background-color:#fff;border:1px solid #fff;border-radius:3px;padding:14px 20px;box-shadow:0 0 8px #eeeeee;}
+        .login-form .layui-form-item {position:relative;}
+        .login-form .layui-form-item label {position:absolute;left:1px;top:1px;width:38px;line-height:36px;text-align:center;color:#d2d2d2;}
+        .login-form .layui-form-item input {padding-left:36px;}
+        .captcha {width:60%;display:inline-block;}
+        .captcha-img {display:inline-block;width:34%;float:right;}
+        .captcha-img img {height:34px;border:1px solid #e6e6e6;height:36px;width:100%;}
+
+
+       /*及验*/
+        #captcha {
+            width: 300px;
+            display: inline-block;
+        }
+
+        #text {
+            height: 42px;
+            width: 298px;
+            text-align: center;
+            border-radius: 2px;
+            background-color: #F3F3F3;
+            color: #BBBBBB;
+            font-size: 14px;
+            letter-spacing: 0.1px;
+            line-height: 42px;
+        }
+
+        #wait {
+            display: none;
+            height: 42px;
+            width: 298px;
+            text-align: center;
+            border-radius: 2px;
+            background-color: #F3F3F3;
+        }
+
+        .loading {
+            margin: auto;
+            width: 70px;
+            height: 20px;
+        }
+
+        .loading-dot {
+            float: left;
+            width: 8px;
+            height: 8px;
+            margin: 18px 4px;
+            background: #ccc;
+
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+
+            opacity: 0;
+
+            -webkit-box-shadow: 0 0 2px black;
+            -moz-box-shadow: 0 0 2px black;
+            -ms-box-shadow: 0 0 2px black;
+            -o-box-shadow: 0 0 2px black;
+            box-shadow: 0 0 2px black;
+
+            -webkit-animation: loadingFade 1s infinite;
+            -moz-animation: loadingFade 1s infinite;
+            animation: loadingFade 1s infinite;
+        }
+
+        .loading-dot:nth-child(1) {
+            -webkit-animation-delay: 0s;
+            -moz-animation-delay: 0s;
+            animation-delay: 0s;
+        }
+
+        .loading-dot:nth-child(2) {
+            -webkit-animation-delay: 0.1s;
+            -moz-animation-delay: 0.1s;
+            animation-delay: 0.1s;
+        }
+
+        .loading-dot:nth-child(3) {
+            -webkit-animation-delay: 0.2s;
+            -moz-animation-delay: 0.2s;
+            animation-delay: 0.2s;
+        }
+
+        .loading-dot:nth-child(4) {
+            -webkit-animation-delay: 0.3s;
+            -moz-animation-delay: 0.3s;
+            animation-delay: 0.3s;
+        }
+
+        @-webkit-keyframes loadingFade {
+            0% { opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+
+        @-moz-keyframes loadingFade {
+            0% { opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes loadingFade {
+            0% { opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="layui-container">
+    <div class="admin-login-background">
+        <div class="layui-form login-form">
+
+                <div class="layui-form-item logo-title">
+                    <h1>{$UserInfo.UserTitle|default='商户管理'}</h1>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-username" for="username"></label>
+                    <input type="text" name="username" id="username" lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-password" for="password"></label>
+                    <input type="password" name="password" id="password" lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input" >
+                </div>
+
+
+            <!--判断是否开启谷歌验证码登录-->
+            <!--{if $UserInfo.UserGoole == 1}-->
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-vercode" for="googlecode"></label>
+                    <input type="text" name="googlecode" id="googlecode" lay-verify="required" placeholder="谷歌密码" autocomplete="off" class="layui-input" >
+                </div>
+            <!--{/if}-->
+                <div class="layui-form-item"   >
+                    <label  for="captcha"></label>
+                    <div id="captcha">
+                        <div id="text">
+                            行为验证™ 安全组件加载中
+                        </div>
+                        <div id="wait" class="show">
+                            <div class="loading">
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn-fluid"   id="submitBtn" lay-submit lay-filter="submitBtn" >登 入</button>
+                </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="__STATIC__/plugs/jquery/jquery.md5.js"></script>
+<script type="text/javascript" src="__STATIC__/plugs/layui-layer/layer.js"></script>
+<script src="__STATIC__/user/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
+<script src="__STATIC__/plugs/Geetest/gt.js"></script>
+
+
+<script        >
+    $(document).ready(function () {
+
+        // 登录过期的时候，跳出ifram框架
+        if (top.location != self.location) top.location = self.location;
+
+        $('.layui-container').particleground({
+            dotColor:'#5cbdaa',
+            lineColor:'#5cbdaa'
+        });
+
+        var handler = function (captchaObj) {
+            captchaObj.appendTo('#captcha');
+            captchaObj.onReady(function () {
+                $("#wait").hide();
+            });
+            $('#submitBtn').click(function () {
+
+                if($('#username').val() == ''){
+                    layer.msg('请先输入用户名', {icon: 2, time: 2000});
+                    return false;
+                }
+
+                if(!usernameType($('#username').val())){
+                    layer.msg('用户名只能输入数字和字母，4-16位', {icon: 2, time: 2000});
+                    return false;
+                }
+
+                if($('#password').val() == ''){
+                    layer.msg('请先输入密码', {icon: 2, time: 2000});
+                    return false;
+                }
+
+                if(!pwdType($('#password').val())){
+                    layer.msg('密码只能输入6-20位', {icon: 2, time: 2000});
+                    return false;
+                }
+
+
+                /**{if $UserInfo.UserGoole == 1}**/
+                if($('#googlecode').val() == ''){
+                    layer.msg('请先输入谷歌验证码', {icon: 2, time: 2000});
+                    return false;
+                }
+                if(!googleType($('#googlecode').val())){
+                    layer.msg('谷歌只能输入6位数字', {icon: 2, time: 2000});
+                    return false;
+                }
+                /**{/if}**/
+
+
+                var result = captchaObj.getValidate();
+                if (!result) {
+                    layer.msg('请先完成验证', {icon: 2, time: 2000});
+                    return false;
+                }
+
+
+                $.ajax({
+                    url: "{:url('@user/Login/index')}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        username: $('#username').val(),
+                        password: $.md5($('#password').val()),
+                        /**{if $UserInfo.UserGoole == 1}**/
+                        googlecode: $('#googlecode').val(),
+                        /**{/if}**/
+                        geetest_challenge: result.geetest_challenge,
+                        geetest_validate: result.geetest_validate,
+                        geetest_seccode: result.geetest_seccode
+                    },
+                    success: function (data) {
+                        if (data.code == 1){
+                            layer.msg(data.msg, {icon: 1,time: 1500}, function(){
+                                window.location.href = "{:url('@user/index')}";
+                            });
+                        }else {
+                            layer.msg(data.msg, {icon: 2,time: 1500}, function(){
+                                window.location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            window.gt = captchaObj;
+        };
+
+        $.ajax({
+            url: "{:url('@user/Login/startGeetest')}?t=" + (new Date()).getTime(), // 加随机数防止缓存
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                var JsonObjs = $.parseJSON(data);
+                $('#text').hide();
+                $('#wait').show();
+                // 调用 initGeetest 进行初始化
+                // 参数1：配置参数
+                // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它调用相应的接口
+                initGeetest({
+                    // 以下 4 个配置参数为必须，不能缺少
+                    gt: JsonObjs.gt,
+                    challenge: JsonObjs.challenge,
+                    offline: !JsonObjs.success, // 表示用户后台检测极验服务器是否宕机
+                    new_captcha: JsonObjs.new_captcha, // 用于宕机时表示是新验证码的宕机
+
+                    product: "float", // 产品形式，包括：float，popup
+                    width: "300px",
+                    https: false
+
+                }, handler);
+            }
+        });
+
+    });
+
+
+    function usernameType(username) {
+        var usern = /^[a-zA-Z0-9]{4,16}$/;
+        if(usern.test(username)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    function pwdType(pwd) {
+        if(pwd.length > 5 || pwd.length > 21){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    function googleType(google) {
+        var googlen = /^[0-9]{6}$/;
+        if(googlen.test(google)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+</script>
+</body>
+</html>
+

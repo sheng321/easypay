@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{$UserInfo.title|default=''}</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="__USER__/css/font.css">
+    <link rel="stylesheet" href="__LAYUI__/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__USER__/css/weadmin.css">
+
+</head>
+
+<body  class="layui-layout-body"  >
+<!-- 顶部开始 -->
+<div class="container">
+    <div class="logo">
+        <a href="./index.html">{$UserInfo.title|default=''}</a>
+    </div>
+    <div class="left_open">
+        <!-- <i title="展开左侧栏" class="iconfont">&#xe699;</i> -->
+        <i title="展开左侧栏" class="layui-icon layui-icon-shrink-right"></i>
+
+    </div>
+
+    <ul class="layui-nav right" lay-filter="">
+        <li class="layui-nav-item">
+            <a href="javascript:;">{$user_info.username|default='无名'}</a>
+            <dl class="layui-nav-child">
+                <!-- 二级菜单 -->
+                <dd>
+                    <a  data-href="{:url('@user/User/edit_self')}"  data-title="个人信息" >个人信息</a>
+                </dd>
+                <dd>
+                    <a  data-href="{:url('@user/User/changepwd')}"  data-title="修改密码" >修改密码</a>
+                </dd>
+                <dd>
+                    <a class="loginout" href="{:url('@user/login/logout')}">退出</a>
+                </dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item to-index">
+            <a href="{$UserInfo.HomeUrl|default=''}" target="_blank">前台首页</a>
+        </li>
+    </ul>
+
+</div>
+<!-- 顶部结束 -->
+<!-- 中部开始 -->
+<!-- 左侧菜单开始 -->
+<div class="left-nav">
+    <div id="side-nav"></div>
+</div>
+<!-- <div class="x-slide_left"></div> -->
+<!-- 左侧菜单结束 -->
+<!-- 右侧主体开始 -->
+<div class="page-content">
+    <div class="layui-tab tab" lay-filter="wenav_tab" id="WeTabTip" lay-allowclose="true">
+        <ul class="layui-tab-title" id="tabName">
+            <li>欢迎页</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <iframe src="{:url('@user/index/welcome')}" frameborder="0" scrolling="yes" class="weIframe"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-content-bg"></div>
+<!-- 右侧主体结束 -->
+<!-- 中部结束 -->
+<!-- 底部开始 -->
+<div class="footer">
+    <div class="copyright">{$UserInfo.FooterName|default=''}</div>
+</div>
+<!-- 底部结束 -->
+<script  src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script   src="__LAYUI__/layui.all.js"></script>
+<script type="text/javascript"   >
+
+
+    /**
+     * 跳出ifram框架
+     */
+    if (top.location != self.location) top.location = self.location;
+
+    layui.config({
+        base: '__USER__/js/'
+    }).extend({ //设定模块别名
+        admin: 'admin'
+        ,menu: 'menu'
+    });
+    layui.use(['jquery', 'admin', 'menu'], function(){
+        var $ = layui.jquery,
+            admin = layui.admin,
+            menu = layui.menu;
+        $(function(){
+            menu.getMenu('/user.php/api.Menu/getMenu');
+        });
+
+
+        /**
+         * 跳转新页面
+         * 注册 data-href 事件
+         */
+        $('body').on('click', '[data-href]', function () {
+            var url = $(this).attr('data-href');
+            var text = $(this).attr('data-title');
+            WeAdminShow(text,url);
+            return false;
+        });
+
+
+    });
+
+</script>
+</body>
+<!--Tab菜单右键弹出菜单-->
+<ul class="rightMenu" id="rightMenu">
+    <li data-type="fresh">刷新</li>
+    <li data-type="current">关闭当前</li>
+    <li data-type="other">关闭其它</li>
+    <li data-type="all">关闭所有</li>
+</ul>
+
+</html>
