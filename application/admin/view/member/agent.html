@@ -12,7 +12,7 @@
 
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
-                <input type="text" id="username" class="layui-input" placeholder="请输入商户名称"/>
+                <input type="text" id="username" class="layui-input" placeholder="请输入代理名称"/>
             </div>
         </div>
 
@@ -42,7 +42,7 @@
 
         {if auth("$thisClass/add")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/add")}' data-title="添加商户或者代理">添加</a>
+            <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/add")}' data-title="添加代理或者代理">添加</a>
         </div>
         {/if}
 
@@ -60,6 +60,15 @@
     <!--主表单渲染--结束-->
 
     <!--表单模板绑定--开始-->
+
+    <script type="text/html" id="level">
+        <a class="layui-btn layui-btn-xs" style="background-color: #7EC0EE"    value="{{d.id}}" data-open='{:url("$thisClass/relations")}?uid={{d.uid}}' data-title="代理关系表">{{d.profile.level}}</a>
+    </script>
+
+
+
+
+
 
     <script type="text/html" id="checkStatus">
         <input type="checkbox" name="{{d.id}}" value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
@@ -81,19 +90,19 @@
 
         {if auth("$thisClass/add_staff")}
             {{# if (d.who == 0 || d.who == 2 ) { }}
-            <a class="layui-btn layui-btn-xs" style="background-color: #2C9DD5"    value="{{d.id}}" data-open='{:url("$thisClass/add_staff")}?pid={{d.id}}&type=1' data-title="添加商户员工">添加员工</a>
+            <a class="layui-btn layui-btn-xs" style="background-color: #2C9DD5"    value="{{d.id}}" data-open='{:url("$thisClass/add_staff")}?pid={{d.id}}&type=3' data-title="添加代理员工">添加员工</a>
             {{# } }}
         {/if}
 
         {if auth("$thisClass/edit_password")}
-        <a class="layui-btn layui-btn-xs layui-btn-green" data-open='{:url("$thisClass/edit_password")}?id={{d.id}}' data-title="修改商户密码">修改密码</a>
+        <a class="layui-btn layui-btn-xs layui-btn-green" data-open='{:url("$thisClass/edit_password")}?id={{d.id}}' data-title="修改代理密码">修改密码</a>
         {/if}
 
         {if auth("$thisClass/edit")}
             {{# if (d.who == 1 || d.who == 3 ) { }}
-                <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm  " data-open='{:url("$thisClass/edit_staff")}?id={{d.id}}' data-title="修改商户员工信息">编辑员工信息</a>
+                <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm  " data-open='{:url("$thisClass/edit_staff")}?id={{d.id}}' data-title="修改代理员工信息">编辑员工信息</a>
             {{# } else { }}
-                <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改商户信息">编辑</a>
+                <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改代理信息">编辑</a>
             {{# } }}
 
         {/if}
@@ -375,15 +384,14 @@
          */
         $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
             {type: "checkbox", fixed: "left", width: 50},
-            {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
+            {field: 'uid', title: '代理号', minWidth: 20, align: "center"},
             {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
+            {field: 'level', title: '等级', minWidth: 20, align: "center", templet: '#level'},
             {field: 'username', title: '用户名', minWidth: 80, align: "center"},
             {field: 'nickname', title: '昵称',  minWidth: 80, align: "center"},
 
             {field: 'remark', title: '备注',  minWidth: 80, edit: 'text', align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
             {field: 'auth_title', title: '权限配置',  minWidth: 80, align: "center"},
-
-            {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
 
             /**{if auth("$thisClass/single")}**/
             {field: 'is_single', title: '单点登入', minWidth: 20, templet: '#checkSingle', unresize: true, align: "center"},

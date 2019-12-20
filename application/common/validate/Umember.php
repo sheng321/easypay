@@ -100,6 +100,7 @@ class Umember extends Validate {
      */
     public function sceneAdd() {
         return $this->only([ 'username', 'password', 'password1', 'phone', 'mail', 'auth_id', 'qq', 'remark'])
+            ->append('username', 'checkUsername')
             ->remove('phone', 'require')
             ->remove('qq', 'require');
     }
@@ -219,7 +220,6 @@ class Umember extends Validate {
     protected function checkUsername($value, $rule, $data = []) {
         $where_user = [
             'username'   => $value,
-            'status'     => 1,
                    ];
         $user = \app\common\model\Umember::where($where_user)->find();
         return empty($user) ? true : '已有相同登录账号，请更换进行注册！';

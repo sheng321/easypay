@@ -21,6 +21,39 @@ class Member extends AdminController {
         $this->model = model('app\common\model\Umember');
     }
 
+
+    /**
+     * 代理关系表
+     * @return mixed|\think\response\Json
+     */
+    public function relations() {
+        if (!$this->request->isPost()) {
+
+            $model = model('app\common\model\Uprofile');
+            //ajax访问
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                $search['uid'] = (int)$this->request->get('uid', 0);
+                return json($model->aList($page, $limit, $search));
+            }
+
+            //基础数据
+            $basic_data = [
+                'title' => '代理关系表列表',
+                'data'  => '',
+            ];
+
+            return $this->fetch('', $basic_data);
+        }
+    }
+
+
+
+
+
+
     /**
      * 商户列表
      */
@@ -96,7 +129,7 @@ class Member extends AdminController {
             $agent = $this->model->where([
                 ['who','=','2'],
                 ['status','=','1']
-            ])->field('uid,id')->select()->toArray();
+            ])->field('uid,id,who')->select()->toArray();
 
             $group =   \app\common\model\Ulevel::field('id,title')->select()->toArray();
 
@@ -113,7 +146,7 @@ class Member extends AdminController {
         } else {
 
             $member = $this->request->only('username,password,password1,nickname,phone,qq,who,remark,auth_id');
-            $profile = $this->request->only('a_id,group_id');
+            $profile = $this->request->only('pid,group_id');
 
             !isset($member['auth_id']) && $member['auth_id'] = [];
             //数组转json
@@ -141,12 +174,18 @@ class Member extends AdminController {
             $find = $this->model->field('uid')->get($this->model->id);
 
             if(!empty($profile)){
+
                 $Uprofile =  model('\app\common\model\Uprofile');
+
+                $agent_level = 0;
                 if($member['who'] == 2){
-                    $agent_level = 0;
-                   if(!empty($profile['a_id'])) $agent_level  = $Uprofile->where('uid',$profile['a_id'])->value('agent_level');
-                    $profile['agent_level'] = $agent_level + 1;
+                    if(!empty($profile['pid'])){
+                        //代理等级
+                        $agent_level  = $Uprofile->where('uid',$profile['pid'])->value('level');
+                    }
+                    $agent_level = $agent_level + 1;
                 }
+                $profile['level'] = $agent_level;
 
                 $profile['id'] = $find['profile']['id'];
                 $profile['uid'] = $find['profile']['uid'];
@@ -208,7 +247,7 @@ class Member extends AdminController {
             $agent = $this->model->where([
                 ['who','=','2'],
                 ['status','=','1']
-            ])->field('uid,id')->select()->toArray();
+            ])->field('uid,id,who')->select()->toArray();
 
             $group =   \app\common\model\Ulevel::field('id,title')->select()->toArray();
             //查找所需修改用户
@@ -233,7 +272,7 @@ class Member extends AdminController {
 
             foreach ($agent as $k => $val) {
                 $is_checked = false;
-                if($Member['profile']['a_id'] == $val['uid']) $is_checked = true;
+                if($Member['profile']['pid'] == $val['uid']) $is_checked = true;
                 $agent[$k]['agent_checked'] = $is_checked;
             }
 
@@ -250,11 +289,9 @@ class Member extends AdminController {
             return $this->form();
         } else {
 
-
-
             $post = $this->request->only('username,nickname,phone,qq,who,remark,auth_id,id');
-            $profile = $this->request->only('a_id,group_id');
-            $pid = $this->request->post('pid','0');
+            $profile = $this->request->only('pid,group_id');
+            $pid = $this->request->post('p_id','0');
 
 
             !isset($post['auth_id']) && $post['auth_id'] = [];
@@ -267,8 +304,23 @@ class Member extends AdminController {
             $res = $this->model->__edit($post);
 
             if(!empty($profile)){
+
+               $Uprofile = model('\app\common\model\Uprofile');
+
                 $profile['id'] = $pid;
-                model('\app\common\model\Uprofile')->__edit($profile);
+
+                $agent_level = 0;
+                if($post['who'] == 2){
+                    if(!empty($profile['pid'])){
+                        //代理等级
+                        $agent_level  = $Uprofile->where('uid',$profile['pid'])->value('level');
+                    }
+                    $agent_level = $agent_level + 1;
+                }
+                $profile['level'] = $agent_level;
+                $profile['who'] = $post['who'];
+
+                $Uprofile->__edit($profile);
             }
             return  $res;
         }

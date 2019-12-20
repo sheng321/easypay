@@ -62,6 +62,7 @@ class Umember extends UserService {
        return $val;
     }
 
+
     /**
      * 追加输出权限
      * @param $val
@@ -87,14 +88,13 @@ class Umember extends UserService {
      */
     protected function getProfileAttr($val,$data)
     {
-        if(isset($data['uid'])){
+        if(isset($data['uid'])&&isset($data['who'])){
            $Uprofile =  model('app\common\model\Uprofile');
-            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,agent_level,a_id,pay_pwd,group_id')->find();
+            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,group_id,who')->find();
             if(empty($find)){
-                $Uprofile->save(['uid'=>$data['uid']]);
-                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,agent_level,a_id,pay_pwd,group_id')->find();
+                $Uprofile->save(['uid'=>$data['uid'],'who'=>$data['who']]);
+                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,group_id,who')->find();
             }
-
             $data = $find->toArray();
             return $data;
         }
@@ -217,20 +217,23 @@ class Umember extends UserService {
         $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
 
+        //用户分组数组
+        $group =  \app\common\model\Ulevel::idArr();
+
 
         $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single';
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
-            ->each(function ($item, $key) {
+            ->each(function ($item, $key) use ($group) {
                 $item['auth_title'] =  $item['auth'];
+
+                $item['group_title'] = isset($group[$item['profile']['group_id']])?$group[$item['profile']['group_id']]:'未分组' ;
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
             });
 
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
-
-
 
         $info = [
             'limit'        => $limit,
@@ -269,23 +272,19 @@ class Umember extends UserService {
         $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
 
+        //用户分组数组
+        $group =  \app\common\model\Ulevel::idArr();
+
         $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single';
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
-            ->each(function ($item, $key) {
-
-                dump($item['auth']);
-
-               // $item['auth_title'] =  $item['auth'];
+            ->each(function ($item, $key) use ($group)  {
+                $item['auth_title'] =  $item['auth'];
+                $item['group_title'] = isset($group[$item['profile']['group_id']])?$group[$item['profile']['group_id']]:'未分组' ;
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
             });
-
-
-        halt($data);
-
-
 
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 

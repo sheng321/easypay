@@ -50,10 +50,10 @@
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">所属代理</label>
         <div class="layui-input-inline">
-            <select name="a_id" class="status" lay-filter="status">
+            <select name="pid" class="status" lay-filter="status">
                 <option value="">默认平台</option>
                 {foreach $agent as $vo}
-                <option value="{$vo.uid|default=''}"    {eq name='$vo.agent_checked|default=false' value='true' }checked{/eq}      >{$vo.agent_checked}{$vo.profile.agent_level}级 {$vo.uid}</option>
+                <option value="{$vo.uid|default=''}"    {eq name='$vo.agent_checked|default=false' value='true' }selected{/eq}   >{$vo.profile.level}级 {$vo.uid}</option>
                 {/foreach}
             </select>
         </div>
@@ -63,8 +63,8 @@
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">类别</label>
         <div class="layui-input-block">
-            <input type="radio" name="who" value="0" title="普通商户" checked="checked"  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>普通商户</div></div>
-            <input type="radio" name="who" value="2" title="代理" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>代理</div></div>
+            <input type="radio" name="who" value="0" title="普通商户"    {eq name='$user.who|default=false' value='0' }checked="checked" {/eq}      ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>普通商户</div></div>
+            <input type="radio" name="who" value="2" title="代理"     {eq name='$user.who|default=false' value='2' }checked="checked" {/eq}    ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>代理</div></div>
         </div>
     </div>
 
@@ -96,7 +96,7 @@
 
     {if !empty($user)}
     <input type="hidden"   name="id" value="{$user.id|default=''}">
-    <input type="hidden"   name="pid" value="{$user.profile.id|default=''}">
+    <input type="hidden"   name="p_id" value="{$user.profile.id|default=''}">
     {/if}
 
 
