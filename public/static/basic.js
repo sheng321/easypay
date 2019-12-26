@@ -117,9 +117,8 @@
                 return false;
             }
         }
-
-
     }
+
 
     /**
      * 重新封装表单插件
@@ -165,7 +164,7 @@
          * @param cols 表单渲染
          * @param page 表单渲染
          */
-        this.table = function (elem, url, cols, isPage = true, skin = 'line', size = '', isTool = true) {
+        this.table = function (elem, url, cols, isPage = true,done = '',  size = '', isTool = true,) {
             if (!isPage) {
                 var data = {
                     elem: '#' + elem + 'Table',
@@ -176,11 +175,8 @@
                     limit: 500,
                     id: elem + 'TableId',
                     cols: cols,
-                    done:function(res){
-
-                    $('td').each(function(index,element){
-                        $(element).attr('title',$(element).text());
-                    });
+                    done:function(res,curr,count){
+                        if (done != '')  done(res,curr,count);
                 }
                 };
             } else {
@@ -194,15 +190,11 @@
                     limit: 15,
                     id: elem + 'TableId',
                     cols: cols,
-                    done:function(res){
-
-                    $('td').each(function(index,element){
-                        $(element).attr('title',$(element).text());
-                    });
+                    done:function(res,curr,count){
+                        if (done != '')  done(res,curr,count);
                 }
                 };
             }
-            if (skin != '') data.skin = skin;
             if (size != '') data.size = size;
             if (size == 'lg') data.limit = 10;
             if (!isTool) data.height = "full-20";

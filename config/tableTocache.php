@@ -33,5 +33,11 @@ return [
     'Ulevel'=>[
         'Ulevel',
     ],
+    'Channel'=>[
+        'Channel',
+    ],
+    'ChannelGroup'=>[
+        'ChannelGroup',
+    ],
 
 ];

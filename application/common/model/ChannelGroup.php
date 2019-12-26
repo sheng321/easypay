@@ -23,7 +23,7 @@ class ChannelGroup extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+        'is_open'=> false,
         'ttl'=> 3360 ,
         'key'=> "String:table:ChannelGroup:id:{id}:title:{title}",
         'keyArr'=> ['id','title'],
@@ -45,11 +45,11 @@ class ChannelGroup extends ModelService {
         $where = search($search,$searchField,$where);
 
 
-        $field = ['id','update_at','remark','title','status','sort','verson','p_id','mode','is_true'];
+        $field = ['id','update_at','remark','title','status','sort','verson','p_id','mode','is_true','c_rate','cli'];
 
         $count = $this->where($where)->count();
 
-        $data = $this->where($where)->field($field)->page($page, $limit)->order(['sort'=>'desc'])->select()->toArray();
+        $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc'])->select()->toArray();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
         //产品列表
@@ -111,6 +111,60 @@ class ChannelGroup extends ModelService {
 
 
 
+
+    /**
+     * 代理分组获取列表信息
+     * @param int $page  当前页
+     * @param int $limit 每页显示数量
+     * @return array
+     */
+    public function bList($page = 1, $limit = 10, $search = []) {
+        $where = [
+            ['cli','=',1]
+        ];
+
+        //搜索条件
+        $searchField['eq'] = ['status'];
+        $searchField['like'] = ['remark','title'];
+
+        $where = search($search,$searchField,$where);
+
+        $field = ['id','remark','title','status','verson','p_id','is_true','c_rate','cli'];
+
+        $count = $this->where($where)->count();
+
+        $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc'])->select()->toArray();
+        empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+        //产品列表
+        $product = \app\common\model\PayProduct::idArr();
+        $code = \app\common\model\PayProduct::idCode();
+
+        foreach ($data as $k => $v){
+            $data[$k]['product'] = $product[$v['p_id']];
+            $data[$k]['code'] = $code[$v['p_id']];
+
+        }
+
+        $info = [
+            'limit'        => $limit,
+            'page_current' => $page,
+            'page_sum'     => ceil($count / $limit),
+        ];
+        $list = [
+            'code'  => 0,
+            'msg'   => $msg,
+            'count' => $count,
+            'info'  => $info,
+            'data'  => $data,
+        ];
+
+        return $list;
+    }
+
+
+
+
     /**
      * 商户获取通道分组列表信息
      * @param int $page  当前页
@@ -166,8 +220,6 @@ class ChannelGroup extends ModelService {
     }
 
 
-
-
     /**
      * ID与支付名称数组
      * @param array $modules
@@ -184,17 +236,18 @@ class ChannelGroup extends ModelService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * ID与成本费率和运营费率
+     * @param array $modules
+     */
+    public static function idRate(){
+        \think\facade\Cache::remember('ChannelGroupidRate', function () {
+            $data = self::column('id,c_rate,status','id');
+            \think\facade\Cache::tag('ChannelGroup')->set('ChannelGroupidRate',$data,60);
+            return \think\facade\Cache::get('ChannelGroupidRate');
+        });
+        return \think\facade\Cache::get('ChannelGroupidRate');
+    }
 
 
 

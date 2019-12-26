@@ -77,6 +77,29 @@
     <!--表单模板绑定--结束-->
 
     <!--表单操作栏--开始-->
+
+    <script type="text/html" id="group">
+
+        {{# if (d.group_title == '未分组') { }}
+        <a class="layui-btn layui-btn-xs layui-btn-danger "     value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择通道分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
+        {{# } else { }}
+        <a class="layui-btn layui-btn-xs" style="background-color: #7EC0EE"    value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择通道分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
+        {{# } }}
+
+    </script>
+
+
+
+
+
+    <script type="text/html" id="product">
+
+        {if auth("$thisClass/product")}
+        <a class="layui-btn layui-btn-xs " style="background-color: #00b7ee;"     data-open='{:url("$thisClass/product")}?uid={{d.uid}}' data-title="商户号：{{d.uid}}-支付产品与费率">支付产品与费率</a>
+        {/if}
+    </script>
+
+
     <script type="text/html" id="currentTableBar">
 
         {if auth("$thisClass/add_staff")}
@@ -180,7 +203,7 @@
                 };
             }
 
-            if (skin != '') data.skin = skin;
+           // if (skin != '') data.skin = skin;
             if (size != '') data.size = size;
             if (size == 'lg') data.limit = 10;
             if (!isTool) data.height = "full-40";
@@ -287,85 +310,37 @@
 
 
         function merge(res) {
-            //初始化分割点
-            var indexPoint = [0];
+
             var data = res.data;
             var mergeIndex = 0;//定位需要添加合并属性的行数
             var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-            //列名集合["orderNumber","reagentName","chineseVulgo","component","specifications","componentShelf","remarks"];
-            /**
-             * 执行第一列，已序号分组为准，产生分割点并保存
-             */
-            var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
-            for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
-                var tdCurArr = trArr.eq(i).find("td").eq(0);//获取当前行的当前列
-                var tdPreArr = trArr.eq(mergeIndex).find("td").eq(0);//获取相同列的第一列
-                // console.log(k);
-                if (data[i].orderNumber === data[i - 1].orderNumber) { //后一行的值与前一行的值做比较，相同就需要合并
-                    mark += 1;
-                    //相同列的第一列增加rowspan属性
-                    tdPreArr.each(function () {
-                        $(this).attr("rowspan", mark);
-                    });
-                    //当前行隐藏
-                    tdCurArr.each(function () {
-                        $(this).css("display", "none");
-                    });
-                }else {
-                    //保存分割点
-                    indexPoint.push(i)
-                    mergeIndex = i;
-                    mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
-                }
-            }
-            //补全最后一个分割点
-            indexPoint.push(res.data.length)
-            // console.log("合并索引点集合：",indexPoint)
-//依据拿到的分割点，对其他6列进行合并处理
-            for(var i = 0;i<indexPoint.length;i++){
-                var startIndex=0;
-                if(i!=0){
-                    startIndex = indexPoint[i-1];
-                }
-                for(var j=startIndex;j<indexPoint[i];j++){
-                    //以第一列产生的区域分割点为基准，执行后面6列合并逻辑
-                    mergeSomeRows(1,startIndex,indexPoint[i],trArr,data,'uid');
-                    mergeSomeRows(2,startIndex,indexPoint[i],trArr,data,'group_title');
-                }
-            }
-        }
+            var columsName = ['uid','group_title','uid'];//需要合并的列名称
+            var columsIndex = [1,2,3];//需要合并的列索引值
 
+            for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+                var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+                for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                    var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                    var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
 
-        /**
-         *
-         * @param colIndex:table中列索引
-         * @param startIndex：合并单元格起始索引
-         * @param endIndex：合并单元格结束索引
-         * @param trArr：单列单元格元素集合
-         * @param data：后端返回数据集合
-         * @param colName：当前列字段名
-         */
-        function mergeSomeRows(colIndex,startIndex,endIndex,trArr,data,colName){
-            var mark = 1;
-            for(var j=startIndex+1;j<endIndex;j++){
-                ++mark;
-                var tdCurArr = trArr.eq(j).find("td").eq(colIndex);//获取当前行的当前列
-                var tdPreArr = trArr.eq(startIndex).find("td").eq(colIndex);//获取相同列的第一列
-                if (data[j][colName] === data[j - 1][colName]) { //后一行的值与前一行的值做比较，相同就需要合并
-                    //相同列的第一列增加rowspan属性
-                    tdPreArr.each(function () {
-                        $(this).attr("rowspan", mark);
-                    });
-                    //当前行隐藏
-                    tdCurArr.each(function () {
-                        $(this).css("display", "none");
-                    });
-                }else {
-                    mark=1;
-                    startIndex=j;
+                    if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                        mark += 1;
+                        //相同列的第一列增加rowspan属性
+                        tdPreArr.each(function () {
+                            $(this).attr("rowspan", mark);
+                        });
+                        //当前行隐藏
+                        tdCurArr.each(function () {
+                            $(this).css("display", "none");
+                        });
+                    }else {
+                        mergeIndex = i;
+                        mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                    }
                 }
+                mergeIndex = 0;
+                mark = 1;
             }
-
         }
 
 
@@ -376,14 +351,13 @@
         $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
             {type: "checkbox", fixed: "left", width: 50},
             {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
-            {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
+            {field: 'group_title', title: '用户分组', minWidth: 20,  align: "center", templet: '#group'},
+            {field: 'uid', title: '支付产品', minWidth: 100,  align: "center", templet: '#product'},
             {field: 'username', title: '用户名', minWidth: 80, align: "center"},
             {field: 'nickname', title: '昵称',  minWidth: 80, align: "center"},
 
             {field: 'remark', title: '备注',  minWidth: 80, edit: 'text', align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
             {field: 'auth_title', title: '权限配置',  minWidth: 80, align: "center"},
-
-            {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
 
             /**{if auth("$thisClass/single")}**/
             {field: 'is_single', title: '单点登入', minWidth: 20, templet: '#checkSingle', unresize: true, align: "center"},
@@ -397,7 +371,7 @@
             /**{/if}**/
 
             /**{if auth("$thisClass/edit_password") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
-            {title: '操作', minWidth: 200, templet: '#currentTableBar', align: "center"},
+            {title: '操作', minWidth: 200, templet: '#currentTableBar', align: "center", unresize: true},
             /**{/if}**/
             {field: 'create_by_username', title: '创建人', align: 'center'},
             {field: 'phone', title: '用户手机', align: 'center'},

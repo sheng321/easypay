@@ -23,7 +23,7 @@ class Channel extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+        'is_open'=> false,
         'ttl'=> 3360 ,
         'key'=> "String:table:Channel:id:{id}:title:{title}",
         'keyArr'=> ['id','title'],
@@ -46,7 +46,7 @@ class Channel extends ModelService {
         $where = search($search,$searchField,$where);
 
 
-        $field = ['id','pid','p_id','visit','update_at','remark','title','status','sort','verson','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','limit_money'];
+        $field = ['id','pid','p_id','visit','update_at','remark','title','status','sort','verson','code','c_rate','s_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','limit_money'];
 
         $count = $this->where($where)->count();
 
@@ -98,7 +98,7 @@ class Channel extends ModelService {
 
        if(!empty($search['p_id'])) $where[] = ['p_id','=',json_encode([$search['p_id']])];
 
-        $field = ['id','pid','p_id','visit','update_at','remark','title','status','sort','verson','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','limit_money'];
+        $field = ['id','pid','p_id','visit','update_at','remark','title','status','sort','verson','code','c_rate','s_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','limit_money'];
 
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['sort'=>'desc','update_at'=>'desc'])->select();
@@ -149,6 +149,20 @@ class Channel extends ModelService {
         ];
 
         return $list;
+    }
+
+
+    /**
+     * ID与成本费率和运营费率
+     * @param array $modules
+     */
+    public static function idRate(){
+        \think\facade\Cache::remember('ChannelIdRate', function () {
+            $data = self::column('id,c_rate,s_rate','id');
+            \think\facade\Cache::tag('Channel')->set('ChannelIdRate',$data,60);
+            return \think\facade\Cache::get('ChannelIdRate');
+        });
+        return \think\facade\Cache::get('ChannelIdRate');
     }
 
 

@@ -84,7 +84,7 @@
         <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
     </script>
     <script type="text/html" id="checkCli">
-        <input type="checkbox"    verson = "{{d.verson + 1}}"  name="{{d.id}}"   value="{{d.cli}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="modifyCli" {{ d.cli== 1 ? 'checked' : '' }}>
+        <input type="checkbox"    verson = "{{d.verson + 1}}"  name="{{d.id}}"   value="{{d.cli}}" lay-skin="switch" lay-text="隐藏|显示" lay-filter="modifyCli" {{ d.cli== 1 ? 'checked' : '' }}>
     </script>
     <!--表单模板绑定--结束-->
 
@@ -112,17 +112,20 @@
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 30,},
+        {field: 'id', title: 'ID', minWidth: 10, align: 'center',sort:true},
         {field: 'sort', title: '排序', width: 80, edit: 'text', align: "center", sort: true},
+
         {field: 'title', title: '支付产品名称', maxWidth: 100, align: 'center', sort: true},
         {field: 'code', title: '编码', maxWidth: 50, align: 'center'},
         {field: 'p_rate', title: '费率', maxWidth: 50, align: 'center'},
 
-        {field: 'min_amount', title: '限额', maxWidth: 200, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;'},
+        {field: 'min_amount', title: '限额', maxWidth: 200, align: "center", templet: '#limit', style: 'background-color: #7CCD7C; color: #fff;'},
         {field: 'remark', title: '备注信息', edit: 'text', maxWidth: 100, align: "center", style: 'background-color: #009688; color: #fff;', sort: true},
 
-        {field: 'update_at', title: '最新更新时间', align: 'center', sort: true},
+
         {field: 'cli', title: '客户端', width: 100, templet: '#checkCli', unresize: true, align: "center"},
         {field: 'status', title: '启用状态', width: 100, templet: '#checkStatus', unresize: true, align: "center"},
+        {field: 'update_at', title: '最新更新时间', align: 'center', sort: true},
         /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
         {title: '操作', maxWidth: 110, templet: '#currentTableBar', fixed: "right", align: "center"},
         /**{/if}**/

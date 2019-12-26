@@ -95,7 +95,7 @@ class Product  extends AdminController
 
         //判断菜单状态
         $status = $this->model->where('id', $get['id'])->value('cli');
-        $status == 1 ? list($msg, $status) = ['客户端隐藏成功', $status = 0] : list($msg, $status) = ['客户端显示成功', $status = 1];
+        $status == 1 ? list($msg, $status) = ['客户端显示成功', $status = 0] : list($msg, $status) = ['客户端隐藏成功', $status = 1];
 
         //执行更新操作操作
         $update =  $this->model->__edit(['cli' => $status,'id' => $get['id']],$msg);

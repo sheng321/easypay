@@ -17,24 +17,18 @@ class Ulevel extends ModelService {
      */
     protected $table = 'cm_member_level';
 
-
-
     /**
-     * 获取权限组
-     * @param int $type 0 后台   1 商户端
-     * @return array|\PDOStatement|string|\think\Collection
+     * redis
+     * key   字段值要唯一
+     * @var array
      */
-    public function getList($type = 0) {
-        $where_auth = [
-            ['status', '=', 1],
-            ['type', '=', $type],
-        ];
-        $order_auth = [
-            'id' => 'asc',
-        ];
-        $auth = $this->where($where_auth)->field('id, title, status')->order($order_auth)->select();
-        return $auth;
-    }
+    protected $redis = [
+        'is_open'=> true,
+        'ttl'=> 3360 ,
+        'key'=> "String:table:Ulevel:uid:{uid}:id:{id}",
+        'keyArr'=> ['id','uid'],
+    ];
+
 
     /**
      * 用户分组列表
@@ -47,20 +41,25 @@ class Ulevel extends ModelService {
     public function aList($page = 1, $limit = 10, $search = [], $where = []) {
         
         //搜索条件
-
+        $searchField['eq'] = ['type'];
         $searchField['like'] = ['title'];
 
         $where = search($search,$searchField,$where);
 
-        $field = 'id, title, remark, channel_id,create_at';
+        $field = 'id, title, remark, channel_id,create_at,type1,type,uid';
         $count = $this->where($where)->count();
-        $data = $this->where($where)->field($field)->page($page, $limit)->order(['create_at desc'])->select()->each(function ($item, $key) {
+        $data = $this->where($where)->field($field)->page($page, $limit)->order(['uid desc','create_at desc'])->select()->each(function ($item, $key) {
             $arr = json_decode($item["channel_id"],true);
             $num =  count($arr,COUNT_RECURSIVE); //通道分组个数
             if($num > 1){
                 $num =  $num - count($arr);
             }
             $item['mode'] = $num;
+
+            //费率
+           $count =  \app\common\model\SysRate::where(['group_id'=>$item['id']])->count();
+           $item['rate_count'] = $count;
+
         });
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
         $info = [
@@ -77,6 +76,32 @@ class Ulevel extends ModelService {
         ];
         return $list;
     }
+
+    /**
+     * 获取所属支付通道分组的最大费率
+     * @param ID    用户分组ID
+     * @param $p_id 支付产品
+     * @return mixed
+     */
+    public static function getMaxRate($id,$p_id) {
+
+        \think\facade\Cache::remember('getMaxRate', function (){
+            $channel_id = self::column('channel_id,id','id');
+            foreach ($channel_id as $k => $v){
+                $data[$k] = json_decode($v,true);
+                foreach ($data[$k] as $k1 => $v1){
+                    $data[$k][$k1] = \app\common\model\ChannelGroup::where(['id','in',$v1])->max('c_rate');
+                }
+            }
+            \think\facade\Cache::tag('Ulevel')->set('getMaxRate',$data,3600);
+            return \think\facade\Cache::get('getMaxRate');
+        });
+        $getMaxRate = \think\facade\Cache::get('getMaxRate');
+        $max = isset($getMaxRate[$id][$p_id])?$getMaxRate[$id][$p_id]:0;
+        return $max;
+    }
+
+
 
 
     /**

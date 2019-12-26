@@ -72,6 +72,8 @@ class Common extends Validate {
     public function sceneEdit_field()
     {
         return $this->only(['id','field','value'])
+            ->append('field', 'in:title,remark,sort')
+            ->append('value', 'chsDash')
             ->remove('value', 'require');
     }
 
@@ -81,6 +83,7 @@ class Common extends Validate {
         return $this->only(['id','field','value'])
             ->remove('value', 'require')
             ->append('value', 'float')
+            ->append('field', 'in:p_rate,rate,c_rate,s_rate')
             ->append('value', 'checkRate');
     }
 

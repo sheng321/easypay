@@ -21,6 +21,8 @@ class Level extends Validate {
         'node_id' => 'require',
         'field'   => 'require',
         'value'   => 'require|max:30',
+        'type1'   => 'require|in:0,1',
+        'uid'   => 'require|number|checkUid',
 
     ];
 
@@ -44,7 +46,9 @@ class Level extends Validate {
      */
     protected $scene = [
         //添加用户分组
-        'add'        => ['title','remark'],
+        'add'        => ['title','remark','type1'],
+        'add_agent'        => ['title','remark','type1','uid'],
+        'edit_agent'        => ['id','title','remark','type1','uid'],
 
         //授权
         'authorize'  => ['auth_id, node_id'],
@@ -64,7 +68,7 @@ class Level extends Validate {
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id', 'remark', 'title'])
+        return $this->only(['id', 'remark', 'title','type1'])
             ->remove('id', 'checkAuthId');
     }
 
@@ -79,8 +83,16 @@ class Level extends Validate {
      * @throws \think\exception\DbException
      */
     protected function checkAuthId($value, $rule, $data = []) {
-        $user = \app\common\model\SysAuth::where(['id' => $value])->find();
-        if (empty($user)) return '暂无角色数据，请稍后再试！';
+        $user = \app\common\model\Ulevel::where(['id' => $value])->find();
+        if (empty($user)) return '暂无数据，请稍后再试！';
         return true;
     }
+
+    protected function checkUid($value, $rule, $data = []) {
+        $user = \app\common\model\Uprofile::where(['uid' => $value])->find();
+        if (empty($user)) return '暂无数据，请稍后再试！';
+        if ($user['who'] != 2) return '该商户号不是代理，请稍后再试！';
+        return true;
+    }
+
 }

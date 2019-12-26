@@ -122,13 +122,46 @@ class Channel  extends AdminController
 
         //判断菜单状态
         $status = $this->model->where('id', $get['id'])->value('visit');
-        $status == 1 ? list($msg, $status) = ['启用成功', $status = 0] : list($msg, $status) = ['禁用成功', $status = 1];
+
+        if($status == 0 ||$status == 2 ){
+            //这个时候关闭手机
+            list($msg, $status) = ['禁用成功', $status = 1];
+        }else{
+            list($msg, $status) = ['启用成功', $status = 0];
+        }
+
 
         //执行更新操作操作
         $update =  $this->model->__edit(['visit' => $status,'id' => $get['id']],$msg);
 
         return $update;
     }
+
+    public function pc() {
+        $get = $this->request->get();
+
+        //验证数据
+        $validate = $this->validate($get, 'app\common\validate\Channel.visit');
+        if (true !== $validate) return __error($validate);
+
+        //判断菜单状态
+        $status = $this->model->where('id', $get['id'])->value('visit');
+
+        if($status == 0 ||$status == 1 ){
+            //这个时候关闭pc
+            list($msg, $status) = ['禁用成功', $status = 2];
+        }else{
+            list($msg, $status) = ['启用成功', $status = 0];
+        }
+
+        //执行更新操作操作
+        $update =  $this->model->__edit(['visit' => $status,'id' => $get['id']],$msg);
+
+        return $update;
+    }
+
+
+
 
 
     public function top() {

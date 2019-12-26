@@ -63,28 +63,28 @@
 
     <!--表单模板绑定--开始-->
     <script type="text/html" id="limit">
+        {{# if (d.pid != '0') { }}
+            {{#  if(d.max_amount !== ''){ }}
+            <span >最低： {{d.min_amount}}最高：{{d.max_amount}}</span>
+            {{#  } }}
 
-        {{#  if(d.max_amount !== ''){ }}
-        <span >最低： {{d.min_amount}}最高：{{d.max_amount}}</span>
+            {{#  if(d.f_amount !== ''){ }}
+            <span > 固定金额：{{d.f_amount}}</span>
+            {{#  } }}
+
+            {{#  if(d.ex_amount !== ''){ }}
+            <span >排除金额：{{d.ex_amount}}</span>
+            {{#  } }}
+
+            {{#  if(d.f_multiple !== ''){ }}
+            <span >固定倍数：{{d.f_multiple}}</span>
+            {{#  } }}
+
+
+            {{#  if(d.f_num !== ''){ }}
+            <span class="layui-btn  layui-btn-warm  layui-btn-xs">固定尾数：{{d.f_num}}</span>
+            {{#  } }}
         {{#  } }}
-
-        {{#  if(d.f_amount !== ''){ }}
-        <span > 固定金额：{{d.f_amount}}</span>
-        {{#  } }}
-
-        {{#  if(d.ex_amount !== ''){ }}
-        <span >排除金额：{{d.ex_amount}}</span>
-        {{#  } }}
-
-        {{#  if(d.f_multiple !== ''){ }}
-        <span >固定倍数：{{d.f_multiple}}</span>
-        {{#  } }}
-
-
-        {{#  if(d.f_num !== ''){ }}
-        <span class="layui-btn  layui-btn-warm  layui-btn-xs">固定尾数：{{d.f_num}}</span>
-        {{#  } }}
-
     </script>
 
 
@@ -93,11 +93,31 @@
     </script>
 
 
+    <script type="text/html" id="c_rate">
+
+        {{# if (d.pid != '0') { }}
+        {{d.c_rate}}
+        {{# } }}
+
+    </script>
+    <script type="text/html" id="s_rate">
+        {{# if (d.pid != '0') { }}
+           {{d.s_rate}}
+        {{# } }}
+    </script>
+
+
     <script type="text/html" id="checkMobile">
 
         {{# if (d.pid != '0') { }}
 
         <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.visit}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyMobile" {{ d.visit == 1 ? '' : 'checked' }}>
+
+        {{# } }}
+    </script>
+    <script type="text/html" id="checkPC">
+        {{# if (d.pid != '0') { }}
+        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.visit}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyPC" {{ d.visit == 2 ? '' : 'checked' }}>
 
         {{# } }}
     </script>
@@ -122,7 +142,7 @@
         {{# if (d.pid == '0') { }}
         <a class="layui-btn layui-btn-normal layui-btn-xs" value="{{d.id}}" data-open='{:url("$thisClass/product")}?pid={{d.id}}' data-title="添加支付产品">添加支付产品</a>
         {{# } else { }}
-        <a class="layui-btn layui-btn-xs color-99admin-gray" value="{{d.id}}">添加产品</a>
+     <!--   <a class="layui-btn layui-btn-xs color-99admin-gray" value="{{d.id}}">添加产品</a>-->
         {{# } }}
 
         {/if}
@@ -133,9 +153,9 @@
         {if auth("$thisClass/edit")}
 
             {{# if (d.pid == '0') { }}
-            <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改信息">编辑</a>
+            <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改信息">编辑通道</a>
             {{# } else { }}
-            <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/product_edit")}?id={{d.id}}' data-title="修改信息">编辑</a>
+            <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/product_edit")}?id={{d.id}}' data-title="修改信息">编辑产品</a>
             {{# } }}
 
         {/if}
@@ -272,7 +292,7 @@
                 };
             }
 
-            if (skin != '') data.skin = skin;
+          //  if (skin != '') data.skin = skin;
             if (size != '') data.size = size;
             if (size == 'lg') data.limit = 10;
             if (!isTool) data.height = "full-40";
@@ -335,18 +355,19 @@
         $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
 
             {type: "checkbox", fixed: "left", width: 30,},
-            //{field: 'sort', title: '排序', width: 80, edit: 'text', align: "center", sort: true},
-            {field: 'top', title: '置顶', width: 60, templet: '#checkTop',  align: "center"},
+            {field: 'id', title: 'ID', minWidth: 10, align: 'center',sort:true},
+            {field: 'top', title: '置顶', minWidth: 40, templet: '#checkTop',  align: "center"},
             {field: 'title', title: '通道名称', minWidth: 200, align: 'center'},
             {field: 'code', title: '编码', maxWidth: 50, align: 'center'},
-            {field: 'c_rate', title: '成本费率', maxWidth: 50, align: 'center'},
-            {field: 'c_rate', title: '对外费率', maxWidth: 50, align: 'center'},
+            {field: 'c_rate', title: '成本费率', maxWidth: 50, align: 'center', templet: '#c_rate'},
+            {field: 's_rate', title: '对外费率', maxWidth: 50, align: 'center', templet: '#s_rate'},
 
-            {field: 'min_amount', title: '单笔限额',  minWidth: 100, align: "center", templet: '#limit',style:'background-color: #009688; color: #fff;'},
+            {field: 'min_amount', title: '单笔限额',  minWidth: 100, align: "center", templet: '#limit',style:'background-color: #6CA6CD; color: #fff;'},
             {field: 'limit_money', title: '当日限额',  minWidth: 100, align: "center", },
             {field: 'remark', title: '备注信息', edit: 'text', maxWidth: 100, align: "center", style: 'background-color: #009688; color: #fff;'},
 
             {field: 'status', title: '移动端', width: 80, templet: '#checkMobile', unresize: true, align: "center"},
+            {field: 'status', title: 'PC端', width: 80, templet: '#checkPC', unresize: true, align: "center"},
             {field: 'status', title: '启用状态', width: 80, templet: '#checkStatus', unresize: true, align: "center"},
 
             /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
@@ -374,6 +395,7 @@
 
         $.form.switch('modifyTop', '{:url("$thisClass/top")}');
         $.form.switch('modifyMobile', '{:url("$thisClass/mobile")}');
+        $.form.switch('modifyPC', '{:url("$thisClass/pc")}');
 
     });
 

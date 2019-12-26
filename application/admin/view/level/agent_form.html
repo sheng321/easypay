@@ -12,6 +12,13 @@
     </div>
 
     <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">代理商户号</label>
+        <div class="layui-input-block">
+            <input type="text" name="uid" class="layui-input" lay-verify="required" value="{$auth.uid|default=''}" placeholder="请输入代理商户号">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">类别</label>
         <div class="layui-input-block">
             <input type="radio" name="type1" value="0" title="商户分组"    {eq name='$auth.type1|default=false' value='0' }checked="checked" {/eq}      ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>商户分组</div></div>
@@ -47,7 +54,7 @@
      * 添加、编辑
      */
 
-    $.form.on('submitBtn', "{if empty($auth)}{:url('@admin/level/add')}{else/}{:url('@admin/level/edit')}{/if}", function (res) {
+    $.form.on('submitBtn', "{if empty($auth)}{:url('@admin/level/add_agent')}{else/}{:url('@admin/level/edit')}{/if}", function (res) {
         $.msg.success(res.msg, function () {
             $.tool.reload('open');
         });

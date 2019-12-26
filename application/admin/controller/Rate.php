@@ -10,7 +10,7 @@ use app\common\controller\AdminController;
  * Class Level
  * @package app\admin\controller
  */
-class Rate extends AdminController {
+class Rate extends AdminController{
 
     /**
      * Rate模型对象
@@ -28,7 +28,7 @@ class Rate extends AdminController {
     }
 
     /**
-     * 费率列表
+     * 平台商户分组费率列表
      */
     public function index(){
         if (!$this->request->isPost()) {
@@ -39,33 +39,135 @@ class Rate extends AdminController {
                 $limit = $this->request->get('limit', 10);
                 $search = (array)$this->request->get('search', []);
                 $search['type'] = 0;
-
+                $search['uid'] = 0;
+                $search['channel_id'] = 0;
                 if(!empty($search['title'])){
                     $uid =  model('app\common\model\Ulevel')->where([['title','like','%'.$search['title'].'%']])->value('id');
-                    if(!empty($uid)) $search['uid'] = $uid;
+                    if(!empty($uid)) $search['group_id'] = $uid;
                     unset($search['title']);
                 }
-
                 return json($this->model->aList($page, $limit, $search));
             }
 
             //基础数据
             $basic_data = [
-                'title'  => '系统费率列表',
+                'title'  => '平台商户分组费率列表',
                 'data'   => '',
                 'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
             ];
 
             return $this->fetch('', $basic_data);
         } else {
-            $post = $this->request->post();
-
+            $post = $this->request->only('id,field,value');
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
             return $this->model->editField($post);
+        }
+    }
+
+    //代理的商户分组费率
+    public function agent_user(){
+
+        if (!$this->request->isPost()) {
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                $search['type'] = 1;
+                $search['channel_id'] = 0;
+                if(!empty($search['title'])){
+                    $uid =  model('app\common\model\Ulevel')->where([['title','like','%'.$search['title'].'%']])->value('id');
+                    if(!empty($uid)) $search['group_id'] = $uid;
+                    unset($search['title']);
+                }
+                return json($this->model->aList($page, $limit, $search));
+            }
+
+            //基础数据
+            $basic_data = [
+                'title'  => '平台商户分组费率列表',
+                'data'   => '',
+                'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
+            ];
+
+            return $this->fetch('', $basic_data);
+        }
+    }
+
+
+    /**
+     * 平台代理分组费率列表
+     */
+    public function agent(){
+        if (!$this->request->isPost()) {
+
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                $search['type'] = 0;
+                $search['uid'] = 0;
+                $search['p_id'] = 0;
+                if(!empty($search['title'])){
+                    $uid =  model('app\common\model\Ulevel')->where([['title','like','%'.$search['title'].'%']])->value('id');
+                    if(!empty($uid)) $search['group_id'] = $uid;
+                    unset($search['title']);
+                }
+                return json($this->model->aList($page, $limit, $search));
+            }
+
+            //基础数据
+            $basic_data = [
+                'title'  => '平台代理分组费率列表',
+                'data'   => '',
+                'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->only('id,field,value');
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
+            if (true !== $validate) return __error($validate);
+
+            //保存数据,返回结果
+            return $this->model->editField($post);
+        }
+    }
+
+
+    //代理的代理分组
+    public function agent_agent(){
+        if (!$this->request->isPost()) {
+
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                $search['type'] = 1;
+                $search['p_id'] = 0;
+                if(!empty($search['title'])){
+                    $uid =  model('app\common\model\Ulevel')->where([['title','like','%'.$search['title'].'%']])->value('id');
+                    if(!empty($uid)) $search['group_id'] = $uid;
+                    unset($search['title']);
+                }
+                return json($this->model->aList($page, $limit, $search));
+            }
+
+            //基础数据
+            $basic_data = [
+                'title'  => '平台代理分组费率列表',
+                'data'   => '',
+                'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
+            ];
+
+            return $this->fetch('', $basic_data);
         }
     }
 
@@ -81,14 +183,13 @@ class Rate extends AdminController {
                 $page = $this->request->get('page', 1);
                 $limit = $this->request->get('limit', 10);
                 $search = (array)$this->request->get('search', []);
-                $search['type'] = 1;
-
+                $search['type'] = 2;
                 if(!empty($search['title'])){
                     $search['uid'] = $search['title'];
                     unset($search['title']);
                 }
 
-                return json($this->model->aList($page, $limit, $search));
+                return json($this->model->uList($page, $limit, $search));
             }
 
             //基础数据
@@ -100,8 +201,7 @@ class Rate extends AdminController {
 
             return $this->fetch('', $basic_data);
         } else {
-            $post = $this->request->post();
-
+            $post = $this->request->only('id,field,value');
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
             if (true !== $validate) return __error($validate);
@@ -134,21 +234,24 @@ class Rate extends AdminController {
             if (true !== $validate) return __error($validate);
 
 
-            $p_id = \app\common\model\PayProduct::column('id');
+            $p_id = \app\common\model\PayProduct::where(['cli'=>0])->column('id');
             $p_id1 = \app\common\model\SysRate::where([
                 [ 'uid','=',$post['uid']],
-                [ 'type','=',1]
+                [ 'type','=',2]
             ])->column('p_id');
 
             $intersection = array_diff($p_id,$p_id1);
-
             if(empty($intersection))  return __error("已添加，请勿重复操作");
+            //交集
+            if ($intersection !== array_intersect($intersection, $p_id)) return __error("请删除不存在的支付产品数据！");
+
 
             $data = [];
             foreach ($intersection as $k => $val){
                 $data1['p_id'] = $val;
-                $data1['uid'] =   $post['uid'];
-                $data1['type'] =  1;
+                $data1['uid'] =  $post['uid'];
+                $data1['type'] =  2;
+                $data1['rate'] = \app\common\service\RateService::getMemRate($post['uid'],$val);
                 $data[] = $data1;
             }
 

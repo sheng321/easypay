@@ -287,7 +287,7 @@ class ModelService extends Model {
         $res =  $quickGet->first();
 
         //调试模式 先关闭
-     //  if(!empty($res))  return json_decode($res,true);
+      if(!empty($res))  return json_decode($res,true);
 
         //查询数据库
         $res = $data::where($search)->find();
@@ -405,7 +405,6 @@ class ModelService extends Model {
 
         //使用事物保存数据
         $model->startTrans();
-
         $del = $model::destroy($get['id']);
         if (!($del >= 1) ) {
             $model->rollback();

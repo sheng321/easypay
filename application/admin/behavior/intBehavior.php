@@ -13,11 +13,9 @@ use think\facade\Request;
  */
 class intBehavior extends Controller
 {
-    public function run()
-    {
+    public function run(){
+
         Policy();
-
-
       $this->check_param();
       $this->command();
     }

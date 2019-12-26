@@ -3,6 +3,8 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\SysRate;
+use app\common\model\Uprofile;
 
 
 class Member extends AdminController {
@@ -20,6 +22,45 @@ class Member extends AdminController {
         parent::__construct();
         $this->model = model('app\common\model\Umember');
     }
+
+
+    /**
+     * 选择用户分组
+     * @return mixed|\think\response\Json
+     */
+    public function group(){
+        if (!$this->request->isPost()) {
+            $uid = $this->request->get('uid/d',0);
+            $user = \app\common\model\Uprofile::where(['uid'=>$uid])->find();
+
+            $agent = $this->model->where([
+                ['who','=','2'],
+                ['status','=','1']
+            ])->field('uid,id,who')->select()->toArray();
+
+            $type = $user['who'] == 2 ?1:0; //区分获取什么分组
+            $group =   \app\common\model\Ulevel::where(['uid'=>$user['pid'],'type1'=>$type])->field('id,title')->select()->toArray();
+
+            //基础数据
+            $basic_data = [
+                'title' => '选择用户分组',
+                'user'  => $user,
+                'group'  => $group,//用户分组
+                'agent'  => $agent,//所有的代理
+            ];
+            $this->assign($basic_data);
+            return $this->fetch('', $basic_data);
+        }else{
+            $profile['id'] = $this->request->post('id/d',0);
+            $profile['group_id'] = $this->request->post('group_id/d',0);
+
+            $res = model('\app\common\model\Uprofile')->__edit($profile);
+           return $res;
+        }
+    }
+
+
+
 
 
     /**
@@ -48,6 +89,340 @@ class Member extends AdminController {
             return $this->fetch('', $basic_data);
         }
     }
+
+
+    public function rate() {
+
+        $group_id = (int)$this->request->get('id',0);
+        $model = model('app\common\model\SysRate');
+        $SysRate = $model->where(['group_id'=>$group_id])->select()->toArray();
+
+        if (!$this->request->isPost()) {
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 100);
+                $search = (array)$this->request->get('search', []);
+                $result = model('app\common\model\PayProduct')->aList($page, $limit, $search);
+
+                foreach ($result['data'] as $k => $v){
+
+                    $result['data'][$k]['status1'] = 0;
+                    //支付产品是开启的 才给开启修改
+                    if($v['status'] == 1) $result['data'][$k]['status1'] = 1;
+
+                    foreach ($SysRate as $k1 => $v1){
+                        if($v1['p_id'] == $v['id']){
+                            $result['data'][$k]['p_rate'] = $v1['rate'];
+
+                            if($v['status'] == 1)  $result['data'][$k]['status'] = $v1['status'];
+                        }
+                    }
+                }
+
+
+                return json($result);
+            }
+
+            //基础数据
+            $basic_data = [
+                'title'  => '系统分组费率列表',
+                'data'   => '',
+                'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->only('id,field,value');
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
+            if (true !== $validate) return __error($validate);
+
+            $uid = $this->model->where(['id'=>$group_id])->value('uid');
+            $type = $this->model->where(['id'=>$group_id])->value('type');
+
+            $data = array();
+            if(empty($SysRate)){
+                //都不存在的情况
+                $PayProduct =   model('app\common\model\PayProduct')->field('id,p_rate')->select()->toArray();
+                foreach ($PayProduct as $k=>$val){
+                    $temp =  [];
+                    $temp['type'] =  $type;
+                    $temp['p_id'] =  $val['id'];
+                    $temp['group_id'] = $group_id;
+                    if($post['id'] == $val['id']){
+                        $temp['rate'] = $post['value'];
+                    }else{
+                        $temp['rate'] = $val['p_rate'];
+                    }
+                    if(!empty($uid)) $temp['uid'] = $uid;
+                    $data[]=$temp;
+                }
+            }else{
+
+                //单条不存在的情况
+                $id = $model->where(['group_id'=>$group_id,'p_id'=>$post['id']])->value('id');
+                $temp['p_id'] =  $post['id'];
+                $temp['group_id'] = $group_id;
+                $temp['rate'] = $post['value'];
+                $temp['type'] =  $type;
+                if(!empty($id)) $temp['id'] = $id;
+                if(!empty($uid)) $temp['uid'] = $uid;
+                $data[]=$temp;
+            }
+
+            $msg = '操作失败';
+            $res = 0;
+            if(!empty($data)) $res = $model->saveAll($data) &&   $msg = '操作成功'  ;
+
+            if($res >= 1){
+                return __success($msg);
+            }else{
+                return __error($msg);
+            }
+        }
+    }
+
+
+    //商户的支付产品
+    public function product(){
+        $uid = $this->request->get('uid/d','0');
+        $profile = Uprofile::quickGet(['uid'=>$uid]);
+
+        if(empty($profile) || $profile['who'] != 0 )  return msg_error('数据错误，请重试~');
+        if(empty($profile['group_id'])) return msg_error('数据错误，该商户未选着用户分组');
+
+
+        if (!$this->request->isPost()){
+            //ajax访问
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 100);
+                $search = (array)$this->request->get('search', []);
+                $result = model('app\common\model\PayProduct')->aList($page, $limit, $search);
+
+                foreach ($result['data'] as $k => $v){
+
+                    $result['data'][$k]['status1'] = 1;
+
+                    $rateStatus = \app\common\service\RateService::getMemStatus($uid,$v['id']); //当前用户的费率状态
+                    //当支付产品和通道分组关闭是不给修改
+                    if($rateStatus['type'] > 1 && $rateStatus['status'] == 0){
+                        $result['data'][$k]['status1'] = 0;
+                    }
+
+                    if($rateStatus['id'] == $v['id']){
+                        $result['data'][$k]['status'] = $rateStatus['status'];
+                        $result['data'][$k]['p_rate'] = $rateStatus['rate'];
+                    }
+
+                }
+
+                return json($result);
+            }
+
+            //基础数据
+            $basic_data = [
+                'title' => '商户支付产品费率列表',
+                'data' => '',
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->only('id,field,value');
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
+            if (true !== $validate) return __error($validate);
+
+            if($profile['pid'] > 0){
+                $rate1 = \app\common\service\RateService::getMemRate($profile['pid'],$post['id']); //当前用户分组的费率状态
+                if($rate1 > $post['value'] ){
+                    return __error("设置费率不能小于上级设定费率：".$rate1);
+                }
+            }
+
+
+            $model =  model('app\common\model\SysRate');
+            $rate['type'] = 2;
+            $rate['uid'] = $uid;
+            $rate['p_id'] = $post['id'];
+            $id =  $model->where($rate)->value('id');
+
+            $rate['rate'] = $post['value'];
+            $rate['status'] = 1;
+
+            if(!empty($id)){
+                $rate['id'] = $id;
+                $res = $model->__edit($rate);
+            }else{
+                $res = $model->__add($rate);
+            }
+
+            return $res;
+        }
+    }
+
+    //代理的支付通道分组
+    public function channel(){
+        $uid = $this->request->get('uid/d','0');
+        $profile = Uprofile::quickGet(['uid'=>$uid]);
+        if(empty($profile) || $profile['who'] != 2 )  return msg_error('数据错误，请重试~');
+        if(empty($profile['group_id'])) return msg_error('数据错误，该商户未选着用户分组');
+
+        if (!$this->request->isPost()){
+            //ajax访问
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 100);
+                $search = (array)$this->request->get('search', []);
+                $result = model('app\common\model\ChannelGroup')->bList($page, $limit, $search);
+
+                foreach ($result['data'] as $k => $v){
+
+                    $result['data'][$k]['status1'] = 1;
+
+                    $rateStatus = \app\common\service\RateService::getAgentStatus($uid,$v['id']); //当前用户的费率状态
+
+                    //当平台通道分组关闭  上级支付通道分组  是不给修改
+                    if($rateStatus['type'] > 1 && $rateStatus['status'] == 0){
+                        $result['data'][$k]['status1'] = 0;
+                    }
+
+                    if($rateStatus['id'] == $v['id']){
+                        $result['data'][$k]['status'] = $rateStatus['status'];
+                        $result['data'][$k]['c_rate'] = $rateStatus['rate'];
+                    }
+
+                }
+
+                return json($result);
+            }
+
+            //基础数据
+            $basic_data = [
+                'title' => '代理通道分组费率列表',
+                'data' => '',
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->only('id,field,value');
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
+            if (true !== $validate) return __error($validate);
+
+            if($profile['pid'] > 0){
+                $rate1 = \app\common\service\RateService::getAgentRate($profile['pid'],$post['id']); //当前用户分组的费率状态
+                if($rate1 > $post['value'] ){
+                    return __error("设置费率不能小于上级设定费率：".$rate1);
+                }
+            }
+
+
+
+            $model =  model('app\common\model\SysRate');
+            $rate['uid'] = empty($profile['pid'])?0:$profile['pid'];
+            $rate['p_id'] = 0;
+            $rate['type'] = empty($profile['pid'])?0:1; //是否代理分组 平台分组
+            $rate['channel_id'] = $post['id'];
+            $rate['group_id'] = $profile['group_id'];
+            $id =  $model->where($rate)->value('id');
+            if(!empty($id)) $rate['id'] = $id;
+            $rate['rate'] = $post['value'];
+            $rate['status'] = 1;
+
+            if(!empty($rate['id'])){
+                $res = $model->__edit($rate);
+            }else{
+                $res = $model->__add($rate);
+            }
+
+            return $res;
+        }
+    }
+
+
+    //修改代理费率状态
+    public function channelStatus() {
+        $channel_id = $this->request->get('id/d','0');//支付通道分组ID
+        $uid = $this->request->get('uid/d','0');
+        $profile = Uprofile::quickGet(['uid'=>$uid]);
+        if(empty($profile) || $profile['who'] != 2 )  return msg_error('数据错误，请重试~');
+        if(empty($profile['group_id']))  return msg_error('数据错误，该商户未选着用户分组');
+
+        $data['uid'] = empty($profile['pid'])?0:$profile['pid'];
+        $data['p_id'] = 0;
+        $data['type'] = empty($profile['pid'])?0:1; //是否代理分组 平台分组
+        $data['channel_id'] = $channel_id;
+        $data['group_id'] = $profile['group_id'];
+        $model =  model('app\common\model\SysRate');
+        //判断状态
+        $SysRate =  $model->quickGet($data);
+
+        if(!empty($SysRate)){
+            $data['status'] = $SysRate['status'];
+            $data['id'] = $SysRate['id'];
+        }else{
+            $data['rate'] = \app\common\service\RateService::getAgentRate($uid,$channel_id);
+            $data['status'] = 1;//默认开启
+        }
+
+        $data['status'] == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
+
+        $data['status'] = $status;
+        if(!empty($data['id'])){
+            $res = $model->__edit($data,$msg);
+        }else{
+            $res = $model->__add($data,$msg);
+        }
+
+        return $res;
+    }
+
+
+
+    /**
+     * 修改个人费率状态
+     * @return \think\response\Json
+     */
+    public function rateStatus() {
+        $p_id = $this->request->get('id/d','0');//支付产品
+        $uid = $this->request->get('uid/d','0');
+        $profile = Uprofile::quickGet(['uid'=>$uid]);
+        if(empty($profile) || $profile['who'] != 0 )  return msg_error('数据错误，请重试~');
+        if(empty($profile['group_id']))  return msg_error('数据错误，该商户未选着用户分组');
+
+        $data['uid'] = $uid;
+        $data['p_id'] = $p_id;
+        $data['type'] = 2;
+        $model =  model('app\common\model\SysRate');
+        //判断状态
+        $SysRate =  $model->where($data)->find();
+
+        if(!empty($SysRate)){
+            $data['status'] = $SysRate['status'];
+            $data['id'] = $SysRate['id'];
+        }else{
+            $data['status'] = 1;//默认开启
+            $data['rate'] = \app\common\service\RateService::getMemRate($uid,$p_id);
+        }
+
+        $data['status'] == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
+
+        $data['status'] = $status;
+        if(!empty($data['id'])){
+            $res = $model->__edit($data,$msg);
+        }else{
+            $res = $model->__add($data,$msg);
+        }
+
+        return $res;
+    }
+
+
 
 
 
@@ -146,7 +521,7 @@ class Member extends AdminController {
         } else {
 
             $member = $this->request->only('username,password,password1,nickname,phone,qq,who,remark,auth_id');
-            $profile = $this->request->only('pid,group_id');
+            $profile = $this->request->only('pid');
 
             !isset($member['auth_id']) && $member['auth_id'] = [];
             //数组转json
@@ -290,7 +665,7 @@ class Member extends AdminController {
         } else {
 
             $post = $this->request->only('username,nickname,phone,qq,who,remark,auth_id,id');
-            $profile = $this->request->only('pid,group_id');
+            $profile = $this->request->only('pid');
             $pid = $this->request->post('p_id','0');
 
 

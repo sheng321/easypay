@@ -1,0 +1,108 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--顶部操作栏--开始-->
+    <!--顶部操作栏--结束-->
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+
+    <!--表单模板绑定--开始-->
+    <script type="text/html" id="checkStatus">
+        {{# if (d.status1) { }}
+        <input type="checkbox" name="{{d.id}}" value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
+        {{# } else { }}
+        关闭
+        {{# } }}
+    </script>
+    <!--表单模板绑定--结束-->
+
+
+
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+    function merge(res) {
+        var data = res.data;
+        var mergeIndex = 0;//定位需要添加合并属性的行数
+        var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+        var columsName = ['product','code'];//需要合并的列名称
+        var columsIndex = [4,5];//需要合并的列索引值
+
+        for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+            var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+            for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+                if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                    mark += 1;
+                    //相同列的第一列增加rowspan属性
+                    tdPreArr.each(function () {
+                        $(this).attr("rowspan", mark);
+                    });
+                    //当前行隐藏
+                    tdCurArr.each(function () {
+                        $(this).css("display", "none");
+                    });
+                }else {
+                    mergeIndex = i;
+                    mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                }
+            }
+            mergeIndex = 0;
+            mark = 1;
+        }
+    }
+
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax&id={$Think.get.id}', [[
+        {field: 'id', title: 'ID', maxWidth: 10, align: 'center', sort: true},
+        {field: 'title', title: '通道分组名称', minWidth: 20, align: 'center'},
+        {field: 'status', title: '启用状态', minWidth: 80, templet: '#checkStatus', unresize: true, align: "center"},
+        {field: 'c_rate', title: '费率', minWidth: 20, align: 'center', sort: true, edit: 'text', style: 'background-color: #009688; color: #fff;'},
+        {field: 'product', title: '支付产品', minWidth: 20, align: 'center'},
+        {field: 'code', title: '支付编码', minWidth: 20, align: 'center'},
+        {field: 'remark',title: '备注',minWidth: 20, align: "center"},
+    ]],false,function (res,curr,count){
+        //行
+        var id= -1;
+        $('tr').each(function(index, element){
+            if( typeof($(element).attr('data-index')) !== 'undefined'){
+                id++;
+                $(element).find('td').each(function(index1, element1){
+                    if(($(element1).attr('data-field') == 'c_rate') && (res.data[id].status1 != 1)  ){
+                        $(element1).removeAttr("data-edit");
+                        $(element1).removeAttr("style");
+                    }
+                });
+            }
+        });
+        merge(res)
+    });
+
+
+    /**
+     * 监听字段值编辑
+     */
+    $.form.editField('currentTable', '{:url("$thisRequest")}?id={$Think.get.id}');
+
+    /**
+     * 修改状态
+     */
+    $.form.switch('modifyStatus', '{:url("$thisClass/status")}?group_id={$Think.get.id}');
+</script>
+{/block}

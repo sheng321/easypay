@@ -52,9 +52,9 @@ class Rate extends Validate {
      * @return bool
      */
     function checkUid($value, $rule, $data = []){
-        $user = \app\common\model\Umember::where(['uid' => $value])->find();
+        $user = \app\common\model\Uprofile::where(['uid' => $value])->find();
         if (empty($user)) return '暂无账户数据，请稍后再试！';
-        if ($user['status'] == 3) return '该账户已被删除，不可操作！';
+        if ($user['who'] != 0) return '该商户号不是会员，不可操作！';
         return true;
     }
 

@@ -26,6 +26,24 @@ class Uprofile extends ModelService {
      */
     protected $table = 'cm_member_profile';
 
+
+    /**
+     * redis
+     * key   字段值要唯一
+     * @var array
+     */
+    protected $redis = [
+        'is_open'=> true,
+        'ttl'=> 3360 ,
+        'key'=> "String:table:ChannelGroup:uid:{uid}:id:{id}",
+        'keyArr'=> ['id','uid'],
+    ];
+
+
+
+
+
+
     public function aList($page = 1, $limit = 10, $search = []) {
 
         //用户分组数组
@@ -69,8 +87,6 @@ class Uprofile extends ModelService {
             }
 
         }
-
-
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
         $info = [

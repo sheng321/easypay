@@ -12,26 +12,20 @@
     <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">商户号</label>
+            <label class="layui-form-label-99admin">平台代理分组名称</label>
             <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入商户商户号"/>
+                <input type="text" id="title" class="layui-input" placeholder="请输入平台代理分组名称"/>
             </div>
         </div>
+
 
         <div class="layui-form-item layui-inline">
             <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
         </div>
 
-
-        {if auth("$thisClass/add")}
-        <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add")}' data-title="添加商户个人费率">添加</a>
-        </div>
-        {/if}
-
         {if auth("$thisClass/del")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-danger layui-btn-normal   layui-btn-sm" data-title="确定批量删除,删除商户个人费率,将默认用户分组费率？" data-del-all='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
+            <a class="layui-btn layui-btn-danger layui-btn-normal   layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
         </div>
         {/if}
 
@@ -45,7 +39,7 @@
     <!--表单模板绑定--开始-->
 
     <script type="text/html" id="checkStatus">
-        <input type="checkbox" name="{{d.id}}"      value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status == 1 ? 'checked' : '' }}>
+        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
     </script>
 
     <!--表单模板绑定--结束-->
@@ -53,7 +47,7 @@
     <!--表单操作栏--开始-->
     <script type="text/html" id="currentTableBar">
         {if auth("$thisClass/del")}
-        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="删除商户个人费率,将默认用户分组费率？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
         {/if}
 
     </script>
@@ -86,7 +80,7 @@
                     }
                 };
             }
-          //  if (skin != '') data.skin = skin;
+           // if (skin != '') data.skin = skin;
             if (size != '') data.size = size;
             if (size == 'lg') data.limit = 10;
             if (!isTool) data.height = "full-20";
@@ -99,8 +93,8 @@
          */
         $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
             {type: "checkbox", fixed: "left", width: 30,},
-            {field: 'uid', title: '商户号', minWidth: 20, align: 'center'},
-            {field: 'product', title: '支付产品', minWidth: 20, align: 'center'},
+            {field: 'level', title: '平台代理分组名称', minWidth: 20, align: 'center'},
+            {field: 'channel', title: '支付通道分组', minWidth: 20, align: 'center'},
             {
                 field: 'rate',
                 title: '费率',
@@ -109,7 +103,6 @@
                 edit: 'text',
                 style: 'background-color: #009688; color: #fff;'
             },
-
             {field: 'update_at', title: '最新更新时间', minWidth: 20, align: 'center', sort: true},
             {field: 'status', title: '启用状态', minWidth: 20, templet: '#checkStatus', unresize: true, align: "center"},
             /**{if auth("$thisClass/del")}**/
@@ -138,7 +131,7 @@
             var data = res.data;
             var mergeIndex = 0;//定位需要添加合并属性的行数
             var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-            var columsName = ['uid'];//需要合并的列名称
+            var columsName = ['level'];//需要合并的列名称
             var columsIndex = [1];//需要合并的列索引值
 
             for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
@@ -166,10 +159,6 @@
                 mark = 1;
             }
         }
-
-
-
-
 
 
     });

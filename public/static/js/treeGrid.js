@@ -62,7 +62,7 @@ layui.extend({
             };
         }
 
-        if (skin != '') data.skin = skin;
+      //  if (skin != '') data.skin = skin;
         if (size != '') data.size = size;
         if (size == 'lg') data.limit = 10;
         if (!isTool) data.height = "full-40";

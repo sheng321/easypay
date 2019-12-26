@@ -49,18 +49,47 @@ class Cgroup  extends AdminController
 
             return $this->fetch('', $basic_data);
         } else {
-            $post = $this->request->post();
+            $post = $this->request->only("id,field,value");
 
-            //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            if($post['field'] == 'c_rate' ){
+                //验证数据
+                $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
+            }else{
+                //验证数据
+                $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            }
+
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
             return $this->model->editField($post);
         }
 
-
     }
+
+    /**
+     * 是否隐藏客服端
+     * @return \think\response\Json
+     */
+    public function cli() {
+        $get = $this->request->get();
+
+        //验证数据
+        $validate = $this->validate($get, 'app\common\validate\ChannelGroup.cli');
+        if (true !== $validate) return __error($validate);
+
+        //判断菜单状态
+        $status = $this->model->where('id', $get['id'])->value('cli');
+        $status == 1 ? list($msg, $status) = ['客户端隐藏成功', $status = 0] : list($msg, $status) = ['客户端显示成功', $status = 1];
+
+        //执行更新操作操作
+        $update =  $this->model->__edit(['cli' => $status,'id' => $get['id']],$msg);
+
+        return $update;
+    }
+
+
+
 
     //接口模式
     public function mode()
@@ -121,13 +150,6 @@ class Cgroup  extends AdminController
 
 
     }
-
-
-
-
-
-
-
 
 
     /**
@@ -256,8 +278,7 @@ class Cgroup  extends AdminController
      * @throws \Exception
      */
     public function del() {
-        $get = $this->request->get();
-
+        $get = $this->request->get('id');
 
 
         //验证数据

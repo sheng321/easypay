@@ -1,0 +1,72 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable"     lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+    <!--表单模板绑定--开始-->
+    <script type="text/html" id="checkStatus">
+        {{# if (d.status1) { }}
+        <input type="checkbox" name="{{d.id}}" value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
+        {{# } else { }}
+        关闭
+        {{# } }}
+
+
+    </script>
+    <!--表单模板绑定--结束-->
+
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+
+
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax&uid={$Think.get.uid}', [[
+        {field: 'title', title: '支付产品名称', maxWidth: 100, align: 'center', sort: true},
+        {field: 'code', title: '编码', maxWidth: 50, align: 'center'},
+        {field: 'p_rate', title: '费率', maxWidth: 50, align: 'center',edit: 'text', style: 'background-color: #009688; color: #fff;'},
+        {field: 'status', title: '启用状态', width: 100, templet: '#checkStatus', unresize: true, align: "center"},
+    ]],false,function (res,curr,count){
+        //行
+        var id= -1;
+        $('tr').each(function(index, element){
+            if( typeof($(element).attr('data-index')) !== 'undefined'){
+                id++;
+                $(element).find('td').each(function(index1, element1){
+                    if(($(element1).attr('data-field') == 'p_rate') && (res.data[id].status1 != 1)  ){
+                        $(element1).removeAttr("data-edit");
+                        $(element1).removeAttr("style");
+                    }
+                });
+            }
+        });
+
+    });
+
+    /**
+     * 监听字段值编辑
+     */
+    $.form.editField('currentTable', '{:url("$thisRequest")}?uid={$Think.get.uid}');
+
+    /**
+     * 修改状态
+     */
+    $.form.switch('modifyStatus', '{:url("$thisClass/rateStatus")}?uid={$Think.get.uid}');
+
+
+
+</script>
+{/block}
