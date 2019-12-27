@@ -76,7 +76,7 @@ class SysAdmin extends AdminService {
     public function editSelf($data) {
 
         $data['id'] = $data['id'];
-        $this->save($data,['id', $data['id']]);
+        $this->save($data,['id'=> $data['id']]);
 
         //重新刷新session
         $user = self::quickGet(['id'=>$data['id']]);
@@ -96,7 +96,7 @@ class SysAdmin extends AdminService {
 
         $this->startTrans();
         try {
-            $this->save(['password' => password($update['password']),'id'=>$update['id']],['id', $update['id']]);
+            $this->save(['password' => password($update['password']),'id'=>$update['id']],['id'=> $update['id']]);
             $this->commit();
         } catch (\Exception $e) {
             $this->rollback();

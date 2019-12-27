@@ -310,7 +310,7 @@ if (!function_exists('__log')) {
     /**
      * 写入系统日志
      * @param $data 数据
-     * @param $type 日志类型 1 后台 2 商户
+     * @param $type 日志类型 1 后台 2 会员
      */
     function __log($data,$type = 1){
         if(is_array($data)) $data = json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -533,32 +533,6 @@ if (!function_exists('clear_menu')) {
     }
 }
 
-
-if (!function_exists('check_money')) {
-
-    /**
-     * 检测金额
-     */
-    function check_money($money)
-    {
-        $num = floatval($money);
-
-        if(!($num > 0)) return false;
-
-        $res =  bccomp($num, $money, 2);//比较
-        if($res !== 0 ) return false;
-
-        $temp = explode ( '.', $money );
-        //小数点后位数
-        if (sizeof ( $temp ) > 1) {
-            $decimal = end ( $temp );
-            $count = strlen ( $decimal );
-            if($count > 2) return false;
-        }
-
-        return true;
-    }
-}
 
 
 if (!function_exists('clear_cache')){

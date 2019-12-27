@@ -2,6 +2,17 @@
 
 {block name="style"}
 <link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+<style>
+    /* layui-table 表格内容允许换行 */
+    .layui-table-cell {
+
+        height:auto;
+        overflow:visible;
+        text-overflow:inherit;
+        white-space:normal;
+        word-break: break-all;
+    }
+</style>
 {/block}
 
 {block name="cotent"}
@@ -60,6 +71,17 @@
     <!--主表单渲染--结束-->
 
     <!--表单模板绑定--开始-->
+
+    <script type="text/html" id="money">
+
+        {if auth("$thisClass/money")}
+        <span  data-open='{:url("$thisClass/money")}?uid={{d.uid}}' data-title="商户号：{{d.uid}}">总金额：{{d.money.total_money}}，可用余额：{{d.money.balance}}
+                {{ d.money.artificial != '0.000' ? ',人工冻结:'+d.money.artificial : '' }}
+                {{ d.money.frozen_amount != '0.000' ? ',冻结:'+d.money.frozen_amount : '' }}
+                {{ d.money.frozen_amount_t1 != '0.000' ? ',T1冻结:'+d.money.frozen_amount_t1 : '' }}
+            </span>
+        {/if}
+    </script>
 
 
     <script type="text/html" id="group">
@@ -325,8 +347,8 @@
             var data = res.data;
             var mergeIndex = 0;//定位需要添加合并属性的行数
             var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-            var columsName = ['uid','group_title','uid'];//需要合并的列名称
-            var columsIndex = [1,2,3];//需要合并的列索引值
+            var columsName = ['uid','group_title','uid','uid'];//需要合并的列名称
+            var columsIndex = [1,2,3,4];//需要合并的列索引值
 
             for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
                 var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
@@ -363,8 +385,10 @@
             {type: "checkbox", fixed: "left", width: 50},
             {field: 'uid', title: '代理号', minWidth: 20, align: "center"},
             {field: 'group_title', title: '用户分组', minWidth: 20,  align: "center", templet: '#group'},
-            {field: 'uid', title: '通道与费率', minWidth: 30,   align: "center", templet: '#channel'},
+            {field: 'channel', title: '通道与费率', minWidth: 30,   align: "center", templet: '#channel'},
+            {field: 'money', title: '账户金额', minWidth: 240, align: "center", templet: '#money',style: 'background-color: #A2B5CD; color: #fff; '},
             {field: 'level', title: '等级', minWidth: 20, align: "center", templet: '#level'},
+
             {field: 'username', title: '用户名', minWidth: 80, align: "center"},
             {field: 'nickname', title: '昵称',  minWidth: 80, align: "center"},
 

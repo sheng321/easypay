@@ -110,12 +110,11 @@ class Umember extends UserService {
     {
         if(isset($data['uid'])){
             $Umoney =  model('app\common\model\Umoney');
-            $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,status')->find();
+            $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,status,artificial,frozen_amount_t1,frozen_amount,total_money')->find();
             if(empty($find)){
                 $Umoney->save(['uid'=>$data['uid']]);
-                $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,status')->find();
+                $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,status,artificial,frozen_amount_t1,frozen_amount,total_money')->find();
             }
-
             $data =   $find->toArray();
             return $data;
         }
@@ -168,7 +167,7 @@ class Umember extends UserService {
     public function editSelf($data) {
 
         $data['id'] = $data['id'];
-        $this->save($data,['id', $data['id']]);
+        $this->save($data,['id'=> $data['id']]);
 
         //重新刷新session
         $user = self::quickGet(['id'=>$data['id']]);
@@ -188,7 +187,7 @@ class Umember extends UserService {
 
         $this->startTrans();
         try {
-            $this->save(['password' => password($update['password']),'id'=>$update['id']],['id', $update['id']]);
+            $this->save(['password' => password($update['password']),'id'=>$update['id']],['id'=>$update['id']]);
             $this->commit();
         } catch (\Exception $e) {
             $this->rollback();
@@ -219,7 +218,6 @@ class Umember extends UserService {
 
         //用户分组数组
         $group =  \app\common\model\Ulevel::idArr();
-
 
         $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single';
         $count = $this->where($where)->count();

@@ -147,8 +147,25 @@ class ModelService extends Model {
 
     //插入/更新到分表
     static protected function slave(ModelService $model){
+       // $obj = get_object_vars($model);
 
-        $obj = get_object_vars($model);
+        $obj =  $model->getData();
+        switch (true){
+            case (!empty($model->id)):
+                $id = $model->id;
+                break;
+            case (!empty($obj["origin"]['id'])):
+                $id = $obj["origin"]['id'];
+                break;
+            case (!empty($obj["data"]['id'])):
+                $id = $obj["data"]['id'];
+                break;
+            default:
+                return false;
+                break;
+        }
+
+
 
         //判断是否复制
         if(!isset($obj['salve']) || $obj['salve']==false) return true;
@@ -161,7 +178,7 @@ class ModelService extends Model {
         try {
             $sql =  "CREATE TABLE IF NOT EXISTS  {$newTable}  LIKE {$obj['table']}";
             Db::execute($sql);
-            $data =  Db::table($obj['table'])->find($model->id);
+            $data =  Db::table($obj['table'])->find($id);
             if(empty($data)) throw new Exception("未查询到数据！");
             Db::table($newTable)->insert($data, true);//存在就更新
             // 提交事务
@@ -175,21 +192,36 @@ class ModelService extends Model {
 
     //更新插入redis
     static protected function redisEvent(ModelService $model){
+         //$obj = get_object_vars($model);
 
-
-        $obj = get_object_vars($model);
+        $obj =  $model->getData();
+        switch (true){
+            case (!empty($model->id)):
+                $id = $model->id;
+                break;
+            case (!empty($obj["origin"]['id'])):
+                $id = $obj["origin"]['id'];
+                break;
+            case (!empty($obj["data"]['id'])):
+                $id = $obj["data"]['id'];
+                break;
+           default:
+                return false;
+                break;
+        }
 
         //判断
         if(!isset($obj['redis']) || !isset($obj['redis']['is_open']) || $obj['redis']['is_open'] == false) return true;
 
+
         //防止缓存穿透
-        $lockKey = 'lock:'.$obj['name'].':'.$model->id;
+        $lockKey = 'lock:'.$obj['name'].':'.$id;
         $random = mt_rand(1,100000);
         $ok =  $model->lockRedis($lockKey,$random);
         if ($ok) {
             //获取到锁
             try {
-                $data = $model::get($model->id);//查询数据库获取所有数据
+                $data = $model::get($id);//查询数据库获取所有数据
                 if(empty($data)) throw new Exception("未查询到数据！");
 
                 $res = self::saveRedis($obj,$data);
@@ -208,7 +240,25 @@ class ModelService extends Model {
     static protected function deleteRedis(ModelService $model){
 
         //防止缓存穿透
-        $obj = get_object_vars($model);
+       // $obj = get_object_vars($model);
+
+        $obj =  $model->getData();
+        switch (true){
+            case (!empty($model->id)):
+                $id = $model->id;
+                break;
+            case (!empty($obj["origin"]['id'])):
+                $id = $obj["origin"]['id'];
+                break;
+            case (!empty($obj["data"]['id'])):
+                $id = $obj["data"]['id'];
+                break;
+            default:
+                return false;
+                break;
+        }
+
+
 
         //判断
         if(!isset($obj['redis']) || !isset($obj['redis']['is_open']) || $obj['redis']['is_open'] == false) return true;
@@ -216,16 +266,15 @@ class ModelService extends Model {
         //判断
         if(!isset($obj['redis'])) return true;
 
-        $lockKey = 'lock:'.$obj['name'].':'.$model->id;
+        $lockKey = 'lock:'.$obj['name'].':'.$id;
         $random = mt_rand(1,100000);
         $ok =  $model->lockRedis($lockKey,$random);
         if ($ok) {
             //获取到锁
             try {
-
                 self::$redisModel->key = $obj['redis']['key'];//设置key
 
-                self::$redisModel->newQuery()->where('id', $model->id)->delete();
+                self::$redisModel->newQuery()->where('id', $id)->delete();
             } catch (\Exception $e) {
                 halt($e->getMessage());
             }

@@ -43,7 +43,7 @@
 
         {if auth("$thisClass/add")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add")}' data-title="添加文章">添加</a>
+            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add")}' data-title="添加">添加</a>
         </div>
         {/if}
 
@@ -74,7 +74,7 @@
         {/if}
 
         {if auth("$thisClass/edit")}
-        <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改菜单信息">编辑</a>
+        <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改信息">编辑</a>
         {/if}
 
         {if auth("$thisClass/del")}
