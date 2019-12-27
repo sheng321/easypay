@@ -222,24 +222,25 @@ class Auth extends AdminController {
      * @throws \think\exception\DbException
      */
     public function authorize() {
+
         if (!$this->request->isPost()) {
 
             //查找所需授权角色
-            $auth = $this->model->where('id', $this->request->get('id'))->find();
+            $auth = $this->model->where('id', $this->request->get('id/d'))->find();
             if (empty($auth)) return msg_error('暂无数据，请重新刷新页面！');
 
             $node = model('app\common\model\SysNode')->where(['is_auth' => 1])->order('node asc')->select();
 
             $auth_node = model('app\common\model\SysAuthNode')->where(['auth' => $auth['id']])->select();
 
-            $type = $this->request->get('type',0);
+            $type = $this->request->get('type/d',0);
 
             foreach ($node as $k=> &$vo) {
-                if($type == 0  && strpos($vo['node'],'user') === 0 ){
+                if($type == 0  && ( strpos($vo['node'],'user') === 0 || strpos($vo['node'],'pay') === 0 || strpos($vo['node'],'index') === 0 || strpos($vo['node'],'agent') === 0 ) ){
                     unset($node[$k]);
                     continue;
                 }
-                if($type == 1  && strpos($vo['node'],'admin') === 0 ){
+                if($type == 1  && (strpos($vo['node'],'admin') === 0 || strpos($vo['node'],'index') === 0)  ){
                     unset($node[$k]);
                     continue;
                 }
