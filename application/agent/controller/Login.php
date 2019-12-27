@@ -19,9 +19,9 @@ class Login extends BaseController
     public function __construct() {
         parent::__construct();
         $action = $this->request->action();
-        if (!empty(session('user_info.id')) && $action !== 'logout' && $action !== 'startGeetest' ) return $this->redirect('@user');
+        if (!empty(session('agent_info.id')) && $action !== 'logout' && $action !== 'startGeetest' ) return $this->redirect('@agent');
         
-        $this->UserInfo = cache('UserInfo');
+        $this->UserInfo = cache('AgentInfo');
 
     }
 
@@ -94,8 +94,8 @@ class Login extends BaseController
             if (true !== $validate){
                 return __error($validate);
             }
-
             $this->model = model('app\common\model\Umember');
+
 
             //判断登录是否成功
             $login = $this->model->login($post['username'], $post['password']);
@@ -105,7 +105,7 @@ class Login extends BaseController
             }
 
             //谷歌验证码
-            if($this->UserInfo['UserGoole'] == 1){
+            if($this->UserInfo['AgentGoole'] == 1){
 
                 $data1['google_token'] = $login['user']['google_token'];
                 $data1['google'] = $post['googlecode'];
@@ -118,7 +118,7 @@ class Login extends BaseController
 
             //储存session数据
             $login['user']['login_at'] = time();
-            session('user_info', $login['user']);
+            session('agent_info', $login['user']);
 
             $session_id  =  session_id();
             //单点登入
@@ -128,7 +128,7 @@ class Login extends BaseController
                     'id'=>$login['user']['id']
                 ],
                     ['id'=>$login['user']['id']]);
-                session('user_info.single_key', $session_id);
+                session('agent_info.single_key', $session_id);
             }
             __log($login['msg'],2);
 
@@ -149,12 +149,12 @@ class Login extends BaseController
         __log('退出登录成功！',2);
 
         //删除自身菜单缓存
-        Cache::rm(session('user_info.id') . '_UserMenu');
+        Cache::rm(session('agent_info.id') . '_UserMenu');
 
         //清空sesion数据
-        session('user_info', null);
+        session('agent_info', null);
 
-        return msg_success('退出登录成功', url('@user/login'));
+        return msg_success('退出登录成功', url('@agent/login'));
 
     }
 

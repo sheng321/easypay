@@ -1,9 +1,9 @@
 <?php
 namespace app\agent\controller;
 
-use app\common\controller\UserController;
+use app\common\controller\AgentController;
 
-class Index extends UserController
+class Index extends AgentController
 {
     public function index()
     {

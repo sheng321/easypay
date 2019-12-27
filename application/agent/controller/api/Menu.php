@@ -1,10 +1,10 @@
 <?php
 
 namespace app\user\controller\api;
-use app\common\controller\UserController;
+use app\common\controller\AgentController;
 use think\facade\Cache;
 
-class Menu extends UserController
+class Menu extends AgentController
 {
 
     /**

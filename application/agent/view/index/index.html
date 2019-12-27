@@ -29,17 +29,17 @@
 
     <ul class="layui-nav right" lay-filter="">
         <li class="layui-nav-item">
-            <a href="javascript:;">{$user_info.username|default='无名'}</a>
+            <a href="javascript:;">{$agent_info.username|default='无名'}</a>
             <dl class="layui-nav-child">
                 <!-- 二级菜单 -->
                 <dd>
-                    <a  data-href="{:url('@user/User/edit_self')}"  data-title="个人信息" >个人信息</a>
+                    <a  data-href="{:url('@agent/User/edit_self')}"  data-title="个人信息" >个人信息</a>
                 </dd>
                 <dd>
-                    <a  data-href="{:url('@user/User/changepwd')}"  data-title="修改密码" >修改密码</a>
+                    <a  data-href="{:url('@agent/User/changepwd')}"  data-title="修改密码" >修改密码</a>
                 </dd>
                 <dd>
-                    <a class="loginout" href="{:url('@user/login/logout')}">退出</a>
+                    <a class="loginout" href="{:url('@agent/login/logout')}">退出</a>
                 </dd>
             </dl>
         </li>
@@ -65,7 +65,7 @@
         </ul>
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
-                <iframe src="{:url('@user/index/welcome')}" frameborder="0" scrolling="yes" class="weIframe"></iframe>
+                <iframe src="{:url('@agent/index/welcome')}" frameborder="0" scrolling="yes" class="weIframe"></iframe>
             </div>
         </div>
     </div>
@@ -99,7 +99,7 @@
             admin = layui.admin,
             menu = layui.menu;
         $(function(){
-            menu.getMenu('/user.php/api.Menu/getMenu');
+            menu.getMenu('/agent.php/api.Menu/getMenu');
         });
 
 

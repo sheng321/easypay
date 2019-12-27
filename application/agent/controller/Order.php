@@ -1,12 +1,12 @@
 <?php
 
 
-namespace app\user\controller;
+namespace app\agent\controller;
 
 
-use app\common\controller\UserController;
+use app\common\controller\AgentController;
 use think\Db;
-class Order extends UserController {
+class Order extends AgentController {
 /**
      * config模型对象
      */

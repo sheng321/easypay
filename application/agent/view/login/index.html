@@ -135,7 +135,7 @@
         <div class="layui-form login-form">
 
                 <div class="layui-form-item logo-title">
-                    <h1>{$UserInfo.UserTitle|default='商户管理'}</h1>
+                    <h1>{$UserInfo.AgentTitle|default='商户管理'}</h1>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-username" for="username"></label>
@@ -148,7 +148,7 @@
 
 
             <!--判断是否开启谷歌验证码登录-->
-            <!--{if $UserInfo.UserGoole == 1}-->
+            <!--{if $UserInfo.AgentGoole == 1}-->
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-vercode" for="googlecode"></label>
                     <input type="text" name="googlecode" id="googlecode" lay-verify="required" placeholder="谷歌密码" autocomplete="off" class="layui-input" >
@@ -187,7 +187,6 @@
 
 <script        >
     $(document).ready(function () {
-
         // 登录过期的时候，跳出ifram框架
         if (top.location != self.location) top.location = self.location;
 
@@ -224,7 +223,7 @@
                 }
 
 
-                /**{if $UserInfo.UserGoole == 1}**/
+                /**{if $UserInfo.AgentGoole == 1}**/
                 if($('#googlecode').val() == ''){
                     layer.msg('请先输入谷歌验证码', {icon: 2, time: 2000});
                     return false;
@@ -244,13 +243,13 @@
 
 
                 $.ajax({
-                    url: "{:url('@user/Login/index')}",
+                    url: "{:url('@agent/Login/index')}",
                     type: 'POST',
                     dataType: 'json',
                     data: {
                         username: $('#username').val(),
                         password: $.md5($('#password').val()),
-                        /**{if $UserInfo.UserGoole == 1}**/
+                        /**{if $UserInfo.AgentGoole == 1}**/
                         googlecode: $('#googlecode').val(),
                         /**{/if}**/
                         geetest_challenge: result.geetest_challenge,
@@ -260,7 +259,7 @@
                     success: function (data) {
                         if (data.code == 1){
                             layer.msg(data.msg, {icon: 1,time: 1500}, function(){
-                                window.location.href = "{:url('@user/index')}";
+                                window.location.href = "{:url('@agent/index')}";
                             });
                         }else {
                             layer.msg(data.msg, {icon: 2,time: 1500}, function(){
@@ -274,7 +273,7 @@
         };
 
         $.ajax({
-            url: "{:url('@user/Login/startGeetest')}?t=" + (new Date()).getTime(), // 加随机数防止缓存
+            url: "{:url('@agent/Login/startGeetest')}?t=" + (new Date()).getTime(), // 加随机数防止缓存
             type: "get",
             dataType: "json",
             success: function (data) {

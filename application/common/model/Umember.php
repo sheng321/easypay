@@ -139,9 +139,6 @@ class Umember extends UserService {
     }
 
 
-
-
-
     /**
      * 登录验证
      * @param $username 会员账户
@@ -150,8 +147,12 @@ class Umember extends UserService {
      */
     public function login($username, $password) {
         $login =  self::quickGet(['username'=>$username]);
-
         if (empty($login)) return ['code' => 0, 'msg' => '账户不存在，请重新输入！', 'user' => $login];
+
+        $module =  app('request')->module();
+        if($module == 'agent'  && $login['profile']['who'] == 0) return ['code' => 0, 'msg' => '账户不存在，请重新输入！', 'user' => $login]; //是否代理
+        if($module == 'user'  && $login['profile']['who'] == 2) return ['code' => 0, 'msg' => '账户不存在，请重新输入！', 'user' => $login]; //是否用户
+
         if ($login['password'] !== password($password)) return ['code' => 0, 'msg' => '密码不正确，请重新输入！', 'user' => $login];
         if ($login['status'] == 0) return ['code' => 0, 'msg' => '该账户已被停用，请联系客服！', 'user' => $login];
         unset($login['password']);

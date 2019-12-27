@@ -78,6 +78,20 @@ class SysConfig extends AdminService {
         return \think\facade\Cache::get('UserInfo');
     }
 
+    static public function getAgentConfig() {
+
+        \think\facade\Cache::remember('AgentInfo', function () {
+            $config1 = self::where('group', 'basic')->column('name,value');
+            $config2 = self::where('group', 'agent')->column('name,value');
+
+            $config = array_merge($config1,$config2);
+            \think\facade\Cache::tag('user')->set('AgentInfo',$config,3600);
+            return \think\facade\Cache::get('AgentInfo');
+        });
+
+        return \think\facade\Cache::get('AgentInfo');
+    }
+
 
 
     /**

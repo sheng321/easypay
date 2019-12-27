@@ -1,12 +1,12 @@
 <?php
 
-namespace app\user\controller;
+namespace app\agent\controller;
 
 
-use app\common\controller\UserController;
+use app\common\controller\AgentController;
 
 
-class User extends UserController {
+class User extends AgentController {
 
     /**
      * User模型对象
@@ -95,16 +95,27 @@ class User extends UserController {
      * @return mixed|string|\think\response\Json
      */
     public function edit_self() {
+
         if (!$this->request->isPost()) {
 
             //查找所需修改用户
             $user =  $this->model->quickGet(['id'=>$this->user['id']]);
+
+            unset($user['password']);
+            unset($user['money']);
+            unset($user['profile']);
+            unset($user['single_key']);
+            unset($user['google_token']);
+            unset($user['password']);
+            unset($user['auth_id']);
+            unset($user['password']);
+
             if (empty($user)) return msg_error('暂无数据，请重新刷新页面！');
 
             //基础数据
             $basic_data = [
                 'title' => '修改商户信息',
-                'user'  => $user->hidden(['password']),
+                'user'  => $user,
             ];
             $this->assign($basic_data);
 

@@ -11,7 +11,7 @@ return [
         if (app('request')->module() == 'agent') {
 
             //缓存系统配置信息
-            $UserInfo =  \app\common\model\SysConfig::getUserConfig();
+            $UserInfo =  \app\common\model\SysConfig::getAgentConfig();
             //渲染到视图层
             app('view')->init(config('template.'))->assign([
                 'UserInfo'   => $UserInfo,
@@ -19,7 +19,7 @@ return [
         }
     },
     // 操作开始执行
-    'action_begin' => ['\\app\\user\\behavior\\intBehavior'],
+    'action_begin' => ['\\app\\agent\\behavior\\intBehavior'],
     // 视图内容过滤
     'view_filter'  => [],
     // 日志写入

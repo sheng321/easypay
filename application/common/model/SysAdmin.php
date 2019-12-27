@@ -59,7 +59,6 @@ class SysAdmin extends AdminService {
      */
     public function login($username, $password) {
         $login =  self::quickGet(['username'=>$username]);
-
         if (empty($login)) return ['code' => 0, 'msg' => '账户不存在，请重新输入！', 'user' => $login];
         if ($login['password'] != password($password)) return ['code' => 0, 'msg' => '密码不正确，请重新输入！', 'user' => $login];
         if ($login['status'] == 0) return ['code' => 0, 'msg' => '该账户已被停用，请联系超级管理员！', 'user' => $login];
