@@ -99,7 +99,6 @@ class User extends AgentController {
             $data['nickname'] = $this->user['nickname'];
             $data['phone'] = $this->user['phone'];
             $data['qq'] = $this->user['qq'];
-            $data['mail'] = $this->user['mail'];
             $data['remark'] = $this->user['remark'];
 
             //基础数据
@@ -111,7 +110,7 @@ class User extends AgentController {
 
             return $this->fetch('form_self');
         } else {
-            $post = $this->request->only(['username','nickname','phone','qq','mail','remark','__token__'], 'post');
+            $post = $this->request->only(['username','nickname','phone','qq','remark','__token__'], 'post');
             $post['id'] =  $this->user['id'];
 
             //验证数据

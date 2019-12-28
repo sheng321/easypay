@@ -98,7 +98,6 @@ class User extends UserController {
             $data['nickname'] = $this->user['nickname'];
             $data['phone'] = $this->user['phone'];
             $data['qq'] = $this->user['qq'];
-            $data['mail'] = $this->user['mail'];
             $data['remark'] = $this->user['remark'];
 
             //基础数据
