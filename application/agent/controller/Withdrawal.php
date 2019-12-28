@@ -2,8 +2,6 @@
 
 
 namespace app\agent\controller;
-
-
 use app\common\controller\AgentController;
 use think\Db;
 class Withdrawal extends AgentController {

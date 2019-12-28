@@ -209,6 +209,7 @@ class SysMenu extends ModelService {
 
             foreach ($first_menu as $vo_1) {
                 if (auth($vo_1['href'])) {
+
                     if (!empty($vo_1['href']) && $vo_1['href'] != "#") {
                         $vo_1['href'] = url($vo_1['href']);
                     }
@@ -226,7 +227,7 @@ class SysMenu extends ModelService {
                         }
                     }
                     //去除空菜单
-                    if (!isset($nav[$k]['children'][$i]['children'])) {
+               if (!isset($nav[$k]['children'][$i]['children'])) {
                         if ($nav[$k]['children'][$i]['href'] == '#' || $nav[$k]['children'][$i]['href'] == '') {
                             unset($nav[$k]['children'][$i]);
                         } else {
@@ -237,7 +238,18 @@ class SysMenu extends ModelService {
                     }
                 }
             }
+
+            if (!isset($nav[$k]['children'])) {
+                if ($nav[$k]['href'] == '#' || $nav[$k]['href'] == '') {
+                    unset($nav[$k]);
+                }else{
+                    $nav[$k]['href'] = url($nav[$k]['href']);
+                }
+            }
+
         }
+
+
         return $nav;
     }
 
@@ -268,6 +280,47 @@ class SysMenu extends ModelService {
                 foreach ($v1['children'] as $k2 => $v2){
                     if(empty($v2['href']) || $v2['href'] == '#') continue;
                      $data[$k]['children'][$k1]['children'][$k2]['icon'] = "layui-icon layui-icon-".$v2['icon'];
+
+                    $data[$k]['children'][$k1]['children'][$k2]['url'] = $v2['href'];
+                    unset($data[$k]['children'][$k1]['children'][$k2]['href']);
+                    $data[$k]['children'][$k1]['children'][$k2]['name'] = $v2['title'];
+                    unset($data[$k]['children'][$k1]['children'][$k2]['title']);
+                }
+            }
+        }
+
+
+        return ['status'=>0,'msg'=>"ok",'data'=>$data];
+    }
+
+
+    public static function getAgentMenuApi() {
+        $data = self::getMenuApi(2);
+
+        foreach ($data as $k => $v){
+            if(empty($v['children']) && $v['href'] == '#') continue;
+            $data[$k]['icon'] = "layui-icon layui-icon-".$v['icon'];
+
+            $data[$k]['url'] = $v['href'];
+            unset($data[$k]['href']);
+            $data[$k]['name'] = $v['title'];
+            unset($data[$k]['title']);
+
+            if(empty($v['children'])) continue;
+            foreach ($v['children'] as $k1 => $v1){
+                if( empty($v1['children']) &&  (empty($v1['href']) || $v1['href'] == '#') ) continue;
+
+                $data[$k]['children'][$k1]['icon'] = "layui-icon layui-icon-".$v1['icon'];
+
+                $data[$k]['children'][$k1]['url'] = $v1['href'];
+                unset($data[$k]['children'][$k1]['href']);
+                $data[$k]['children'][$k1]['name'] = $v1['title'];
+                unset($data[$k]['children'][$k1]['title']);
+
+                if(empty($v1['children'])) continue;
+                foreach ($v1['children'] as $k2 => $v2){
+                    if(empty($v2['href']) || $v2['href'] == '#') continue;
+                    $data[$k]['children'][$k1]['children'][$k2]['icon'] = "layui-icon layui-icon-".$v2['icon'];
 
                     $data[$k]['children'][$k1]['children'][$k2]['url'] = $v2['href'];
                     unset($data[$k]['children'][$k1]['children'][$k2]['href']);

@@ -31,19 +31,18 @@ class User extends UserController {
     public function save_google() {
         if (!$this->request->isPost()) {
 
-            $user = $this->model->quickGet(['id'=> $this->user['id']]);
-            if (empty($user)) return msg_error('暂无用户信息，请关闭页面刷新重试！');
-
-            if(!empty($user['google_token'])){
-                session('admin.google_token',$user['google_token']);
-                $user['token'] = $user['google_token'];
+            if(!empty($this->user['google_token'])){
+                session('admin.google_token',$this->user['google_token']);
+                $data['token'] = $this->user['google_token'];
             }else{
-                $user['token'] = (new \tool\Goole())->createSecret(17);
+                $data['token'] = (new \tool\Goole())->createSecret(17);
             }
+
+            $data['google_token'] = $this->user['google_token'];
 
             $basic_data = [
                 'title' => '绑定谷歌',
-                'user'  => $user,
+                'user'  => $data,
             ];
             return $this->fetch('', $basic_data);
         } else {
@@ -67,11 +66,10 @@ class User extends UserController {
     public function changepwd() {
         if (!$this->request->isPost()) {
 
-            $user = $this->model->quickGet(['id'=> $this->user['id']]);
-            if (empty($user)) return msg_error('暂无用户信息，请关闭页面刷新重试！');
+            $data['username'] = $this->user['username'];
             $basic_data = [
                 'title' => '修改商户密码',
-                'user'  => $user,
+                'user'  => $data,
             ];
             return $this->fetch('', $basic_data);
         } else {
@@ -96,16 +94,20 @@ class User extends UserController {
      */
     public function edit_self() {
         if (!$this->request->isPost()) {
-
-            //查找所需修改用户
-            $user =  $this->model->quickGet(['id'=>$this->user['id']]);
-            if (empty($user)) return msg_error('暂无数据，请重新刷新页面！');
+            $data['username'] = $this->user['username'];
+            $data['nickname'] = $this->user['nickname'];
+            $data['phone'] = $this->user['phone'];
+            $data['qq'] = $this->user['qq'];
+            $data['mail'] = $this->user['mail'];
+            $data['remark'] = $this->user['remark'];
 
             //基础数据
             $basic_data = [
                 'title' => '修改商户信息',
-                'user'  => $user->hidden(['password']),
+                'user'  => $data,
             ];
+
+
             $this->assign($basic_data);
 
             return $this->fetch('form_self');

@@ -16,6 +16,7 @@ return [
    'SysConfig'=>[
        'basic',
        'user',
+       'agent',
    ],
     'SysMenu'=>[
         'menu'

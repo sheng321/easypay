@@ -48,6 +48,8 @@ class Common extends Validate {
         'google.length' => '谷歌验证码为6位',
         'google.number' => '谷歌验证码为数字',
 
+        'field.in' => 'field不再范围内',
+
     ];
 
     /**
@@ -72,7 +74,7 @@ class Common extends Validate {
     public function sceneEdit_field()
     {
         return $this->only(['id','field','value'])
-            ->append('field', 'in:title,remark,sort')
+            ->append('field', 'in:title,remark,sort,value')
             ->append('value', 'chsDash')
             ->remove('value', 'require');
     }

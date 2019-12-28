@@ -56,7 +56,7 @@ if (!function_exists('getGoogleQr')) {
         if(empty($google_token))  return false;
 
         //第一个参数是"标识",第二个参数为"安全密匙SecretKey" 生成二维码信息
-        $qrCodeUrl = (new \tool\Goole())->getQRCodeGoogleUrl(\think\facade\Config::get('google.domain'), $google_token);
+        $qrCodeUrl = (new \tool\Goole())->getQRCodeGoogleUrl(Config('google.domain'), $google_token);
         return $qrCodeUrl;
 
     }
@@ -319,21 +319,7 @@ if (!function_exists('__log')) {
 }
 
 
-if (!function_exists('auth')) {
 
-    /**
-     * 权限节点判断
-     * @param $node 节点
-     * @return bool （true：有权限，false：无权限）
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    function auth($node)
-    {
-        return \app\common\service\AuthService::checkNode($node);
-    }
-}
 
 if (!function_exists('check_word')) {
 

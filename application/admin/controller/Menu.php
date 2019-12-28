@@ -110,6 +110,42 @@ class Menu extends AdminController {
         }
     }
 
+    /**
+     * 代理端菜单栏列表
+     * @return mixed|\think\response\Json
+     */
+    public function agent() {
+
+        if (!$this->request->isPost()) {
+            //ajax访问
+            if ($this->request->get('type') == 'ajax') {
+                $search = (array)$this->request->get('search', []);
+                $search['type'] = 2;
+                $menu_list = $this->model->menuList($search);
+                return json($menu_list);
+            }
+
+            //基础数据
+            $basic_data = [
+                'status' => [
+                    ['id' => 1, 'title' => '启用'],
+                    ['id' => 0, 'title' => '禁用'],
+                ],
+                'title'  => '菜单栏管理',
+                'data'   => '',
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->post();
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            if (true !== $validate) return __error($validate);
+            //保存数据,返回结果
+            return $this->model->editField($post);
+        }
+    }
+
 
     /**
      * 添加菜单

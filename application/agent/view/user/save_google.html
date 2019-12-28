@@ -1,4 +1,4 @@
-{extend name="user@public/basic" /}
+{extend name="agent@public/basic" /}
 
 {block name="cotent"}
 
@@ -49,7 +49,7 @@
      */
     $("#googleBtn").click(function () {
         var google_token = $("#token").val();
-        $.request.post("{:url('@user/user/save_google')}", {'google_token':google_token,'__token__':"{$Request.token}"}, function (res) {
+        $.request.post("{:url('@agent@/agent@/save_google')}", {'google_token':google_token,'__token__':"{$Request.token}"}, function (res) {
             $.msg.success(res.msg, function () {
                 $.tool.reload('open');
             })

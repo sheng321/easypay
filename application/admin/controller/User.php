@@ -219,14 +219,15 @@ class User extends AdminController {
 
             if(!empty($user['google_token'])){
                 session('admin.google_token',$user['google_token']);
-                $user['token'] = $user['google_token'];
+                $data['token'] = $user['google_token'];
             }else{
-                $user['token'] = (new \tool\Goole())->createSecret(17);
+                $data['token'] = (new \tool\Goole())->createSecret(17);
             }
+            $data['google_token'] =  $user['google_token'];
 
             $basic_data = [
                 'title' => '绑定谷歌',
-                'user'  => $user,
+                'user'  => $data,
             ];
             return $this->fetch('', $basic_data);
         } else {

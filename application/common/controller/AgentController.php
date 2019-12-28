@@ -42,13 +42,15 @@ class AgentController extends BaseController
 
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
+        $this->UserInfo = cache('AgentInfo');
+
         //检测登录情况
         if ($this->is_login == true) {
             $this->__checkLogin();
         }
 
         $user =  \app\common\model\Umember::quickGet(session('agent_info.id'));
-        $this->UserInfo = cache('AgentInfo');
+
         //判断是否异常用户
         $this->__checkLock($user);
 
@@ -60,7 +62,7 @@ class AgentController extends BaseController
 
         //绑定谷歌
         if( isset($this->UserInfo['AgentGoole']) && $this->UserInfo['AgentGoole'] == '1'){
-            //$this->__google($user);
+            $this->__google($user);
         }
 
 
@@ -69,10 +71,8 @@ class AgentController extends BaseController
             $this->__checkAuth();
         }
 
-
         // 登录会员信息
         $this->user = session('agent_info');
-        $this->assign('agent_info', session('agent_info'));
 
     }
 
@@ -106,7 +106,7 @@ class AgentController extends BaseController
      */
     public function __checkAuth()
     {
-        if (\app\common\service\AuthService::checkUserNode() == false){
+        if (\app\common\service\AuthService::checkAgentNode() == false){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '抱歉，您暂无该权限，请联系管理员！', 'url' => url('@agent')];
             exceptions($data);
         }

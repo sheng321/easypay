@@ -42,13 +42,15 @@ class UserController extends BaseController
 
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
+        $this->UserInfo = cache('UserInfo');
+
         //检测登录情况
         if ($this->is_login == true) {
             $this->__checkLogin();
         }
 
         $user =  \app\common\model\Umember::quickGet(session('user_info.id'));
-        $this->UserInfo = cache('UserInfo');
+
         //判断是否异常用户
         $this->__checkLock($user);
 
@@ -60,7 +62,7 @@ class UserController extends BaseController
 
         //绑定谷歌
         if( isset($this->UserInfo['UserGoole']) && $this->UserInfo['UserGoole'] == '1'){
-            //$this->__google($user);
+            $this->__google($user);
         }
 
 
@@ -69,10 +71,8 @@ class UserController extends BaseController
             $this->__checkAuth();
         }
 
-
         // 登录会员信息
-        $this->user = session('user_info');
-        $this->assign('user_info', session('user_info'));
+        $this->user = $user;
 
     }
 

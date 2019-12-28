@@ -20,10 +20,9 @@ class Umember extends UserService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 3360 ,
-        'key'=> "String:table:Umember:id:{id}:username:{username}",
+        'key'=> "String:table:Umember:username:{username}:id:{id}",
         'keyArr'=> ['id','username'],
     ];
-
 
     protected $insert = [ 'create_by','uid'];
 

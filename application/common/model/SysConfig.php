@@ -85,7 +85,7 @@ class SysConfig extends AdminService {
             $config2 = self::where('group', 'agent')->column('name,value');
 
             $config = array_merge($config1,$config2);
-            \think\facade\Cache::tag('user')->set('AgentInfo',$config,3600);
+            \think\facade\Cache::tag('agent')->set('AgentInfo',$config,3600);
             return \think\facade\Cache::get('AgentInfo');
         });
 

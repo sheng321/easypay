@@ -17,13 +17,16 @@ class Menu extends AdminController
      */
     public function getMenu()
     {
-        if (!empty(Cache::tag('menu')->get(session('admin_info.id') . '_AdminMenu'))) {
-            return json(Cache::get(session('admin_info.id') . '_AdminMenu'));
-        } else {
+
+        $name = session('admin_info.id') . '_AdminMenu';
+        \think\facade\Cache::remember($name, function ()use ($name) {
             $menu_list = \app\common\model\SysMenu::getMenuApi();
-            Cache::tag('menu')->set(session('admin_info.id') . '_AdminMenu', $menu_list, 86400);
-            return json($menu_list);
-        }
+            \think\facade\Cache::tag('menu')->set($name,$menu_list,86400);
+            return \think\facade\Cache::get($name);
+        });
+        return json(Cache::get($name));
+
+
     }
 
     /**

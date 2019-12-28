@@ -65,9 +65,45 @@ class AuthService {
         if (empty($is_auth)) return true;
 
         //获取当前用户角色组信息 ,拆表
-        $user = new \app\common\model\SysAdmin;
+        $user = new \app\common\model\Umember;
         $auth_id_list = json_decode($user->where(['id' => session('user_info.id'), 'status' => 1])->value('auth_id'), true);
         if (empty($auth_id_list)) return false;
+
+        //去除失效的角色组信息
+        foreach ($auth_id_list as $k => $val) {
+            if (empty(model('\app\common\model\SysAuth')->where(['id' => $val, 'status' => 1])->find())) unset($auth_id_list[$k]);
+        }
+
+        //判断是否有权限访问
+        foreach ($auth_id_list as $vo) {
+            if ($vo == 0) return true; //超级管理员组权限
+            $is_auth_node = model('\app\common\model\SysAuthNode')->where(['auth' => $vo, 'node' => $is_auth['id']])->find();
+
+            if (!empty($is_auth_node)) return true;
+        }
+        return false;
+    }
+
+
+
+    /**
+     * 判断代理端是否有权限访问该节点
+     * @param string $node 节点
+     * @return bool（true：有权限，false：无权限）
+     */
+    public static function checkAgentNode($node = '') {
+        //如果没有传参，默认获取当前位置    模块/控制器/方法 （小写）
+        if (empty($node)) $node = self::getNode();
+
+        //判断是否加入RABC控制
+        $is_auth = model('\app\common\model\SysNode')->where(['node' => $node, 'is_auth' => 1])->find();
+        if (empty($is_auth)) return true;
+
+        //获取当前用户角色组信息 ,拆表
+        $user = new \app\common\model\Umember;
+        $auth_id_list = json_decode($user->where(['id' => session('agent_info.id'), 'status' => 1])->value('auth_id'), true);
+        if (empty($auth_id_list)) return false;
+
 
         //去除失效的角色组信息
         foreach ($auth_id_list as $k => $val) {

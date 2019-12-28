@@ -76,8 +76,7 @@ class Login extends BaseController
                 $this->model->save([
                     'single_key'=>$session_id,
                     'id'=>$login['user']['id']
-                ],
-                    ['id'=>$login['user']['id']]);
+                ],['id'=>$login['user']['id']]);
                 session('admin_info.single_key', $session_id);
             }
 

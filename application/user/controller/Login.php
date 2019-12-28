@@ -109,25 +109,23 @@ class Login extends BaseController
 
                 $data1['google_token'] = $login['user']['google_token'];
                 $data1['google'] = $post['googlecode'];
-               // $validate1 = $this->validate($data1, 'app\common\validate\common.google');
-                //if (true !== $validate1) return __error($validate1);
+                $validate1 = $this->validate($data1, 'app\common\validate\common.google');
+                if (true !== $validate1) return __error($validate1);
             }
-
-
 
 
             //储存session数据
             $login['user']['login_at'] = time();
             session('user_info', $login['user']);
 
-            $session_id  =  session_id();
+            $session_id  = session_id();
+
             //单点登入
             if(!empty($session_id)){
                 $this->model->save([
                     'single_key'=>$session_id,
                     'id'=>$login['user']['id']
-                ],
-                    ['id'=>$login['user']['id']]);
+                ],['id'=>$login['user']['id']]);
                 session('user_info.single_key', $session_id);
             }
             __log($login['msg'],2);
