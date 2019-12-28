@@ -40,9 +40,18 @@ class UserController extends BaseController
     {
         parent::__construct();
 
+        //检测来源
+        $REFERER = $this->request->server('HTTP_REFERER','');
+        $url = $this->request->domain();
+        if (strpos($REFERER, $url) !== 0) {
+            $this->redirect(url('@user/login/index'),302);
+            session('user_info', null);
+        }
+
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
         $this->UserInfo = cache('UserInfo');
+
 
         //检测登录情况
         if ($this->is_login == true) {

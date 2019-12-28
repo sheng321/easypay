@@ -40,10 +40,6 @@ class Uprofile extends ModelService {
     ];
 
 
-
-
-
-
     public function aList($page = 1, $limit = 10, $search = []) {
 
         //用户分组数组

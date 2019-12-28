@@ -40,6 +40,15 @@ class AgentController extends BaseController
     {
         parent::__construct();
 
+
+        //检测来源
+        $REFERER = $this->request->server('HTTP_REFERER','');
+        $url = $this->request->domain();
+        if (strpos($REFERER, $url) !== 0) {
+            $this->redirect(url('@agent/login/index'),302);
+            session('agent_info', null);
+        }
+
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
         $this->UserInfo = cache('AgentInfo');

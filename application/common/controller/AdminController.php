@@ -40,6 +40,20 @@ class AdminController extends BaseController
     {
         parent::__construct();
 
+
+        //检测来源
+        $REFERER = $this->request->server('HTTP_REFERER','');
+        $url = $this->request->domain();
+        if (strpos($REFERER, $url) !== 0) {
+            $this->redirect(url('@admin/login/index'),302);
+            session('admin_info', null);
+        }
+
+        //IP白名单
+
+
+
+
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
         $this->SysInfo = cache('SysInfo');

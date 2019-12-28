@@ -977,6 +977,38 @@ class Member extends AdminController {
         return   $this->model->__edit($data,$msg);
     }
 
+
+    /**重置秘钥
+     * @return \think\response\Json
+     */
+    public function secret() {
+        $get = $this->request->get('id/d',0);
+        $find =  $this->model->quickGet($get);
+        if(empty($find['profile']['id'])) return __error('重置失败');
+
+        $data['id'] = $find['profile']['id'];
+        $data['secret'] = '';
+
+        return (new Uprofile)->__edit($data,'重置秘钥成功');
+    }
+
+
+    /**重置支付密码
+     * @return \think\response\Json
+     */
+    public function paypwd() {
+        $get = $this->request->get('id/d',0);
+        $find =  $this->model->quickGet($get);
+        if(empty($find['profile']['id'])) return __error('重置失败');
+
+        $data['id'] = $find['profile']['id'];
+        $data['paypwd'] = password('123456');
+
+        return (new Uprofile)->__edit($data,'重置支付密码成功');
+    }
+
+
+
     /**
      * 商户单点登入
      * @return \think\response\Json

@@ -37,6 +37,8 @@ class ModelService extends Model {
     {
         if(app('request')->module() === 'user'){
             $userId = session('user_info.id');
+        }elseif(app('request')->module() === 'agent'){
+            $userId = session('agent_info.id');
         }elseif(app('request')->module() === 'admin'){
             $userId = session('admin_info.id');
         }else{
@@ -48,18 +50,17 @@ class ModelService extends Model {
 
     protected function setUpdateByAttr()
     {
-        switch (true) {
-            case (!empty(session('admin_info.id'))):
-                $userId = session('admin_info.id');
-                break;
-            case (!empty(session('user_info.id'))):
-                $userId = session('user_info.id');
-                break;
-            default:
-                $userId = 0;
-                break;
+        if(app('request')->module() === 'user'){
+            $userId = session('user_info.id');
+        }elseif(app('request')->module() === 'agent'){
+            $userId = session('agent_info.id');
+        }elseif(app('request')->module() === 'admin'){
+            $userId = session('admin_info.id');
+        }else{
+            $userId = 0;
         }
         return $userId;
+
     }
 
     protected function setUpdateAtAttr()
