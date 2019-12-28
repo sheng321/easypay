@@ -1,8 +1,6 @@
 <?php
 namespace app\pay\controller;
-
 use app\common\controller\PayController;
-
 
 class Index extends PayController
 {
@@ -11,7 +9,6 @@ class Index extends PayController
        echo "这里是下单借口";
 
     }
-
 
 
 }

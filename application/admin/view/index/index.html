@@ -71,7 +71,7 @@
 
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite>{$admin_info.nickname|default='无名'}</cite>
+                        <cite>{$Think.session.admin_info.nickname|default='无名'}</cite>
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a lay-href="{:url('admin/User/edit_self')}">基本资料</a></dd>

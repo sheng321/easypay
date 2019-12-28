@@ -42,13 +42,15 @@ class AdminController extends BaseController
 
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
+        $this->SysInfo = cache('SysInfo');
+
         //检测登录情况
         if ($this->is_login == true) {
             $this->__checkLogin();
         }
 
         $user =  \app\common\model\SysAdmin::quickGet(session('admin_info.id'));
-        $this->SysInfo = cache('SysInfo');
+
 
         $this->__checkLock($user);
 
@@ -69,13 +71,8 @@ class AdminController extends BaseController
             $this->__checkAuth();
         }
 
-
         // 登录会员信息
         $this->user = session('admin_info');
-        $this->assign('admin_info', session('admin_info'));
-
-
-
     }
 
 
