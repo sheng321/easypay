@@ -1,0 +1,40 @@
+{extend name="user@public/basic" /}
+{block name="style"}{/block}
+
+{block name="cotent"}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">API设置</div>
+                <div class="layui-card-body">
+                    <blockquote class="layui-elem-quote layui-quote-nm">
+                        <strong>API对接参数：</strong><br><br>
+                        商户号：{$Think.session.user_info.uid|default='无名'}<br><br>
+                        网关地址：{$UserInfo.Api|default=''}<br><br>
+                        商户APIKEY：<button id="apikey-query" onclick="apikey(this)"  class="layui-btn layui-btn-small layui-btn-normal">点击查看密钥</button><span id='apikey' class="hide"></span>
+                    </blockquote>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{/block}
+
+{block name="script"}
+<script>
+    function apikey(){
+        $.msg.prompt('为了安全起见，请输入支付密码','{:url("$thisClass/secret")}',{}, function (res) {
+            if(res.code == 1){
+                $('#apikey-query').hide();
+                $('#apikey').text(res.data).removeClass('hide')
+            }else {
+                $.msg.error(res.msg);
+            }
+        });
+    }
+</script>
+{/block}

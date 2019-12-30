@@ -2,6 +2,22 @@
 
 // 应用公共文件
 
+
+if (!function_exists('getSessionid')) {
+
+    /**
+     * 获取sessionID
+     */
+    function getSessionid() {
+        $num = mt_rand(1,10000);
+        session($num,'');
+        $session_id  = session_id();
+        session($num,null);
+        return $session_id;
+    }
+}
+
+
 if (!function_exists('timeToDate')) {
 
     /**

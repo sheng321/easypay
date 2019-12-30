@@ -987,7 +987,7 @@ class Member extends AdminController {
         if(empty($find['profile']['id'])) return __error('重置失败');
 
         $data['id'] = $find['profile']['id'];
-        $data['secret'] = '';
+        $data['secret'] = password($find['uid'].mt_rand(1,200),$key = '1233');
 
         return (new Uprofile)->__edit($data,'重置秘钥成功');
     }
@@ -999,10 +999,11 @@ class Member extends AdminController {
     public function paypwd() {
         $get = $this->request->get('id/d',0);
         $find =  $this->model->quickGet($get);
+
         if(empty($find['profile']['id'])) return __error('重置失败');
 
         $data['id'] = $find['profile']['id'];
-        $data['paypwd'] = password('123456');
+        $data['pay_pwd'] = password(md5(123456));
 
         return (new Uprofile)->__edit($data,'重置支付密码成功');
     }
@@ -1023,7 +1024,6 @@ class Member extends AdminController {
         //判断商户状态
         $status = $this->model->where('id', $get['id'])->value('is_single');
         $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
-
 
         $data['id'] = $get['id'];
         $data['is_single'] = $status;

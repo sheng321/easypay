@@ -1,13 +1,4 @@
 <?php
-// +----------------------------------------------------------------------
-// | 99PHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2018~2020 https://www.99php.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: Mr.Chung <chung@99php.cn >
-// +----------------------------------------------------------------------
 
 namespace app\common\validate;
 
@@ -38,6 +29,8 @@ class Umember extends Validate {
         'qq'           => 'number',
         'remark'       => 'max:250',
         'google_token'       => 'require|length:17|token|checkGoogle',
+
+        'paypwd'       => 'require|length:32|checkPaypwd', //支付密码
 
     ];
 
@@ -90,8 +83,20 @@ class Umember extends Validate {
         'google'        => ['id'],
 
         //绑定谷歌
-        'save_google'  => ['id','google_token']
+        'save_google'  => ['id','google_token'],
+
+        'paypwd'  => ['paypwd', 'paypwd1']
     ];
+
+
+    /**支付密码
+     * @return $this
+     */
+    public function scenePaypwd() {
+        return $this->only([ 'paypwd', 'paypwd1'])
+            ->append('paypwd', 'require')
+            ->append('paypwd', 'checkPaypwd');
+    }
 
 
     /**
@@ -165,6 +170,12 @@ class Umember extends Validate {
         if (empty($user)) return '暂无上级账户数据，请稍后再试！';
         if ($user['status'] == 3) return '该账户已被删除，不可操作！';
         if ($user['who'] == 1 || $user['who'] == 3) return '上级账户是员工，不可操作！';
+        return true;
+    }
+    //支付密码
+    protected function checkPaypwd($value, $rule, $data = []) {
+        if(empty($data['paypwd1']))  $data['paypwd1'] = password(md5(123456));
+        if(password($value) != $data['paypwd1']) return '支付密码错误';
         return true;
     }
 

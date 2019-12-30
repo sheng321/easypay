@@ -32,15 +32,8 @@ class intBehavior extends Controller
             if(is_array($v)){
                 $this->check_param1($v);
             }elseif(is_string($v)){
-                $data['param'] = $v;
-
-                if($k == 'email' || $k == 'mailUsername'){
-                    $validate2 = $this->validate($data, 'app\common\validate\Common.email');
-                    if (true !== $validate2) exceptions($validate2);
-                }
 
                 if($k == 'create_at' || $k == 'update_at'){
-                    $v = str_replace("-","",$v);
                     $v = str_replace(" - ","",$v);
                 }
 
@@ -48,7 +41,6 @@ class intBehavior extends Controller
                 if($k == 'geetest_seccode'){
                     $v = str_replace("|","",$v);
                 }
-
                 $data['param'] = $v;
                 $data['param_k'] = $k;
 

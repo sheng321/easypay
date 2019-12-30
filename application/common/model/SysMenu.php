@@ -195,7 +195,7 @@ class SysMenu extends ModelService {
      * @param array $menu_list
      * @return array
      */
-    public static function getMenuApi($type = 0) {
+    public static function getMenuApi($type = 0){
         $field = 'id, pid, title, icon, href';
         $order = ['sort' => 'desc', 'create_at' => 'desc'];
 
@@ -258,7 +258,11 @@ class SysMenu extends ModelService {
 
         foreach ($data as $k => $v){
             if(empty($v['children']) && $v['href'] == '#') continue;
-            $data[$k]['icon'] = "layui-icon layui-icon-".$v['icon'];
+            if( !empty($v['icon']) &&  strpos($v['icon'],'fa-') === 0){
+                $data[$k]['icon'] = "fa ".$v['icon'];
+            }else{
+                $data[$k]['icon'] = "layui-icon layui-icon-".$v['icon'];
+            }
 
             $data[$k]['url'] = $v['href'];
             unset($data[$k]['href']);
@@ -269,7 +273,12 @@ class SysMenu extends ModelService {
             foreach ($v['children'] as $k1 => $v1){
                 if( empty($v1['children']) &&  (empty($v1['href']) || $v1['href'] == '#') ) continue;
 
-                $data[$k]['children'][$k1]['icon'] = "layui-icon layui-icon-".$v1['icon'];
+                if( !empty($v1['icon']) &&  strpos($v1['icon'],'fa-') === 0){
+                    $data[$k]['children'][$k1]['icon'] = "fa ".$v1['icon'];
+                }else{
+                    $data[$k]['children'][$k1]['icon'] = "layui-icon layui-icon-".$v1['icon'];
+                }
+
 
                 $data[$k]['children'][$k1]['url'] = $v1['href'];
                 unset($data[$k]['children'][$k1]['href']);
@@ -279,7 +288,11 @@ class SysMenu extends ModelService {
                 if(empty($v1['children'])) continue;
                 foreach ($v1['children'] as $k2 => $v2){
                     if(empty($v2['href']) || $v2['href'] == '#') continue;
-                     $data[$k]['children'][$k1]['children'][$k2]['icon'] = "layui-icon layui-icon-".$v2['icon'];
+                    if( !empty($v2['icon']) &&  strpos($v2['icon'],'fa-') === 0){
+                        $data[$k]['children'][$k1]['children'][$k2]['icon'] = "fa ".$v2['icon'];
+                    }else{
+                        $data[$k]['children'][$k1]['children'][$k2]['icon'] = "layui-icon layui-icon-".$v2['icon'];
+                    }
 
                     $data[$k]['children'][$k1]['children'][$k2]['url'] = $v2['href'];
                     unset($data[$k]['children'][$k1]['children'][$k2]['href']);
@@ -299,7 +312,12 @@ class SysMenu extends ModelService {
 
         foreach ($data as $k => $v){
             if(empty($v['children']) && $v['href'] == '#') continue;
-            $data[$k]['icon'] = "layui-icon layui-icon-".$v['icon'];
+
+            if( !empty($v['icon']) &&  strpos($v['icon'],'fa-') === 0){
+                $data[$k]['icon'] = "fa ".$v['icon'];
+            }else{
+                $data[$k]['icon'] = "layui-icon layui-icon-".$v['icon'];
+            }
 
             $data[$k]['url'] = $v['href'];
             unset($data[$k]['href']);
@@ -308,9 +326,13 @@ class SysMenu extends ModelService {
 
             if(empty($v['children'])) continue;
             foreach ($v['children'] as $k1 => $v1){
-                if( empty($v1['children']) &&  (empty($v1['href']) || $v1['href'] == '#') ) continue;
+                if( empty($v1['children']) &&  (empty($v1['href']) || $v1['href'] == '#')  ) continue;
 
-                $data[$k]['children'][$k1]['icon'] = "layui-icon layui-icon-".$v1['icon'];
+                if( !empty($v1['icon']) &&  strpos($v1['icon'],'fa-') === 0){
+                    $data[$k]['children'][$k1]['icon'] = "fa ".$v1['icon'];
+                }else{
+                    $data[$k]['children'][$k1]['icon'] = "layui-icon layui-icon-".$v1['icon'];
+                }
 
                 $data[$k]['children'][$k1]['url'] = $v1['href'];
                 unset($data[$k]['children'][$k1]['href']);
@@ -320,7 +342,11 @@ class SysMenu extends ModelService {
                 if(empty($v1['children'])) continue;
                 foreach ($v1['children'] as $k2 => $v2){
                     if(empty($v2['href']) || $v2['href'] == '#') continue;
-                    $data[$k]['children'][$k1]['children'][$k2]['icon'] = "layui-icon layui-icon-".$v2['icon'];
+                    if( !empty($v2['icon']) &&  strpos($v2['icon'],'fa-') === 0){
+                         $data[$k]['children'][$k1]['children'][$k2]['icon'] = "fa ".$v2['icon'];
+                     }else{
+                         $data[$k]['children'][$k1]['children'][$k2]['icon'] = "layui-icon layui-icon-".$v2['icon'];
+                     }
 
                     $data[$k]['children'][$k1]['children'][$k2]['url'] = $v2['href'];
                     unset($data[$k]['children'][$k1]['children'][$k2]['href']);

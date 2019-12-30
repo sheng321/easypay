@@ -16,26 +16,27 @@ class RedisModel extends Model
     static protected $instance;
 
     //默认过期时间
-    public $ttl = 360;
+    public $ttl = 120;
 
-    protected $database = 0;
+    public $database = 0;
 
 
     protected  function redisConfig($parameters){
-        if(!isset($parameters['host'])){
-            $parameters = \think\facade\Config::get('redis.');
-        }
 
         if (!isset($parameters['host'])) {
-            $parameters['host'] = 'localhost';
+            $parameters['host'] = \think\facade\Config::get('redis.host');
         }
 
         if (!isset($parameters['port'])) {
-            $parameters['port'] = 6379;
+            $parameters['port'] = \think\facade\Config::get('redis.port');
         }
 
-        if (!$this->database != 0) {
-            $parameters['database'] = $this->database;
+        if (!isset($parameters['password'])) {
+            $parameters['password'] = \think\facade\Config::get('redis.password');
+        }
+
+        if ($this->database > 0) {
+            $parameters['database'] = $this->database?$this->database:\think\facade\Config::get('redis.database');
         }
 
         return  $parameters;

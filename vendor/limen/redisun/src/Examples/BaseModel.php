@@ -22,6 +22,7 @@ class BaseModel extends Model
 {
     protected function initRedisClient($parameters, $options)
     {
+
         if (!isset($parameters['host'])) {
             $parameters['host'] = 'localhost';
         }

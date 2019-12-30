@@ -45,8 +45,11 @@ class AdminController extends BaseController
         $REFERER = $this->request->server('HTTP_REFERER','');
         $url = $this->request->domain();
         if (strpos($REFERER, $url) !== 0) {
-            $this->redirect(url('@admin/login/index'),302);
-            session('admin_info', null);
+            $session_id  = getSessionid();
+            if($session_id   !== session('admin_info.single_key')){
+                $this->redirect(url('@admin/login/index'),302);
+                session('admin_info', null);
+            }
         }
 
         //IP白名单
@@ -134,7 +137,8 @@ class AdminController extends BaseController
      */
     public function __single($user)
     {
-        if($user['single_key'] !== session('admin_info.single_key')){
+        $session_id  = getSessionid();
+        if($user['single_key'] !== session('user_info.single_key')  ||  $user['single_key'] !== $session_id){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '账号在其它设备登入，强制退出！', 'url' => url('@admin/login/logout')];
             __log( session('admin_info.nickname').' 账号在其它设备登入，强制退出！');
             session('admin_info', null);

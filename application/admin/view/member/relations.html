@@ -1,4 +1,4 @@
-{extend name="admin@public/basic" /}
+{extend name="admin@public/basicTree" /}
 
 {block name="style"}
 <link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
@@ -63,233 +63,19 @@
 
 {block name="script"}
 
-<script type="text/javascript"       >
-    layui.extend({
-        treeGrid: "/static/js/lay-module/treeGrid/treeGrid",
-    }).use([ 'jquery','treeGrid'], function () {
-        var treeGrid = layui.treeGrid,
-            $ = layui.jquery;
-        // 当前页面Bogy对象
-        var $body = $('body');
-        /**
-         * 生成树形表单
-         * @param elem 绑定表单id
-         * @param url 链接
-         * @param cols 表单渲染
-         * @param page 表单渲染
-         */
-        $.form.tableTree = function (elem, url, cols, treeShowName = 'title',isPage = true, skin = 'line', size = '', isTool = true) {
-            if (!isPage) {
-                var data = {
-                    id: elem + 'TableId'
-                    , elem: '#' + elem + 'Table'
-                    , url: url
-                    , method: 'get'
-                    , cellMinWidth: 95
-                    , idField: 'id'//必須字段
-                    , treeId: 'id'//树形id字段名称
-                    , treeUpId: 'pid'//树形父id字段名称
-                    , treeShowName: treeShowName//以树形式显示的字段
-                    , height: "full-80"
-                    , isFilter: false
-                    , iconOpen: false//是否显示图标【默认显示】
-                    , isOpenDefault: true//节点默认是展开还是折叠【默认展开】
-                    , loading: true
-                    , cols: cols
-                    , isPage: false
-                    , parseData: function (res) {
-                        return res;
-                    },
-                    done: function (res) {
-                        merge(res);
-                    }
-                };
-            } else {
-                var data = {
-                    id: elem + 'TableId'
-                    , elem: '#' + elem + 'Table'
-                    , url: url
-                    , method: 'get'
-                    , cellMinWidth: 95
-                    , idField: 'id'//必須字段
-                    , treeId: 'id'//树形id字段名称
-                    , treeUpId: 'pid'//树形父id字段名称
-                    , treeShowName: treeShowName//以树形式显示的字段
-                    , height: "full-80"
-                    , isFilter: false
-                    , iconOpen: false//是否显示图标【默认显示】
-                    , isOpenDefault: true//节点默认是展开还是折叠【默认展开】
-                    , loading: true
-                    , limits: [10, 15, 20, 25, 50, 100]
-                    , limit: 10
-                    , cols: cols
-                    , isPage: true
-                    , parseData: function (res) {
-                        // return res;
-                    },
-                    done: function (res) {
-                        merge(res);
-                    }
-
-                };
-            }
-
-           // if (skin != '') data.skin = skin;
-            if (size != '') data.size = size;
-            if (size == 'lg') data.limit = 10;
-            if (!isTool) data.height = "full-40";
-
-            treeGrid.render(data);
-        }
-
-        $.form.searchTree = function (TableId, search, page = 1) {
-            console.log('搜索内容');
-            console.log(search);
-            var loading = $.msg.loading();
-            if (!page) {
-                var data = {
-                    where: {search: search}
-                };
-            } else {
-                var data = {
-                    page: {curr: page},
-                    where: {search: search}
-                };
-            }
-            if (!$.tool.isEmptyArray(search)) {
-                treeGrid.reload(TableId, data);
-                $.msg.close(loading);
-                $.msg.success('查询成功！');
-            } else {
-                $.msg.close(loading);
-                $.tool.reload();
-            }
-        }
-        /**
-         * 修改表单字段值
-         * @param tableName table名称
-         * @param url 链接
-         */
-        $.form.editFieldTree = function (tableName, url) {
-            treeGrid.on('edit(' + tableName + ')', function (obj) {
-                var value = obj.value //修改后的值
-                    , data = obj.data //所在行所有键值
-                    , field = obj.field; //字段名称
-                $.request.post(url, {
-                    id: data.id,
-                    field: field,
-                    value: value,
-                }, function (res) {
-                    $.msg.success(res.msg);
-                }, true);
-                return false;
-            });
-        }
-
-        /**
-         * 注册 data-search-tree 事件
-         * 用于表格搜索
-         */
-        $body.on('click', '[data-search-tree]', function () {
-            var searchData = Object();
-            var searchInput = $('#searchBlock div div input');
-            var searchSelect = $('#searchBlock div div select');
-            $.each(searchInput, function (i, obj) {
-                id = $(obj).attr('id');
-                if (id != undefined) {
-                    searchData[id] = $("#" + id).val();
-                }
-            });
-
-            $.each(searchSelect, function (i, obj) {
-                id = $(obj).attr('id');
-                if (id != undefined) {
-                    searchData[id] = $("#" + id).val();
-                }
-            });
-
-            $.form.searchTree($(this).attr('data-search-tree'), searchData);
-            return false;
-        });
-        /**
-         * 批量删除
-         * 注册 data-del-all-tree 事件
-         */
-        $body.on('click', '[data-del-all-tree]', function () {
-            var url = $(this).attr('data-del-all-tree');
-            var checkStatus = treeGrid.checkStatus($(this).attr('data-table-id')),
-                data = checkStatus.data,
-                id = [];
-
-            if (data.length > 0) {
-                for (let i in data) {
-                    id.push(data[i].id);
-                }
-
-                $.msg.confirm($(this).attr('data-title'), function () {
-                    $.request.get(url, {id: id}, function (res) {
-                        $.msg.success(res.msg, function () {
-                            $.tool.reload();
-                        })
-                    })
-                });
-            } else {
-                $.msg.error('请选择需要删除的信息!');
-            }
-            return false;
-        });
-
-
-
-        function merge(res) {
-
-            var data = res.data;
-            var mergeIndex = 0;//定位需要添加合并属性的行数
-            var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-            var columsName = ['level_title'];//需要合并的列名称
-            var columsIndex = [0];//需要合并的列索引值
-
-            for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
-                var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
-                for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
-                    var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
-                    var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
-
-                    if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
-                        mark += 1;
-                        //相同列的第一列增加rowspan属性
-                        tdPreArr.each(function () {
-                            $(this).attr("rowspan", mark);
-                        });
-                        //当前行隐藏
-                        tdCurArr.each(function () {
-                            $(this).css("display", "none");
-                        });
-                    }else {
-                        mergeIndex = i;
-                        mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
-                    }
-                }
-                mergeIndex = 0;
-                mark = 1;
-            }
-        }
-
-
-        /*************************************淫荡分割线***************************************************************/
         /**
          * 生成表单
          */
         $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax&uid={$Think.get.uid}', [[
             {field: 'level_title', title: '等级', minWidth: 20, align: "center"},
             {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
-
-
             {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
 
             {field: 'create_by_username', title: '创建人', align: 'center'},
             {field: 'create_at', title: '创建时间', align: 'center', minWidth: 150},
-        ]], 'uid',true);
+        ]], 'uid','pid',true,function (res,curr,count){
+            merge(res,['level_title'],[0]);
+        })
 
 
         /**
@@ -302,14 +88,12 @@
          */
         $.form.editFieldTree('currentTable', '{:url("$thisRequest")}');
 
-
         /**
          * 修改状态
          */
         $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
         $.form.switch('modifySingle', '{:url("$thisClass/single")}');
         $.form.switch('modifyGoogle', '{:url("$thisClass/google")}');
-    });
 
-</script>
+
 {/block}

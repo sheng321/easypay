@@ -30,13 +30,15 @@ class Uprofile extends ModelService {
     /**
      * redis
      * key   字段值要唯一
+     * relate 关联一起更新
      * @var array
      */
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 3360 ,
-        'key'=> "String:table:ChannelGroup:uid:{uid}:id:{id}",
-        'keyArr'=> ['id','uid'],
+        'key'=> "String:table:Uprofile:uid:{uid}:id:{id}",
+        'keyArr'=> ['uid','id'],
+        'relate'=> ['Umember'=>'uid'],
     ];
 
 

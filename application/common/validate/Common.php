@@ -17,12 +17,12 @@ class Common extends Validate {
     protected $rule = [
         'id'    => 'require|number',
         'field' => 'require',
-        'value' => 'require|max:30',
+        'value' => 'require|max:100',
         'email' => 'email',
         'ip' => 'require|ip',
         'word' => 'require|checkWord',//口令
 
-        'param' => 'chsDash|max:255',//验证某个字段的值只能是汉字、字母、数字和下划线_及破折号-
+        'param' => 'checkParam|max:255',//验证某个字段的值只能是汉字、字母、数字和下划线_及破折号-
         'param_k' => 'require|alphaDash|max:20',
 
         'google'=>'require|length:6|number|verifyGoogle',
@@ -75,9 +75,35 @@ class Common extends Validate {
     {
         return $this->only(['id','field','value'])
             ->append('field', 'in:title,remark,sort,value')
-            ->append('value', 'chsDash')
-            ->remove('value', 'require');
+            ->remove('value', 'require')
+            ->append('value', 'checkValue');
+
     }
+
+    public function checkParam($value, $rule, $data = [])
+    {
+        return $this->checkVal($value);
+    }
+
+    public function checkValue($value, $rule, $data = [])
+    {
+        return $this->checkVal($value);
+    }
+    public function checkVal($value){
+        if(empty($value))  return true;
+
+        $msg = true;
+        $value = str_replace("@","",$value);
+        $value = str_replace("http://","",$value);
+        $value = str_replace("/","",$value);
+        $value = str_replace(".","",$value);
+
+        $chsDash = \think\facade\Validate::checkRule($value,"chsDash"); //只能是汉字、字母、数字和下划线_及破折号-
+        if(!$chsDash) $msg = '输入值只能是汉字、字母、数字和下划线_及破折号-';
+
+        return $msg;
+    }
+
 
 
     public function sceneEdit_rate()

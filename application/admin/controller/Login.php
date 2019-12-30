@@ -70,15 +70,13 @@ class Login extends BaseController
             $login['user']['login_at'] = time();
             session('admin_info', $login['user']);
 
-            $session_id  =   session_id();
+            $session_id  = session_id();
             //单点登入
-            if(!empty($session_id)){
-                $this->model->save([
-                    'single_key'=>$session_id,
-                    'id'=>$login['user']['id']
-                ],['id'=>$login['user']['id']]);
-                session('admin_info.single_key', $session_id);
-            }
+            $this->model->save([
+                'single_key'=>$session_id,
+                'id'=>$login['user']['id']
+            ],['id'=>$login['user']['id']]);
+            session('admin_info.single_key', $session_id);
 
             __log('登入成功！');
 

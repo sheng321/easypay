@@ -45,9 +45,13 @@ class AgentController extends BaseController
         $REFERER = $this->request->server('HTTP_REFERER','');
         $url = $this->request->domain();
         if (strpos($REFERER, $url) !== 0) {
-            $this->redirect(url('@agent/login/index'),302);
-            session('agent_info', null);
+            $session_id  = getSessionid();
+            if($session_id   !== session('agent_info.single_key')){
+                $this->redirect(url('@agent/login/index'),302);
+                session('agent_info', null);
+            }
         }
+
 
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
@@ -126,7 +130,8 @@ class AgentController extends BaseController
      */
     public function __single($user)
     {
-        if($user['single_key'] !== session('agent_info.single_key')){
+        $session_id  = getSessionid();
+        if($user['single_key'] !== session('user_info.single_key')  ||  $user['single_key'] !== $session_id){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '账号在其它设备登入，强制退出！', 'url' => url('@agent/login/logout')];
             __log( session('agent_info.nickname').' 账号在其它设备登入，强制退出！');
             session('agent_info', null);

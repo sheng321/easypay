@@ -44,9 +44,13 @@ class UserController extends BaseController
         $REFERER = $this->request->server('HTTP_REFERER','');
         $url = $this->request->domain();
         if (strpos($REFERER, $url) !== 0) {
-            $this->redirect(url('@user/login/index'),302);
-            session('user_info', null);
+            $session_id  = getSessionid();
+            if($session_id   !== session('user_info.single_key')){
+                $this->redirect(url('@user/login/index'),302);
+                session('user_info', null);
+            }
         }
+
 
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
@@ -126,7 +130,8 @@ class UserController extends BaseController
      */
     public function __single($user)
     {
-        if($user['single_key'] !== session('user_info.single_key')){
+        $session_id  = getSessionid();
+        if($user['single_key'] !== session('user_info.single_key')  ||  $user['single_key'] !== $session_id){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '账号在其它设备登入，强制退出！', 'url' => url('@user/login/logout')];
             __log( session('user_info.nickname').' 账号在其它设备登入，强制退出！');
             session('user_info', null);

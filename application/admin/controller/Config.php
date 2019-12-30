@@ -52,6 +52,7 @@ class Config extends AdminController {
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果

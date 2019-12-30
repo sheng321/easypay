@@ -21,6 +21,7 @@
         this.close = function (index) {
             return layer.close(index);
         };
+
         //弹出警告消息框
         this.alert = function (msg, callback) {
             var index = layer.alert(msg, {end: callback, scrollbar: false});
@@ -36,6 +37,7 @@
             });
             return index;
         };
+
         this.confirm = function (msg, ok, no) {
             var index = layer.confirm(msg, {title: '操作确认', btn: ['确认', '取消']}, function () {
                 typeof ok === 'function' && ok.call(this);
@@ -45,11 +47,6 @@
             });
             return index;
         };
-
-
-
-
-
 
         // 显示成功类型的消息
         this.success = function (msg, callback) {
@@ -79,6 +76,24 @@
             var index = msg ? layer.msg(msg, {icon: 16, scrollbar: false, shade: this.shade, time: 0, end: callback}) : layer.load(2, {time: 0, scrollbar: false, shade: this.shade, end: callback});
             return this.dialogIndexs.push(index), index;
         };
+
+        this.prompt = function (msg,url,obj, callback) {
+            var  index = layer.prompt({
+                formType: 1,
+                title: msg,
+                close: false,
+                btn: ['确定','取消']
+            }, function (value,index1){
+                if($.tool.isEmpty(value)) return false;
+                layer.close(index1);
+                obj.paypwd = $.md5(value);
+                $.request.post(url,obj,function (res) {
+                    callback(res);
+                });
+            });
+            return this.dialogIndexs.push(index), index;
+        };
+
 
     };
 
@@ -164,7 +179,7 @@
          * @param cols 表单渲染
          * @param page 表单渲染
          */
-        this.table = function (elem, url, cols, isPage = true,done = '',  size = '', isTool = true,) {
+        this.table = function (elem, url, cols, isPage = true , done = '',  size = '', isTool = true) {
             if (!isPage) {
                 var data = {
                     elem: '#' + elem + 'Table',
@@ -273,10 +288,6 @@
                 return false;
             });
         }
-
-
-
-
 
         /**
          * 弹出新窗口

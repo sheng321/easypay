@@ -20,8 +20,8 @@ class Umember extends UserService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 3360 ,
-        'key'=> "String:table:Umember:username:{username}:id:{id}",
-        'keyArr'=> ['id','username'],
+        'key'=> "String:table:Umember:username:{username}:uid:{uid}:id:{id}",
+        'keyArr'=> ['id','username','uid'],
     ];
 
     protected $insert = [ 'create_by','uid'];
@@ -89,10 +89,10 @@ class Umember extends UserService {
     {
         if(isset($data['uid'])&&isset($data['who'])){
            $Uprofile =  model('app\common\model\Uprofile');
-            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,group_id,who')->find();
+            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,secret,group_id,who')->find();
             if(empty($find)){
                 $Uprofile->save(['uid'=>$data['uid'],'who'=>$data['who']]);
-                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,group_id,who')->find();
+                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,secret,group_id,who')->find();
             }
             $data = $find->toArray();
             return $data;

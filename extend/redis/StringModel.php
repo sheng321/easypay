@@ -9,6 +9,8 @@ class StringModel extends RedisModel
 
     protected $sortable = true;
 
+    public $database = 11;
+
     protected function compare($a, $b)
     {
         if ($a > $b) {
