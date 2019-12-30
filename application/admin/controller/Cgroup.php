@@ -25,8 +25,6 @@ class Cgroup  extends AdminController
         $this->model = model('app\common\model\ChannelGroup');
     }
 
-
-
     public function index()
     {
 

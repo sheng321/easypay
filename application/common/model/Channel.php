@@ -104,26 +104,37 @@ class Channel extends ModelService {
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
+        //查找该通道分组 的通道
+        $find = model('app\common\model\ChannelProduct')->where('group_id', $search['g_id'])->find();
+        if(empty($find)){
+            $find = [];
+        }else{
+            $find = array_column($find->toArray(), null, 'id');
+        }
 
-        //查找所需修改通道分组
-        $find = model('app\common\model\ChannelGroup')->where('id', $search['g_id'])->field(['mode','weight','concurrent'])->find();
 
         $mode = [];
         $weight = [];
         $concurrent = [];
         if(!empty($find)){
-            $mode1 = json_decode($find['mode'],true);
-            $weight1 = json_decode($find['weight'],true);
-            $concurrent1 = json_decode($find['concurrent'],true);
+            $mode1 = $find['mode'];
+            $weight1 = $find['weight'];
+            $concurrent1 = $find['concurrent'];
 
             !empty($mode1) && $mode = $mode1;
             !empty($weight1) && $weight = $weight1;
             !empty($concurrent1) && $concurrent = $concurrent1;
 
         }
-
-
         foreach ($data as $k => $val){
+            $data[$k]['LAY_CHECKED'] = false;
+            if(!empty($find)){
+                foreach ($find as $k => $v){
+
+                }
+            }
+
+
 
             $data[$k]['LAY_CHECKED'] = false;
             if(in_array($val['id'], $mode)){
