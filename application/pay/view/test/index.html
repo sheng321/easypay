@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{$title|default='付款方式'}</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="__USER__/css/font.css">
+    <link rel="stylesheet" href="__LAYUI__/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__USER__/css/weadmin.css">
+    <script  src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+    <style type="text/css">
+        /* CSS Document */
+        body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,table,td,img,div,dl,dt,dd,input{margin:0;padding:0; box-sizing: border-box}
+        body{font-size:12px;}
+        img{border:none;}
+        li{list-style:none;}
+        input,select,textarea{outline:none;}
+        textarea{resize:none;}
+        a{text-decoration:none;}
+        /*清浮动*/
+        .clearfix:after{content:"";display:block;clear:both;}
+        .clearfix{zoom:1;}
+
+        /* 取消a标签点击后的虚线框 */
+        a {outline: none;}
+        a:active {star:expression(this.onFocus=this.blur());}
+        input[type="text"]{
+            outline: none;
+        }
+        /*付款方式*/
+        .payWrap{
+            width:95%;
+            min-height: 70%;
+            background: #FFFFFF;
+            margin: 0 auto;
+        }
+        .payHeader{
+            height:70px;
+            line-height: 70px;
+            border-bottom: 1px solid #CCCCCC;
+            padding: 0 40px;
+        }
+
+        .payWrap .fontsize{
+            color:#d81e06 ;
+            font-size: 18px;
+            margin:0 5px;
+        }
+        .payContent{
+            padding:10px 20px;
+        }
+        .unionpayList{
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            margin: 5px 0;
+            position: relative;
+            border: 2px solid #FFFFFF;
+        }
+        .unionpayList:hover{
+            cursor: pointer;
+            background: #f1f4fa;
+        }
+        .unionPrice{
+            position: absolute;
+            top: 0;
+            right: 20px;
+        }
+
+        .unionpay{
+            padding: 0 20px 0 40px;
+
+        }
+        .unionpay1{
+            padding: 0 20px 0 62px;
+           /* background: url("images/unionpay1.png") 20px center no-repeat;*/
+        }
+        .unionpay2{
+            padding: 0 20px 0 62px;
+            /*background: url("images/unionpay2.png") 20px center no-repeat;*/
+        }
+        .activeBtn{
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            border: 2px solid #7a97cc;
+        }
+        .payBorder{
+            width: 100%;
+            border-top: 1px solid #f2f2f2;
+            margin-top: 30px;
+        }
+        .payBut{
+            display: block;
+            width: 150px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            background: #0169c6!important;
+            color: #FFFFFF!important;
+            float: left!important;
+            margin: 20px 0;
+        }
+
+    </style>
+</head>
+
+<body  class="layui-layout-body"  >
+
+<!-- 中部开始 -->
+<div class="payWrap">
+    <div class="payHeader clearfix">
+        <strong class="fl">订单编号：{$orderid|default=''}</strong>
+        <span class="fr"><strong class="fontsize">{$Think.get.amount|default="100.00"}</strong>元</span>
+    </div>
+    <section class="payContent">
+
+        {if $Think.get.code}
+           {if isset($data[$Think.get.code])}
+                <div class="unionpayList   activeBtn  ">
+                    <span class="unionpay {$data[$Think.get.code]['code']}"  code = "{$data[$Think.get.code]['code']}"  >{$data[$Think.get.code]['title']}</span>
+                    <span class=" unionPrice">支付<strong class="fontsize">{$Think.get.amount|default="100.00"}</strong>元</span>
+                </div>
+           {/if}
+        {else /}
+            {foreach $data as $vo}
+            <div class="unionpayList     ">
+                <span class="unionpay {$vo.code}"  code = "{$vo.code}"  >{$vo.title}</span>
+                <span class=" unionPrice">支付<strong class="fontsize">{$Think.get.amount|default="100.00"}</strong>元</span>
+            </div>
+            {/foreach}
+        {/if}
+
+        <div class="payBorder clearfix">
+            <a href="#" class="fl payBut ">确认支付</a>
+        </div>
+    </section>
+</div>
+
+<script>
+    $(".unionpayList").click(function(){
+        $(".unionpayList").removeClass("activeBtn");
+        $(this).addClass("activeBtn")
+    })
+</script>
+
+<!-- 中部结束 -->
+
+</body>
+</html>

@@ -49,13 +49,8 @@ class Cgroup  extends AdminController
         } else {
             $post = $this->request->only("id,field,value");
 
-            if($post['field'] == 'c_rate' ){
-                //验证数据
-                $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
-            }else{
-                //验证数据
-                $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
-            }
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
 
             if (true !== $validate) return __error($validate);
 
@@ -87,13 +82,14 @@ class Cgroup  extends AdminController
     }
 
 
-
-
     //接口模式
     public function mode()
     {
+      $g_id = $this->request->get('id', 0);
+      $status =  $this->model->where(['id'=>$g_id])->value('status');
 
         if (!$this->request->isPost()) {
+            if($status != 1) return msg_error('请先开启通道分组');
 
             //ajax访问获取数据
             if ($this->request->get('type') == 'ajax') {
@@ -101,10 +97,9 @@ class Cgroup  extends AdminController
                 $limit = $this->request->get('limit', 1000);
                 $search = (array)$this->request->get('search', []);
                 $search['p_id'] = $this->request->get('p_id', '');
-                $search['g_id'] = $this->request->get('g_id', '');
+                $search['g_id'] = $g_id;
                 return json(model('app\common\model\Channel')->pList($page, $limit, $search));
             }
-
 
             //基础数据
             $basic_data = [
@@ -113,6 +108,8 @@ class Cgroup  extends AdminController
 
             return $this->fetch('', $basic_data);
         } else {
+            if($status != 1) return __error('请先开启通道分组');
+
             $post = $this->request->post();
 
             //验证数据
@@ -122,24 +119,19 @@ class Cgroup  extends AdminController
             //权重 和 并发 编辑
             if($post['field'] == 'weight' || $post['field'] == 'concurrent'){
 
-                if(!is_numeric($post['value'])){
-                    return __error('请输入数字！');
-                }
+                $ChannelProduct = model('app\common\model\ChannelProduct');
 
+                $id = $ChannelProduct->where(['group_id'=>$g_id,'channel_id'=>$post['id']])->value('id');
+                if(empty($id)) return '数据错误，请重试';
 
-                $data[$post['field']] = json_decode($this->model->where('id', $this->request->get('g_id'))->value($post['field']),true);
-                if(empty($data[$post['field']])) $data[$post['field']] = [];
-                $data[$post['field']][$post['id']] = $post['value'];
-
-                $data2['id'] = $this->request->get('g_id');
+                $data2['id'] = $id;
                 $data2['field'] = $post['field'];
-                $data2['value'] = json_encode($data[$post['field']]);
-
+                $data2['value'] = $post['value'];
 
                 //保存数据,返回结果
-                return $this->model->editField($data2);
-            }else{
+                return $ChannelProduct->editField($data2);
 
+            }else{
                 //保存数据,返回结果
                 return model('app\common\model\Channel')->editField($post);
             }
@@ -165,10 +157,32 @@ class Cgroup  extends AdminController
         $status = $this->model->where('id', $get['id'])->value('status');
         $status == 1 ? list($msg, $status) = ['通道分组禁用成功', $status = 0] : list($msg, $status) = ['通道分组启用成功', $status = 1];
 
-        //执行更新操作操作
-        $update =  $this->model->__edit(['status' => $status,'id' => $get['id']],$msg);
 
-        return $update;
+        if($status == 0){
+            //使用事物保存数据
+            $this->model->startTrans();
+            $save = $this->model->save(['status' => $status,'id' => $get['id']],['id'=>$get['id']]);
+
+            $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
+                $query->where(['group_id'=>$get['id']]);
+            });
+
+            if (!$save || !$del) {
+                $this->model->rollback();
+                $msg = '数据有误，请稍后再试！';
+                return __error($msg);
+            }
+            $this->model->commit();
+
+            return __success($msg);
+
+        }else{
+            //执行更新操作操作
+            $update =  $this->model->__edit(['status' => $status,'id' => $get['id']],$msg);
+            return $update;
+        }
+
+
     }
 
 
@@ -276,7 +290,7 @@ class Cgroup  extends AdminController
      * @throws \Exception
      */
     public function del() {
-        $get = $this->request->get('id');
+        $get = $this->request->get();
 
 
         //验证数据
@@ -291,9 +305,22 @@ class Cgroup  extends AdminController
             }
         }
 
-        //执行操作
-        $del = $this->model->__del($get);
-        return $del;
+        //使用事物保存数据
+        $this->model->startTrans();
+        $del1 = $this->model->destroy($get['id']);
+
+        //删除关联数据
+        $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
+            $query->where(['group_id'=>$get['id']]);
+        });
+
+        if (!$del1 || !$del) {
+            $this->model->rollback();
+            $msg = '数据有误，请稍后再试！';
+            return __error($msg);
+        }
+        $this->model->commit();
+        return __success('删除成功');
     }
 
     /**
@@ -303,16 +330,28 @@ class Cgroup  extends AdminController
      */
     public function confirm() {
         $get = $this->request->get();
+        if(empty($get['pid'])) return __error('请选择通道！');
+        $p_id = $this->model->where([])->value('p_id');
+        if(empty($p_id)) return __error('该通道未选着支付产品！');
 
-        $mode = [
-            'mode'=>[]
-        ];
+        $ChannelProduct = model('app\common\model\ChannelProduct');
+
+        $mode = [];
+        $id = [];
         //验证数据
         if (isset($get['id'])) {
             if (!is_array($get['id'])) {
                 $validate = $this->validate($get, 'app\common\validate\Channel.del');
                 if (true !== $validate) return __error($validate);
-                $mode['mode'][] = $get['id'];
+                $temp = ['channel_id'=>$get['id'],'group_id'=>$get['pid'],'p_id'=>$p_id];
+                $find = $ChannelProduct->where($temp)->find();
+                if(!empty($find)){
+                    $temp = $find->toArray();
+                    $id[] = $temp['id'];
+                }
+
+
+                $mode[] = $temp;
             }else{
                 foreach ($get['id'] as $k => $val){
                     $data['id'] = $val;
@@ -321,19 +360,38 @@ class Cgroup  extends AdminController
                         unset($get['id'][$k]);
                         continue;
                     }
-                    $mode['mode'][] = $val;
+                    $temp = ['channel_id'=>$val,'group_id'=>$get['pid'],'p_id'=>$p_id];
+                    $find = $ChannelProduct->where($temp)->find();
+                    if(!empty($find)){
+                        $temp = $find->toArray();
+                        $id[] = $temp['id'];
+                    }
+
+                    $mode[] = $temp;
                 }
             }
-
         }
-        if(empty($get['pid'])) return __error('请选择通道！');
 
-        $mode['id'] = $get['pid'];
-        $mode['mode'] = json_encode($mode['mode']);
+        if(empty($mode))  return __error('保存失败');
 
-        //执行更新操作操作
-        $update = $this->model->__edit($mode);
-        return $update;
+
+        //使用事物保存数据
+        $ChannelProduct->startTrans();
+
+        $del = $ChannelProduct->destroy(function($query) use ($get,$id){
+            $query->where(['group_id'=>$get['pid']])->whereNotIn('id',$id);
+        });
+
+        $save = $ChannelProduct->saveAll($mode);
+        if (!$save || !$del) {
+            $ChannelProduct->rollback();
+            $msg = '数据有误，请稍后再试！';
+            return __error($msg);
+        }
+        $ChannelProduct->commit();
+
+        empty($msg) && $msg = '保存成功';
+        return __success($msg);
     }
 
     /**
@@ -343,11 +401,10 @@ class Cgroup  extends AdminController
     public function top() {
         $get = $this->request->get();
 
-
         $data = [];
         //没有数据就把所有选中的前置
         if(empty($get['search']['title']) && !empty($get['id'])){
-            $mode = json_decode($this->model->where(['id'=>$get['id']])->value('mode'),true);
+            $mode = model('app\common\model\ChannelProduct')->where(['group_id'=>$get['id']])->column('channel_id');
            if(!empty($mode)) $data = $mode;
         }
 

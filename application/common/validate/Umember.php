@@ -85,6 +85,7 @@ class Umember extends Validate {
         //绑定谷歌
         'save_google'  => ['id','google_token'],
 
+        //验证支付密码
         'paypwd'  => ['paypwd', 'paypwd1']
     ];
 
@@ -96,6 +97,20 @@ class Umember extends Validate {
         return $this->only([ 'paypwd', 'paypwd1'])
             ->append('paypwd', 'require')
             ->append('paypwd', 'checkPaypwd');
+    }
+
+    public function scenePaypwd1() {
+        return $this->only([  'password', 'password1', 'paypwd1'])
+            ->append('paypwd1', 'token')
+            ->append('paypwd1', 'checkPaypwd1');
+    }
+
+
+    //修改支付密码
+    protected function checkPaypwd1($value, $rule, $data = []) {
+        if(empty($data['paypwd1']))  $data['paypwd1'] = password(md5(123456));
+        if(password($data['old_password']) != $data['paypwd1']) return '原始支付密码错误';
+        return true;
     }
 
 
@@ -172,12 +187,14 @@ class Umember extends Validate {
         if ($user['who'] == 1 || $user['who'] == 3) return '上级账户是员工，不可操作！';
         return true;
     }
-    //支付密码
+    //验证支付密码
     protected function checkPaypwd($value, $rule, $data = []) {
         if(empty($data['paypwd1']))  $data['paypwd1'] = password(md5(123456));
         if(password($value) != $data['paypwd1']) return '支付密码错误';
         return true;
     }
+
+
 
 
 

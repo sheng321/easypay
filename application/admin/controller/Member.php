@@ -5,7 +5,6 @@ namespace app\admin\controller;
 use app\common\controller\AdminController;
 use app\common\model\Uprofile;
 
-
 class Member extends AdminController {
 
     /**

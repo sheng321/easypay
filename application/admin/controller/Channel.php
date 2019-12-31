@@ -76,41 +76,51 @@ class Channel  extends AdminController
         $status = $this->model->where('id', $get['id'])->value('status');
         $status == 1 ? list($msg, $status) = ['支付通道禁用成功', $status = 0] : list($msg, $status) = ['支付通道启用成功', $status = 1];
 
-        //执行更新操作操作
-        $update =  $this->model->__edit(['status' => $status,'id' => $get['id']],$msg);
-
-        $res1 = json_decode($update->getContent(),true);
-        if($res1['code'] == 1){
-            //产品开启，通道更新开启
-            $pid = $this->model->where('id', $get['id'])->value('pid');
-            if($pid !== 0 && $status == 1){
-                $this->model->__edit(['status' => $status,'id' => $pid]);
-            }
+        //是通道 还是通道本身
+        $pid = $this->model->where(['id'=>$get['id']])->value('pid');
 
 
-            //通道关闭，产品更新关闭
-            if($pid == 0 && $status == 0){
-                $se = $this->model->where('pid', $get['id'])->field('status,id')->select();
+        $data = [];
+        $channel_id = [];
 
-                $up = [];
-                foreach ($se as $k => $v){
-                    if($v['status'] == 1){
-                        $data['id'] = $v['id'];
-                        $data['status'] = 0;
-                        $up[$k] = $data;
-                    }
+        $data[] = ['id'=>$get['id'],'status'=>$status];
+        if($pid == 0 ){
+            //是通道
+            if($status == 0){
+                //关闭
+                $child = $this->model->where(['pid'=>$get['id'],'status'=>1])->column('id');
+                foreach ($child as $k=>$v){
+                    $data[] = ['id'=>$v,'status'=>0];
+                    $channel_id[] = $v;
                 }
-
-             if(!empty($up))   $this->model->saveAll($up);
-
             }
-
+        }else{
+            //是通道产品
+            if($status == 0)  $channel_id[] = $get['id'];
         }
 
+        //使用事物保存数据
+        $this->model->startTrans();
+        $save = $this->model->saveAll($data);
 
+        $del = true;
+        if($status == 0 && !empty($channel_id) ){
+            $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($channel_id){
+                $query->where([['channel_id','in',$channel_id]]);
+            });
+        }
+        if (!$save || !$del) {
+            $this->model->rollback();
+            $msg = '数据有误，请稍后再试！';
+            return __error($msg);
+        }
+        $this->model->commit();
 
-        return $update;
+        return __success($msg);
     }
+
+
+
 
 
     public function mobile() {
@@ -528,22 +538,47 @@ class Channel  extends AdminController
      */
     public function del() {
         $get = $this->request->get();
+        if(is_array($get['id'])) return msg_error('数据错误，请重试');
 
-        //验证数据
-        if (!is_array($get['id'])) {
-            $validate = $this->validate($get, 'app\common\validate\Channel.del');
-            if (true !== $validate) return __error($validate);
+        $validate = $this->validate($get, 'app\common\validate\Channel.del');
+        if (true !== $validate) return __error($validate);
+
+
+        //是通道 还是通道本身
+        $pid = $this->model->where(['id'=>$get['id']])->value('pid');
+
+        $data = [];
+        $channel_id = [];
+
+        $data[] =(int) $get['id'];
+        if($pid == 0 ){
+            //是通道
+            $channel_id = $this->model->where(['pid'=>$get['id'],'status'=>1])->column('id');
+            $data = array_merge($data,$channel_id);
         }else{
-            foreach ($get['id'] as $k => $val){
-                $data['id'] = $val;
-                $validate = $this->validate($data, 'app\common\validate\Channel.del');
-                if (true !== $validate) unset($get['id'][$k]);
-            }
+            //是通道产品
+            $channel_id[] = $get['id'];
         }
 
-        //执行操作
-        $del = $this->model->__del($get);
-        return $del;
+        //使用事物保存数据
+        $this->model->startTrans();
+        $save = $this->model->destroy($data);
+
+        $del = true;
+        if(!empty($channel_id) ){
+            $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($channel_id){
+                $query->where([['channel_id','in',$channel_id]]);
+            });
+        }
+        if (!$save || !$del) {
+            $this->model->rollback();
+            $msg = '数据有误，请稍后再试！';
+            return __error($msg);
+        }
+        $this->model->commit();
+
+        return __success('删除成功');
+
     }
 
 

@@ -77,10 +77,30 @@ class Product  extends AdminController
         $status = $this->model->where('id', $get['id'])->value('status');
         $status == 1 ? list($msg, $status) = ['支付产品禁用成功', $status = 0] : list($msg, $status) = ['支付产品启用成功', $status = 1];
 
-        //执行更新操作操作
-        $update =  $this->model->__edit(['status' => $status,'id' => $get['id']],$msg);
+        if($status == 0){
+            //使用事物保存数据
+            $this->model->startTrans();
+            $save = $this->model->save(['status' => $status,'id' => $get['id']],['id'=>$get['id']]);
 
-        return $update;
+            $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
+                $query->where(['p_id'=>$get['id']]);
+            });
+
+            if (!$save || !$del) {
+                $this->model->rollback();
+                $msg = '数据有误，请稍后再试！';
+                return __error($msg);
+            }
+            $this->model->commit();
+
+            return __success($msg);
+
+        }else{
+            //执行更新操作操作
+            $update =  $this->model->__edit(['status' => $status,'id' => $get['id']],$msg);
+            return $update;
+        }
+
     }
     /**
      * 更改支付产品状态
@@ -193,9 +213,23 @@ class Product  extends AdminController
             }
         }
 
-        //执行操作
-        $del = $this->model->__del($get);
-        return $del;
+        //使用事物保存数据
+        $this->model->startTrans();
+        $del1 = $this->model->destroy($get['id']);
+
+        //删除关联数据
+        $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
+            $query->where(['p_id'=>$get['id']]);
+        });
+
+        if (!$del1 || !$del) {
+            $this->model->rollback();
+            $msg = '数据有误，请稍后再试！';
+            return __error($msg);
+        }
+        $this->model->commit();
+        return __success('删除成功');
+
     }
     
 

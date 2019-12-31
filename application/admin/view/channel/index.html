@@ -48,12 +48,6 @@
         </div>
         {/if}
 
-        {if auth("$thisClass/del")}
-        <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-danger layui-btn-normal   layui-btn-sm" data-title="确定批量删除？" data-del-all-tree='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
-        </div>
-        {/if}
-
     </blockquote>
     <!--顶部操作栏--结束-->
 
@@ -176,7 +170,6 @@
          */
         $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
 
-            {type: "checkbox", fixed: "left", width: 30,},
             {field: 'id', title: 'ID', minWidth: 10, align: 'center',sort:true},
             {field: 'top', title: '置顶', minWidth: 40, templet: '#checkTop',  align: "center"},
             {field: 'title', title: '通道名称', minWidth: 200, align: 'center'},

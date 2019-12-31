@@ -155,4 +155,18 @@ class PayProduct extends ModelService {
         return \think\facade\Cache::get('idRate');
     }
 
+
+    /**
+     * ID与支付编码数组
+     * @param array $modules
+     */
+    public static function codeTitle(){
+        \think\facade\Cache::remember('codeTitle', function () {
+            $data = self::where(['status'=>1,'cli'=>0])->column('id,code,title','code');
+            \think\facade\Cache::tag('PayProduct')->set('codeTitle',$data,3600);
+            return \think\facade\Cache::get('codeTitle');
+        });
+        return \think\facade\Cache::get('codeTitle');
+    }
+
 }

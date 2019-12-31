@@ -2,9 +2,6 @@
 
 namespace app\common\service;
 
-use think\facade\Cache;
-
-
 /**
  * Class RateService
  * 获取费率服务
@@ -30,8 +27,6 @@ class RateService
     public $product;
     public $channel;
     public $channelGroup;
-
-
 
     //支付产品的默认费率
     public static function product(){

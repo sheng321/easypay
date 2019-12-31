@@ -85,6 +85,30 @@ class User extends AgentController {
         }
     }
 
+    public function changepaypwd() {
+
+        if (!$this->request->isPost()) {
+
+            $data['username'] = $this->user['username'];
+            $basic_data = [
+                'title' => '修改支付密码',
+                'user'  => $data,
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->only(['password','password1','old_password','__token__'], 'post');
+            $post['paypwd1'] =  $this->user['profile']['pay_pwd'];
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Umember.paypwd1');
+            if (true !== $validate) return __error($validate);
+            $data['pay_pwd'] = password($post['password']);
+            $data['id'] = $this->user['profile']['id'];
+            return model('app\common\model\Uprofile')->__edit($data);
+
+        }
+    }
+
 
     
     /**

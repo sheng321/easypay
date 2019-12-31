@@ -74,7 +74,7 @@ class Common extends Validate {
     public function sceneEdit_field()
     {
         return $this->only(['id','field','value'])
-            ->append('field', 'in:title,remark,sort,value')
+            ->append('field', 'in:title,remark,sort,value,weight,concurrent,c_rate,s_rate,min_amount,max_amount,f_amount,limit_money')
             ->remove('value', 'require')
             ->append('value', 'checkValue');
 
@@ -87,16 +87,30 @@ class Common extends Validate {
 
     public function checkValue($value, $rule, $data = [])
     {
+        if($data['field'] == 'weight' || $data['field'] == 'concurrent' || $data['field'] == 'sort'){
+            if(!is_numeric($value) || $value  < 0) return '请输入正整数';
+        }
+
+        if( in_array($data['field'],['min_amount','max_amount','limit_money'])){
+            if(!is_float($value) || $value  < 0) return '请输入正确金额格式';
+        }
+        if( in_array($data['field'],['c_rate','s_rate'])){
+            if(!is_float($value) || $value  < 0 || $value  > 0.8) return '请输入正确费率格式';
+        }
+
+
         return $this->checkVal($value);
     }
     public function checkVal($value){
-        if(empty($value))  return true;
 
         $msg = true;
         $value = str_replace("@","",$value);
         $value = str_replace("http://","",$value);
         $value = str_replace("/","",$value);
         $value = str_replace(".","",$value);
+        $value = str_replace("|","",$value); //固定金额
+
+        if(empty($value))  return true;
 
         $chsDash = \think\facade\Validate::checkRule($value,"chsDash"); //只能是汉字、字母、数字和下划线_及破折号-
         if(!$chsDash) $msg = '输入值只能是汉字、字母、数字和下划线_及破折号-';

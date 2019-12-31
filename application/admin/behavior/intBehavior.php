@@ -16,9 +16,6 @@ class intBehavior extends Controller
     public function run(){
 
 
-
-
-
         //IP 白名单
 
 
@@ -75,12 +72,6 @@ class intBehavior extends Controller
             if(is_array($v)){
                 $this->check_param1($v);
             }elseif(is_string($v)){
-
-
-                if($k == 'email' || $k == 'mailUsername'){
-                    $validate2 = $this->validate($data, 'app\common\validate\Common.email');
-                    if (true !== $validate2) exceptions($validate2);
-                }
 
                 if($k == 'create_at' || $k == 'update_at'){
                     $v = str_replace(" - ","",$v);

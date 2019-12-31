@@ -1,4 +1,4 @@
-{extend name="user@public/basic" /}
+{extend name="agent@public/basic" /}
 
 {block name="style"}
 <style>
@@ -19,7 +19,7 @@
 
 {block name="cotent"}
 <div class="layui-fluid">
-    <div class="layui-row layui-col-space15">
+
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">查看通道费率</div>
@@ -28,9 +28,7 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <table class="layui-table"   >
                 <colgroup>
@@ -41,8 +39,8 @@
                 </colgroup>
                 <thead>
                 <tr >
-                    <th >通道编码</th>
-                    <th>通道名称</th>
+                    <th>通道分组名称</th>
+                    <th >支付模式</th>
                     <th>通道费率(千分)</th>
                     <th>通道状态</th>
                 </tr>
@@ -50,18 +48,18 @@
                 <tbody>
 
                 {foreach $data as $vo}
-                    <tr>
-                        <td>{$vo.code|default=''}</td>
-                        <td>{$vo.title|default=''}</td>
-                        <td>{$vo.p_rate|default=''}</td>
-                        <td>{$vo.status == 1?'开启':'关闭'}</td>
-                    </tr>
+                <tr>
+                    <td>{$vo.title|default=''}</td>
+                    <td>{$vo.product|default=''}</td>
+                    <td>{$vo.c_rate|default=''}</td>
+                    <td>{$vo.status == 1?'开启':'关闭'}</td>
+                </tr>
                 {/foreach}
 
                 </tbody>
             </table>
         </div>
-    </div>
+
 </div>
 
 {/block}

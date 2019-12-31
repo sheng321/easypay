@@ -52,49 +52,11 @@
 
         // 当前页面Bogy对象
         var $body = $('body');
-        $.form.table = function (elem, url, cols, isPage = true, skin = 'line', size = '', isTool = true) {
-            if (!isPage) {
-                var data = {
-                    elem: '#' + elem + 'Table',
-                    url: url,
-                    cellMinWidth: 95,
-                    page: false,
-                    height: "full-80",
-                    limits: [1000],
-                    limit: 1000,
-                    id: elem + 'TableId',
-                    cols: cols,
-                    done: function (res) {
-
-                        $('tr').each(function(index, element){
-                            var id = index -1;
-                            if(id >=0 && id < $('tr').length -3){
-                                if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
-                                    $(element).find('td').each(function(index1, element1){
-                                        $(element1).removeAttr("data-edit");
-                                        $(element1).removeAttr("style");
-                                    });
-                                }
-                            }
-                        });
-
-
-                    }
-                };
-         }
-           // if (skin != '') data.skin = skin;
-            if (size != '') data.size = size;
-            if (size == 'lg') data.limit = 10;
-            if (!isTool) data.height = "full-20";
-            table.render(data);
-        }
-
-
 
         /**
          * 生成表单
          */
-        $.form.table('current', '{:url("$thisRequest")}?type=ajax&p_id={$Think.get.p_id}&g_id={$Think.get.id}', [[
+        $.form.table('current', '{:url("$thisRequest")}?type=ajax&p_id={$Think.get.p_id}&id={$Think.get.id}', [[
             {type: "checkbox",fixed: "left", width: 30,},
             {field: 'title', title: '通道名称', minWidth: 20, align: 'center'},
             {field: 'weight',title: '权重',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;'},
@@ -107,13 +69,24 @@
             {field: 'limit_money', title: '当日限额', edit: 'text',minWidth: 20, align: "center", style: 'background-color: #009688; color: #fff;'},
 
             {field: 'remark',title: '备注信息', edit: 'text',minWidth: 80, align: "center",style: 'background-color: #009688; color: #fff;'},
-        ]], false);
-
+        ]], false,function (res,curr,count){
+            $('tr').each(function(index, element){
+                var id = index -1;
+                if(id >=0 && id < $('tr').length -3){
+                    if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
+                        $(element).find('td').each(function(index1, element1){
+                            $(element1).removeAttr("data-edit");
+                            $(element1).removeAttr("style");
+                        });
+                    }
+                }
+            });
+        });
 
         /**
          * 监听字段值编辑
          */
-        $.form.editField('currentTable', '{:url("$thisRequest")}?g_id={$Think.get.id}');
+        $.form.editField('currentTable', '{:url("$thisRequest")}?id={$Think.get.id}');
 
 
         /**

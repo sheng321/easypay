@@ -105,45 +105,19 @@ class Channel extends ModelService {
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
         //查找该通道分组 的通道
-        $find = model('app\common\model\ChannelProduct')->where('group_id', $search['g_id'])->find();
-        if(empty($find)){
-            $find = [];
-        }else{
-            $find = array_column($find->toArray(), null, 'id');
-        }
+        $select = model('app\common\model\ChannelProduct')->where('group_id', $search['g_id'])->select()->toArray();
+        $find = array_column($select, null, 'channel_id');
 
-
-        $mode = [];
-        $weight = [];
-        $concurrent = [];
-        if(!empty($find)){
-            $mode1 = $find['mode'];
-            $weight1 = $find['weight'];
-            $concurrent1 = $find['concurrent'];
-
-            !empty($mode1) && $mode = $mode1;
-            !empty($weight1) && $weight = $weight1;
-            !empty($concurrent1) && $concurrent = $concurrent1;
-
-        }
         foreach ($data as $k => $val){
             $data[$k]['LAY_CHECKED'] = false;
-            if(!empty($find)){
-                foreach ($find as $k => $v){
-
-                }
-            }
-
-
-
-            $data[$k]['LAY_CHECKED'] = false;
-            if(in_array($val['id'], $mode)){
-                $data[$k]['LAY_CHECKED'] = true;
-            }
             $data[$k]['weight'] = 5;
-            if(isset($weight[$val['id']]))   $data[$k]['weight'] = $weight[$val['id']];
             $data[$k]['concurrent'] = 0;
-            if(isset($concurrent[$val['id']])) $data[$k]['concurrent'] = $concurrent[$val['id']];
+
+            if(isset($find[$val['id']])){
+                $data[$k]['LAY_CHECKED'] = true;
+                $data[$k]['weight'] =  $find[$val['id']]['weight'];
+                $data[$k]['concurrent'] = $find[$val['id']]['concurrent'];
+            }
         }
 
         $info = [

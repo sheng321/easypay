@@ -3,7 +3,7 @@
 namespace app\common\model;
 
 use app\common\service\ModelService;
-
+use think\Db;
 /**
  * 支付通道分组
  */
@@ -15,7 +15,6 @@ class ChannelGroup extends ModelService {
      * @var string
      */
     protected $table = 'cm_channel_group';
-
 
     /**
      * redis
@@ -45,7 +44,7 @@ class ChannelGroup extends ModelService {
         $where = search($search,$searchField,$where);
 
 
-        $field = ['id','update_at','remark','title','status','sort','verson','p_id','mode','is_true','c_rate','cli'];
+        $field = ['id','update_at','remark','title','status','sort','verson','p_id','is_true','c_rate','cli'];
 
         $count = $this->where($where)->count();
 
@@ -54,45 +53,42 @@ class ChannelGroup extends ModelService {
 
         //产品列表
         $product = \app\common\model\PayProduct::idArr();
-
-        //统计通道单笔限额
-        $res = model('\app\common\model\Channel')->where([['pid','>',0],
-            ['status','=',1]])->field(['id','min_amount','max_amount','f_amount'])->select()->toArray();
-
-        $tempArr = [];
-        if(!empty($res)) $tempArr =(array) array_column($res, null, 'id');
-
-
+        $ChannelProduct = model('app\common\model\ChannelProduct');
         foreach ($data as $k => $v){
-            //接口模式
-            $mode =  json_decode($v['mode'],true);
-            if(!is_array($mode) || empty($mode)){
-                $data[$k]['mode'] = 0;
-            }else{
-                $data[$k]['mode'] = count($mode);
 
-                $data[$k]['min_amount'] = 0;
-                $data[$k]['max_amount'] = 0;
-                $data[$k]['f_amount'] = '';
-                $data[$k]['ex_amount'] = '';
+            $data[$k]['min_amount'] = 0;
+            $data[$k]['max_amount'] = 0;
+            $data[$k]['f_amount'] = '';
+            $data[$k]['ex_amount'] = '';
 
-                foreach ($mode as $k1=>$v1){
-                    if(!empty($tempArr[$v1]['min_amount']))  $data[$k]['min_amount'] = min($tempArr[$v1]['min_amount'],$data[$k]['min_amount']);
-                    if(!empty($tempArr[$v1]['max_amount']))  $data[$k]['max_amount'] = max($tempArr[$v1]['max_amount'],$data[$k]['max_amount']);
-                    if(!empty($tempArr[$v1]['f_amount']))  $data[$k]['f_amount'] =  $data[$k]['f_amount'].'|'.$tempArr[$v1]['f_amount'];
+            $data[$k]['mode'] =  $ChannelProduct->where(['p_id'=>$v['p_id'],'group_id'=>$v['id']])->count();
+            if($data[$k]['mode'] > 0){
+                $select = $ChannelProduct->alias('a')->join('channel w','w.id = a.channel_id','LEFT')->where([
+                    ['a.p_id','=',$v['p_id']],
+                    ['a.group_id','=',$v['id']]])->field('a.*,w.min_amount,w.max_amount,w.f_amount,w.ex_amount')->select()->toArray();
+
+                foreach ($select as $k1 => $v1){
+                    $data[$k]['min_amount'] = $data[$k]['min_amount'] == 0?$v1['min_amount']:min($v1['min_amount'],$data[$k]['min_amount']);
+                    $data[$k]['max_amount'] = max($v1['max_amount'],$data[$k]['max_amount']);
+                    $data[$k]['f_amount'] =  $data[$k]['f_amount'].'|'.$v1['f_amount'];
+                    $data[$k]['ex_amount'] =  $data[$k]['ex_amount'].'|'.$v1['ex_amount'];
                 }
 
                 if(!empty($data[$k]['f_amount'])){
                     $filter = array_filter(explode('|',$data[$k]['f_amount']));
-                    if(!empty($filter))  $data[$k]['f_amount'] = implode('|',array_diff($filter));
-
+                    $data[$k]['f_amount'] = implode('|',array_unique($filter));
                 }
+
+                if(!empty($data[$k]['ex_amount'])){
+                    $filter = array_filter(explode('|',$data[$k]['ex_amount']));
+                    $data[$k]['ex_amount'] = implode('|',array_unique($filter));
+                }
+
             }
+
             $data[$k]['product'] = $product[$v['p_id']];
         }
-
-
-
+        
         $info = [
             'limit'        => $limit,
             'page_current' => $page,
@@ -176,7 +172,7 @@ class ChannelGroup extends ModelService {
             ['status','=',1],
         ];
 
-        $field = ['id','update_at','remark','title','status','sort','verson','p_id','mode','is_true'];
+        $field = ['id','update_at','remark','title','status','sort','verson','p_id','is_true'];
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
