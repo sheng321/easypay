@@ -11,7 +11,7 @@ $secret = '123456';
 //获取请求参数
 $request = file_get_contents('php://input');
 if (empty($request)) {
-    die('request is empty');
+  //  die('request is empty');
 }
 //获取http 头
 $headers = getHeaders();
@@ -23,7 +23,7 @@ list($algo, $hash) = explode('=', $hubSignature, 2);
 $payloadHash = hash_hmac($algo, $request, $secret);
 // 判断签名是否匹配
 if ($hash != $payloadHash) {
-    die('secret is error');
+   // die('secret is error');
 }
 
 echo shell_exec("cd {$local} && /usr/bin/git pull {$remote} 2>&1");
