@@ -11,7 +11,7 @@ $secret = '123456';
 $request = file_get_contents('php://input');
 
 
-file_put_contents('/www/wwwroot/secret1.text',$request);
+file_put_contents('/www/wwwroot/easypay/secret1.text',$request);
 
 if (empty($request)) {
     die('request is empty');
@@ -19,7 +19,7 @@ if (empty($request)) {
 //获取http 头
 $headers = getHeaders();
 
-file_put_contents('/www/wwwroot/secret.text',json_encode($headers));
+file_put_contents('/www/wwwroot/easypay/secret.text',json_encode($headers));
 
 //github发送过来的签名
 $hubSignature = $headers['X-Hub-Signature'];
