@@ -43,7 +43,6 @@ fclose($fp);
 die('done ' . date('Y-m-d H:i:s', time()));
 
 
-
 /**
  * @todo 获取头信息
  */

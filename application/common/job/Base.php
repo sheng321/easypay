@@ -3,7 +3,6 @@ namespace app\common\job;
 use think\queue\Job;
 
 class Base {
-
     /**
      * fire方法是消息队列默认调用的方法
      * @param Job            $job      当前的任务对象
