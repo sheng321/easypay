@@ -11,7 +11,7 @@ return [
 
     'is_close'=> false,//网站是否维护
     'is_api'=> false,//是否禁止下单
-    'is_income'=> false,//是否禁止入账
+    'noentry'=> 0,//是否禁止入账  1 禁止所有通道入账
 
     'memberid'=> '20100002',//测试商户号
     'Md5key'=> 'd6f3fa704e7748f52f3a08fb3f1af6038be9cf3f',//测试测试秘钥

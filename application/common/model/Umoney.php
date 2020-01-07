@@ -26,7 +26,6 @@ class Umoney extends ModelService {
      */
     protected $table = 'cm_money';
 
-
     /**
      * redis (复制的时候不要少数组参数)
      * key   字段值要唯一
@@ -35,8 +34,8 @@ class Umoney extends ModelService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 3360 ,
-        'key'=> "String:table:Umoney:uid:{uid}:id:{id}",
-        'keyArr'=> ['id','uid'],
+        'key'=> "String:table:Umoney:channel_id:{channel_id}:uid:{uid}:id:{id}",
+        'keyArr'=> ['id','uid','channel_id'],
     ];
 
 

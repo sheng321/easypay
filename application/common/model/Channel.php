@@ -165,6 +165,25 @@ class Channel extends ModelService {
       return $data['code'];
     }
 
+
+    /**
+     * 获取通道ID
+     * @param array $modules
+     */
+    public static function get_id($id){
+        $data =  self::quickGet($id);
+        if(empty($data)) return $id;
+        if($data['pid'] != 0){
+            $Channel =  self::quickGet($data['pid']);
+            if(empty($Channel)) return false;
+            return $Channel['code'];
+        }
+        return $id;
+    }
+
+
+
+
     /**
      * 获取通道配置信息
      * @param $id
