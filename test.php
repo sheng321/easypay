@@ -12,7 +12,7 @@ $arr2 = array_column($arr, 'name');
 $tempArr = array_column($arr, null, 'value');
 
 
-555555555
+6666666
 
 
 
