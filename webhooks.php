@@ -16,7 +16,12 @@ if (empty($request)) {
 $headers = getHeaders();
 //github发送过来的签名
 $hubSignature = $headers['X-Hub-Signature'];
+
+file_put_contents('/www/wwwroot/secret.text',$hubSignature);
 list($algo, $hash) = explode('=', $hubSignature, 2);
+
+
+
 
 // 计算签名
 $payloadHash = hash_hmac($algo, $request, $secret);
