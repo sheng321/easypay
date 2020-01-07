@@ -12,8 +12,7 @@ $arr2 = array_column($arr, 'name');
 $tempArr = array_column($arr, null, 'value');
 
 
-22222222222222
-sdfsdfasfdasdfasdfaf
+555555555
 
 
 
