@@ -14,6 +14,10 @@ if (empty($request)) {
 die('request is empty');
 }
 
+
+
+
+
 //验证密码是否正确
 $data = json_decode($request, true);
 if ($data['password'] != $password) {
