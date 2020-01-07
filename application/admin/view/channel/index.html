@@ -70,7 +70,7 @@
             <span >排除金额：{{d.ex_amount}}</span>
             {{#  } }}
 
-            {{#  if(d.f_multiple !== ''){ }}
+            {{#  if(d.f_multiple != '' && d.f_multiple != 0){ }}
             <span >固定倍数：{{d.f_multiple}}</span>
             {{#  } }}
 
@@ -125,6 +125,8 @@
 
     </script>
 
+
+
     <!--表单模板绑定--结束-->
 
     <!--表单操作栏--开始-->
@@ -140,9 +142,6 @@
         {{# } }}
 
         {/if}
-
-
-
 
         {if auth("$thisClass/edit")}
 
@@ -164,6 +163,7 @@
 {/block}
 
 {block name="script"}
+<!--<script>-->
 
         /**
          * 生成表单
@@ -172,8 +172,9 @@
 
             {field: 'id', title: 'ID', minWidth: 10, align: 'center',sort:true},
             {field: 'top', title: '置顶', minWidth: 40, templet: '#checkTop',  align: "center"},
+            {field: 'code', title: '编码', minWidth: 40, align: 'center'},
             {field: 'title', title: '通道名称', minWidth: 200, align: 'center'},
-            {field: 'code', title: '编码', maxWidth: 50, align: 'center'},
+
             {field: 'c_rate', title: '成本费率', maxWidth: 50, align: 'center', templet: '#c_rate'},
             {field: 's_rate', title: '对外费率', maxWidth: 50, align: 'center', templet: '#s_rate'},
 
@@ -191,7 +192,9 @@
             {field: 'update_at', title: '最新更新时间', align: 'center' },
 
 
-        ]], 'title','pid',true);
+        ]], 'title','pid',true,function (res,curr,count){
+            merge(res,['top','code'],[1,2]);
+        });
 
         /**
          * 日期范围

@@ -11,7 +11,7 @@
                     <blockquote class="layui-elem-quote layui-quote-nm">
                         <strong>API对接参数：</strong><br><br>
                         商户号：{$Think.session.user_info.uid|default='无名'}<br><br>
-                        网关地址：{$UserInfo.Api|default=''}<br><br>
+                        网关地址：{:config('set.api')}<br><br>
                         商户APIKEY：<button id="apikey-query" onclick="apikey(this)"  class="layui-btn layui-btn-small layui-btn-normal">点击查看密钥</button><span id='apikey' class="hide"></span>
                     </blockquote>
                 </div>

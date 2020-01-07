@@ -121,8 +121,6 @@ class Channel  extends AdminController
 
 
 
-
-
     public function mobile() {
         $get = $this->request->get();
 
@@ -226,9 +224,11 @@ class Channel  extends AdminController
             $p_id =  $this->request->post('p_id',[]);
             $post['p_id'] = json_encode($p_id);
 
+
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Channel.add');
             if (true !== $validate) return __error($validate);
+            unset($post['__token__']);
 
             //保存数据,返回结果
             //使用事物保存数据
@@ -237,19 +237,19 @@ class Channel  extends AdminController
 
             if (!$channel || !$this->model->id ) {
                 $this->model->rollback();
-
                 empty($msg) && $msg = '数据有误，请稍后再试！!';
                 return __error($msg);
             }
 
+            $data = [];
             foreach ($p_id as $k => $val){
                 $data[$k]['p_id'] = json_encode([$val]);
                 $data[$k]['pid'] = $this->model->id;
                 //添加支付产品
                 $data[$k]['title'] = $post['title'];
-
             }
-           if(!empty($data)) $this->model->saveAll($data);
+
+           if(!empty($data)) $this->model->isUpdate(false)->saveAll($data);
             $this->model->commit();
             empty($msg) && $msg = '添加成功!';
             return __success($msg);
@@ -544,7 +544,7 @@ class Channel  extends AdminController
         if (true !== $validate) return __error($validate);
 
 
-        //是通道 还是通道本身
+        //是通道产品 还是通道本身
         $pid = $this->model->where(['id'=>$get['id']])->value('pid');
 
         $data = [];
@@ -553,7 +553,7 @@ class Channel  extends AdminController
         $data[] =(int) $get['id'];
         if($pid == 0 ){
             //是通道
-            $channel_id = $this->model->where(['pid'=>$get['id'],'status'=>1])->column('id');
+            $channel_id = $this->model->where(['pid'=>$get['id']])->column('id');
             $data = array_merge($data,$channel_id);
         }else{
             //是通道产品

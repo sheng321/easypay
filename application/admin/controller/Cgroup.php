@@ -372,26 +372,43 @@ class Cgroup  extends AdminController
             }
         }
 
-        if(empty($mode))  return __error('保存失败');
+        if(empty($mode)){
+            //使用事物保存数据
+            $ChannelProduct->startTrans();
+            $del = $ChannelProduct->destroy(function($query) use ($get){
+                $query->where(['group_id'=>$get['pid']]);
+            });
+            if (!$del) {
+                $ChannelProduct->rollback();
+                $msg = '数据有误，请稍后再试！';
+                return __error($msg);
+            }
+            $ChannelProduct->commit();
 
+            empty($msg) && $msg = '保存成功';
+            return __success($msg);
+        }else{
 
-        //使用事物保存数据
-        $ChannelProduct->startTrans();
+            //使用事物保存数据
+            $ChannelProduct->startTrans();
 
-        $del = $ChannelProduct->destroy(function($query) use ($get,$id){
-            $query->where(['group_id'=>$get['pid']])->whereNotIn('id',$id);
-        });
+            $del = $ChannelProduct->destroy(function($query) use ($get,$id){
+                $query->where(['group_id'=>$get['pid']])->whereNotIn('id',$id);
+            });
 
-        $save = $ChannelProduct->saveAll($mode);
-        if (!$save || !$del) {
-            $ChannelProduct->rollback();
-            $msg = '数据有误，请稍后再试！';
-            return __error($msg);
+            $save = $ChannelProduct->saveAll($mode);
+            if (!$save || !$del) {
+                $ChannelProduct->rollback();
+                $msg = '数据有误，请稍后再试！';
+                return __error($msg);
+            }
+            $ChannelProduct->commit();
+
+            empty($msg) && $msg = '保存成功';
+            return __success($msg);
         }
-        $ChannelProduct->commit();
 
-        empty($msg) && $msg = '保存成功';
-        return __success($msg);
+
     }
 
     /**

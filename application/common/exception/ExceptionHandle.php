@@ -21,7 +21,6 @@ class ExceptionHandle extends Handle
             return parent::render($e);
         }
 
-
        $this->recordErrorLog($e);
 
        return json($this->msg,$this->code);
@@ -70,7 +69,6 @@ class ExceptionHandle extends Handle
         $data['Trace'] = $traceArr;
 
         Log::write($data,'error');
-
 
     }
 }

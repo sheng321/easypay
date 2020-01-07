@@ -42,7 +42,7 @@
         .payHeader{
             height:70px;
             line-height: 70px;
-            border-bottom: 1px solid #CCCCCC;
+           /* border-bottom: 1px solid #CCCCCC;*/
             padding: 0 40px;
         }
 
@@ -73,7 +73,7 @@
         }
 
         .unionpay{
-            padding: 0 20px 0 40px;
+            padding: 0 20px 0 20px;
 
         }
         .unionpay1{
@@ -114,39 +114,119 @@
 
 <!-- 中部开始 -->
 <div class="payWrap">
-    <div class="payHeader clearfix">
-        <strong class="fl">订单编号：{$orderid|default=''}</strong>
-        <span class="fr"><strong class="fontsize">{$Think.get.amount|default="100.00"}</strong>元</span>
+    <div class="payHeader clearfix"   >
+        <strong class="fl" style="font-size: 16px" >订单编号：{$order.pay_orderid|default=''}</strong>
+
     </div>
+    <div class="payHeader clearfix"  style="  border-bottom: 1px solid #CCCCCC;"  >
+        <strong class="fl">测试金额：<input type="number" id="amount"     class="fontsize"  style="width:40%;margin-top: 15px;height: 40px;"  value='{$Think.get.amount|default="100.00"}' placeholder="请输入测试金额"  onchange="setamount()"   >元</strong>
+    </div>
+
     <section class="payContent">
 
         {if $Think.get.code}
            {if isset($data[$Think.get.code])}
-                <div class="unionpayList   activeBtn  ">
-                    <span class="unionpay {$data[$Think.get.code]['code']}"  code = "{$data[$Think.get.code]['code']}"  >{$data[$Think.get.code]['title']}</span>
-                    <span class=" unionPrice">支付<strong class="fontsize">{$Think.get.amount|default="100.00"}</strong>元</span>
-                </div>
+
+                {foreach $data as $vo}
+                    <div class="unionpayList  {if $Think.get.code ==  $vo.code}   activeBtn    {/if}    ">
+                        <span class="unionpay {$vo.code}"     code = "{$vo.code}"     >{$vo.title}</span>
+                        <span class=" unionPrice">支付<strong class="fontsize">{$order.pay_amount|default='100.00'}</strong>元</span>
+                    </div>
+                {/foreach}
+
            {/if}
         {else /}
             {foreach $data as $vo}
             <div class="unionpayList     ">
-                <span class="unionpay {$vo.code}"  code = "{$vo.code}"  >{$vo.title}</span>
-                <span class=" unionPrice">支付<strong class="fontsize">{$Think.get.amount|default="100.00"}</strong>元</span>
+                <span class="unionpay {$vo.code}"     code = "{$vo.code}"  >{$vo.title}</span>
+                <span class=" unionPrice">支付<strong class="fontsize">{$order.pay_amount|default='100.00'}</strong>元</span>
             </div>
             {/foreach}
         {/if}
 
         <div class="payBorder clearfix">
-            <a href="#" class="fl payBut ">确认支付</a>
+            <a  class="fl payBut "     >确认支付</a>
         </div>
     </section>
 </div>
 
+<form id="form-inline" method="post" action="{:config('set.api')}">
+    {foreach $order as $key => $val}
+          <input type="hidden" name="{$key}" value="{$val}">
+    {/foreach}
+</form>
+
 <script>
+    $(".payBut").click(function(){
+        var amount = "{$order.pay_amount|default='100.00'}";
+        var code = "{$order.pay_bankcode|default=''}";
+
+        if(amount == "" || amount ==null || isNaN(amount)){
+            alert('请输入正确的金额格式');
+            return false;
+        }
+        if(amount < 1){
+            alert('金额不能小于一元');
+            return false;
+        }
+
+
+        if(code == ''){
+            alert('请选择支付通道');
+          return false;
+        }
+
+        $("#form-inline").submit();
+    });
+
     $(".unionpayList").click(function(){
         $(".unionpayList").removeClass("activeBtn");
-        $(this).addClass("activeBtn")
-    })
+        $(this).addClass("activeBtn");
+
+        var code =  $(this).find('span').attr('code');
+        setcode(code);
+    });
+
+    function setcode(value) {
+
+        if(value == null || value == '' || value == 'undefined' || value <= 0){
+            return false;
+        }
+        var Url =  changeURLArg('code',value);
+        window.location.href = Url;
+    }
+
+
+    function setamount() {
+
+        var value =  $("#amount").val();
+        if(value == null || value == '' || value == 'undefined' || value <= 0){
+            return false;
+        }
+        var Url =  changeURLArg('amount',value);
+        window.location.href = Url;
+    }
+
+    function changeURLArg(arg,arg_val){
+
+        var url = window.location.href;
+
+        var pattern=arg+'=([^&]*)';
+        var replaceText=arg+'='+arg_val;
+        if(url.match(pattern)){
+            var tmp='/('+ arg+'=)([^&]*)/gi';
+            tmp=url.replace(eval(tmp),replaceText);
+            return tmp;
+        }else{
+            if(url.match('[\?]')){
+                return url+'&'+replaceText;
+            }else{
+                return url+'?'+replaceText;
+            }
+        }
+        return url+'\n'+arg+'\n'+arg_val;
+    }
+
 </script>
 
 <!-- 中部结束 -->

@@ -5,16 +5,28 @@ namespace app\common\model;
 use app\common\service\ModelService;
 
 /**
- * 支付通道
+ * 订单支付表
  */
 class Order extends ModelService {
-
 
      /**
      * 绑定数据表
      * @var string
      */
     protected $table = 'cm_order';
+
+    /**
+     * redis (复制的时候不要少数组参数)
+     * key   字段值要唯一
+     * @var array
+     */
+    protected $redis = [
+        'is_open'=> true,
+        'ttl'=> 300,
+        'key'=> "String:table:Order:out_trade_no:{out_trade_no}:systen_no:{systen_no}:id:{id}",
+        'keyArr'=> ['id','out_trade_no','systen_no'],
+    ];
+
 
     /**
      * Undocumented 分页获取
@@ -24,7 +36,7 @@ class Order extends ModelService {
      * @param array $search
      * @return void
      */
-    public function list($page = 1,$limit = 10,$search = [],$uid=''){
+    public function alist($page = 1,$limit = 10,$search = [],$uid=''){
         if(empty($uid)){
             $where = [];
         }else{

@@ -21,7 +21,7 @@
         "topthink/think-captcha": "^2.0",
         "topthink/think-image": "^1.0",
         "topthink/think-helper": "^3.0",
-        "topthink/think-queue": "*",
+        "topthink/think-queue": "2.0.*",
         "limen/redisun": "2.0.*"
     },
     "autoload": {

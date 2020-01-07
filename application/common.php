@@ -376,22 +376,34 @@ if (!function_exists('exceptions')) {
     /**
      * 抛出自定义异常
      */
-    function exceptions($data) {
-        $response['type'] = 'error';
-        $response['code'] = 0;
-        $response['msg'] = '未知错误~';
-        $response['url'] = '';
-        if(is_array($data)){
-            if(array_key_exists('type',$data)) $response['type'] = $data['type'];
-            if(array_key_exists('code',$data)) $response['code'] = $data['code'];
-            if(array_key_exists('msg',$data)) $response['msg'] = $data['msg'];
-            if(array_key_exists('url',$data)) $response['url'] = $data['url'];
+    function exceptions($msg,$data=[]) {
+
+        $result['code'] = 0;
+        $result['msg'] = '未知错误~';
+        $result['data'] = $data;
+        $url = null;
+        if(is_array($msg)){
+            if(array_key_exists('code',$msg)) $result['code'] = $msg['code'];
+            if(array_key_exists('msg',$msg)) $result['msg'] = $msg['msg'];
+            if(array_key_exists('url',$msg)) $url = $msg['url'];
         }else{
-            $response['msg'] = $data;
+            $result['msg'] = $msg;
         }
 
-        throw new \think\exception\HttpResponseException(Request()->isAjax() ? json($response) : exit(msg_error($response['msg'],$response['url'])));
+        if(Request()->isAjax()){
+            throw new \think\exception\HttpResponseException(json($result));
+        }else{
+            if (is_null($url)) {
+                $url = Request()->isAjax() ? '' : 'javascript:history.back(-1);';
+            } elseif ('' !== $url) {
+                $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('url')->build($url);
+            }
 
+            $result['url'] = $url;
+            $result['wait'] = 4;
+            $response = \think\facade\Response::create($result, 'jump')->options(['jump_template' => config('app.dispatch_error_tmpl') ]);
+            throw new \think\exception\HttpResponseException( $response);
+        }
     }
 }
 
@@ -456,6 +468,33 @@ if (!function_exists('msg_error')) {
     function msg_error($msg = '', $url = '', $time = 3, $icon = 2)
     {
         return alert($msg, $url, $time, $icon);
+    }
+}
+
+
+if (!function_exists('__jsuccess')) {
+
+    /**
+     * 接口成功时返回的信息
+     * @param $msg 消息
+     * @return \think\response\Json
+     */
+    function __jsuccess($msg, $data = [])
+    {
+        throw new \think\exception\HttpResponseException(json(['status' => 'success', 'msg' => $msg, 'data' => $data]));
+    }
+}
+
+if (!function_exists('__jerror')) {
+
+    /**
+     * 接口错误时返回的信息
+     * @param $msg 消息
+     * @return \think\response\Json
+     */
+    function __jerror($msg, $data = [])
+    {
+        throw new \think\exception\HttpResponseException(json(['status' => 'error', 'msg' => $msg, 'data' => $data]));
     }
 }
 
@@ -773,11 +812,24 @@ function out_xss($value) {
  */
 function Policy(){
     $url = request()->domain();
-
     $report = '';
     header('Content-Type: text/javascript; charset=utf-8');
     //设置heard头
     header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;child-src 'self';form-action 'self';object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:; report-uri $report ");
+}
+
+
+/**
+ * 预防 xss  下单请求
+ * Content-Security-Policy 内容安全政策
+ * report-uri /report  策略指令，并提供至少一个URI地址去递交报告：
+ */
+function PolicyApi(){
+    $url = request()->domain();
+    $report = '';
+    header('Content-Type: text/javascript; charset=utf-8');
+    //设置heard头
+    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;child-src 'self';form-action *;object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:; report-uri $report ");
 }
 
 

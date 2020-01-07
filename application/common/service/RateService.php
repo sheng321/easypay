@@ -182,12 +182,12 @@ class RateService
     /**
      * 获取代理支付通道分组状态和费率
      * @param $uid
-     * @param $channel_id
+     * @param $channel_group_id
      * @return mixed
      */
-    public static function getAgentStatus($uid,$channel_id){
+    public static function getAgentStatus($uid,$channel_group_id){
         $res['code'] = 0;
-        $res['id'] = $channel_id;//支付通道分组
+        $res['id'] = $channel_group_id;//支付通道分组
         $res['status'] = 0;//对应费率表的状态
         $res['rate'] = 0;//费率
         $res['type'] = 0;//哪种类型的费率
@@ -200,14 +200,14 @@ class RateService
 
 
         $channelGroup = self::channelGroup();
-        $status = $channelGroup[$channel_id]['status'];
+        $status = $channelGroup[$channel_group_id]['status'];
 
 
         //1.代理用户分组费率
         $data['type'] = empty($profile['pid'])?0:1; //是否代理分组 平台分组
         $data['uid'] = empty($profile['pid'])?0:$profile['pid'];
         $data['group_id'] = $profile['group_id'];
-        $data['channel_id'] = $channel_id;
+        $data['channel_id'] = $channel_group_id;
         $data['p_id'] = 0;
         $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
 
@@ -220,7 +220,7 @@ class RateService
 
         //2.上级的状态
         if($profile['pid'] != 0){
-            $res1 = self::getAgentStatus($profile['pid'],$channel_id);
+            $res1 = self::getAgentStatus($profile['pid'],$channel_group_id);
             if(!empty($res1)){
                 $res['rate'] = max($res1['rate'],$res['rate']);
                 if($res1['status'] == 0){
@@ -237,7 +237,7 @@ class RateService
             $res['code'] = 1;
             $res['status'] = $status;
             $res['type'] = 3;//系统通道分组费率类型
-            $res['rate'] =  $channelGroup[$channel_id]['c_rate'];//没有记录，统一使用支付产品的默认费率
+            $res['rate'] =  $channelGroup[$channel_group_id]['c_rate'];//没有记录，统一使用支付产品的默认费率
         }
 
 
@@ -255,9 +255,9 @@ class RateService
     /**
      * 获取代理费率
      * @param int $uid 商户号
-     * @param channel_id  支付通道分组ID
+     * @param $channel_group_id  支付通道分组ID
      */
-    public static function getAgentRate($uid,$channel_id){
+    public static function getAgentRate($uid,$channel_group_id){
         $rate = 0;
 
         $data['uid'] = $uid;
@@ -273,7 +273,7 @@ class RateService
         $data['type'] = empty($profile['pid'])?0:1; //是否代理分组 平台分组
         $data['uid'] = empty($profile['pid'])?0:$profile['pid'];
         $data['group_id'] = $profile['group_id'];
-        $data['channel_id'] = $channel_id;
+        $data['channel_id'] = $channel_group_id;
         $data['p_id'] = 0;
         $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
 
@@ -281,12 +281,12 @@ class RateService
 
         //2.上级的状态
         if($profile['pid'] != 0){
-            $res1 = self::getAgentRate($profile['pid'],$channel_id);
+            $res1 = self::getAgentRate($profile['pid'],$channel_group_id);
             if(!empty($res1) ) $rate = max($res1,$rate);  //通道分组没有设置费率的情况
         }
 
         //3.获取平台支付通道分组费率
-        if(empty($rate))  $rate = $channelGroup[$channel_id]['c_rate'];//没有记录，统一使用支付产品的默认费率
+        if(empty($rate))  $rate = $channelGroup[$channel_group_id]['c_rate'];//没有记录，统一使用支付产品的默认费率
 
         return $rate;
     }

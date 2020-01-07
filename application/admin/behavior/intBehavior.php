@@ -18,7 +18,6 @@ class intBehavior extends Controller
 
         //IP 白名单
 
-
         Policy(); //同源协议
       $this->check_param();
       $this->command();
@@ -90,9 +89,8 @@ class intBehavior extends Controller
                 if($k == 'back_ip' || $k == 'secretkey' ){
                     $v = str_replace("\n","",$v);//换行的情况
                 }
-
-                if($k == 'ex_amount' || $k == 'f_amount'  || $k == 'f_num'){
-                    $v = str_replace("|","",$v);//固定金额
+                if($k == 'back_ip'){
+                    $v = str_replace("*","",$v);
                 }
 
                 $data['param'] = $v;

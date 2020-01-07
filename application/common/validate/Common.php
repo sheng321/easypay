@@ -50,6 +50,10 @@ class Common extends Validate {
 
         'field.in' => 'field不再范围内',
 
+        'param_k.in' => '参数字段不能缺少',
+        'param_k.alphaDash' => '参数字段只能是字母、数字和下划线_及破折号-',
+        'param_k.max' => '参数字段不能少于20个字符',
+
     ];
 
     /**
@@ -92,7 +96,7 @@ class Common extends Validate {
         }
 
         if( in_array($data['field'],['min_amount','max_amount','limit_money'])){
-            if(!is_float($value) || $value  < 0) return '请输入正确金额格式';
+            if(!is_numeric($value) || $value  < 0) return '请输入正确金额格式';
         }
         if( in_array($data['field'],['c_rate','s_rate'])){
             if(!is_float($value) || $value  < 0 || $value  > 0.8) return '请输入正确费率格式';

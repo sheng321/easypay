@@ -25,7 +25,7 @@ class PayProduct extends ModelService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 3360 ,
-        'key'=> "String:table:PayProduct:id:{id}:title:{title}:code:{code}",
+        'key'=> "String:table:PayProduct:title:{title}:code:{code}:id:{id}",
         'keyArr'=> ['id','title','code'],
     ];
 
@@ -131,19 +131,26 @@ class PayProduct extends ModelService {
      * @param array $modules
      */
     public static function idCode() {
-
         \think\facade\Cache::remember('idCode', function () {
             $data = self::column('id,code');
             \think\facade\Cache::tag('PayProduct')->set('idCode',$data,3600);
             return \think\facade\Cache::get('idCode');
         });
-
         return \think\facade\Cache::get('idCode');
+    }
+    public static function idCode1() {
+        \think\facade\Cache::remember('idCode1', function () {
+            $data = self::column('id,code,status','code');
+            \think\facade\Cache::tag('PayProduct')->set('idCode1',$data,3600);
+            return \think\facade\Cache::get('idCode1');
+        });
+        return \think\facade\Cache::get('idCode1');
     }
 
 
+
     /**
-     * ID与支付编码数组
+     * ID与费率数组
      * @param array $modules
      */
     public static function idRate() {
@@ -157,7 +164,7 @@ class PayProduct extends ModelService {
 
 
     /**
-     * ID与支付编码数组
+     * 商户端显示
      * @param array $modules
      */
     public static function codeTitle(){

@@ -15,13 +15,13 @@ class Channel extends Validate {
     protected $rule = [
         'id'      => 'require|number|checkProductId|checkVer',
         'pid'      => 'require|number|checkPid',
-        'title'   => 'require|max:30|token',
+        'title'   => 'require|max:30',
         'sort'    => 'member',
         'remark'  => 'max:250',
         'field'   => 'require',
         'value'   => 'require|max:30',
 
-        'code'  => 'require|max:20|alphaNum',
+        'code'  => 'require|max:20|alphaNum|checkCode',
         'c_rate'=> 'float',//运营费率
         'min_amount'=> 'number',//最低限额
         'max_amount'=> 'number',//最高限额
@@ -35,6 +35,8 @@ class Channel extends Validate {
 
         'p_id'   => 'require',
         'pid'   => 'require|number',
+
+        'charge'   => 'in:0,1',//话费
 
     ];
 
@@ -97,7 +99,7 @@ class Channel extends Validate {
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num'])
+        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge'])
             ->remove('id', 'checkProductId');
     }
 
@@ -138,6 +140,13 @@ class Channel extends Validate {
     protected function checkPid($value, $rule, $data = []) {
         $user = \app\common\model\Channel::where(['id' => $value,'pid' => 0])->find();
         if (empty($user)) return '暂无支付上级通道数据，请稍后再试！';
+        return true;
+    }
+
+
+    protected function checkCode($value, $rule, $data = []) {
+        $code = \app\common\model\Channel::where(['code'=>$value,'pid'=>0])->value('code');
+        if (!empty($code)) return '通道编码重复';
         return true;
     }
 

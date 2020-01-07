@@ -17,11 +17,10 @@ class Curl
      * @param string $method 提交方式：post或get 默认post
      * @return string 提交表单的HTML文本
      */
-    function buildRequestForm($url, $data, $method = 'post')
+    static function buildRequestForm($url, $data, $method = 'post')
     {
         $sHtml = "<form id='requestForm' name='requestForm' action='".$url."' method='".$method."'>";
-        while (list ($key, $val) = each ($data))
-        {
+        foreach ($data as $key => $val){
             $sHtml.= "<input type='hidden' name='".$key."' value='".$val."' />";
         }
         $sHtml = $sHtml."<input type='submit' value='确定' style='display:none;'></form>";
@@ -38,14 +37,25 @@ class Curl
      * @param boolean $post_file 是否文件上传
      * @return string content
      */
-    static public function post($url,$param,$post_file=false){
+    static public function post($url,$param,$timeout=10){
         $oCurl = curl_init();
+
         if(stripos($url,"https://")!==FALSE){
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
         }
-        if (is_string($param) || $post_file) {
+        //设置curl默认访问为IPv4
+        if(defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
+            curl_setopt($oCurl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            //curl版本7.10.8及以上版本时，以上设置才生效
+        }
+        //设置curl请求连接时的最长秒数，如果设置为0，则无限
+        curl_setopt ($oCurl, CURLOPT_CONNECTTIMEOUT, $timeout);
+        //设置curl总执行动作的最长秒数，如果设置为0，则无限
+        curl_setopt ($oCurl, CURLOPT_TIMEOUT,$timeout*3);
+
+        if (is_string($param)) {
             $strPOST = $param;
         } else{
             $aPOST = array();
@@ -54,42 +64,96 @@ class Curl
             }
             $strPOST =  join("&", $aPOST);
         }
+        curl_setopt($oCurl, CURLOPT_HTTPHEADER, array('Expect:'));
         curl_setopt($oCurl, CURLOPT_URL, $url);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt($oCurl, CURLOPT_POST,true);
         curl_setopt($oCurl, CURLOPT_POSTFIELDS,$strPOST);
         $sContent = curl_exec($oCurl);
-        $aStatus = curl_getinfo($oCurl);
+       // $aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
-        dump(json_decode($sContent));
-        if(intval($aStatus["http_code"])==200){
-            return $sContent;
-        }else{
-            return false;
+        return $sContent;
+    }
+
+    static public function post_json($url,$param,$timeout=10){
+        $oCurl = curl_init();
+
+        if(stripos($url,"https://")!==FALSE){
+            curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
         }
+        //设置curl默认访问为IPv4
+        if(defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
+            curl_setopt($oCurl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            //curl版本7.10.8及以上版本时，以上设置才生效
+        }
+        //设置curl请求连接时的最长秒数，如果设置为0，则无限
+        curl_setopt ($oCurl, CURLOPT_CONNECTTIMEOUT, $timeout);
+        //设置curl总执行动作的最长秒数，如果设置为0，则无限
+        curl_setopt ($oCurl, CURLOPT_TIMEOUT,$timeout*3);
+
+        if (is_string($param)) {
+            $strPOST = $param;
+            curl_setopt($oCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length:' . strlen($param),'Expect:'));
+
+        } else{
+            $aPOST = array();
+            foreach($param as $key=>$val){
+                $aPOST[] = $key."=".urlencode($val);
+            }
+            $strPOST =  join("&", $aPOST);
+            curl_setopt($oCurl, CURLOPT_HTTPHEADER, array('Expect:'));
+        }
+        curl_setopt($oCurl, CURLOPT_URL, $url);
+        curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt($oCurl, CURLOPT_POST,true);
+        curl_setopt($oCurl, CURLOPT_POSTFIELDS,$strPOST);
+        $sContent = curl_exec($oCurl);
+        // $aStatus = curl_getinfo($oCurl);
+        curl_close($oCurl);
+        return $sContent;
     }
 
     /**
      * @param $url
      * @return bool|mixed
      */
-    static public function get($url){
+    static public function get($url,$param = false,$timeout = 10){
         $oCurl = curl_init();
         if(stripos($url,"https://")!==FALSE){
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, FALSE);
             curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
         }
+
+        if (is_string($param)) {
+            $url = $url.'?'.$param;
+        } elseif(is_array($param)){
+            $aPOST = array();
+            foreach($param as $key=>$val){
+                $aPOST[] = $key."=".urlencode($val);
+            }
+            $strPOST =  join("&", $aPOST);
+            $url = $url.'?'.$strPOST;
+        }
+        curl_setopt($oCurl, CURLOPT_HTTPHEADER, array('Expect:'));//减少一次不必要的 HTTP 请求
+
+        //设置curl默认访问为IPv4
+        if(defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
+            curl_setopt($oCurl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        }
+        //设置curl请求连接时的最长秒数，如果设置为0，则无限
+        curl_setopt ($oCurl, CURLOPT_CONNECTTIMEOUT, $timeout);
+        //设置curl总执行动作的最长秒数，如果设置为0，则无限
+        curl_setopt ($oCurl, CURLOPT_TIMEOUT,$timeout*3);
+
         curl_setopt($oCurl, CURLOPT_URL, $url);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
         $sContent = curl_exec($oCurl);
-        $aStatus = curl_getinfo($oCurl);
+        //$aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
-        if(intval($aStatus["http_code"])==200){
-            return $sContent;
-        }else{
-            return false;
-        }
+        return $sContent;
     }
 
     /**
@@ -106,60 +170,13 @@ class Curl
         curl_setopt($oCurl, CURLOPT_URL, $url);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
         $sContent = curl_exec($oCurl);
-        $aStatus = curl_getinfo($oCurl);
+       // $aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
         $xml = simplexml_load_string($sContent);
-        if($xml){
-            return $xml;
-        }else{
-            return false;
-        }
+        return $xml;
 
 
     }
-
-
-
-
-    static public function getCurlFileMedia($file_path){
-        if (class_exists('\CURLFile')) {// 这里用特性检测判断php版本
-            $data =  new \CURLFile($file_path,"","");//>=5.5
-        } else {
-            $data =  '@' . $file_path;//<=5.5
-        }
-        return $data;
-
-    }
-    static public function  curlFile($url,$data){
-// 兼容性写法参考示例
-        $curl = curl_init();
-        if (class_exists('\CURLFile')) {// 这里用特性检测判断php版本
-            curl_setopt($curl, CURLOPT_SAFE_UPLOAD, true);
-
-        } else {
-            if (defined('CURLOPT_SAFE_UPLOAD')) {
-                curl_setopt($curl, CURLOPT_SAFE_UPLOAD, false);
-            }
-        }
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_POST, 1 );
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_USERAGENT,"TEST");
-        $result = curl_exec($curl);
-        //    $error = curl_error($curl);
-        $status = curl_getinfo($curl);
-        curl_close($curl);
-        if(intval($status["http_code"])==200){
-            return $result;
-        }else{
-            return false;
-        }
-
-
-
-    }
-
 
     /**
      * 生成安全JSON数据

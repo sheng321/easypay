@@ -214,7 +214,7 @@ class ModelService extends Model {
                 $data = $model::get($id);//查询数据库获取所有数据
                 if(empty($data)) throw new Exception("未查询到数据！");
 
-                $res = self::saveRedis($obj,$data);
+                $res = self::saveRedis($obj,$data->toArray());
                 if(!$res) throw new Exception("更新redis失败！");
 
                 // 相关联模型删除
@@ -230,7 +230,6 @@ class ModelService extends Model {
                     }
 
                 }
-
 
             } catch (\Exception $e) {
                 logs($e->getMessage().'|'.$obj['name'].'更新插入'.$id."|".json_encode($data),'redis');
@@ -365,6 +364,7 @@ class ModelService extends Model {
         //查询数据库
         $res = $data::where($search)->find();
         if(empty($res))  return false;
+        $res =  $res->toArray();
         self::saveRedis($obj,$res);
 
         return $res;

@@ -22,7 +22,7 @@ class ChannelProduct extends ModelService {
      */
     protected $redis = [
         'is_open'=> true,
-        'ttl'=> 3 ,
+        'ttl'=> 10,
         'key'=> "String:table:ChannelProduct:p_id:{p_id}:group_id:{group_id}:channel_id:{channel_id}:id:{id}",
         'keyArr'=> ['id','p_id','group_id','channel_id'],
     ];

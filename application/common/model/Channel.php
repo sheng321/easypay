@@ -9,7 +9,6 @@ use app\common\service\ModelService;
  */
 class Channel extends ModelService {
 
-
     /**
      * 绑定数据表
      * @var string
@@ -23,10 +22,10 @@ class Channel extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> false,
+        'is_open'=> true,
         'ttl'=> 3360 ,
-        'key'=> "String:table:Channel:id:{id}:title:{title}",
-        'keyArr'=> ['id','title'],
+        'key'=> "String:table:Channel:id:{id}",
+        'keyArr'=> ['id'],
     ];
 
     /**
@@ -53,7 +52,6 @@ class Channel extends ModelService {
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['status'=>'desc','sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
-
         //产品列表
         $product = \app\common\model\PayProduct::idArr();
         foreach ($data as $k => $val){
@@ -63,6 +61,7 @@ class Channel extends ModelService {
               $p_id = json_decode($val['p_id'],true)[0];
                $data[$k]['title'] = $data[$k]['title']."【".$product[$p_id]."】";
            }
+
         }
 
 
@@ -150,6 +149,30 @@ class Channel extends ModelService {
         return \think\facade\Cache::get('ChannelIdRate');
     }
 
+
+    /**
+     * 获取通道编码
+     * @param array $modules
+     */
+    public static function get_code($id){
+       $data =  self::quickGet($id);
+      if(empty($data)) return false;
+      if($data['pid'] != 0){
+          $Channel =  self::quickGet($data['pid']);
+          if(empty($Channel)) return false;
+          return $Channel['code'];
+      }
+      return $data['code'];
+    }
+
+    /**
+     * 获取通道配置信息
+     * @param $id
+     */
+    public static function get_config($code){
+        $config = self::where(['code'=>$code])->cache('channel_config_'.$code,1)->find();
+        return  $config;
+    }
 
 
 

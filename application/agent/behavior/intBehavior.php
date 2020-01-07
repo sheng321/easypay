@@ -3,7 +3,6 @@
 namespace app\agent\behavior;
 use think\Controller;
 
-
 /**
  * 访问前的操作
  * Class intBehavior

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd0f5583265ac5ce34eac3b8ca62fe1d",
+    "content-hash": "4da19bb868c9ea032893bc7594cb3425",
     "packages": [
         {
             "name": "limen/redisun",
