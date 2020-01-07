@@ -10,6 +10,8 @@ $arr2 = array_column($arr, 'name');
 
 $tempArr = array_column($arr, null, 'value');
 
+77777777777777
+
 
 
 
