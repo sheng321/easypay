@@ -760,10 +760,10 @@ function remove_xss($val) {
         'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 'onmovestart', 'onpaste', 'onpropertychange','onreadystatechange',
         'onreset', 'onresize', 'onresizeend', 'onresizestart', 'onrowenter', 'onrowexit', 'onrowsdelete', 'onrowsinserted',
         'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 'onsubmit', 'onunload');
-    //sql  2019/12
-    $ra1 = array('conver', 'drop', 'truncate');
+    // 2019/12
+    $ra3 = array('conver', 'drop', 'truncate','shell_exec');
 
-    $ra = array_merge($ra1, $ra2);
+    $ra = array_merge($ra1, $ra2,$ra3);
 
     $found = true; // keep replacing as long as the previous round replaced something
     while ($found == true) {
