@@ -35,22 +35,43 @@ class MoneyService {
 
         $Umoney = model('app\common\model\Umoney');
 
+        $update = [];
         //处理金额
         $user  = $Umoney::quickGet(['uid'=>$Order['mch_id'],'channel_id'=>0]); //商户金额
-        $channel  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
+        $update[] = [
+             'id'=>$user['id'],
+             'total_money'=>$user['total_money'] + $Order['settle'],
+             'balance'=>$user['balance'] + $Order['settle'],
+            ];
+
 
         //上级代理
         if(!empty($Order['agent_amount']) && !empty($Order['mch_id1']) ){
             $agent1 = $Umoney::quickGet(['uid'=>$Order['mch_id1'],'channel_id'=>0]);
+            $update[] = [
+                'id'=>$agent1['id'],
+                'total_money'=>$agent1['total_money'] + $Order['agent_amount'],
+                'balance'=>$agent1['balance'] + $Order['agent_amount'],
+            ];
         }
         //上上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
             $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
+            $update[] = [
+                'id'=>$agent2['id'],
+                'total_money'=>$agent2['total_money'] + $Order['agent_amount2'],
+                'balance'=>$agent2['balance'] + $Order['agent_amount2'],
+            ];
         }
 
+        $channel  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
+        $update[] = [
+            'id'=>$channel['id'],
+            'total_money'=>$channel['total_money'] + $Order['upstream_settle'],
+            'balance'=>$channel['balance'] + $Order['upstream_settle'],
+        ];
 
         $Umoney->startTrans();
-
 
         $save = $Umoney->save($update,['id'=>$update['id']]);
         if (!$save) {
