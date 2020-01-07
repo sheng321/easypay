@@ -5,6 +5,10 @@ $hubSignature = 'sha1=1b131953a0fa044ea270b44d94a50c6590f3450a';
 
 list($algo, $hash) = explode('=', $hubSignature, 2);
 
+
+echo 11;
+
+
 // 计算签名
 $payloadHash = hash_hmac($algo, $request, '123456');
 // 判断签名是否匹配
