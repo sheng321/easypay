@@ -9,11 +9,18 @@ $remote = 'https://github.com/sheng321/easypay.git';
 $secret = '123456';
 //获取请求参数
 $request = file_get_contents('php://input');
+
+
+file_put_contents('/www/wwwroot/secret1.text',$request);
+
 if (empty($request)) {
     die('request is empty');
 }
 //获取http 头
 $headers = getHeaders();
+
+file_put_contents('/www/wwwroot/secret.text',json_encode($headers));
+
 //github发送过来的签名
 $hubSignature = $headers['X-Hub-Signature'];
 
