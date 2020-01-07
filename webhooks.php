@@ -1,5 +1,27 @@
 <?php
 
+//github发送过来的签名
+$hubSignature = 'sha1=1b131953a0fa044ea270b44d94a50c6590f3450a';
+
+list($algo, $hash) = explode('=', $hubSignature, 2);
+
+// 计算签名
+$payloadHash = hash_hmac($algo, $request, $secret);
+// 判断签名是否匹配
+if ($hash != $payloadHash) {
+    die('secret is error');
+}
+die('111111');
+
+
+
+
+
+
+
+
+
+
 //本地路径
 $local = '/www/wwwroot/easypay';
 //仓库地址
