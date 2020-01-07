@@ -20,7 +20,7 @@ $hubSignature = $headers['X-Hub-Signature'];
 list($algo, $hash) = explode('=', $hubSignature, 2);
 
 // 计算签名
-$payloadHash = hash_hmac($algo, $request, $secret);
+//$payloadHash = hash_hmac($algo, $request, $secret);
 // 判断签名是否匹配
 if ($hash != $payloadHash) {
    // die('secret is error');
