@@ -28,8 +28,8 @@ class MoneyService {
         dump($Order['channel_id']);
         $Channel =  Channel::alias('a')->where(['a.id'=>$Order['channel_id']])
                         ->join('channel w','a.id = w.pid')
-                        ->field('w.noentry,w.id')
-                        ->cache('channel_pid_'.$Order['channel_id'],3)
+                        ->field('a*,w.noentry,w.id')
+                        //->cache('channel_pid_'.$Order['channel_id'],3)
                         ->select();
 
         dump($Channel);
