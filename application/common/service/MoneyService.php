@@ -18,6 +18,9 @@ class MoneyService {
      */
     public static function api($sn){
        $Order = Order::quickGet(['systen_no'=>$sn]);
+
+       dump($Order);
+
        //不存在 或者下单失败
        if(empty($Order) || $Order['pay_status'] == 1 ) return false;
 
