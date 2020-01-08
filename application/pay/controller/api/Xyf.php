@@ -184,10 +184,6 @@ class Xyf extends PayController
     //回调
     public function notify(){
 
-
-
-        var_dump(urlencode('ZtE/ayLKTzU9LC/KUhyE4nIfh6h9nqXq9KaTmZoVO4H9AC47YJjrLoTIPJ0yrkRReJHT6oqtxwfj2UlTD9AEFKRQlcCW3gzCfzFLD8jbnkZ6DraS0873L+uwOFd9YuURDFF9YLa3ZVEohBv54mECx8PM26mGMRHCezxdE1A51S22haCZ/pwur25J6SmcDsTBifnL/DaKUQTBExXOj1NzmBL4Vrc+s3e/mR3JV5bPBuolCrqTRhUrZPPznqjI0SsCcwny6drO471BYFttM1H2BidahCdv9XJf3uzP/yrWzVUV3O4YQO8Yd+xnBZqtHs/pluwAYh/5g75CbuBRZJdjTQ=='));exit();
-
         $param =  $this->getParam('param');
         if(empty($param)) __jerror('no_data');
         if($param['status'] !== '1') __jerror('pay_fail');
