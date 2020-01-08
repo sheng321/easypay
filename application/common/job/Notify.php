@@ -27,12 +27,10 @@ class Notify {
      */
     private function doHelloJob($data)
     {
-
         print("<info>Hello Job Started. job Data is: ".var_export($data,true)."</info> \n");
         print("<info>Hello Job is Fired at " . date('Y-m-d H:i:s') ."</info> \n");
         print("<info>Hello Job is Done!"."</info> \n");
 
-        $res = \app\common\service\MoneyService::api($data);
-        return $res;
+        return false;
     }
 }

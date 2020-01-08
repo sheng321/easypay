@@ -3,6 +3,12 @@ namespace redis;
 
 class StringModel extends RedisModel
 {
+    public function __construct($database)
+    {
+        parent::__construct();
+        $this->database = $database;
+    }
+
     public $key = 'redisun:{id}:string:{name}';
 
     protected $type = 'string';
