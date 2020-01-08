@@ -24,16 +24,11 @@ class MoneyService {
         //已支付
         if($Order['pay_status'] == 2 ) return true;
 
-
-        dump($Order['channel_id']);
         $Channel =  Channel::alias('a')->where(['a.id'=>$Order['channel_id']])
                         ->join('channel w','a.pid = w.id')
                         ->field('w.noentry,w.id,w.account')
                         ->cache('channel_pid_'.$Order['channel_id'],3)
                         ->find();
-
-        dump($Channel);
-
         if(empty($Channel)) return false;
 
 
@@ -48,6 +43,7 @@ class MoneyService {
         $log = [];
         //处理金额
         $user  = $Umoney::quickGet(['uid'=>$Order['mch_id'],'channel_id'=>0]); //商户金额
+        if(empty($user)) $user = $Umoney->create(['uid'=>$Order['mch_id'],'channel_id'=>0,'type1'=>0]);
 
         //T1 结算
         if($Channel['account'] == 1){
@@ -92,6 +88,7 @@ class MoneyService {
         //上级代理
         if(!empty($Order['agent_amount']) && !empty($Order['mch_id1']) ){
             $agent1 = $Umoney::quickGet(['uid'=>$Order['mch_id1'],'channel_id'=>0]);
+            if(empty($agent1)) $agent1 = $Umoney->create(['uid'=>$Order['mch_id1'],'channel_id'=>0,'type1'=>0]);
 
             //T1 结算
             if($Channel['account'] == 1){
@@ -138,6 +135,7 @@ class MoneyService {
         //上上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
             $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
+            if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0]);
 
             //T1 结算
             if($Channel['account'] == 1){
@@ -179,10 +177,7 @@ class MoneyService {
         }
 
         $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
-        if(empty($channel_money)){
-            $channel_money = $Umoney->create(['uid'=>0,'channel_id'=>$Channel['id']]);
-        }
-        dump($channel_money);
+        if(empty($channel_money))  $channel_money = $Umoney->create(['uid'=>0,'channel_id'=>$Channel['id'],'type1'=>1]);
 
 
         //T1 结算
@@ -222,8 +217,9 @@ class MoneyService {
             ];
         }
 
-        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0,'id'=>0]);
-        if(empty($platform)) return false;
+        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0]);
+        if(empty($platform)) $platform = $Umoney->create(['uid'=>0,'channel_id'=>0,'type1'=>2]);
+
         //T1 结算 平台
         if($Channel['account'] == 1){
             $update[] = [
