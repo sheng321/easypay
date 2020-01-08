@@ -20,13 +20,12 @@ class Notify {
             return;
         }
 
-
         $isJobDone = $this->doHelloJob($data);
         if ($isJobDone) {
             // 如果任务执行成功，记得删除任务
             $job->delete();
         }else{
-            if ($job->attempts() > 5) {
+            if ($job->attempts() > 6) {
                 //通过这个方法可以检查这个任务已经重试了几次了
                 $job->delete();
             }
@@ -39,7 +38,7 @@ class Notify {
      * @return boolean                 任务执行的结果
      */
     private function checkDatabaseToSeeIfJobNeedToBeDone($data){
-       $Order =  Order::quickGet(['systen_no'=>$data['order']['systen_no']]);
+       $Order =  Order::quickGet($data['order']['id']);
         if($Order['notice'] == 2) return false;//已回调
 
         return true;
