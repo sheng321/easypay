@@ -88,7 +88,6 @@ class PayController extends BaseController
     }
 
     protected function async($order){
-        halt(1111);
 
         //加入异步队列
         $job = 'app\\common\\job\\Api';//调用的任务名
