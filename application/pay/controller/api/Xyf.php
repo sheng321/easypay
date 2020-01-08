@@ -183,7 +183,10 @@ class Xyf extends PayController
     }
     //回调
     public function notify(){
-        //var_dump(urlencode('Suph28oHRtLZE7QCQt27MK+q6VstCfKVVe3qNrofVKlEa+TmWKa6TnZSNb0I4sFHL476MMX1hKq2kk93gwM4SUKNXi0du9MfOsH4Zb/RYyVZZ1Gi33QnLHa9yOUolZH/DfL58R/CiC5II8UR45ED+WMCQ+yLkXsz63FtPHDqvHrGHDpgW6WGoF2inh38L4W9BiGbf3usRGvbieh5ls70JvOyVJf/0Z+jHdsLBJgrk3Kl7iwNE9BmsR/ZX1zUzaX0YIiagSosOCEvL/emY8c+sQZs8FG6l9m5XOId2ff958WmPLPFzAE/yG69hMMH0wr150e1pXFty3pHdFtthRBxYA=='));exit();
+
+
+
+        var_dump(urlencode('ZtE/ayLKTzU9LC/KUhyE4nIfh6h9nqXq9KaTmZoVO4H9AC47YJjrLoTIPJ0yrkRReJHT6oqtxwfj2UlTD9AEFKRQlcCW3gzCfzFLD8jbnkZ6DraS0873L+uwOFd9YuURDFF9YLa3ZVEohBv54mECx8PM26mGMRHCezxdE1A51S22haCZ/pwur25J6SmcDsTBifnL/DaKUQTBExXOj1NzmBL4Vrc+s3e/mR3JV5bPBuolCrqTRhUrZPPznqjI0SsCcwny6drO471BYFttM1H2BidahCdv9XJf3uzP/yrWzVUV3O4YQO8Yd+xnBZqtHs/pluwAYh/5g75CbuBRZJdjTQ=='));exit();
 
         $param =  $this->getParam('param');
         if(empty($param)) __jerror('no_data');
