@@ -45,6 +45,8 @@ class MoneyService {
         $user  = $Umoney::quickGet(['uid'=>$Order['mch_id'],'channel_id'=>0]); //商户金额
         if(empty($user)) $user = $Umoney->create(['uid'=>$Order['mch_id'],'channel_id'=>0,'type1'=>0]);
 
+        halt($Umoney);
+
         //T1 结算
         if($Channel['account'] == 1){
             $update[] = [
