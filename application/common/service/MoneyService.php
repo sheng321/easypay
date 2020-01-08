@@ -25,6 +25,7 @@ class MoneyService {
         if($Order['pay_status'] == 2 ) return true;
 
 
+        dump($Order['channel_id']);
         $Channel =  Channel::alias('a')->where(['a.id'=>$Order['channel_id']])
                         ->join('channel w','a.id = w.pid')
                         ->field('w.noentry,w.id')
@@ -32,6 +33,8 @@ class MoneyService {
                         ->select();
 
         dump($Channel);
+
+        if(empty($Channel)) return false;
 
 
         //是否禁止回调
