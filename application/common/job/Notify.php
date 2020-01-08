@@ -2,7 +2,7 @@
 namespace app\common\job;
 use think\queue\Job;
 
-class Api {
+class Notify {
     /**
      * fire方法是消息队列默认调用的方法
      * @param Job            $job      当前的任务对象
@@ -15,7 +15,7 @@ class Api {
             // 如果任务执行成功，记得删除任务
             $job->delete();
         }else{
-            if ($job->attempts() > 3) {
+            if ($job->attempts() > 5) {
                 //通过这个方法可以检查这个任务已经重试了几次了
                 $job->delete();
             }
@@ -27,6 +27,11 @@ class Api {
      */
     private function doHelloJob($data)
     {
+
+        print("<info>Hello Job Started. job Data is: ".var_export($data,true)."</info> \n");
+        print("<info>Hello Job is Fired at " . date('Y-m-d H:i:s') ."</info> \n");
+        print("<info>Hello Job is Done!"."</info> \n");
+
         $res = \app\common\service\MoneyService::api($data);
         return $res;
     }
