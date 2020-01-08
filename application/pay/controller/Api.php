@@ -186,6 +186,7 @@ class Api extends PayController
         $data['channel_id'] = $channel_id;//渠道id
         $data['channel_group_id'] = $channel_group_id;//支付通道分组ID
         $data['pay_code'] = $PayProduct['code'];
+        $data['payment_id'] = $PayProduct['id'];
         $data['notify_url'] = $param['pay_notifyurl'];//异步回调
         $data['callback_url'] = $param['pay_callbackurl'];//同步跳转
         $data['ip'] = get_client_ip();//请求ip
