@@ -10,18 +10,11 @@ class Test  extends Controller
     {
         $model = (new StringModel(3))->instance();
 
-        $res =   $model->get('*');
+
+        dump(  $model->select(3));
+        $res =   $model->mget('*');
         halt($res);
 
-      //$res1 =  $model->newQuery()->where('name','maria')->delete();
-
-       $id = $model->newQuery()->where('id','1')->first();
-
-
-       $res = $model->insert([
-            'id' => 1,
-            'name' => 'maria',
-        ],4444);
 
 /*        //加入异步队列
         $job = 'app\\common\\job\\Notify';//调用的任务名
