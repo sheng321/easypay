@@ -16,23 +16,15 @@ class Api {
             $job->delete();
             return;
         }
-
         $isJobDone = $this->doHelloJob($data);
 
         if ($isJobDone) {
             // 如果任务执行成功，记得删除任务
             $job->delete();
-            print("<info>Hello Job has been done and deleted"."</info>\n");
         }else{
             if ($job->attempts() > 3) {
                 //通过这个方法可以检查这个任务已经重试了几次了
-                print("<warn>Hello Job has been retried more than 3 times!"."</warn>\n");
-
                 $job->delete();
-
-                // 也可以重新发布这个任务
-                //print("<info>Hello Job will be availabe again after 2s."."</info>\n");
-                //$job->release(2); //$delay为延迟时间，表示该任务延迟2秒后再执行
             }
         }
     }
@@ -51,10 +43,7 @@ class Api {
      */
     private function doHelloJob($data)
     {
-        print("<info>Hello Job Started. job Data is: ".var_export($data,true)."</info> \n");
-        print("<info>Hello Job is Fired at " . date('Y-m-d H:i:s') ."</info> \n");
-        print("<info>Hello Job is Done!"."</info> \n");
-
-        return true;
+        $res = \app\common\service\MoneyService::api($data);
+        return $res;
     }
 }

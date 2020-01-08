@@ -2,7 +2,7 @@
 
 namespace app\common\controller;
 use app\common\model\Order;
-
+use think\Queue;
 
 
 /**
@@ -89,13 +89,15 @@ class PayController extends BaseController
 
     protected function async($order){
         //加入异步队列
+        $job = 'app\\common\\job\\Api';//调用的任务名
+        $data = [];//传入的数据
+        $queue = 'notify';//队列名，可以理解为组名
+        //push()方法是立即执行
+        Queue::push($job, $order['systen_no'], $queue);
 
-        $res = \app\common\service\MoneyService::api($order['systen_no']);
-
-
-        halt($res);
-
-
+        //同步
+        //$res = \app\common\service\MoneyService::api($order['systen_no']);
+       // halt($res);
 
         return  $this->config['returnBack'];
     }
