@@ -129,9 +129,7 @@ class MoneyService {
                     'type1'=>0,//会员
                 ];
 
-
             }
-
         }
         //上上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
