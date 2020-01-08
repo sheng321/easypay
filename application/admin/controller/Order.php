@@ -24,17 +24,17 @@ class Order extends AdminController {
     }
     /**
      * Undocumented 提现列表
-     *
      * @return void
      */
     public function index(){
-        if ($this->request->get('type') == 'ajax') {
+        if ($this->request->get('type') == 'ajax'){
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 10);
             $search = (array)$this->request->get('search', []);
-            return json($this->model->list($page, $limit, $search));
+            return json($this->model->alist($page, $limit, $search));
         }
-        return view("index");
+
+        return $this->fetch('', []);
     }
     /**
      * Undocumented 详情
