@@ -11,8 +11,9 @@ class StringModel extends RedisModel
 
     public function __construct($database = null)
     {
-        parent::__construct();
         if(!empty($database)) $this->database = $database;
+        parent::__construct();
+
     }
 
 
