@@ -239,7 +239,7 @@ class MoneyService {
         $Umoney->startTrans();
         $save = $Umoney->saveAll($update);//批量修改金额
         $save1 = model('app\common\model\UmoneyLog')->saveAll($log);//批量添加变动记录
-        $save2 = Order::save(['id'=>$Order['id'],'pay_status'=>2],['id'=>$Order['id']]);
+        $save2 = model('app\common\model\Order')->save(['id'=>$Order['id'],'pay_status'=>2],['id'=>$Order['id']]);
         if (!$save || !$save1|| !$save2) {
             $Umoney->rollback();
             return false;
