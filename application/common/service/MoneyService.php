@@ -59,7 +59,7 @@ class MoneyService {
 
             $log[] = [
                 'uid'=>$user['uid'],
-                'channel_id'=>$Order['pid'],
+                'channel_id'=>$Channel['id'],
                 'before_balance'=>$user['total_money'],
                 'balance'=>$user['total_money'] + $Order['settle'],
                 'change'=>$Order['settle'],
@@ -78,7 +78,7 @@ class MoneyService {
 
             $log[] = [
                 'uid'=>$user['uid'],
-                'channel_id'=>$Order['pid'],
+                'channel_id'=>$Channel['id'],
                 'before_balance'=>$user['total_money'],
                 'balance'=>$user['total_money'] + $Order['settle'],
                 'change'=>$Order['settle'],
@@ -103,7 +103,7 @@ class MoneyService {
 
                 $log[] = [
                     'uid'=>$agent1['uid'],
-                    'channel_id'=>$Order['pid'],
+                    'channel_id'=>$Channel['id'],
                     'before_balance'=>$agent1['total_money'],
                     'balance'=>$agent1['total_money'] + $Order['agent_amount'],
                     'change'=>$Order['agent_amount'],
@@ -122,7 +122,7 @@ class MoneyService {
 
                 $log[] = [
                     'uid'=>$agent1['uid'],
-                    'channel_id'=>$Order['pid'],
+                    'channel_id'=>$Channel['id'],
                     'before_balance'=>$agent1['total_money'],
                     'balance'=>$agent1['total_money'] + $Order['agent_amount'],
                     'change'=>$Order['agent_amount'],
@@ -148,7 +148,7 @@ class MoneyService {
                 ];
                 $log[] = [
                     'uid'=>$agent2['uid'],
-                    'channel_id'=>$Order['pid'],
+                    'channel_id'=>$Channel['id'],
                     'before_balance'=>$agent2['total_money'],
                     'balance'=>$agent2['total_money'] + $Order['agent_amount2'],
                     'change'=>$Order['agent_amount2'],
@@ -166,7 +166,7 @@ class MoneyService {
 
                 $log[] = [
                     'uid'=>$agent2['uid'],
-                    'channel_id'=>$Order['pid'],
+                    'channel_id'=>$Channel['id'],
                     'before_balance'=>$agent2['total_money'],
                     'balance'=>$agent2['total_money'] + $Order['agent_amount2'],
                     'change'=>$Order['agent_amount2'],
@@ -215,8 +215,6 @@ class MoneyService {
                 'type1'=>1,//通道
             ];
         }
-
-
 
         $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0,'id'=>0]);
         if(empty($platform)) return false;
