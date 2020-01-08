@@ -235,7 +235,7 @@ class MoneyService {
 
         dump($update);
 
-        halt($channel);
+        halt($log);
 
 
         $Umoney->startTrans();
