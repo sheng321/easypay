@@ -10,6 +10,88 @@ namespace tool;
 class Curl
 {
 
+    //批量请求
+    static public function curl_multi($data,$timeout = 10){
+        $res = array();
+        $conn = array();
+
+       // 创建批处理cURL句柄
+        $mh = curl_multi_init();
+        foreach ($data as $i => $v) {
+            // 创建一对cURL资源
+            $conn[$i] = curl_init();
+            // 设置URL和相应的选项
+            curl_setopt($conn[$i], CURLOPT_URL, $v['url']);
+            curl_setopt($conn[$i], CURLOPT_HEADER, 0);
+            curl_setopt($conn[$i], CURLOPT_RETURNTRANSFER, 1);
+
+            //302跳转
+            curl_setopt($conn[$i], CURLOPT_FOLLOWLOCATION, 1);
+
+            if(stripos($v['url'],"https://")!==FALSE){
+                curl_setopt($conn[$i], CURLOPT_SSL_VERIFYPEER, FALSE);
+                curl_setopt($conn[$i], CURLOPT_SSL_VERIFYHOST, false);
+                curl_setopt($conn[$i], CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
+            }
+            //设置curl默认访问为IPv4
+            if(defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
+                curl_setopt($conn[$i], CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                //curl版本7.10.8及以上版本时，以上设置才生效
+            }
+            //设置curl请求连接时的最长秒数，如果设置为0，则无限
+            curl_setopt ($conn[$i], CURLOPT_CONNECTTIMEOUT, $timeout);
+            //设置curl总执行动作的最长秒数，如果设置为0，则无限
+            curl_setopt ($conn[$i], CURLOPT_TIMEOUT,$timeout*3);
+
+            curl_setopt($conn[$i], CURLOPT_HTTPHEADER, array('Expect:'));
+
+            if (is_string($v['data'])) {
+                $strPOST = $v['data'];
+            } else{
+                $aPOST = array();
+                foreach($v['data'] as $key=>$val){
+                    $aPOST[] = $key."=".urlencode($val);
+                }
+                $strPOST =  join("&", $aPOST);
+            }
+            curl_setopt($conn[$i], CURLOPT_POST,true);
+            curl_setopt($conn[$i], CURLOPT_POSTFIELDS,$strPOST);
+
+
+            // 增加句柄
+            curl_multi_add_handle($mh, $conn[$i]);
+        }
+
+        $active = null;
+       //防卡死写法：执行批处理句柄
+        do {
+            $mrc = curl_multi_exec($mh, $active); //处理在栈中的每一个句柄。无论该句柄需要读取或写入数据都可调用此方法。
+        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+        while ($active && $mrc == CURLM_OK) {
+            if (curl_multi_select($mh) != -1) { //阻塞直到cURL批处理连接中有活动连接
+                do {
+                    $mrc = curl_multi_exec($mh, $active);
+                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+            }
+        }
+
+        foreach ($data as $i => $v) {
+            //获取输出的文本流
+            $res[$i] = curl_multi_getcontent($conn[$i]);
+            // 移除curl批处理句柄资源中的某个句柄资源
+            curl_multi_remove_handle($mh, $conn[$i]);
+            //关闭cURL会话
+            curl_close($conn[$i]);
+        }
+        //关闭全部句柄
+        curl_multi_close($mh);
+
+        return $res;
+    }
+
+
+
+
     /**
      * 建立跳转请求表单
      * @param string $url 数据提交跳转到的URL

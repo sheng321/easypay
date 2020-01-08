@@ -1,5 +1,6 @@
 <?php
 namespace app\common\job;
+use redis\StringModel;
 use think\queue\Job;
 
 class Notify {
@@ -27,6 +28,25 @@ class Notify {
      */
     private function doHelloJob($data)
     {
+        $key = "queues:notify";
+        $model = (new StringModel())->instance();
+        $model->select(3);
+        $data =  $model->lrange($key, 0 ,60);
+        foreach ($data as $k =>$v ){
+            $data[$k] = json_decode($v,true);
+        }
+
+        /*
+         *[1] => array(4) {
+    ["job"] => string(21) "app\common\job\Notify"
+    ["data"] => int(666666)
+    ["id"] => string(32) "urcVbpOxYJxOKnzJHwKnPzDlQIpNrZqJ"
+    ["attempts"] => int(1)
+  }*/
+
+        //$data[0]['attempts'] = 66;
+       // $model->lSet($key, 0, json_encode($data[0]));
+
         print("<info>Hello Job Started. job Data is: ".var_export($data,true)."</info> \n");
         print("<info>Hello Job is Fired at " . date('Y-m-d H:i:s') ."</info> \n");
         print("<info>Hello Job is Done!"."</info> \n");

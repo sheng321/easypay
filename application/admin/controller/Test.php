@@ -10,7 +10,7 @@ class Test  extends Controller
     public function index()
     {
         $job = 'app\\common\\job\\Notify';//调用的任务名
-        $data = 666666;//传入的数据
+        $data = 7777;//传入的数据
         $queue = 'notify';//队列名，可以理解为组名
         //push()方法是立即执行
         $res =  Queue::push($job, $data, $queue);
@@ -21,8 +21,19 @@ class Test  extends Controller
 
         dump(  $model->select(3));
         dump(1);
-        $res =  $model->get('queues:notify' . "*");
-        halt($res);
+        $data =  $model->lrange("queues:notify", 0 ,100);
+
+        foreach ($data as $k =>$v ){
+            $data[$k] = json_decode($v,true);
+        }
+
+        $data[0]['attempts'] = 66;
+
+        //通过索引修改列表中元素的值，如果没有该索引，则返回false。
+        $model->lSet('queues:notify', 0, json_encode($data[0]));
+
+
+        halt($data);
 
 
 /*        //加入异步队列
