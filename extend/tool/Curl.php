@@ -45,7 +45,7 @@ class Curl
 
             curl_setopt($conn[$i], CURLOPT_HTTPHEADER, array('Expect:'));
 
-            if (is_string($v['data'])) {
+            if (is_string($v['data'])){
                 $strPOST = $v['data'];
             } else{
                 $aPOST = array();
@@ -77,7 +77,8 @@ class Curl
 
         foreach ($data as $i => $v) {
             //获取输出的文本流
-            $res[$i] = curl_multi_getcontent($conn[$i]);
+            $content =  curl_multi_getcontent($conn[$i]);
+            $res[$i] = \think\helper\Str::substr($content,0,100);
             // 移除curl批处理句柄资源中的某个句柄资源
             curl_multi_remove_handle($mh, $conn[$i]);
             //关闭cURL会话

@@ -28,6 +28,25 @@ class Api {
     private function doHelloJob($data)
     {
         $res = \app\common\service\MoneyService::api($data);
+
+        if($res === true){
+            $data
+
+
+            $data = [];
+
+            \tool\Curl::post();
+
+
+
+
+            $job = 'app\\common\\job\\Notify';//调用的任务名
+            $data = [];//传入的数据
+            $queue = 'notify';//队列名，可以理解为组名
+            //push()方法是立即执行
+             \think\Queue::push($job, $data, $queue);
+        }
+
         return $res;
     }
 }

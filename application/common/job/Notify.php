@@ -2,6 +2,7 @@
 namespace app\common\job;
 use redis\StringModel;
 use think\queue\Job;
+use tool\Curl;
 
 class Notify {
     /**
@@ -32,8 +33,12 @@ class Notify {
         $model = (new StringModel())->instance();
         $model->select(3);
         $data =  $model->lrange($key, 0 ,60);
+
+        $notify = array();
         foreach ($data as $k =>$v ){
             $data[$k] = json_decode($v,true);
+            $notify[$k]['url'] = $data[$k]['data']['url'];
+            $notify[$k]['data'] = $data[$k]['data']['url'];
         }
 
         /*
@@ -44,13 +49,18 @@ class Notify {
     ["attempts"] => int(1)
   }*/
 
-        //$data[0]['attempts'] = 66;
-       // $model->lSet($key, 0, json_encode($data[0]));
 
-        print("<info>Hello Job Started. job Data is: ".var_export($data,true)."</info> \n");
-        print("<info>Hello Job is Fired at " . date('Y-m-d H:i:s') ."</info> \n");
-        print("<info>Hello Job is Done!"."</info> \n");
+    $res =  Curl::curl_multi($notify); //批量处理
 
-        return false;
+        foreach ($res as $k1 => $v1){
+            if(md5(strtolower($v1)) == md5('ok')){
+                $data[$k1]['attempts'] = 66;
+            }else{
+                $data[$k1]['attempts'] = $data[$k1]['attempts'] + 1;
+            }
+            $model->lSet($key, 0, json_encode($data[$k1])); //更新
+        }
+
+        return true;
     }
 }
