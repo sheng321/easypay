@@ -38,8 +38,6 @@ class Notify extends PayController
 
     public function index(){
 
-
-        halt(1);
         $return = [];
         $Payment = Payment::factory($this->config['code']);
         // $Payment = Payment::factory('Index');
