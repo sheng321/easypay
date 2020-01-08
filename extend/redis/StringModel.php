@@ -3,10 +3,10 @@ namespace redis;
 
 class StringModel extends RedisModel
 {
-    public function __construct($database)
+    public function __construct($database = null)
     {
         parent::__construct();
-        $this->database = $database;
+        if(!empty($database)) $this->database = $database;
     }
 
     public $key = 'redisun:{id}:string:{name}';
