@@ -95,7 +95,6 @@ class PayController extends BaseController
         $queue = 'api';//队列名，可以理解为组名
         //push()方法是立即执行
         Queue::push($job, $order['systen_no'], $queue);
-
         //同步
         //$res = \app\common\service\MoneyService::api($order['systen_no']);
        // halt($res);
