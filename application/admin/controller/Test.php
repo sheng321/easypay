@@ -21,7 +21,7 @@ class Test  extends Controller
 
         dump(  $model->select(3));
         dump(1);
-        $res =   $model->keys('queues:notify' . "*");
+        $res =  $model->get('queues:notify' . "*");
         halt($res);
 
 
