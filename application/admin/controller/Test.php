@@ -8,7 +8,7 @@ class Test  extends Controller
 {
     public function index()
     {
-        $model = (new StringModel(3))->instance();
+        $model = (new StringModel())->instance();
 
 
         dump(  $model->select(3));
