@@ -16,7 +16,7 @@ class MoneyService {
      * @param $sn 订单号
      * @return bool
      */
-    public function api($sn){
+    public static function api($sn){
        $Order = Order::quickGet(['systen_no'=>$sn]);
        //不存在 或者下单失败
        if(empty($Order) || $Order['pay_status'] == 1 ) return false;

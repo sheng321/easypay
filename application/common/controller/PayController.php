@@ -91,6 +91,12 @@ class PayController extends BaseController
         //加入异步队列
 
 
+        $res = \app\common\service\MoneyService::api($order);
+
+
+        halt($res);
+
+
 
         return  $this->config['returnBack'];
     }
