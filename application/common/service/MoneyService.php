@@ -221,15 +221,15 @@ class MoneyService {
         //T1 结算 平台
         if($Channel['account'] == 1){
             $update[] = [
-                'id'=>$platform['id'],
+                'id'=>0,
                 'total_money'=>$platform['total_money'] + $Order['Platform'],
                 'frozen_amount_t1'=>$platform['frozen_amount_t1'] + $Order['Platform'],
             ];
         }else{
             $update[] = [
                 'id'=>0,
-                'total_money'=>$channel['total_money'] + $Order['Platform'],
-                'balance'=>$channel['balance'] + $Order['Platform'],
+                'total_money'=>$platform['total_money'] + $Order['Platform'],
+                'balance'=>$platform['balance'] + $Order['Platform'],
             ];
         }
 
