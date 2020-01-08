@@ -90,8 +90,6 @@ class PayController extends BaseController
     protected function async($order){
         //加入异步队列
 
-
-        halt(1);
         $res = \app\common\service\MoneyService::api($order['systen_no']);
 
 
