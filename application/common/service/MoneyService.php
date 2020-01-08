@@ -19,10 +19,8 @@ class MoneyService {
     public static function api($sn){
        $Order = Order::quickGet(['systen_no'=>$sn]);
 
-       dump($Order);
-
-       //不存在 或者下单失败
-       if(empty($Order) || $Order['pay_status'] == 1 ) return false;
+       //不存在 或者下单失败 已支付
+       if(empty($Order) || $Order['pay_status'] == 1   ) return false;
 
         //已支付
         if($Order['pay_status'] == 2 ) return true;
@@ -238,21 +236,15 @@ class MoneyService {
             ];
         }
 
-        dump($update);
-
-        halt($log);
-
-
         $Umoney->startTrans();
-
         $save = $Umoney->saveAll($update);//批量修改金额
-        if (!$save) {
+        $save1 = model('app\common\model\UmoneyLog')->saveAll($log);//批量添加变动记录
+        $save2 = Order::save(['id'=>$Order['id'],'pay_status'=>2],['id'=>$Order['id']]);
+        if (!$save || !$save1|| !$save2) {
             $Umoney->rollback();
-            $msg = '数据有误，请稍后再试！';
-            return __error($msg);
+            return false;
         }
         $Umoney->commit();
-
 
         return true;
     }

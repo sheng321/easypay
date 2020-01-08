@@ -28,7 +28,6 @@ class UmoneyLog extends ModelService {
 
     public function aList($page = 1, $limit = 10, $search = [],$where = []) {
 
-
         if(!empty($search['nickname'])){
             $id = getIdbyName($search['nickname']);
             !empty($id) && $where[] = ['create_by','=',$id];
