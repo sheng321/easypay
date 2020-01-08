@@ -25,13 +25,19 @@ class MoneyService {
         if($Order['pay_status'] == 2 ) return true;
 
 
-        $Channel = Channel::quickGet($Order['pid']);
+        $Channel =  Channel::alias('a')->where(['a.id'=>$Order['channel_id']])
+                        ->join('channel w','a.id = w.pid')
+                        ->field('w.noentry,w.id')
+                        ->cache('channel_pid_'.$Order['channel_id'],3)
+                        ->select();
+
+        dump($Channel);
+
 
         //是否禁止回调
         $noentry1 = config('set.noentry');//平台是否禁止入款
         $noentry = max($Order['noentry'],$Channel['noentry'],$noentry1);
         if(!empty($noentry))  return false;
-
 
         $Umoney = model('app\common\model\Umoney');
 
