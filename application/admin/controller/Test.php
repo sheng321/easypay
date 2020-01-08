@@ -10,7 +10,7 @@ class Test  extends Controller
     {
         $model = new StringModel(3);
         $model->key = 'queues:notify';
-        $res =  $model->newQuery()->find();
+        $res =  $model->newQuery()->find('*');
 
         halt($res);
 
