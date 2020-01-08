@@ -36,44 +36,204 @@ class MoneyService {
         $Umoney = model('app\common\model\Umoney');
 
         $update = [];
+        $log = [];
         //处理金额
         $user  = $Umoney::quickGet(['uid'=>$Order['mch_id'],'channel_id'=>0]); //商户金额
-        $update[] = [
-             'id'=>$user['id'],
-             'total_money'=>$user['total_money'] + $Order['settle'],
-             'balance'=>$user['balance'] + $Order['settle'],
+
+        //T1 结算
+        if($Order['account'] == 1){
+            $update[] = [
+                'id'=>$user['id'],
+                'total_money'=>$user['total_money'] + $Order['settle'],
+                'frozen_amount_t1'=>$user['frozen_amount_t1'] + $Order['settle'],
             ];
+
+            $log[] = [
+                'uid'=>$user['uid'],
+                'channel_id'=>$Order['pid'],
+                'before_balance'=>$user['total_money'],
+                'balance'=>$user['total_money'] + $Order['settle'],
+                'change'=>$Order['settle'],
+                'relate'=>$Order['systen_no'],
+                'type'=>11,//T1入账
+                'type1'=>0,//会员
+            ];
+
+
+        }else{
+            $update[] = [
+                'id'=>$user['id'],
+                'total_money'=>$user['total_money'] + $Order['settle'],
+                'balance'=>$user['balance'] + $Order['settle'],
+            ];
+
+            $log[] = [
+                'uid'=>$user['uid'],
+                'channel_id'=>$Order['pid'],
+                'before_balance'=>$user['total_money'],
+                'balance'=>$user['total_money'] + $Order['settle'],
+                'change'=>$Order['settle'],
+                'relate'=>$Order['systen_no'],
+                'type'=>7,//入账
+                'type1'=>0,//会员
+            ];
+        }
 
 
         //上级代理
         if(!empty($Order['agent_amount']) && !empty($Order['mch_id1']) ){
             $agent1 = $Umoney::quickGet(['uid'=>$Order['mch_id1'],'channel_id'=>0]);
-            $update[] = [
-                'id'=>$agent1['id'],
-                'total_money'=>$agent1['total_money'] + $Order['agent_amount'],
-                'balance'=>$agent1['balance'] + $Order['agent_amount'],
-            ];
+
+            //T1 结算
+            if($Order['account'] == 1){
+                $update[] = [
+                    'id'=>$agent1['id'],
+                    'total_money'=>$agent1['total_money'] + $Order['agent_amount'],
+                    'frozen_amount_t1'=>$agent1['frozen_amount_t1'] + $Order['agent_amount'],
+                ];
+
+                $log[] = [
+                    'uid'=>$agent1['uid'],
+                    'channel_id'=>$Order['pid'],
+                    'before_balance'=>$agent1['total_money'],
+                    'balance'=>$agent1['total_money'] + $Order['agent_amount'],
+                    'change'=>$Order['agent_amount'],
+                    'relate'=>$Order['systen_no'],
+                    'type'=>11,//T1入账
+                    'type1'=>0,//会员
+                ];
+
+
+            }else{
+                $update[] = [
+                    'id'=>$agent1['id'],
+                    'total_money'=>$agent1['total_money'] + $Order['agent_amount'],
+                    'balance'=>$agent1['balance'] + $Order['agent_amount'],
+                ];
+
+                $log[] = [
+                    'uid'=>$agent1['uid'],
+                    'channel_id'=>$Order['pid'],
+                    'before_balance'=>$agent1['total_money'],
+                    'balance'=>$agent1['total_money'] + $Order['agent_amount'],
+                    'change'=>$Order['agent_amount'],
+                    'relate'=>$Order['systen_no'],
+                    'type'=>7,//入账
+                    'type1'=>0,//会员
+                ];
+
+
+            }
+
         }
         //上上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
             $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
-            $update[] = [
-                'id'=>$agent2['id'],
-                'total_money'=>$agent2['total_money'] + $Order['agent_amount2'],
-                'balance'=>$agent2['balance'] + $Order['agent_amount2'],
-            ];
+
+            //T1 结算
+            if($Order['account'] == 1){
+                $update[] = [
+                    'id'=>$agent2['id'],
+                    'total_money'=>$agent2['total_money'] + $Order['agent_amount2'],
+                    'frozen_amount_t1'=>$agent2['frozen_amount_t1'] + $Order['agent_amount2'],
+                ];
+                $log[] = [
+                    'uid'=>$agent2['uid'],
+                    'channel_id'=>$Order['pid'],
+                    'before_balance'=>$agent2['total_money'],
+                    'balance'=>$agent2['total_money'] + $Order['agent_amount2'],
+                    'change'=>$Order['agent_amount2'],
+                    'relate'=>$Order['systen_no'],
+                    'type'=>11,//T1入账
+                    'type1'=>0,//会员
+                ];
+
+            }else{
+                $update[] = [
+                    'id'=>$agent2['id'],
+                    'total_money'=>$agent2['total_money'] + $Order['agent_amount2'],
+                    'balance'=>$agent2['balance'] + $Order['agent_amount2'],
+                ];
+
+                $log[] = [
+                    'uid'=>$agent2['uid'],
+                    'channel_id'=>$Order['pid'],
+                    'before_balance'=>$agent2['total_money'],
+                    'balance'=>$agent2['total_money'] + $Order['agent_amount2'],
+                    'change'=>$Order['agent_amount2'],
+                    'relate'=>$Order['systen_no'],
+                    'type'=>7,//入账
+                    'type1'=>0,//会员
+                ];
+            }
+
         }
 
         $channel  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
-        $update[] = [
-            'id'=>$channel['id'],
-            'total_money'=>$channel['total_money'] + $Order['upstream_settle'],
-            'balance'=>$channel['balance'] + $Order['upstream_settle'],
-        ];
+        //T1 结算
+        if($Order['account'] == 1){
+            $update[] = [
+                'id'=>$channel['id'],
+                'total_money'=>$channel['total_money'] + $Order['upstream_settle'],
+                'frozen_amount_t1'=>$channel['frozen_amount_t1'] + $Order['upstream_settle'],
+            ];
+            $log[] = [
+                'uid'=>0,
+                'channel_id'=>$channel['id'],
+                'before_balance'=>$channel['total_money'],
+                'balance'=>$channel['total_money'] + $Order['upstream_settle'],
+                'change'=>$Order['upstream_settle'],
+                'relate'=>$Order['systen_no'],
+                'type'=>11,//T1入账
+                'type1'=>1,//通道
+            ];
+
+        }else{
+            $update[] = [
+                'id'=>$channel['id'],
+                'total_money'=>$channel['total_money'] + $Order['upstream_settle'],
+                'balance'=>$channel['balance'] + $Order['upstream_settle'],
+            ];
+
+            $log[] = [
+                'uid'=>0,
+                'channel_id'=>$channel['id'],
+                'before_balance'=>$channel['total_money'],
+                'balance'=>$channel['total_money'] + $Order['upstream_settle'],
+                'change'=>$Order['upstream_settle'],
+                'relate'=>$Order['systen_no'],
+                'type'=>7,//入账
+                'type1'=>1,//通道
+            ];
+        }
+
+
+
+        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0,'id'=>0]);
+        if(empty($platform)) return false;
+        //T1 结算 平台
+        if($Order['account'] == 1){
+            $update[] = [
+                'id'=>$platform['id'],
+                'total_money'=>$platform['total_money'] + $Order['Platform'],
+                'frozen_amount_t1'=>$platform['frozen_amount_t1'] + $Order['Platform'],
+            ];
+        }else{
+            $update[] = [
+                'id'=>0,
+                'total_money'=>$channel['total_money'] + $Order['Platform'],
+                'balance'=>$channel['balance'] + $Order['Platform'],
+            ];
+        }
+
+        dump($update);
+
+        halt($channel);
+
 
         $Umoney->startTrans();
 
-        $save = $Umoney->save($update,['id'=>$update['id']]);
+        $save = $Umoney->saveAll($update);//批量修改金额
         if (!$save) {
             $Umoney->rollback();
             $msg = '数据有误，请稍后再试！';

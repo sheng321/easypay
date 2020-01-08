@@ -38,7 +38,6 @@ class Umoney extends ModelService {
         'keyArr'=> ['id','uid','channel_id'],
     ];
 
-
     /**
      * Undocumented 获取余额
      *
@@ -50,7 +49,7 @@ class Umoney extends ModelService {
     }
 
     /**
-     * 处理金额  待完善
+     * 处理金额 1.商户后台的金额操作
      * @param $data  会员金额
      * @param $change 变动金额
      * @return mixed
