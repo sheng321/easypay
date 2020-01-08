@@ -16,6 +16,9 @@ class intBehavior extends Controller
         if($this->request->controller() == 'Api' && $this->request->action() == 'index'){
             PolicyApi();
             $this->check_api();
+        }elseif($this->request->controller() == 'Query' && $this->request->action() == 'index'){
+            Policy();
+            $this->check_query();
         }elseif($this->request->controller() == 'Notify' && $this->request->action() == 'index'){
             PolicyApi();
         }else{
@@ -33,6 +36,18 @@ class intBehavior extends Controller
 
         //验证数据
         $validate = $this->validate($param, 'app\common\validate\Pay.check_api');
+        if (true !== $validate)   __jerror($validate);
+
+        return true;
+    }
+
+
+    protected function check_query(){
+        $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_md5sign"],'post');
+        if(empty($param))  __jerror('提交方式错误！');
+
+        //验证数据
+        $validate = $this->validate($param, 'app\common\validate\Pay.check_query');
         if (true !== $validate)   __jerror($validate);
 
         return true;

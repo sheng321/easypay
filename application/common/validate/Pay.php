@@ -73,7 +73,8 @@ class Pay extends Validate {
      * @var array
      */
     protected $scene = [
-         'check_api' => ["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign","pay_productname","pay_attach"]
+         'check_api' => ["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign","pay_productname","pay_attach"],
+        'check_query' => ["pay_memberid" ,"pay_orderid","pay_md5sign"]
     ];
 
 
