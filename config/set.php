@@ -3,8 +3,8 @@
  * 网站基础配置
  */
 return [
-    'api'=>'http://www.test4.com/pay.php/api',//网关
-    'host'=>'http://www.test4.com',//首页
+    'api'=>'http://120.24.166.163:66/pay.php/api',//网关
+    'host'=>'http://120.24.166.163',//首页
     'title'=>'什么付',//标题
     'link'=>'',//联系链接
     'qq'=>'1234567',//开户QQ
