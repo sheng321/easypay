@@ -181,6 +181,7 @@ class MoneyService {
         $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
         if(empty($channel_money)){
             $Umoney->save(['uid'=>0,'channel_id'=>$Channel['id']]);
+            $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
         }
 
 
