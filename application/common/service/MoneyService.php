@@ -50,7 +50,7 @@ class MoneyService {
         $user  = $Umoney::quickGet(['uid'=>$Order['mch_id'],'channel_id'=>0]); //商户金额
 
         //T1 结算
-        if($Order['account'] == 1){
+        if($Channel['account'] == 1){
             $update[] = [
                 'id'=>$user['id'],
                 'total_money'=>$user['total_money'] + $Order['settle'],
@@ -94,7 +94,7 @@ class MoneyService {
             $agent1 = $Umoney::quickGet(['uid'=>$Order['mch_id1'],'channel_id'=>0]);
 
             //T1 结算
-            if($Order['account'] == 1){
+            if($Channel['account'] == 1){
                 $update[] = [
                     'id'=>$agent1['id'],
                     'total_money'=>$agent1['total_money'] + $Order['agent_amount'],
@@ -140,7 +140,7 @@ class MoneyService {
             $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
 
             //T1 结算
-            if($Order['account'] == 1){
+            if($Channel['account'] == 1){
                 $update[] = [
                     'id'=>$agent2['id'],
                     'total_money'=>$agent2['total_money'] + $Order['agent_amount2'],
@@ -180,7 +180,7 @@ class MoneyService {
 
         $channel  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
         //T1 结算
-        if($Order['account'] == 1){
+        if($Channel['account'] == 1){
             $update[] = [
                 'id'=>$channel['id'],
                 'total_money'=>$channel['total_money'] + $Order['upstream_settle'],
@@ -221,7 +221,7 @@ class MoneyService {
         $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0,'id'=>0]);
         if(empty($platform)) return false;
         //T1 结算 平台
-        if($Order['account'] == 1){
+        if($Channel['account'] == 1){
             $update[] = [
                 'id'=>$platform['id'],
                 'total_money'=>$platform['total_money'] + $Order['Platform'],
