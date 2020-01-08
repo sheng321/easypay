@@ -362,7 +362,7 @@ class ModelService extends Model {
       if(!empty($res))  return json_decode($res,true);
 
         //查询数据库
-        $res = $data::where($search)->find();
+        $res = $data::where($search)->order(['id'=>'desc'])->find();
         if(empty($res))  return false;
         $res =  $res->toArray();
         self::saveRedis($obj,$res);

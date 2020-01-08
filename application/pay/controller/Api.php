@@ -21,6 +21,7 @@ class Api extends PayController
     public function index(){
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign"],'post');
 
+
         //商户属性
        $Uprofile =  Uprofile::quickGet(['uid'=>$param['pay_memberid']]);
        if(empty($Uprofile) || $Uprofile['who'] != 0 )  __jerror('商户号不存在');
@@ -164,6 +165,17 @@ class Api extends PayController
                 if($MemRate <= $AgentRate2) $AgentRate2 = 0;
             }
         }
+
+
+        //检测订单好是否重复
+        $date = timeToDate(0,0,0,-3); //默认只搜索3天
+       $id =  Order::where([
+           ['out_trade_no','=',$param['pay_orderid']],
+           ['create_at','>',$date],
+       ])->value('id');
+        if(!empty($id)) __jerror('订单号重复！');
+
+
 
         //已选中的通道
         $Channel = Channel::quickGet($channel_id);
