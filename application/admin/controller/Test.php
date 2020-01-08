@@ -9,10 +9,10 @@ class Test  extends Controller
     public function index()
     {
         $model = new StringModel(3);
-        $model->key = 'redisun4444:{id}:string:{name}';
-        $model->ttl = 555555555;
+        $model->key = 'queues:notify';
+        $res =  $model->newQuery()->find();
 
-        $model->database = 3;
+        halt($res);
 
       //$res1 =  $model->newQuery()->where('name','maria')->delete();
 

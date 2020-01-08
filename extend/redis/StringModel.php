@@ -17,7 +17,6 @@ class StringModel extends RedisModel
     }
 
 
-
     protected function compare($a, $b)
     {
         if ($a > $b) {
