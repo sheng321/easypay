@@ -1,7 +1,6 @@
 <?php
 
 namespace app\common\model;
-
 use app\common\service\ModelService;
 
 /**
@@ -113,5 +112,35 @@ class Order extends ModelService {
         return __success('强制入单成功,异步回调返回：'.$result);
     }
 
+
+    //订单 回调数据
+    public static function notify($sn){
+        $Order = self::quickGet(['systen_no'=>$sn]);
+        $Uprofile = Uprofile::quickGet(['uid'=>$Order['uid']]);
+
+        $data['memberid'] = $Order['uid'];
+        $data['orderid'] = $Order['out_trade_no'];
+        $data['transaction_id'] = $Order['systen_no'];
+        $data['amount'] = $Order['amount'];
+        $data['datetime'] = $Order['pay_time'];
+        $data['returncode'] = '00';
+
+        ksort($data);
+        $md5str = "";
+        foreach ($data as $key => $val) {
+            $md5str = $md5str . $key . "=" . $val . "&";
+        }
+        $data['sign'] = strtoupper(md5($md5str . "key=" . $Uprofile['secret']));
+        $data['attach'] = $Order['attach'];
+
+        return [
+            'data'=>$data,
+            'url'=>$Order['notify_url'],
+            'order'=>[
+                'id'=>$Order['id'],
+                'notice'=>$Order['notice'],
+            ]
+        ];
+    }
 
 }

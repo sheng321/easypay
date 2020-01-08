@@ -1,5 +1,7 @@
 <?php
 namespace app\common\job;
+use app\common\model\Order;
+use app\common\model\Uprofile;
 use think\queue\Job;
 
 class Api {
@@ -30,21 +32,16 @@ class Api {
         $res = \app\common\service\MoneyService::api($data);
 
         if($res === true){
-            $data
 
+            $data = Order::notify($data);
 
-            $data = [];
+            $ok = \tool\Curl::post($data['url'],$data['data']);
+            if(md5(strtolower($ok)) == md5('ok')){
+                (new Order)->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
+            }else{
+                \think\Queue::later('60','app\\common\\job\\Notify', $data, 'notify');
+            }
 
-            \tool\Curl::post();
-
-
-
-
-            $job = 'app\\common\\job\\Notify';//调用的任务名
-            $data = [];//传入的数据
-            $queue = 'notify';//队列名，可以理解为组名
-            //push()方法是立即执行
-             \think\Queue::push($job, $data, $queue);
         }
 
         return $res;

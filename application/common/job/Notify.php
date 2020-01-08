@@ -1,5 +1,6 @@
 <?php
 namespace app\common\job;
+use app\common\model\Order;
 use redis\StringModel;
 use think\queue\Job;
 use tool\Curl;
@@ -12,6 +13,14 @@ class Notify {
      */
     public function fire(Job $job,$data)
     {
+        // 有些消息在到达消费者时,可能已经不再需要执行了
+        $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
+        if($job->attempts() > 6|| !$isJobStillNeedToBeDone ){
+            $job->delete();
+            return;
+        }
+
+
         $isJobDone = $this->doHelloJob($data);
         if ($isJobDone) {
             // 如果任务执行成功，记得删除任务
@@ -25,6 +34,19 @@ class Notify {
     }
 
     /**
+     * 有些消息在到达消费者时,可能已经不再需要执行了
+     * @param array|mixed    $data     发布任务时自定义的数据
+     * @return boolean                 任务执行的结果
+     */
+    private function checkDatabaseToSeeIfJobNeedToBeDone($data){
+       $Order =  Order::quickGet(['systen_no'=>$data['order']['systen_no']]);
+        if($Order['notice'] == 2) return false;//已回调
+
+        return true;
+    }
+
+
+    /**
      * 根据消息中的数据进行实际的业务处理...
      */
     private function doHelloJob($data)
@@ -34,11 +56,12 @@ class Notify {
         $model->select(3);
         $data =  $model->lrange($key, 0 ,60);
 
-        $notify = array();
         foreach ($data as $k =>$v ){
             $data[$k] = json_decode($v,true);
-            $notify[$k]['url'] = $data[$k]['data']['url'];
-            $notify[$k]['data'] = $data[$k]['data']['url'];
+            if($data[$k]['attempts'] > 6){
+                unset($data[$k]);
+                continue;
+            }
         }
 
         /*
@@ -50,17 +73,18 @@ class Notify {
   }*/
 
 
-    $res =  Curl::curl_multi($notify); //批量处理
+    $res =  Curl::curl_multi($data); //批量处理
 
-        foreach ($res as $k1 => $v1){
-            if(md5(strtolower($v1)) == md5('ok')){
-                $data[$k1]['attempts'] = 66;
-            }else{
-                $data[$k1]['attempts'] = $data[$k1]['attempts'] + 1;
-            }
-            $model->lSet($key, 0, json_encode($data[$k1])); //更新
+    foreach ($res as $k1 => $v1){
+        if(md5(strtolower($v1)) == md5('ok')){
+            (new Order)->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
+            $data[$k1]['attempts'] = 66;
+        }else{
+            $data[$k1]['attempts'] = $data[$k1]['attempts'] + 1;
         }
+        $model->lSet($key, 0, json_encode($data[$k1])); //更新
+    }
 
-        return true;
+    return true;
     }
 }
