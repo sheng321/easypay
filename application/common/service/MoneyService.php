@@ -178,19 +178,19 @@ class MoneyService {
 
         }
 
-        $channel  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
+        $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
         //T1 结算
         if($Channel['account'] == 1){
             $update[] = [
-                'id'=>$channel['id'],
-                'total_money'=>$channel['total_money'] + $Order['upstream_settle'],
-                'frozen_amount_t1'=>$channel['frozen_amount_t1'] + $Order['upstream_settle'],
+                'id'=>$channel_money['id'],
+                'total_money'=>$channel_money['total_money'] + $Order['upstream_settle'],
+                'frozen_amount_t1'=>$channel_money['frozen_amount_t1'] + $Order['upstream_settle'],
             ];
             $log[] = [
                 'uid'=>0,
-                'channel_id'=>$channel['id'],
-                'before_balance'=>$channel['total_money'],
-                'balance'=>$channel['total_money'] + $Order['upstream_settle'],
+                'channel_id'=>$channel_money['id'],
+                'before_balance'=>$channel_money['total_money'],
+                'balance'=>$channel_money['total_money'] + $Order['upstream_settle'],
                 'change'=>$Order['upstream_settle'],
                 'relate'=>$Order['systen_no'],
                 'type'=>11,//T1入账
@@ -199,16 +199,16 @@ class MoneyService {
 
         }else{
             $update[] = [
-                'id'=>$channel['id'],
-                'total_money'=>$channel['total_money'] + $Order['upstream_settle'],
-                'balance'=>$channel['balance'] + $Order['upstream_settle'],
+                'id'=>$channel_money['id'],
+                'total_money'=>$channel_money['total_money'] + $Order['upstream_settle'],
+                'balance'=>$channel_money['balance'] + $Order['upstream_settle'],
             ];
 
             $log[] = [
                 'uid'=>0,
-                'channel_id'=>$channel['id'],
-                'before_balance'=>$channel['total_money'],
-                'balance'=>$channel['total_money'] + $Order['upstream_settle'],
+                'channel_id'=>$channel_money['id'],
+                'before_balance'=>$channel_money['total_money'],
+                'balance'=>$channel_money['total_money'] + $Order['upstream_settle'],
                 'change'=>$Order['upstream_settle'],
                 'relate'=>$Order['systen_no'],
                 'type'=>7,//入账
