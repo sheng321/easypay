@@ -1,7 +1,6 @@
 <?php
 namespace app\common\job;
 use app\common\model\Order;
-use app\common\model\Uprofile;
 use think\queue\Job;
 
 class Api {

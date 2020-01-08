@@ -139,6 +139,7 @@ class Order extends ModelService {
             'order'=>[
                 'id'=>$Order['id'],
                 'notice'=>$Order['notice'],
+                'pay_time'=>strtotime($Order['pay_time']),
             ]
         ];
     }

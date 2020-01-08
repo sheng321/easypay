@@ -53,7 +53,7 @@ class Notify {
         $key = "queues:notify";
         $model = (new StringModel())->instance();
         $model->select(3);
-        $data =  $model->lrange($key, 0 ,60);
+        $data =  $model->lrange($key, 0 ,100);
 
         foreach ($data as $k =>$v ){
             $data[$k] = json_decode($v,true);
@@ -61,7 +61,14 @@ class Notify {
                 unset($data[$k]);
                 continue;
             }
+             //每隔60秒发次回调
+            if((time() - $data[$k]['order']['pay_time']) < 60){
+                unset($data[$k]);
+                continue;
+            }
         }
+
+        if(empty($data)) return true;
 
         /*
          *[1] => array(4) {
@@ -80,8 +87,9 @@ class Notify {
             $data[$k1]['attempts'] = 66;
         }else{
             $data[$k1]['attempts'] = $data[$k1]['attempts'] + 1;
+            $data[$k]['order']['pay_time'] = time();
         }
-        $model->lSet($key, 0, json_encode($data[$k1])); //更新
+        $model->lSet($key, 0, json_encode($data[$k1])); //更新队列
     }
 
     return true;
