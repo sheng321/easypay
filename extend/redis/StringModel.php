@@ -3,19 +3,19 @@ namespace redis;
 
 class StringModel extends RedisModel
 {
+    public $key = 'redisun:{id}:string:{name}';
+    protected $type = 'string';
+    protected $sortable = true;
+
+    public $database = 11;
+
     public function __construct($database = null)
     {
         parent::__construct();
         if(!empty($database)) $this->database = $database;
     }
 
-    public $key = 'redisun:{id}:string:{name}';
 
-    protected $type = 'string';
-
-    protected $sortable = true;
-
-    public $database = 11;
 
     protected function compare($a, $b)
     {
