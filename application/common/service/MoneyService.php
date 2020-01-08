@@ -88,7 +88,7 @@ class MoneyService {
         //上级代理
         if(!empty($Order['agent_amount']) && !empty($Order['mch_id1']) ){
             $agent1 = $Umoney::quickGet(['uid'=>$Order['mch_id1'],'channel_id'=>0]);
-            if(empty($agent1)) $agent1 = $Umoney->create(['uid'=>$Order['mch_id1'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0]);
+            if(empty($agent1)) $agent1 = $Umoney->create(['uid'=>$Order['mch_id1'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
 
             //T1 结算
             if($Channel['account'] == 1){
@@ -135,7 +135,7 @@ class MoneyService {
         //上上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
             $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
-            if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0]);
+            if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
 
             //T1 结算
             if($Channel['account'] == 1){
@@ -177,7 +177,7 @@ class MoneyService {
         }
 
         $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
-        if(empty($channel_money))  $channel_money = $Umoney->create(['uid'=>0,'channel_id'=>$Channel['id'],'type1'=>1,'total_money'=>0,'frozen_amount_t1'=>0]);
+        if(empty($channel_money))  $channel_money = $Umoney->create(['uid'=>0,'channel_id'=>$Channel['id'],'type1'=>1,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
 
 
         //T1 结算
@@ -218,7 +218,7 @@ class MoneyService {
         }
 
         $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0]);
-        if(empty($platform)) $platform = $Umoney->create(['uid'=>0,'channel_id'=>0,'type1'=>2,'total_money'=>0,'frozen_amount_t1'=>0]);
+        if(empty($platform)) $platform = $Umoney->create(['uid'=>0,'channel_id'=>0,'type1'=>2,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
 
         //T1 结算 平台
         if($Channel['account'] == 1){
