@@ -47,7 +47,6 @@ class Notify {
         return true;
     }
 
-
     /**
      * 根据消息中的数据进行实际的业务处理...
      */
