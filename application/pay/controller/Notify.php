@@ -18,6 +18,9 @@ class Notify extends PayController
     public function __construct()
     {
         parent::__construct();
+
+        halt(1);
+
         //http://www.test4.com/pay.php/notify/index/Pay/Xyf.html
         $code =  $this->request->param('Pay/s','');
         if(empty($code) || !ctype_alnum($code)) __jsuccess('无权访问');
@@ -36,6 +39,8 @@ class Notify extends PayController
     }
 
     public function index(){
+
+
         $return = [];
         $Payment = Payment::factory($this->config['code']);
         // $Payment = Payment::factory('Index');

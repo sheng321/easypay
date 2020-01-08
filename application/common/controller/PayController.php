@@ -91,7 +91,8 @@ class PayController extends BaseController
         //加入异步队列
 
 
-        $res = \app\common\service\MoneyService::api($order);
+        halt(1);
+        $res = \app\common\service\MoneyService::api($order['systen_no']);
 
 
         halt($res);
