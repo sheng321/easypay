@@ -43,7 +43,7 @@ class MoneyService {
         $log = [];
         //处理金额
         $user  = $Umoney::quickGet(['uid'=>$Order['mch_id'],'channel_id'=>0]); //商户金额
-        if(empty($user)) $user = $Umoney->create(['uid'=>$Order['mch_id'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0]);
+        if(empty($user)) $user = $Umoney->create(['uid'=>$Order['mch_id'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
 
         //T1 结算
         if($Channel['account'] == 1){
