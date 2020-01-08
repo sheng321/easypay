@@ -30,7 +30,7 @@ class MoneyService {
                         ->join('channel w','a.pid = w.id')
                         ->field('w.noentry,w.id')
                         ->cache('channel_pid_'.$Order['channel_id'],3)
-                        ->field();
+                        ->find();
 
         dump($Channel);
 
