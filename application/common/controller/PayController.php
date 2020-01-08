@@ -91,10 +91,10 @@ class PayController extends BaseController
 
         //加入异步队列
         $job = 'app\\common\\job\\Api';//调用的任务名
-        $data = [];//传入的数据
+        $data = $order['systen_no'];//传入的数据
         $queue = 'api';//队列名，可以理解为组名
         //push()方法是立即执行
-        $isPushed =  Queue::push($job, $order['systen_no'], $queue);
+        $isPushed =  Queue::push($job, $data, $queue);
 
         if( $isPushed === false ){
             __jerror('fail');
