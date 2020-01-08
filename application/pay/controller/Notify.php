@@ -31,9 +31,7 @@ class Notify extends PayController
             $ip = get_client_ip();
             if(!in_array($ip,$back_ip))  __jerror('无权访问3');
         }
-
         $this->config = $config;
-
     }
 
     public function index(){
