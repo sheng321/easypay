@@ -3,6 +3,29 @@
 // 应用公共文件
 
 
+
+if (!function_exists('searchArr')) {
+/**
+ * 在数组中模糊搜索给定的值
+ * @param $data
+ * @param $keyword
+ * @return array
+ */
+function searchArr($data,$keyword){
+    $arr = array();
+    foreach($data as $key=>$values ){
+        if (strstr( $values , $keyword ) !== false ){
+            $arr[$key] = $values;
+        }
+    }
+    return $arr;
+  }
+}
+
+
+
+
+
 if (!function_exists('getSessionid')) {
 
     /**

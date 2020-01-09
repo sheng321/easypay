@@ -54,6 +54,13 @@
         </div>
     </div>
 
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">单笔限时</label>
+        <div class="layui-input-block">
+            <input type="text"   name="limit_time"   class="layui-input"  value="{$auth.limit_time|default='20'}" placeholder="请输入单笔限时">
+        </div>
+    </div>
+
 
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">支付方式</label>
@@ -131,7 +138,7 @@
 {/block}
 
 {block name="script"}
-<script       >
+<script  >
 
     /**
      * 添加、编辑

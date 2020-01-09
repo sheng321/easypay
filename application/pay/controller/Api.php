@@ -205,6 +205,8 @@ class Api extends PayController
         $data['Platform'] = $data['amount']*($MemRate -  max($data['cost_rate'],$AgentRate1,$AgentRate2));//平台收益
         $data['create_time'] =  $param['pay_applydate'];//商户提交时间
 
+        $data['over_time'] = time() + $Channel['time_limit']*60;//订单过期时间
+
         $param1 = $this->request->only(["pay_productname","pay_attach"],'post');
         $data['productname'] = $param1['pay_productname'];//商品名称
         $data['attach'] = $param1['pay_attach'];//备注

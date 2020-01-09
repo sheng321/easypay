@@ -32,6 +32,7 @@ class Order extends AdminController {
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 10);
             $search = (array)$this->request->get('search', []);
+
             return json($this->model->alist($page, $limit, $search));
         }
 

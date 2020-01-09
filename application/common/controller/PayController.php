@@ -74,9 +74,8 @@ class PayController extends BaseController
      }
 
      //订单接受回调 时间限制
-     $time = empty($this->config['time_limit'])?10*60:$this->config['time_limit']*60;
-     $limit = strtotime($this->config['create_at']) + $time;
-    // if($limit < time()) __jerror('over_time');
+        if(time() > $order['over_time']) __jerror('over_time');
+
 
      //判断订单金额
       if(!empty($this->config['amount'])  && abs( $order['amount'] - $this->config['amount']) > 1 )  __jerror('money_wrong1');

@@ -32,6 +32,7 @@ class Channel extends Validate {
         'sort'=> 'in:0,2',//固定尾数
 
         'limit_money'=> 'number',//限额
+        'limit_time'=> 'number',//单笔限时
 
         'p_id'   => 'require',
         'pid'   => 'require|number',
@@ -67,6 +68,7 @@ class Channel extends Validate {
 
         'gateway.activeUrl'     => '网关或者IP不正确',
         'limit_money.number'     => '限额必须为纯数字',
+        'limit_time.number'     => '限额必须为纯数字',
 
         'p_id.require'     => '请选择支付类型',
 
@@ -80,7 +82,7 @@ class Channel extends Validate {
         //添加支付通道
         'add'        => ['title','limit_money','code'],
 
-        'padd'        => ['title','pid','p_id','remark','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','limit_money'],
+        'padd'        => ['title','pid','p_id','remark','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num'],
         
         //修改支付通道字段值
         'edit_field' => ['id', 'field', 'value'],
@@ -99,7 +101,7 @@ class Channel extends Validate {
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge'])
+        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge','limit_time','limit_money'])
             ->remove('id', 'checkProductId');
     }
 

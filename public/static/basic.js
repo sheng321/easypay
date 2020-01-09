@@ -213,7 +213,6 @@
             if (size != '') data.size = size;
             if (size == 'lg') data.limit = 10;
             if (!isTool) data.height = "full-20";
-
             table.render(data);
         }
 

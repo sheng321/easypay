@@ -181,8 +181,6 @@ class Channel extends ModelService {
     }
 
 
-
-
     /**
      * 获取通道配置信息
      * @param $id
