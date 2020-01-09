@@ -19,41 +19,73 @@
 
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
-                <input type="text" id="system_sn" class="layui-input" placeholder="商户单号/系统单号"/>
+                <input type="text" id="out_trade_no" class="layui-input" placeholder="商户单号"/>
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <div class="layui-input-inline">
+                <input type="text" id="systen_no" class="layui-input" placeholder="系统单号"/>
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <div class="layui-input-inline">
+                <input type="text" id="transaction_no" class="layui-input" placeholder="上游单号"/>
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <div class="layui-input-inline">
+                <input type="text" id="channel_name" class="layui-input" placeholder="通道"/>
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <div class="layui-input-inline">
+                <input type="text" id="channelgroup_name" class="layui-input" placeholder="通道分组"/>
             </div>
         </div>
 
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
-                <select id="channel_id" class="status" lay-filter="status">
-                    <option value="">请选择</option>
-                    <option value="1">1111</option>
-                    <option value="2">2222</option>
-                    <option value="3">33333</option>
-
+                <select  class="payment_id" lay-filter="payment_id">
+                    <option value="">请选择支付类型</option>
+                    {foreach $product as $k => $vo}
+                    <option value="{$k|default=''}">{$vo|default=''}</option>
+                    {/foreach}
                 </select>
             </div>
         </div>
+
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
-                <select id="payment_id" class="status" lay-filter="status">
-                    <option value="">请选择</option>
-                    <option value="1">1111</option>
-                    <option value="2">2222</option>
-                    <option value="3">33333</option>
-
+                <select  class="money" lay-filter="money">
+                    <option value="">请选择价格区间</option>
+                    <option value="1-200">1 - 200</option>
+                    <option value="200-500">200 - 500</option>
+                    <option value="500-1000">500 - 1000</option>
+                    <option value="1000-1500">1000 - 1500</option>
+                    <option value="1500-2000">1500 - 2000</option>
+                    <option value="2000-5000">2000 - 5000</option>
                 </select>
             </div>
         </div>
+
+
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
-                <select id="status" class="status" lay-filter="status">
+                <select  class="pay_status" lay-filter="pay_status">
                     <option value="">请选择支付状态</option>
-                    <option value="0">待支付</option>
-                    <option value="1">下单失败</option>
-                    <option value="2">已支付</option>
-                    <option value="3">已关闭</option>
-
+                    {foreach $order['pay_status'] as $k => $vo}
+                    <option value="{$k|default=''}">{$vo|default=''}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <div class="layui-input-inline">
+                <select  class="notice" lay-filter="notice">
+                    <option value="">请选择通知状态</option>
+                    {foreach $order['notice'] as $k => $vo}
+                    <option value="{$k|default=''}">{$vo|default=''}</option>
+                    {/foreach}
                 </select>
             </div>
         </div>
@@ -84,19 +116,32 @@
         <div style="color:red;">已关闭</div>
         {{# } }}
     </script>
+
+    <script type="text/html" id="total_fee">
+        {{d.total_fee}}-({{d.run_rate}})
+    </script>
+    <script type="text/html" id="profit">
+        平台:{{d.Platform}}
+        |上游:{{d.upstream_settle}}-({{d.cost_rate}})
+        {{# if (d.mch_id1 != '0') { }}
+        |上级代理:{{d.mch_id1}}-{{d.agent_amount}}-({{d.agent_rate}})
+        {{# } }}
+        {{# if (d.mch_id2 != '0') { }}
+        |上上级代理:{{d.mch_id2}}-{{d.agent_amount2}}-({{d.agent_rate2}})
+        {{# } }}
+    </script>
+
+
     <script type="text/html" id="notice">
         {{# if (d.notice == '1') { }}
         <div>未通知</div>
+        {{# } else if(d.notice == 2) { }}
+        <div style="color:#1E9FFF;">已通知</div>
         {{# } else { }}
-        <div style="color:red;">已通知</div>
+        <div style="color:red;">通知失败</div>
         {{# } }}
     </script>
-    <script type="text/html" id="channel">
-        <div>云来支付</div>
-    </script>
-    <script type="text/html" id="payment">
-        <div>微信扫码</div>
-    </script>
+
     <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/details")}?id={{d.id}}' data-title="订单详情">详情</a>
         {{# if (d.pay_status == '2') { }}
@@ -123,18 +168,17 @@
         {field:'transaction_no', title:'上游单号', minwith:1, align: 'center'},
         {field:'amount', title:'下单金额', minwith:1, align: 'center'},
         {field:'actual_amount', title:'实际支付', minwith:1, align: 'center'},
-        {field:'total_fee', title:'手续费', minwith:1, align: 'center'},
-        {field:'upstream_settle', title:'上游利润', minwith:1, align: 'center'},
-        {field:'Platform', title:'平台利润', minwith:1, align: 'center'},
-        {field:'channel_id', title:'渠道名称',toolbar: '#channel', minwith:1, align: 'center'},
-        {field:'channel_group_id', title:'通道分组',toolbar: '#channel', minwith:1, align: 'center'},
-        {field:'payment_id', title:'支付类型', toolbar: '#payment',minwith:1, align: 'center'},
+        {field:'total_fee', title:'手续费', minwith:1, align: 'center',toolbar: '#total_fee',},
+        {field:'profit', title:'利润', minwith:1, align: 'center',templet: '#profit'},
+        {field:'channel_name', title:'通道', minwith:1, align: 'center'},
+        {field:'product_name', title:'支付类型',minwith:1, align: 'center'},
+        {field:'channelgroup_name', title:'通道分组', minwith:1, align: 'center'},
         {field:'pay_status', title:'支付状态',toolbar: '#pay_status', minwith:1, align: 'center'},
         {field:'notice', title:'通知状态', toolbar: '#notice',minwith:1, align: 'center'},
         {field:'pay_time', title:'支付时间', minwith:1, align: 'center'},
         {field:'create_time', title:'创建时间', minwith:1, align: 'center'},
         {field:'update_at', title:'最近更新时间', minwith:1, align: 'center'},
-    ]]);
+    ]], true , '',100);
 
     /**
      * 日期范围

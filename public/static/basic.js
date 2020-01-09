@@ -179,7 +179,7 @@
          * @param cols 表单渲染
          * @param page 表单渲染
          */
-        this.table = function (elem, url, cols, isPage = true , done = '',  size = '', isTool = true) {
+        this.table = function (elem, url, cols, isPage = true , done = '',limit = 20,  size = '', isTool = true) {
             if (!isPage) {
                 var data = {
                     elem: '#' + elem + 'Table',
@@ -201,8 +201,8 @@
                     cellMinWidth: 95,
                     page: true,
                     height: "full-80",
-                    limits: [10, 15, 20, 25, 50, 100],
-                    limit: 15,
+                    limits: [10, 15, 20, 25, 50, 100,200,500],
+                    limit: limit,
                     id: elem + 'TableId',
                     cols: cols,
                     done:function(res,curr,count){
@@ -213,6 +213,7 @@
             if (size != '') data.size = size;
             if (size == 'lg') data.limit = 10;
             if (!isTool) data.height = "full-20";
+
             table.render(data);
         }
 

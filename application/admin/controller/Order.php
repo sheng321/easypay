@@ -3,9 +3,10 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\PayProduct;
 
 /**
- * Undocumented 提现记录
+ * Undocumented 订单记录
  */
 class Order extends AdminController {
 
@@ -23,7 +24,7 @@ class Order extends AdminController {
         $this->model = model('app\common\model\Order');
     }
     /**
-     * Undocumented 提现列表
+     * Undocumented 订单列表
      * @return void
      */
     public function index(){
@@ -34,7 +35,15 @@ class Order extends AdminController {
             return json($this->model->alist($page, $limit, $search));
         }
 
-        return $this->fetch('', []);
+        //基础数据
+        $basic_data = [
+            'title'  => '支付产品列表',
+            'data'   => '',
+            'order' => config('order.'),
+            'product' =>  PayProduct::idArr()//支付产品
+        ];
+
+        return $this->fetch('', $basic_data);
     }
     /**
      * Undocumented 详情

@@ -94,8 +94,8 @@ class PayController extends BaseController
         $data = [
             'order'=>['systen_no'=>$order['systen_no']],
             'config'=>[
-                'transaction_no'=>empty($this->config['transaction_no'])?'':$this->config['transaction_no'],
-                'amount'=>empty($this->config['amount'])?'':$this->config['amount']
+                'transaction_no'=>empty($this->config['transaction_no'])?'':htmlspecialchars($this->config['transaction_no']),
+                'amount'=>empty($this->config['amount'])?'':floatval($this->config['amount'])
             ],
         ];//传入的数据
 

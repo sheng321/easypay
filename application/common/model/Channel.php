@@ -141,7 +141,7 @@ class Channel extends ModelService {
      */
     public static function idRate(){
         \think\facade\Cache::remember('ChannelIdRate', function () {
-            $data = self::column('id,c_rate,s_rate','id');
+            $data = self::column('id,c_rate,s_rate,title','id');
             \think\facade\Cache::tag('Channel')->set('ChannelIdRate',$data,60);
             return \think\facade\Cache::get('ChannelIdRate');
         });
@@ -188,7 +188,7 @@ class Channel extends ModelService {
      * @param $id
      */
     public static function get_config($code){
-        $config = self::where(['code'=>$code])->cache('channel_config_'.$code,1)->find();
+        $config = self::where(['code'=>$code])->cache('channel_config_'.$code,2)->find();
         return  $config;
     }
 

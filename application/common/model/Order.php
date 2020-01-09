@@ -2,6 +2,7 @@
 
 namespace app\common\model;
 use app\common\service\ModelService;
+use think\helper\Str;
 
 /**
  * 订单支付表
@@ -39,11 +40,25 @@ class Order extends ModelService {
         //搜索条件
         $searchField['eq'] = ['status'];
         $where = search($search,$searchField,$where);
-        $field = "*";
+        $field = "id,mch_id,out_trade_no,systen_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2";
         $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_admin',2)->order(['create_at'=>'desc'])->select()->toArray();
-
-
         empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+        $PayProduct =  PayProduct::idArr();//支付产品
+        $ChannelGroup =  ChannelGroup::idArr();//通道分组
+        $Channel =  Channel::idRate();//通道
+
+        foreach ($list as $k=>$v){
+            $list[$k]['product_name'] = empty($PayProduct[$v['payment_id']])?'未知':$PayProduct[$v['payment_id']];
+            $list[$k]['channelgroup_name'] = empty($PayProduct[$v['payment_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
+            $list[$k]['channel_name'] = empty($PayProduct[$v['payment_id']])?'未知':$Channel[$v['channel_id']]['title'];
+
+            empty($list[$k]['pay_time'])?'':$list[$k]['pay_time'] = Str::substr($list[$k]['pay_time'],8,11);
+            $list[$k]['create_time'] =Str::substr($list[$k]['create_time'],8,11);
+            $list[$k]['update_at'] = Str::substr($list[$k]['update_at'],8,11);
+        }
+
+
 
         $list = [
             'code'  => 0,
