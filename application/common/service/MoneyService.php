@@ -13,11 +13,11 @@ use app\common\model\Order;
 class MoneyService {
 
     /**回调成功，金额变动
-     * @param $sn 订单号
+     * @param $data
      * @return bool
      */
-    public static function api($sn){
-       $Order = Order::quickGet(['systen_no'=>$sn]);
+    public static function api($data){
+       $Order = Order::quickGet(['systen_no'=>$data['order']['systen_no']]);
 
        //不存在 或者下单失败 已支付
        if(empty($Order) || $Order['pay_status'] == 1   ) return false;
@@ -233,11 +233,18 @@ class MoneyService {
                 'balance'=>$platform['balance'] + $Order['Platform'],
             ];
         }
+        $Order_update = [
+            'id'=>$Order['id'],
+            'pay_status'=>2,
+            'pay_time'=>date('Y-m-d H:i:s'),
+        ];
+        if(!empty($data['config']['transaction_no'])) $Order_update['transaction_no'] = $data['config']['transaction_no'];
+        if(!empty($data['config']['amount'])) $Order_update['amount'] = $data['config']['amount'];
 
         $Umoney->startTrans();
         $save = $Umoney->saveAll($update);//批量修改金额
         $save1 = model('app\common\model\UmoneyLog')->saveAll($log);//批量添加变动记录
-        $save2 = model('app\common\model\Order')->save(['id'=>$Order['id'],'pay_status'=>2,'pay_time'=>date('Y-m-d H:i:s')],['id'=>$Order['id']]);
+        $save2 = model('app\common\model\Order')->save($Order_update,['id'=>$Order['id']]);
         if (!$save || !$save1|| !$save2) {
             $Umoney->rollback();
             return false;

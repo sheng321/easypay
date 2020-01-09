@@ -48,8 +48,9 @@
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
                 <select id="status" class="status" lay-filter="status">
-                    <option value="">请选择</option>
-                    <option value="1">待支付</option>
+                    <option value="">请选择支付状态</option>
+                    <option value="0">待支付</option>
+                    <option value="1">下单失败</option>
                     <option value="2">已支付</option>
                     <option value="3">已关闭</option>
 
@@ -66,9 +67,6 @@
         <div class="layui-form-item layui-inline">
             <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
         </div>
-
-
-
     </blockquote>
     <!--顶部操作栏--结束-->
 
@@ -113,7 +111,7 @@
 {/block}
 
 {block name="script"}
-<script       >
+<script  >
 
     /**
      * 生成表单
@@ -122,17 +120,20 @@
         {field:'mch_id', title:'商户号', minwith:1, align: 'center'},
         {field:'out_trade_no', title:'商户单号', minwith:1, align: 'center'},
         {field:'systen_no', title:'系统单号', minwith:1, align: 'center'},
+        {field:'transaction_no', title:'上游单号', minwith:1, align: 'center'},
         {field:'amount', title:'下单金额', minwith:1, align: 'center'},
         {field:'actual_amount', title:'实际支付', minwith:1, align: 'center'},
         {field:'total_fee', title:'手续费', minwith:1, align: 'center'},
+        {field:'upstream_settle', title:'上游利润', minwith:1, align: 'center'},
+        {field:'Platform', title:'平台利润', minwith:1, align: 'center'},
         {field:'channel_id', title:'渠道名称',toolbar: '#channel', minwith:1, align: 'center'},
+        {field:'channel_group_id', title:'通道分组',toolbar: '#channel', minwith:1, align: 'center'},
         {field:'payment_id', title:'支付类型', toolbar: '#payment',minwith:1, align: 'center'},
         {field:'pay_status', title:'支付状态',toolbar: '#pay_status', minwith:1, align: 'center'},
         {field:'notice', title:'通知状态', toolbar: '#notice',minwith:1, align: 'center'},
         {field:'pay_time', title:'支付时间', minwith:1, align: 'center'},
         {field:'create_time', title:'创建时间', minwith:1, align: 'center'},
-        {field:'Platform', title:'平台盈利', minwith:1, align: 'center'},
-        {fixed: 'right', title:'操作', toolbar: '#barDemo', minwith:1, align: 'center'}
+        {field:'update_at', title:'最近更新时间', minwith:1, align: 'center'},
     ]]);
 
     /**

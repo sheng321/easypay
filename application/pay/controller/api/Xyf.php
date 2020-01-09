@@ -189,7 +189,7 @@ class Xyf extends PayController
         if($param['status'] !== '1') __jerror('pay_fail');
 
         $this->config['returnBack'] = 'success';//返回数据
-        //$this->config['transaction_no'] =''; //第三方订单号
+        $this->config['transaction_no'] =$param['sysOrderId']; //第三方订单号
         $this->config['amount'] = $param['orderAmt'];//下订单金额
         //$this->config['upstream_settle'] = 0;//上游结算金额
 

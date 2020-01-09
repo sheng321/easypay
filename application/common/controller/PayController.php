@@ -91,13 +91,20 @@ class PayController extends BaseController
 
         //加入异步队列
         $job = 'app\\common\\job\\Api';//调用的任务名
-        $data = $order['systen_no'];//传入的数据
+        $data = [
+            'order'=>['systen_no'=>$order['systen_no']],
+            'config'=>[
+                'transaction_no'=>empty($this->config['transaction_no'])?'':$this->config['transaction_no'],
+                'amount'=>empty($this->config['amount'])?'':$this->config['amount']
+            ],
+        ];//传入的数据
+
         $queue = 'api';//队列名，可以理解为组名
         //push()方法是立即执行
         $res =  Queue::push($job, $data, $queue);
 
         //同步
-        //$res = \app\common\service\MoneyService::api($order['systen_no']);
+        //$res = \app\common\service\MoneyService::api($data);
        // halt($res);
 
         if( $res === false ) __jerror('fail');

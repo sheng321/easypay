@@ -29,25 +29,22 @@ class Order extends ModelService {
 
     /**
      * Undocumented 分页获取
-     *
      * @param integer $page
      * @param integer $limit
      * @param array $search
      * @return void
      */
-    public function alist($page = 1,$limit = 10,$search = [],$uid=''){
-        if(empty($uid)){
-            $where = [];
-        }else{
-            $where = ['mch_id'=>$uid];
-        }
+    public function alist($page = 1,$limit = 10,$search = []){
+        $where = [];
         //搜索条件
         $searchField['eq'] = ['status'];
-        //$searchField['like'] = ['remark','title'];
         $where = search($search,$searchField,$where);
         $field = "*";
-        $list = $this->alias('a')->where($where)->page($page,$limit)->field($field)->select()->toArray();
+        $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_admin',2)->order(['create_at'=>'desc'])->select()->toArray();
+
+
         empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
         $list = [
             'code'  => 0,
             'msg'   => $msg,

@@ -31,7 +31,6 @@ class Api {
         $res = \app\common\service\MoneyService::api($data);
 
         if($res === true){
-
             $data = Order::notify($data);
 
             $ok = \tool\Curl::post($data['url'],$data['data']);

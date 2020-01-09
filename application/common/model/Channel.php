@@ -41,7 +41,6 @@ class Channel extends ModelService {
         $searchField['eq'] = ['status'];
         $searchField['like'] = ['remark','title','code'];
 
-
         $where = search($search,$searchField,$where);
 
 

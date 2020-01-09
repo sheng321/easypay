@@ -1,13 +1,7 @@
 <?php
 
 
-
-
-
 return [
-
-
-
 
     //提现设置
     "withdrawal" => [
