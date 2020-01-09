@@ -41,7 +41,9 @@ class intBehavior extends Controller
         return true;
     }
 
-
+    /**
+     * 验证查询订单接口
+     */
     protected function check_query(){
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_md5sign"],'post');
         if(empty($param))  __jerror('提交方式错误！');
