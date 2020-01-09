@@ -390,7 +390,7 @@ class ModelService extends Model {
         $keyArr = [];
         foreach ($obj['redis']['keyArr'] as $k => $v){
             $keyArr[$v] = '';
-            if(isset($data[$v])) $keyArr[$v] = $data[$v];
+            if(isset($data[$v])) $keyArr[$v] = empty($data[$v])?0:$data[$v];
         }
         //先删除
         $redisModel->newQuery()->where('id',$data['id'])->delete();

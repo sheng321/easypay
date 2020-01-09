@@ -47,60 +47,113 @@ class Order extends AdminController {
         return $this->fetch('', $basic_data);
     }
     /**
-     * Undocumented 详情
-     *
+     *  详情
      * @return void
      */
     public function details(){
-        $id = $this->request->param('id');
-        $info = $this->model->where("id",$id)->find();
-        if(!$info){
-            return __error("数据不存在");
+
+        if (!$this->request->isPost()) {
+            $id = $this->request->get('id/d',0);
+            $order =  $this->model->quickGet($id);
+            if(empty($order)) msg_error("订单不存在");
+
+            $ChannelGroup =  \app\common\model\ChannelGroup::idArr();//通道分组
+            $Channel =  \app\common\model\Channel::idRate();//通道
+            $PayProduct =  \app\common\model\PayProduct::idArr();//支付产品
+
+
+            $order['product_name'] = empty($PayProduct[$order['payment_id']])?'未知':$PayProduct[$order['payment_id']];
+            $order['channelgroup_name'] = empty($ChannelGroup[$order['channel_group_id']])?'未知':$ChannelGroup[$order['channel_group_id']];
+            $order['channel_name'] = empty($Channel[$order['channel_id']])?'未知':$Channel[$order['channel_id']]['title'];
+
+            if(($order['pay_status'] == 0) && (time() > $order['over_time'])) $order['pay_status'] = 3;//显示订单关闭
+            $order['over_time'] = date('Y-m-d H:i:s',$order['over_time']);
+
+            $order['pay_status1'] = config('order.pay_status.'.$order['pay_status']);
+            $order['notice1'] = config('order.notice.'.$order['notice']);
+
+            $this->assign("order",$order);
+            return $this->fetch('');
+
+        } else {
+            $id = $this->request->get('id/d',0);
+            $order = $this->request->get('order/s',0);
+
+            $OrderDispose = model('app\common\model\OrderDispose');
+
+            $Dispose = $OrderDispose->quickGet(['pid'=>$id]);
+
+            $this->model->startTrans();
+
+            $save = $this->model->save(['pay_status'=>0,'id'=>$id,'over_time'=>time()+3600],['id'=>$id]);//开启订单
+            if(empty($Dispose)){
+                $save1 =  $OrderDispose->create([
+                   'pid'=>$id,
+                    'systen_no'=>$order,
+                    'record'=>$this->user['username'].'-开启',
+                ]);
+            }else{
+                $save1 = $OrderDispose->save([
+                    'id'=>$Dispose['id'],
+                    'record'=>$Dispose['record'].'|'.$this->user['username'].'-开启',
+                ],['id'=>$Dispose['id']]);
+            }
+
+            if (!$save || !$save1) {
+                $this->model->rollback();
+                return __error('数据有误，请稍后再试！');
+            }
+            $this->model->commit();
+            return __success('开启成功！');
+
+
         }
-        $this->assign("info",$info);
-        return view("details");
     }
+
+
     /**
-     * Undocumented 补发通知
+     *  补发通知
      *
      * @return void
      */
     public function replacement(){
-        $id = $this->request->param('id');
-        $info = $this->model->where("id",$id)->find();
-        if(!$info){
-            return __error("数据不存在");
+
+        $id = $this->request->get('id/d',0);
+        $order =  $this->model->quickGet($id);
+        if(empty($order) || $order['notice'] == 2 ) msg_error("订单不存在");
+
+        $res = \app\common\service\MoneyService::api($order);//修改金额
+
+        if($res === true){
+            $data = $this->model->notify($order);
+
+            $ok = \tool\Curl::post($data['url'],$data['data']);
+            if(md5(strtolower($ok)) == md5('ok')){
+                (new Order)->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
+
+                $this->model->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
+            }else{
+                $this->model->save(['id'=>$data['order']['id'],'notice'=>3],['id'=>$data['order']['id']]);
+                if(is_string($ok)){
+                    halt(htmlspecialchars($ok));
+                }else{
+                    halt(htmlspecialchars(json_encode($ok)));
+                }
+            }
+
         }
+
+
+
+
+
         $data = [];
         $data['sign'] = 'xxxxxxxxxxx';
         $result = $this->model->orderSend($data,$info->id);
         return __success('发送成功,异步返回：'.$result);
     }
-    /**
-     * Undocumented 强制入账
-     *
-     * @return void
-     */
-    public function compel(){
-        $id = $this->request->param('id');
-        $info = $this->model->where("id",$id)->find();
-        if(!$info){
-            return __error("数据不存在");
-        }
-        return $this->model->orderUpdate($info,$info->amount,2);
-    }
-    /**
-     * Undocumented 删除订单
-     *
-     * @return void
-     */
-    public function deleteOrder(){
-        $id = $this->request->param('id');
-        $info = $this->model->where("id",$id)->find();
-        if(!$info){
-            return __error("数据不存在");
-        }
-    }
+
+
 
 
 

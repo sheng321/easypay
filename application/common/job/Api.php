@@ -37,6 +37,7 @@ class Api {
             if(md5(strtolower($ok)) == md5('ok')){
                 (new Order)->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
             }else{
+                (new Order)->save(['id'=>$data['order']['id'],'notice'=>3],['id'=>$data['order']['id']]);
                 \think\Queue::later('60','app\\common\\job\\Notify', $data, 'notify');
             }
 

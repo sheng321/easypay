@@ -1,0 +1,73 @@
+{extend name="admin@public/basic" /}
+
+
+{block name="cotent"}
+<table class="layui-table">
+    <tr><td>ID：</td><td>{$order.id}</td></tr>
+    <tr><td>商户编号：</td><td>{$order.mch_id}</td></tr>
+    <tr><td>商户费率：</td><td>{$order.run_rate}</td></tr>
+
+    {if !empty($order['mch_id1'])}
+        <tr><td>上级代理编号：</td><td>{$order.mch_id1}</td></tr>
+        <tr><td>上级代理费率：</td><td>{$order.agent_rate}</td></tr>
+        <tr><td>上级代理结算：</td><td>{$order.agent_amount}</td></tr>
+    {/if}
+    {if !empty($order['mch_id2'])}
+        <tr><td>上上级代理编号：</td><td>{$order.mch_id2}</td></tr>
+        <tr><td>上上级代理费率：</td><td>{$order.agent_rate2}</td></tr>
+        <tr><td>上上级代理结算：</td><td>{$order.agent_amount2}</td></tr>
+    {/if}
+    <tr><td>系统订单号：</td><td><strong class="text-success">{$order.systen_no}</strong></td></tr>
+    <tr><td>商户订单号：</td><td><strong class="text-success">{$order.out_trade_no}</strong></td></tr>
+    <tr><td>上游订单号：</td><td><strong class="text-success">{$order.transaction_no}</strong></td></tr>
+    <tr><td>上游费率：</td><td><strong class="text-success">{$order.cost_rate}</strong></td></tr>
+    <tr><td>上游结算：</td><td><strong class="text-success">{$order.upstream_settle}</strong></td></tr>
+    <tr><td>交易金额：</td><td><strong class="text-danger">{$order.amount}</strong></td></tr>
+    <tr><td>手续费：</td><td><strong class="">{$order.total_fee}</strong></td></tr>
+    <tr><td>实际金额：</td><td><strong class="text-success">{$order.actual_amount}</strong></td></tr>
+    <tr><td>提交时间：</td><td><strong class="text-warning">{$order.create_time}</strong></td></tr>
+    <tr><td>过期时间：</td><td><strong class="text-warning">{$order.over_time}</strong></td></tr>
+    <tr><td>成功时间：</td><td><strong class="text-danger">{$order.pay_time}</strong></td></tr>
+    <tr><td>交易通道：</td><td>{$order.channel_name}</td></tr>
+    <tr><td>交易通道分组：</td><td>{$order.channelgroup_name}</td></tr>
+    <tr><td>支付类型：</td><td>{$order.product_name}</td></tr>
+    <tr><td>提交地址：</td><td>{$order.callback_url}</td></tr>
+    <tr><td>回调地址：</td><td>{$order.notify_url}</td></tr>
+    <tr><td>支付状态：</td><td>
+        <strong class="text-success">
+            {$order.pay_status1}
+            {if $order.pay_status == 3}
+            <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.systen_no}'   > 手动开启</a>
+            {/if}
+        </strong>
+    </td></tr>
+    <tr><td>通知状态：</td><td>
+        <strong class="text-success">
+            {$order.notice1}
+            <a target="_blank"  href='{:url("$thisClass/replacement")}?id={$order.id}&__token__={$Request.token.__hash__}'  class="layui-btn layui-btn-warm  layui-btn-sm "  > 手动补发</a>
+        </strong>
+    </td></tr>
+</table>
+{/block}
+
+
+{block name="script"}
+<script >
+    $('#open_order').click(function () {
+       var url =  $(this).attr('data-url');
+            $.request.post(url,{}, function (res) {
+                $.msg.success(res.msg);
+            }, true);
+    })
+
+
+
+
+
+
+</script>
+{/block}
+
+
+
+
