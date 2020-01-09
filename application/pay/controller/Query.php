@@ -1,14 +1,8 @@
 <?php
 namespace app\pay\controller;
 use app\common\controller\PayController;
-use app\common\model\Channel;
-use app\common\model\ChannelProduct;
 use app\common\model\Order;
-use app\common\model\PayProduct;
-use app\common\model\Ulevel;
 use app\common\model\Uprofile;
-use app\common\service\RateService;
-use app\pay\service\Payment;
 
 
 /**
@@ -30,13 +24,12 @@ class Query extends PayController
         $Order =  Order::quickGet(['out_trade_no'=>$param['pay_orderid']]);
         if(empty($Order))   __jerror('订单号不存在');
 
-
         if($Order['pay_status'] == 2){
             $data['returncode'] = '00';
-            $data['trade_state'] = '';
+            $data['trade_state'] = 'SUCCESS';
         }else{
-            $data['returncode'] = '00';
-            $data['trade_state'] = '';
+            $data['returncode'] = '01';
+            $data['trade_state'] = 'NOTPAY';
         }
 
         $data['memberid'] = $Order['pay_memberid'];
