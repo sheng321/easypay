@@ -87,7 +87,9 @@ class Node extends AdminController {
 
     }
 
-
+    /**后台口令权限
+     * @return \think\response\Json
+     */
     public function command() {
         $get = $this->request->get();
 

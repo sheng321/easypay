@@ -106,7 +106,7 @@ class SysNode extends ModelService {
     public static function NodeArr() {
         \think\facade\Cache::remember('nodeArr', function () {
             $NodeArr = self::column('node,title');
-            \think\facade\Cache::tag('SysNode')->set('nodeArr',$NodeArr);
+            \think\facade\Cache::tag('SysNode')->set('nodeArr',$NodeArr,3600);
             return \think\facade\Cache::get('nodeArr');
         });
         return \think\facade\Cache::get('nodeArr');
@@ -122,7 +122,7 @@ class SysNode extends ModelService {
             foreach ($wordArr as $k => $v){
                 $wordArr[$k] = url($v);
             }
-            \think\facade\Cache::tag('SysNode')->set('wordArr',$wordArr);
+            \think\facade\Cache::tag('SysNode')->set('wordArr',$wordArr,3600);
             return \think\facade\Cache::get('wordArr');
         });
         return \think\facade\Cache::get('wordArr');

@@ -737,10 +737,9 @@
     function request(type, url, data, callback, isReload = false) {
         //$.msg.loading('正在加载，请稍等！');
 
-
        var fag = true;
-
         if(!$.isEmptyObject(window.word)){
+
             for (var i in window.word) {
                 if(!$.tool.isEmpty(window.word[i]) && url.indexOf(window.word[i]) > -1){
                     layer.prompt({title: '输入口令，并确认', formType: 1}, function(pass, index){
