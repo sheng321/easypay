@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 use app\common\model\PayProduct;
+use think\facade\Session;
 
 /**
  * Undocumented 订单记录
@@ -118,48 +119,52 @@ class Order extends AdminController {
      */
     public function replacement(){
 
-        $id = $this->request->get('id/d',0);
-        $order =  $this->model->quickGet($id);
-        if(empty($order) || $order['notice'] == 2 ) msg_error("订单不存在");
+        if ($this->request->isPost()) {
 
-        $res = \app\common\service\MoneyService::api($order);//修改金额
+            $id = $this->request->get('id/d',0);
+            $word = $this->request->get('word/s','');
 
-        if($res === true){
-            $data = $this->model->notify($order);
+            $__token__ = $this->request->get('__token__/s','');
+            $__hash__ = Session::pull('__hash__');
+            if($__token__ !== $__hash__)  return __error("Token验证失败");
 
-            $ok = \tool\Curl::post($data['url'],$data['data']);
-            if(md5(strtolower($ok)) == md5('ok')){
-                (new Order)->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
 
-                $this->model->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
-            }else{
-                $this->model->save(['id'=>$data['order']['id'],'notice'=>3],['id'=>$data['order']['id']]);
-                if(is_string($ok)){
-                    halt(htmlspecialchars($ok));
-                }else{
-                    halt(htmlspecialchars(json_encode($ok)));
-                }
+            $order =  $this->model->quickGet($id);
+            if(empty($order) || $order['pay_status'] == 1 ) return __error("订单不存在或者下单失败");
+
+
+            //订单已关闭 订单未支付
+            if( $order['pay_status'] == 0 || $order['pay_status'] == 3){
+                $res = \app\common\service\MoneyService::api($order['systen_no']);//修改金额
+                if($res !== true)  msg_error("系统异常，变动金额失败");
+
+                $order['pay_status'] = 2;//已支付
             }
 
+            if($order['pay_status'] == 2){
+                $data = $this->model->notify($order['systen_no']);
+                $ok = \tool\Curl::post($data['url'],$data['data']);
+                if(md5(strtolower($ok)) == md5('ok')){
+                    $this->model->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
+
+                    return __success('手动回调单号-'.$order['systen_no'].' 成功！ 商户返回： '.$ok);
+                }else{
+                    $this->model->save(['id'=>$data['order']['id'],'notice'=>3],['id'=>$data['order']['id']]);
+                    $str = '手动回调单号-'.$order['systen_no'].' 失败！ 商户返回： ';
+                    $str.=  "\n";
+                    $str.=  "<code>";
+                    $str.=  "\n";
+                    if(!is_string($ok)){
+                        $str.= json_encode($ok);
+                    }
+                    $str.=  "</code>";
+                    return __error($str);
+
+                }
+            }
         }
 
 
-
-
-
-        $data = [];
-        $data['sign'] = 'xxxxxxxxxxx';
-        $result = $this->model->orderSend($data,$info->id);
-        return __success('发送成功,异步返回：'.$result);
+        return __error('系统异常');
     }
-
-
-
-
-
-
-
-
-
-    
 }

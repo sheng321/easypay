@@ -44,7 +44,7 @@
     <tr><td>通知状态：</td><td>
         <strong class="text-success">
             {$order.notice1}
-            <a target="_blank"  href='{:url("$thisClass/replacement")}?id={$order.id}&__token__={$Request.token.__hash__}'  class="layui-btn layui-btn-warm  layui-btn-sm "  > 手动补发</a>
+            <a id="replacement"  data-url='{:url("$thisClass/replacement")}?id={$order.id}&__token__={$Request.token.__hash__}'  class="layui-btn layui-btn-warm  layui-btn-sm "  > 手动补发</a>
         </strong>
     </td></tr>
 </table>
@@ -58,6 +58,15 @@
             $.request.post(url,{}, function (res) {
                 $.msg.success(res.msg);
             }, true);
+    })
+
+    $('#replacement').click(function () {
+        var url =  $(this).attr('data-url');
+        $.request.post(url,{}, function (res) {
+            console.log(res);
+
+            $.msg.success(res.msg);
+        }, true);
     })
 
 

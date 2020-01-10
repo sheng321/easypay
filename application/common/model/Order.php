@@ -111,68 +111,14 @@ class Order extends ModelService {
         ];
         return $list;
     }
-    /**
-     * Undocumented 补发通知
-     *
-     * @return void
-     */
-    public function orderSend($data,$id){
-        //curl发送
-        $result = 'success';
-        if($result == 'success'){
-            $this->where('id',$id)->update(array('notice'=>2));
-        }
-        return $result;
-    }
-    /**
-     * Undocumented function
-     *
-     * @param [type] $info 查询订单结果
-     * @param [type] $amount 实际支付金额
-     * @param string $transaction_no 三方单号
-     * @return void
-     */
-    public function orderUpdate($info,$amount,$type = '1',$transaction_no =''){
-        $pay_time = date("Y-m-d H:i:s",time());//支付时间
-        //查看商户状态，对否可以入金/model('app\common\model\Umember');
-        //只有未支付订单才能更新
-        if($info->pay_status != 1){
-            return __error('订单状态不对');
-        }
-        //下单金额 - 实际支付
-        if(abs($info->amount) - abs($amount) > 1){
-            return __error('金额不一致');
-        }
-        //验证ip
-        $info->startTrans();
-        try {
-            $info->pay_status     = 2;//支付状态
-            $info->transaction_no = $transaction_no;//三方单号
-            $info->actual_amount  = $amount;//实际支付
-            $info->pay_time       = $pay_time;//支付时间
-            $info->save();
-            $info->commit();
-        } catch (\Exception $e) {
-            // 回滚事务
-            $info->rollback();
-            return __error($e->getMessage());
-        }
-        //发送回调
-        $data = [
-
-        ];
-        $data['sign'] = 'xxxxxxxxxxx';
-        $result = $this->orderSend($data,$info->id);
-        return __success('强制入单成功,异步回调返回：'.$result);
-    }
 
 
     //订单 回调数据
     public static function notify($sn){
         $Order = self::quickGet(['systen_no'=>$sn]);
-        $Uprofile = Uprofile::quickGet(['uid'=>$Order['uid']]);
+        $Uprofile = Uprofile::quickGet(['uid'=>$Order['mch_id']]);
 
-        $data['memberid'] = $Order['uid'];
+        $data['memberid'] = $Order['mch_id'];
         $data['orderid'] = $Order['out_trade_no'];
         $data['transaction_id'] = $Order['systen_no'];
         $data['amount'] = $Order['amount'];
