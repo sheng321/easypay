@@ -155,10 +155,11 @@ class Order extends AdminController {
                     $str.=  "<code>";
                     $str.=  "\n";
                     if(!is_string($ok)){
-                        $str.= json_encode($ok);
+                        $ok.= json_encode($ok);
                     }
+                    $str.=  $ok;
                     $str.=  "</code>";
-                    return __error($str);
+                    return __success($str);
 
                 }
             }

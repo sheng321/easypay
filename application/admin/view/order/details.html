@@ -64,8 +64,7 @@
         var url =  $(this).attr('data-url');
         $.request.post(url,{}, function (res) {
             console.log(res);
-
-            $.msg.success(res.msg);
+            alert(res.msg);
         }, true);
     })
 
