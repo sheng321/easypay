@@ -119,7 +119,7 @@ class Order extends AdminController {
      */
     public function replacement(){
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost()){
 
             $id = $this->request->get('id/d',0);
             $word = $this->request->get('word/s','');
