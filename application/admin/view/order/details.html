@@ -63,16 +63,9 @@
     $('#replacement').click(function () {
         var url =  $(this).attr('data-url');
         $.request.post(url,{}, function (res) {
-            console.log(res);
             alert(res.msg);
         }, true);
-    })
-
-
-
-
-
-
+    });
 </script>
 {/block}
 
