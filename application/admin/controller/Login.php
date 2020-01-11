@@ -78,9 +78,9 @@ class Login extends BaseController
             ],['id'=>$login['user']['id']]);
             session('admin_info.single_key', $session_id);
 
-            __log('登入成功！正在跳转到系统');
+            __log('登入成功');
 
-            return __success($login['msg']);
+            return __success(['msg']);
         }
 
     }

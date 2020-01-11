@@ -246,11 +246,35 @@ class MoneyService {
         if(!empty($transaction_no)) $Order_update['transaction_no'] = $transaction_no;
         if(!empty($amount)) $Order_update['amount'] = $amount;
 
+        if(!empty(session('admin_info.id'))){
+            $OrderDispose =  model('app\common\model\OrderDispose');
+            $Dispose =   $OrderDispose->quickGet(['systen_no'=>$systen_no]);
+            if(empty($Dispose))   $Dispose = $OrderDispose->create(['systen_no'=>$systen_no,'pid'=>$Order['id']]);
+        }
+
+        //添加到处理订单列表
+        if(!empty(session('admin_info.id'))){
+            $OrderDispose =  model('app\common\model\OrderDispose');
+            $Dispose =   $OrderDispose->quickGet(['systen_no'=>$systen_no]);
+        }
+
         $Umoney->startTrans();
         $save = $Umoney->saveAll($update);//批量修改金额
         $save1 = model('app\common\model\UmoneyLog')->saveAll($log);//批量添加变动记录
         $save2 = model('app\common\model\Order')->save($Order_update,['id'=>$Order['id']]);
-        if (!$save || !$save1|| !$save2) {
+
+        //添加到处理订单列表
+        if(!empty(session('admin_info.id'))){
+            if(empty($Dispose))   $save3 = $OrderDispose->create(['systen_no'=>$systen_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动回调']);
+
+            $save3 = model('app\common\model\OrderDispose')->save([
+                'systen_no'=>$systen_no,
+                'pid'=>$Order['id'],
+                'record'=>$Dispose['record']."|".session('admin_info.username').'-手动回调'
+            ],['id'=>$Dispose['id']]);
+        }
+
+        if (!$save || !$save1|| !$save2|| !$save3) {
             $Umoney->rollback();
             return false;
         }
