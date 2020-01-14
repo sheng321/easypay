@@ -193,7 +193,7 @@ class MoneyService {
             ];
             $log[] = [
                 'uid'=>0,
-                'channel_id'=>$channel_money['id'],
+                'channel_id'=>$channel_money['channel_id'],
                 'before_balance'=>$channel_money['total_money'],
                 'balance'=>$channel_money['total_money'] + $Order['upstream_settle'],
                 'change'=>$Order['upstream_settle'],
@@ -210,7 +210,7 @@ class MoneyService {
             ];
             $log[] = [
                 'uid'=>0,
-                'channel_id'=>$channel_money['id'],
+                'channel_id'=>$channel_money['channel_id'],
                 'before_balance'=>$channel_money['total_money'],
                 'balance'=>$channel_money['total_money'] + $Order['upstream_settle'],
                 'change'=>$Order['upstream_settle'],
@@ -385,7 +385,7 @@ class MoneyService {
         ];
         $log[] = [
             'uid'=>0,
-            'channel_id'=>$channel_money['id'],
+            'channel_id'=>$channel_money['channel_id'],
             'before_balance'=>$channel_money['total_money'],
             'balance'=>$channel_money['total_money'] - $Order['upstream_settle'],
             'change'=>$Order['upstream_settle'],
