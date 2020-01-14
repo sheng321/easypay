@@ -220,7 +220,7 @@ class Xyf extends PayController
         if(abs($orderAmt - $Order['amount']) >1) return ['code' => 0, 'msg' => '查询订单金额不匹配：'.$orderAmt, 'data' => []];
 
           //添加到日志
-         logs($res,$type = 'order/query/'.$Order['channel_id']);
+         logs($res,$type = 'order/query/'.date('Ymd').'/'.$Order['channel_id']);
          return ['code' => 1, 'msg' => '查询成功！', 'data' => $resp];
     }
     //回调
