@@ -299,8 +299,6 @@ class MoneyService {
             ->cache('channel_pid_'.$Order['channel_id'],3)
             ->find();
 
-        halt($Channel);
-
         if(empty($Channel)) return false;
 
 
