@@ -47,6 +47,35 @@ class Order extends AdminController {
 
         return $this->fetch('', $basic_data);
     }
+
+
+    /**
+     * Undocumented 处理订单列表
+     * @return void
+     */
+    public function dispose(){
+        if ($this->request->get('type') == 'ajax'){
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 10);
+            $search = (array)$this->request->get('search', []);
+
+            return json($this->model->alist($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title'  => '支付产品列表',
+            'data'   => '',
+            'order' => config('order.'),
+            'product' =>  PayProduct::idArr()//支付产品
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+
+
+
     /**
      *  详情
      * @return void

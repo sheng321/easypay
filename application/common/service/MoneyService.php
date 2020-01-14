@@ -249,7 +249,6 @@ class MoneyService {
         if(!empty(session('admin_info.id'))){
             $OrderDispose =  model('app\common\model\OrderDispose');
             $Dispose =   $OrderDispose->quickGet(['systen_no'=>$systen_no]);
-            if(empty($Dispose))   $Dispose = $OrderDispose->create(['systen_no'=>$systen_no,'pid'=>$Order['id']]);
         }
 
         //添加到处理订单列表
@@ -267,7 +266,7 @@ class MoneyService {
         if(!empty(session('admin_info.id'))){
             if(empty($Dispose))   $save3 = $OrderDispose->create(['systen_no'=>$systen_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动回调']);
 
-            $save3 = model('app\common\model\OrderDispose')->save([
+            $save3 = $OrderDispose->save([
                 'systen_no'=>$systen_no,
                 'pid'=>$Order['id'],
                 'record'=>$Dispose['record']."|".session('admin_info.username').'-手动回调'
