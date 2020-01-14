@@ -236,13 +236,8 @@ class Order extends AdminController {
         if ($this->request->isPost()){
             $id = $this->request->get('id/d',0);
 
-            $__token__ = $this->request->get('__token__/s','');
-            $__hash__ = Session::pull('__hash__');
-            if($__token__ !== $__hash__)  return __error("Token验证失败");
-
-
             $order =  $this->model->quickGet($id);
-            if(empty($order) || $order['pay_status'] == 1 ) return __error("订单不存在或者下单失败");
+            if(empty($order) || $order['pay_status'] == 1 ) return __error("订单不存在或者该订单下单失败");
 
 
             $code = \app\common\model\Channel::get_code($order['channel_id']);
