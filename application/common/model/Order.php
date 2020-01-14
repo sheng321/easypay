@@ -84,6 +84,7 @@ class Order extends ModelService {
         }else{
             if($type == 1){
                 $where[] = ['mch_id1|mch_id2', '>', 0];
+                //已经支付的订单 等待做。。
             }
         }
 
