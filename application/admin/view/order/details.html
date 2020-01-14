@@ -37,17 +37,24 @@
         <strong class="text-success">
             {$order.pay_status1}
             {if $order.pay_status == 3}
-            <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.systen_no}'   > 手动开启</a>
+                {if auth("$thisRequest")  }
+                <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.systen_no}'   > 手动开启</a>
+                {/if}
             {/if}
             {if $order.pay_status == 0}
-            <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.systen_no}&type=1'   > 手动关闭</a>
+                {if auth("$thisRequest") }
+                <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.systen_no}&type=1'   > 手动关闭</a>
+                {/if}
             {/if}
         </strong>
     </td></tr>
     <tr><td>通知状态：</td><td>
         <strong class="text-success">
             {$order.notice1}
+
+            {if auth("$thisClass/replacement")  }
             <a id="replacement"  data-url='{:url("$thisClass/replacement")}?id={$order.id}&__token__={$Request.token.__hash__}'  class="layui-btn layui-btn-warm  layui-btn-sm "  > 手动补发</a>
+            {/if}
         </strong>
     </td></tr>
 </table>
