@@ -1,8 +1,0 @@
----------------------------------------------------------------
-
-[2019-12-10T20:43:53+08:00] 127.0.0.1 GET www.test1.com/admin.php/index.html?name=javascript
-[ info ] {"name":"ja<x>vasc<x>ript"}
----------------------------------------------------------------
-
-[2019-12-10T20:44:01+08:00] 127.0.0.1 GET www.test1.com/admin.php/index.html?name=javascript
-[ info ] {"name":"ja<x>vasc<x>ript"}
