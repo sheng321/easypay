@@ -38,6 +38,14 @@
                 <input type="text" id="transaction_no" class="layui-input" placeholder="上游单号"/>
             </div>
         </div>
+
+        <div class="layui-form-item layui-inline">
+            <div class="layui-input-inline">
+                <input type="text" id="ip" class="layui-input" placeholder="请输入ip"/>
+            </div>
+        </div>
+
+
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
                 <input type="text" id="channel_name" class="layui-input" placeholder="通道"/>
@@ -141,9 +149,9 @@
     </script>
 
     <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/details")}?id={{d.id}}' data-title="订单详情">详情</a>
-        <a class="layui-btn layui-btn-green layui-btn-sm" data-del='{:url("$thisClass/replacement")}?id={{d.id}}' data-title="查询状态">查询状态</a>
-        <a class="layui-btn layui-btn-danger layui-btn-sm" data-del='{:url("$thisClass/details")}?id={{d.id}}' data-title="手动退单">手动退单</a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/details")}?id={{d.pid}}' data-title="订单详情">详情</a>
+        <a class="layui-btn layui-btn-green layui-btn-sm" data-del='{:url("$thisClass/replacement")}?id={{d.pid}}' data-title="查询状态">查询状态</a>
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-del='{:url("$thisClass/details")}?id={{d.pid}}' data-title="手动退单">手动退单</a>
     </script>
 </form>
 {/block}
@@ -155,6 +163,10 @@
      * 生成表单
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {field:'id', title:'ID', with:20, align: 'center'},
+        {field:'record', title:'操作记录', minwith:1, align: 'center'},
+        {field:'remark1', title:'操作备注', minwith:1, align: 'center', edit: 'text', style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
+        {field:'update_at', title:'最近操作时间', minwith:1, align: 'center'},
         {field:'mch_id', title:'商户号', minwith:1, align: 'center'},
         {field:'out_trade_no', title:'商户单号', minwith:1, align: 'center'},
         {field:'systen_no', title:'系统单号', minwith:1, align: 'center'},
@@ -170,8 +182,8 @@
         {field:'notice', title:'通知状态', toolbar: '#notice1',minwith:1, align: 'center'},
         {field:'create_time', title:'提交时间', minwith:1, align: 'center'},
         {field:'pay_time', title:'支付时间', minwith:1, align: 'center'},
-        {field:'remark', title:'备注', minwith:1, align: 'center'},
-        {field:'update_at', title:'最近更新时间', minwith:1, align: 'center'},
+        {field:'ip', title:'IP', minwith:1, align: 'center'},
+        {field:'remark2', title:'订单备注', minwith:1, align: 'center'},
 
         /**{if auth("$thisClass/details") || auth("$thisClass/replacement") }**/
         {title: '操作', minWidth: 190, templet: '#barDemo', fixed: "right", align: "center"},
@@ -182,6 +194,11 @@
      * 日期范围
      */
     $.laydate.range('create_at',5);
+
+    /**
+     * 监听字段值编辑
+     */
+    $.form.editField('currentTable', '{:url("$thisRequest")}');
 
 </script>
 {/block}

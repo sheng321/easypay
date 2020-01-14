@@ -36,10 +36,9 @@ class Order extends AdminController {
 
             return json($this->model->alist($page, $limit, $search));
         }
-
         //基础数据
         $basic_data = [
-            'title'  => '支付产品列表',
+            'title'  => '订单列表',
             'data'   => '',
             'order' => config('order.'),
             'product' =>  PayProduct::idArr()//支付产品
@@ -48,29 +47,41 @@ class Order extends AdminController {
         return $this->fetch('', $basic_data);
     }
 
-
     /**
      * Undocumented 处理订单列表
      * @return void
      */
     public function dispose(){
-        if ($this->request->get('type') == 'ajax'){
-            $page = $this->request->get('page', 1);
-            $limit = $this->request->get('limit', 10);
-            $search = (array)$this->request->get('search', []);
+        if (!$this->request->isPost()) {
+            if ($this->request->get('type') == 'ajax'){
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                return json($this->model->blist($page, $limit, $search));
+            }
+            //基础数据
+            $basic_data = [
+                'title'  => '处理订单列表',
+                'data'   => '',
+                'order' => config('order.'),
+                'product' =>  PayProduct::idArr()//支付产品
+            ];
+            return $this->fetch('', $basic_data);
 
-            return json($this->model->alist($page, $limit, $search));
+        } else {
+            $post = $this->request->post();
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            if (true !== $validate) return __error($validate);
+
+            $post['field'] =  'remark';
+            //保存数据,返回结果
+            return model('app\common\model\OrderDispose')->editField($post);
+
+
+
+
         }
-
-        //基础数据
-        $basic_data = [
-            'title'  => '支付产品列表',
-            'data'   => '',
-            'order' => config('order.'),
-            'product' =>  PayProduct::idArr()//支付产品
-        ];
-
-        return $this->fetch('', $basic_data);
     }
 
 
