@@ -205,12 +205,12 @@ class Xyf extends PayController
     ["sign"] => string(344) "iOrtZhmHzSrXSBEBXvzNQ5igDZDP7KbRggaKZ7x9l88Hw42sHG8u1gVfGaxEeNRWWrhjyHxdkfZ7xqmenFN6YNomaO5e/oTtiYL1bM8udBd3KSdz845c7Jg/XVVaBw38zx1FIw4fv1X9IoYBRX3d2NM7iTUkegYFpJ0mJCsAtS3Y8BlVCa32aVZkcyIMivDtdRBEQCJBxySkOQlMvQII7cGP6gOvwnaKYFJZnx8bwmgoR/EhQYsQJCvKYADyWKYdsYdKLXeV00i1pvVjG8030hpWbjmlqFoH9NMxVOQ7RXoJ7U0bVKmPQ39snbHPNtdz4RVku9pi1dq8FmtFEEinIQ=="
   }
 } */
-        if(empty($resp) ||$resp['code'] != '1'){
+        if(empty($resp) ||$resp['code'] !== 1){
             if($resp['msg']) return ['code' => 0, 'msg' => $resp['msg'], 'data' => []];
            return  ['code' => 0, 'msg' => '查询失败', 'data' => []];
         }
         if( empty($resp['data']) || $resp['data']['status'] != '1'   ){
-            return ['code' => 0, 'msg' => '订单未支付：'.$sn, 'data' => []];
+            return ['code' => 0, 'msg' => '订单：'.$sn.'未支付', 'data' => []];
         }
 
         $flag = $this->verifys($resp['data']);
@@ -219,9 +219,9 @@ class Xyf extends PayController
         $orderAmt = floatval($resp['data']['orderAmt']);
         if(abs($orderAmt - $Order['amount']) >1) return ['code' => 0, 'msg' => '查询订单金额不匹配：'.$orderAmt, 'data' => []];
 
-          //添加到日志
+          //添加到订单查询日志
          logs($res,$type = 'order/query/'.date('Ymd').'/'.$Order['channel_id']);
-         return ['code' => 1, 'msg' => '查询成功！', 'data' => $resp];
+         return ['code' => 1, 'msg' => '查询成功！', 'data' => $res];
     }
     //回调
     public function notify(){

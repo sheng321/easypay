@@ -244,43 +244,19 @@ class Order extends AdminController {
 
             $Payment = Payment::factory($code);
 
-            $html  = $Payment->query($order['systen_no']);
+            $res  = $Payment->query($order['systen_no']);
 
-            halt($html);
+            if($res['code'] == 0) return json($res);
 
+            $msg = '查询订单号：'.$order['systen_no'].'支付成功';
+            $msg .= "\n";
+            $msg .= '返回报文：';
+            $msg .= "\n";
+            $msg .= $res['data'];
+            $msg .= "\n";
+            $res['data'] = $msg;
 
-
-
-            //订单已关闭 订单未支付
-            if( $order['pay_status'] == 0 || $order['pay_status'] == 3){
-                $res = \app\common\service\MoneyService::api($order['systen_no']);//修改金额
-                if($res !== true)  msg_error("系统异常，变动金额失败");
-
-                $order['pay_status'] = 2;//已支付
-            }
-
-            if($order['pay_status'] == 2){
-                $data = $this->model->notify($order['systen_no']);
-                $ok = \tool\Curl::post($data['url'],$data['data']);
-                if(md5(strtolower($ok)) == md5('ok')){
-                    $this->model->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
-
-                    return __success('手动回调单号-'.$order['systen_no'].' 成功！ 商户返回： '.$ok);
-                }else{
-                    $this->model->save(['id'=>$data['order']['id'],'notice'=>3],['id'=>$data['order']['id']]);
-                    $str = '手动回调单号-'.$order['systen_no'].' 失败！ 商户返回： ';
-                    $str.=  "\n";
-                    $str.=  "<code>";
-                    $str.=  "\n";
-                    if(!is_string($ok)){
-                        $ok.= json_encode($ok);
-                    }
-                    $str.=  $ok;
-                    $str.=  "</code>";
-                    return __success($str);
-
-                }
-            }
+            return json($res);
         }
 
 
