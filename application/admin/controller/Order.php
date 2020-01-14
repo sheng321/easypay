@@ -162,7 +162,7 @@ class Order extends AdminController {
                 return __error('数据有误，请稍后再试！');
             }
             $this->model->commit();
-            return __success('开启成功！');
+            return __success('操作成功！');
 
 
         }
