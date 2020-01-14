@@ -34,7 +34,7 @@ class Order extends ModelService {
      * @param array $search
      * @return void
      */
-    public function alist($page = 1,$limit = 10,$search = []){
+    public function alist($page = 1,$limit = 10,$search = [],$type = 0){
         $where = [];
 
         $ChannelGroup =  ChannelGroup::idArr();//通道分组
@@ -81,6 +81,10 @@ class Order extends ModelService {
         //代理
         if(!empty($search['mch_id1'])){
             $where[] = ['mch_id1|mch_id2', '=', $search['mch_id1']];
+        }else{
+            if($type == 1){
+                $where[] = ['mch_id1|mch_id2', '>', 0];
+            }
         }
 
 
@@ -111,8 +115,6 @@ class Order extends ModelService {
         ];
         return $list;
     }
-
-
 
 
     /**

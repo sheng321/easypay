@@ -147,11 +147,19 @@
         <div style="color:red;">通知失败</div>
         {{# } }}
     </script>
-
     <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/details")}?id={{d.pid}}' data-title="订单详情">详情</a>
+
+        {if auth("$thisClass/query_order")  }
         <a class="layui-btn layui-btn-green layui-btn-sm"  onclick="query_order('{:url("$thisClass/query_order")}?id={{d.pid}}')"   >查询状态</a>
+        {/if}
+
+        {{# if (d.pay_status == 2) { }}
+
+        {if auth("$thisClass/back_order")  }
         <a class="layui-btn layui-btn-danger layui-btn-sm"  onclick="back_order('{:url("$thisClass/back_order")}?id={{d.pid}}')"  >手动退单</a>
+        {/if}
+        {{# } }}
     </script>
 </form>
 {/block}
@@ -198,7 +206,7 @@
         {field:'remark2', title:'订单备注', minwith:1, align: 'center'},
 
         /**{if auth("$thisClass/details") || auth("$thisClass/replacement") }**/
-        {title: '操作', minWidth: 190, templet: '#barDemo', fixed: "right", align: "center"},
+        {title: '操作', minWidth: 130, templet: '#barDemo', fixed: "right", align: "center"},
         /**{/if}**/
     ]], true , '',100);
 
