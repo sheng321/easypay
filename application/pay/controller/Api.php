@@ -140,9 +140,8 @@ class Api extends PayController
         unset($train);
         unset($random_keys);
 
-        //获取费率
+        //获取商户费率
         $MemRate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$channel_id);
-
 
         $AgentRate1 = 0;
         $AgentRate2 = 0;
@@ -177,8 +176,12 @@ class Api extends PayController
 
 
 
-        //已选中的通道
+        //已选中的通道产品
         $Channel = Channel::quickGet($channel_id);
+        //已选中所属通道
+        $Channel_father = Channel::quickGet($Channel['pid']);
+        if(empty($Channel_father) || empty($Channel_father['code']) || empty($Channel_father['limit_time'])) __jerror('支付服务不存在0');
+
 
         $data['mch_id'] = $param['pay_memberid'];//商户号
         $data['mch_id1'] = $uid1;//上级代理
@@ -205,7 +208,7 @@ class Api extends PayController
         $data['Platform'] = $data['amount']*($MemRate -  max($data['cost_rate'],$AgentRate1,$AgentRate2));//平台收益
         $data['create_time'] =  $param['pay_applydate'];//商户提交时间
 
-        $data['over_time'] = time() + $Channel['limit_time']*60;//订单过期时间
+        $data['over_time'] = time() + $Channel_father['limit_time']*60;//订单过期时间
 
         $param1 = $this->request->only(["pay_productname","pay_attach"],'post');
         $data['productname'] = $param1['pay_productname'];//商品名称
@@ -230,15 +233,10 @@ class Api extends PayController
         fclose($fp);
 
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
-
-        //提交上游
-
-        $code = Channel::get_code($channel_id);
-        if(empty($code)) __jerror('支付服务不存在0');
-
         $create['code'] = $Channel['code'];
 
-        $Payment = Payment::factory($code);
+        //提交上游
+        $Payment = Payment::factory($Channel_father['code']);
         // $Payment = Payment::factory('Index');
         $html  = $Payment->pay($create);
         return $html;

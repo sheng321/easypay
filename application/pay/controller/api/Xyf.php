@@ -179,7 +179,15 @@ class Xyf extends PayController
 
     //查询
     public function query($sn){
+        $gateway = 'http://api.xinyufu.com/pay/query';
+        $data = array();
+        $data['merId'] =  $this->config['mch_id'];
+        $data['orderId'] = $sn;
+        $data['nonceStr'] = md5(time() . mt_rand(10000,99999));
 
+        $res = json_decode(Curl::post($gateway, http_build_query($data)),true);
+
+        halt($res);
     }
     //回调
     public function notify(){

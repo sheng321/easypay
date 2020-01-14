@@ -171,11 +171,11 @@ class Channel extends ModelService {
      */
     public static function get_id($id){
         $data =  self::quickGet($id);
-        if(empty($data)) return $id;
+        if(empty($data)) return false;
         if($data['pid'] != 0){
             $Channel =  self::quickGet($data['pid']);
             if(empty($Channel)) return false;
-            return $Channel['code'];
+            return $Channel['id'];
         }
         return $id;
     }
