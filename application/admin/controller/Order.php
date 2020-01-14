@@ -239,11 +239,11 @@ class Order extends AdminController {
             $order =  $this->model->quickGet($id);
             if(empty($order) || $order['pay_status'] == 1 ) return __error("订单不存在或者该订单下单失败");
 
-
             $code = \app\common\model\Channel::get_code($order['channel_id']);
             if(empty($code)) __jerror('支付服务不存在0');
 
             $Payment = Payment::factory($code);
+
             $html  = $Payment->query($order['systen_no']);
 
             halt($html);

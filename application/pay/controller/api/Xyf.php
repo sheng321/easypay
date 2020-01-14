@@ -170,7 +170,6 @@ class Xyf extends PayController
             }
             $str .= "{$k}={$v}&";
         }
-
         $str .= "key=" . $this->config['signkey'];
         $md5 = strtoupper(md5($str));
         $rsa = new Xyfrsa($this->webkey, $this->private);
@@ -179,15 +178,50 @@ class Xyf extends PayController
 
     //查询
     public function query($sn){
+        $Order =  Order::quickGet(['systen_no'=>$sn]);
+        if(empty($Order))  return ['code' => 0, 'msg' => '订单不存在：'.$sn, 'data' => []];
+
         $gateway = 'http://api.xinyufu.com/pay/query';
         $data = array();
         $data['merId'] =  $this->config['mch_id'];
         $data['orderId'] = $sn;
         $data['nonceStr'] = md5(time() . mt_rand(10000,99999));
+        $data['sign'] = $this->getSign($data);
+        $res = Curl::post($gateway, http_build_query($data));
+        $resp = json_decode($res,true);
 
-        $res = json_decode(Curl::post($gateway, http_build_query($data)),true);
+        /*
+         array(4) {
+  ["code"] => int(1)
+  ["msg"] => string(12) "查询成功"
+  ["time"] => string(10) "1578983647"
+  ["data"] => array(7) {
+    ["merId"] => string(7) "2019099"
+    ["status"] => string(1) "1"
+    ["orderId"] => string(27) "2019099s2001141225278937541"
+    ["sysOrderId"] => string(18) "XISUvFGrL6p32EVwmJ"
+    ["orderAmt"] => string(6) "300.00"
+    ["nonceStr"] => string(32) "zk209VXMNR4Z8OwTf5c6jEFQJuoIS1YK"
+    ["sign"] => string(344) "iOrtZhmHzSrXSBEBXvzNQ5igDZDP7KbRggaKZ7x9l88Hw42sHG8u1gVfGaxEeNRWWrhjyHxdkfZ7xqmenFN6YNomaO5e/oTtiYL1bM8udBd3KSdz845c7Jg/XVVaBw38zx1FIw4fv1X9IoYBRX3d2NM7iTUkegYFpJ0mJCsAtS3Y8BlVCa32aVZkcyIMivDtdRBEQCJBxySkOQlMvQII7cGP6gOvwnaKYFJZnx8bwmgoR/EhQYsQJCvKYADyWKYdsYdKLXeV00i1pvVjG8030hpWbjmlqFoH9NMxVOQ7RXoJ7U0bVKmPQ39snbHPNtdz4RVku9pi1dq8FmtFEEinIQ=="
+  }
+} */
+        if(empty($resp) ||$resp['code'] != '1'){
+            if($resp['msg']) return ['code' => 0, 'msg' => $resp['msg'], 'data' => []];
+           return  ['code' => 0, 'msg' => '查询失败', 'data' => []];
+        }
+        if( empty($resp['data']) || $resp['data']['status'] != '1'   ){
+            return ['code' => 0, 'msg' => '订单未支付：'.$sn, 'data' => []];
+        }
 
-        halt($res);
+        $flag = $this->verifys($resp['data']);
+        if(!$flag)  return ['code' => 0, 'msg' => '查询失败：验签不通过', 'data' => []];
+
+        $orderAmt = floatval($resp['data']['orderAmt']);
+        if(abs($orderAmt - $Order['amount']) >1) return ['code' => 0, 'msg' => '查询订单金额不匹配：'.$orderAmt, 'data' => []];
+
+          //添加到日志
+         logs($res,$type = 'order/query/'.$Order['channel_id']);
+         return ['code' => 1, 'msg' => '查询成功！', 'data' => $resp];
     }
     //回调
     public function notify(){
