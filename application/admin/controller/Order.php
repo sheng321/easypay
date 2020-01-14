@@ -142,7 +142,7 @@ class Order extends AdminController {
                     ],['id'=>$Dispose['id']]);
                 }
             }else{
-                $save = $this->model->save(['pay_status'=>3,'id'=>$id,'over_time'=>time()+3600],['id'=>$id]);//关闭订单
+                $save = $this->model->save(['pay_status'=>3,'id'=>$id],['id'=>$id]);//关闭订单
                 if(empty($Dispose)){
                     $save1 =  $OrderDispose->create([
                         'pid'=>$id,
