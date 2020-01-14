@@ -119,6 +119,7 @@ class Order extends AdminController {
         } else {
             $id = $this->request->get('id/d',0);
             $order = $this->request->get('order/s',0);
+            $type = $this->request->get('type/d',0);
 
             $OrderDispose = model('app\common\model\OrderDispose');
 
@@ -126,18 +127,34 @@ class Order extends AdminController {
 
             $this->model->startTrans();
 
-            $save = $this->model->save(['pay_status'=>0,'id'=>$id,'over_time'=>time()+3600],['id'=>$id]);//开启订单
-            if(empty($Dispose)){
-                $save1 =  $OrderDispose->create([
-                   'pid'=>$id,
-                    'systen_no'=>$order,
-                    'record'=>$this->user['username'].'-开启',
-                ]);
+            if($type == 0){
+                $save = $this->model->save(['pay_status'=>0,'id'=>$id,'over_time'=>time()+3600],['id'=>$id]);//开启订单
+                if(empty($Dispose)){
+                    $save1 =  $OrderDispose->create([
+                        'pid'=>$id,
+                        'systen_no'=>$order,
+                        'record'=>$this->user['username'].'-开启',
+                    ]);
+                }else{
+                    $save1 = $OrderDispose->save([
+                        'id'=>$Dispose['id'],
+                        'record'=>$Dispose['record'].'|'.$this->user['username'].'-开启',
+                    ],['id'=>$Dispose['id']]);
+                }
             }else{
-                $save1 = $OrderDispose->save([
-                    'id'=>$Dispose['id'],
-                    'record'=>$Dispose['record'].'|'.$this->user['username'].'-开启',
-                ],['id'=>$Dispose['id']]);
+                $save = $this->model->save(['pay_status'=>3,'id'=>$id,'over_time'=>time()+3600],['id'=>$id]);//关闭订单
+                if(empty($Dispose)){
+                    $save1 =  $OrderDispose->create([
+                        'pid'=>$id,
+                        'systen_no'=>$order,
+                        'record'=>$this->user['username'].'-关闭',
+                    ]);
+                }else{
+                    $save1 = $OrderDispose->save([
+                        'id'=>$Dispose['id'],
+                        'record'=>$Dispose['record'].'|'.$this->user['username'].'-关闭',
+                    ],['id'=>$Dispose['id']]);
+                }
             }
 
             if (!$save || !$save1) {

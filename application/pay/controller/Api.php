@@ -211,7 +211,6 @@ class Api extends PayController
         $data['productname'] = $param1['pay_productname'];//商品名称
         $data['attach'] = $param1['pay_attach'];//备注
 
-
         //插入数据库
         //文件排它锁 阻塞模式
         $fp = fopen("lock/api.txt", "w+");
