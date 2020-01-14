@@ -59,7 +59,9 @@
     $('#open_order').click(function () {
        var url =  $(this).attr('data-url');
             $.request.post(url,{}, function (res) {
-                $.msg.success(res.msg);
+                $.msg.success(res.msg, function () {
+                    $.tool.reload('open');
+                });
             }, true);
     })
 
