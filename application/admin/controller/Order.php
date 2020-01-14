@@ -263,4 +263,26 @@ class Order extends AdminController {
         return __error('系统异常');
     }
 
+    /**手动退单
+     * @return \think\response\Json
+     */
+    public function back_order(){
+
+        if ($this->request->isPost()){
+            $id = $this->request->get('id/d',0);
+
+            $order =  $this->model->quickGet($id);
+            if(empty($order) || $order['pay_status'] !== 2   ) return __error("订单不存在或者该订单未支付");
+
+            $res = \app\common\service\MoneyService::back($order['systen_no']);//修改金额
+            if($res !== true)  __error("系统异常，变动金额失败");
+
+            return __success('操作成功');
+        }
+
+
+        return __error('系统异常');
+    }
+
+
 }

@@ -151,7 +151,7 @@
     <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/details")}?id={{d.pid}}' data-title="订单详情">详情</a>
         <a class="layui-btn layui-btn-green layui-btn-sm"  onclick="query_order('{:url("$thisClass/query_order")}?id={{d.pid}}')"   >查询状态</a>
-        <a class="layui-btn layui-btn-danger layui-btn-sm" data-del='{:url("$thisClass/details")}?id={{d.pid}}' data-title="手动退单">手动退单</a>
+        <a class="layui-btn layui-btn-danger layui-btn-sm"  onclick="back_order('{:url("$thisClass/back_order")}?id={{d.pid}}')"  >手动退单</a>
     </script>
 </form>
 {/block}
@@ -161,6 +161,12 @@
     function query_order(url) {
         $.request.post(url,{}, function (res) {
             alert(res['data']);
+        }, true);
+    }
+
+    function back_order(url) {
+        $.request.post(url,{}, function (res) {
+            $.msg.success(res.msg)
         }, true);
     }
 
