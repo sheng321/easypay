@@ -116,7 +116,7 @@ class Moneylog  extends AdminController
 
         //基础数据
         $basic_data = [
-            'title' => '商户金额列表',
+            'title' => '商户资金',
             'data'  => '',
         ];
 
@@ -136,7 +136,7 @@ class Moneylog  extends AdminController
 
         //基础数据
         $basic_data = [
-            'title' => '通道金额列表',
+            'title' => '通道资金',
             'data'  => '',
         ];
 
@@ -156,7 +156,7 @@ class Moneylog  extends AdminController
 
         //基础数据
         $basic_data = [
-            'title' => '平台金额展示',
+            'title' => '平台资金',
             'data'  => '',
         ];
         return $this->fetch('', $basic_data);
