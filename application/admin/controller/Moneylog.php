@@ -103,4 +103,65 @@ class Moneylog  extends AdminController
 
 
 
+    public function index_money()
+    {
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 15);
+            $search = (array)$this->request->get('search', []);
+            $search['type1'] = 0;
+            return json($this->model->aList($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '商户金额列表',
+            'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+    public function channel_money()
+    {
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 15);
+            $search = (array)$this->request->get('search', []);
+            $search['type1'] = 0;
+            return json($this->model->aList($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '通道金额列表',
+            'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+    public function sys_money()
+    {
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 15);
+            $search = (array)$this->request->get('search', []);
+            $search['type1'] = 0;
+            return json($this->model->aList($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '平台金额展示',
+            'data'  => '',
+        ];
+        return $this->fetch('', $basic_data);
+    }
+
+
+
 }
