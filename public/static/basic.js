@@ -482,6 +482,46 @@
         parent.layer.close(index);
     })
 
+
+    /**
+     * 注册 data-export 事件
+     * 用于表格搜索
+     */
+    $body.on('click', '[data-export]', function () {
+        var searchData = new Array();
+        var searchInput = $('#searchBlock div div input');
+        var searchSelect = $('#searchBlock div div select');
+        $.each(searchInput, function (i, obj) {
+            id = $(obj).attr('id');
+            if (id != undefined) {
+                searchData[id] = $("#" + id).val();
+            }
+        });
+        $.each(searchSelect, function (i, obj) {
+            id = $(obj).attr('id');
+            if (id != undefined) {
+                searchData[id] = $("#" + id).val();
+            }
+        });
+        searchData['export'] = '1';
+
+       var data = [];
+
+        data['search'] = searchData;
+        data['type'] = 'ajax';
+        data['page'] = 1;
+        data['limit'] = 3000;
+
+        var url = $(this).attr('data-export');
+
+        formCall( 'get',url, data, '_blank');
+        return false;
+
+    });
+
+
+
+
     /**
      * 批量删除
      * 注册 data-del-all 事件
@@ -825,6 +865,38 @@
                 }
             });
         }
+    }
+
+
+    /**
+     * js Post提交
+     * @param type
+     * @param url
+     * @param params
+     * @param target
+     * @returns {boolean}
+     */
+    function formCall(type = 'post', url, params, target = '_blank'){
+
+        var tempform = document.createElement("form");
+        tempform.action = url;
+        tempform.method = type;
+        tempform.style.display="none";
+        if(target) {
+            tempform.target = target;
+        }
+        for (var x in params) {
+            var opt = document.createElement("input");
+            opt.name = x;
+            opt.value = params[x];
+            tempform.appendChild(opt);
+        }
+        var opt = document.createElement("input");
+        opt.type = "submit";
+        tempform.appendChild(opt);
+        document.body.appendChild(tempform);
+        tempform.submit();
+        document.body.removeChild(tempform);
     }
 
     /**
