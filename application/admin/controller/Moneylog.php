@@ -145,6 +145,54 @@ class Moneylog  extends AdminController
 
     public function sys_money()
     {
+        $Umoney =  model('app\common\model\Umoney');
+        $user =$Umoney->where(['uid'=>0,'channel_id'=>0,'id'=>0])->field('id,uid,balance,total_money,frozen_amount,frozen_amount_t1,artificial,channel_id')->find();
+        if(empty($user)) return msg_error('系统异常，请通知技术');
+        $user = $user->toArray();
+
+        if (!$this->request->isPost()){
+            //基础数据
+            $basic_data = [
+                'title' => '平台资金',
+                'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除'],
+                'user'  => $user,//平台资金
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $money = $this->request->only('remark,change,type,__token__','post');
+
+            //验证数据
+            $validate = $this->validate($money, 'app\common\validate\Money.edit');
+            //if (true !== $validate) return __error($validate);
+
+            //处理金额
+            $res =  $Umoney->dispose($user,$money);
+            if (true !== $res['msg']) return __error($res['msg']);
+
+            unset($money['__token__']);
+
+            //使用事物保存数据
+            $Umoney->startTrans();
+
+            $save = $Umoney->saveAll($res['data']);
+            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+
+            if (!$save || !$add) {
+                $Umoney->rollback();
+                $msg = '数据有误，请稍后再试！';
+                __log($uid.$res['log'].'失败');
+                return __error($msg);
+            }
+            $Umoney->commit();
+
+            __log($uid.$res['log'].'成功');
+            empty($msg) && $msg = '操作成功';
+            return __success($msg);
+        }
+
+
+
+
         //ajax访问
         if ($this->request->get('type') == 'ajax') {
             $page = $this->request->get('page', 1);
@@ -157,9 +205,62 @@ class Moneylog  extends AdminController
         //基础数据
         $basic_data = [
             'title' => '平台资金',
+            'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除'],
             'data'  => '',
         ];
         return $this->fetch('', $basic_data);
+    }
+
+
+    /**
+     * 会员金额
+     * @return mixed
+     */
+    public function money(){
+        $uid = $this->request->get('uid/d',0);
+        $Umoney =  model('app\common\model\Umoney');
+        $user =$Umoney->where(['uid'=>$uid])->field('id,uid,balance,total_money,frozen_amount,frozen_amount_t1,artificial,channel_id')->find();
+        if(empty($user)) return msg_error('数据错误，请重试！');
+        $user = $user->toArray();
+
+        if (!$this->request->isPost()){
+            //基础数据
+            $basic_data = [
+                'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除'],
+                'user'  => $user,//用户金额
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $money = $this->request->only('remark,change,type,__token__','post');
+
+            //验证数据
+            $validate = $this->validate($money, 'app\common\validate\Money.edit');
+            //if (true !== $validate) return __error($validate);
+
+            //处理金额
+            $res =  $Umoney->dispose($user,$money);
+            if (true !== $res['msg']) return __error($res['msg']);
+
+            unset($money['__token__']);
+
+            //使用事物保存数据
+            $Umoney->startTrans();
+
+            $save = $Umoney->saveAll($res['data']);
+            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+
+            if (!$save || !$add) {
+                $Umoney->rollback();
+                $msg = '数据有误，请稍后再试！';
+                __log($uid.$res['log'].'失败');
+                return __error($msg);
+            }
+            $Umoney->commit();
+
+            __log($uid.$res['log'].'成功');
+            empty($msg) && $msg = '操作成功';
+            return __success($msg);
+        }
     }
 
 

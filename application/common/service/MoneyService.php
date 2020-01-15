@@ -220,8 +220,8 @@ class MoneyService {
             ];
         }
 
-        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0]);
-        if(empty($platform)) $platform = $Umoney->create(['uid'=>0,'channel_id'=>0,'type1'=>2,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0,'id'=>0]);
+        if(empty($platform)) $platform = $Umoney->create(['id'=>0,'uid'=>0,'channel_id'=>0,'type1'=>2,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
 
         //T1 结算 平台
         if($Channel['account'] == 1){
@@ -396,8 +396,8 @@ class MoneyService {
 
 
         //平台金额
-        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0]);
-        if(empty($platform)) $platform = $Umoney->create(['uid'=>0,'channel_id'=>0,'type1'=>2,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0,'id'=>0]);
+        if(empty($platform)) $platform = $Umoney->create(['id'=>0,'uid'=>0,'channel_id'=>0,'type1'=>2,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
 
         $update[] = [
             'id'=>0,

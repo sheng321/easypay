@@ -1,97 +1,89 @@
 {extend name="admin@public/basic" /}
-
-{block name="style"}
+{block name="style"}{/block}
 <link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
-<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
-{/block}
-
 {block name="cotent"}
-<form class="layui-form">
+<form class="layui-form" style="width:80%;">
+    <br>
 
-    <!--顶部操作栏--开始-->
-    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">操作人</label>
-            <div class="layui-input-inline">
-                <input type="text" id="nickname" class="layui-input" placeholder="请输入用操作人"/>
-            </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">总金额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input "   value="{$user.total_money|default=''}"  readonly  >
         </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">权限组</label>
-            <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入用权限组名称"/>
-            </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">可用余额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input "  value="{$user.balance|default=''}" readonly  >
         </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">关联</label>
-            <div class="layui-input-inline">
-                <input type="text" id="relate" class="layui-input" placeholder="请输入关联"/>
-            </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">人工冻结金额</label>
+        <div class="layui-input-block">
+            <input type="text"   class="layui-input " value="{$user.artificial|default=''}" readonly >
         </div>
-
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">创建时间</label>
-            <div class="layui-input-inline">
-                <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间"    >
-            </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">冻结金额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input " value="{$user.frozen_amount|default=''}" readonly >
         </div>
-
-        <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">T1冻结金额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input " value="{$user.frozen_amount_t1|default=''}" readonly >
         </div>
-
-    </blockquote>
-    <!--顶部操作栏--结束-->
-
-    <!--主表单渲染--开始-->
-    <table id="currentTable" lay-filter="currentTable"></table>
-    <!--主表单渲染--结束-->
-
-    <!--表单IP--开始-->
-    <script type="text/html" id="IPcopy">
-        {{d.location}}
-        {{d.ip}}
-    </script>
-    <!--表单IP--结束-->
-
-    <!--表单Name--开始-->
-    <script type="text/html" id="Name">
-        {{d.auth_title}}-{{d.nickname}}
-    </script>
-    <!--表单IP--结束-->
+    </div>
 
 
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-inline">
+            <select name="type"  class="type" lay-filter="type" lay-verify="required"   >
+                {foreach $status as $k=> $vo}
+                <option value="{$k|default='0'}" >{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">变动金额</label>
+        <div class="layui-input-block">
+            <input type="number" id="change" name="change" class="layui-input change" lay-verify="required"  placeholder="请输入变动金额(正数)"  >
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row money">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入备注信息" id="remark"  name="remark"  class="layui-textarea remark"></textarea>
+        </div>
+    </div>
+
+    {:token('__token__', 'sha1')}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
 </form>
 {/block}
 
 {block name="script"}
-
-<script       >
-
-
+<script >
     /**
-     * 生成表单
+     * 添加、编辑
      */
-    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
-        {field: 'id', title: 'ID', minWidth: 40, align: "center"},
-        {field: 'nickename', title: '操作人', minWidth: 100, align: "center",templet: '#Name'},
-        {field: 'title', title: '操作类型', minWidth: 20, align: "center"},
-        {field: 'before_balance', title: '变动前可用余额', align: 'center', minWidth: 20},
-        {field: 'change', title: '变动金额', align: 'center', minWidth: 20},
-        {field: 'balance', title: '变动后可用余额', align: 'center', minWidth: 20},
-        {field: 'remark', title: '备注', align: 'center', minWidth: 20},
-        {field: 'relate', title: '关联', align: 'center', minWidth: 20},
-        {field: 'create_at', title: '创建时间', align: 'center', minWidth: 20},
-    ]]);
-
-    /**
-     * 日期范围
-     */
-    $.laydate.range('create_at',1);
+    $.form.on('submitBtn', "{:url('@admin/member/money')}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    });
 
 </script>
 {/block}
