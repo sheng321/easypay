@@ -2,9 +2,38 @@
 {block name="style"}{/block}
 <link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
 {block name="cotent"}
+
+<ul class="layui-row layui-col-space10">
+    <li class="layui-col-xs6">
+        <a lay-href="app/content/comment.html" class="layadmin-backlog-body">
+            <h3>待审评论</h3>
+            <p><cite>66</cite></p>
+        </a>
+    </li>
+    <li class="layui-col-xs6">
+        <a lay-href="app/forum/list.html" class="layadmin-backlog-body">
+            <h3>待审帖子</h3>
+            <p><cite>12</cite></p>
+        </a>
+    </li>
+    <li class="layui-col-xs6">
+        <a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+            <h3>待审商品</h3>
+            <p><cite>99</cite></p>
+        </a>
+    </li>
+    <li class="layui-col-xs6">
+        <a href="javascript:;" onclick="layer.tips('不跳转', this, {tips: 3});" class="layadmin-backlog-body">
+            <h3>待发货</h3>
+            <p><cite>20</cite></p>
+        </a>
+    </li>
+</ul>
+
+
+
 <form class="layui-form" style="width:80%;">
     <br>
-
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">总金额</label>
         <div class="layui-input-block">
