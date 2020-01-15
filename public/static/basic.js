@@ -186,7 +186,7 @@
                     url: url,
                     cellMinWidth: 95,
                     height: "full-80",
-                    limits: [500],
+                    limits: [500,3000],
                     limit: 500,
                     id: elem + 'TableId',
                     cols: cols,
@@ -201,7 +201,7 @@
                     cellMinWidth: 95,
                     page: true,
                     height: "full-80",
-                    limits: [10, 15, 20, 25, 50, 100,200,500],
+                    limits: [10, 15, 20, 25, 50, 100,200,500,3000],
                     limit: limit,
                     id: elem + 'TableId',
                     cols: cols,
@@ -503,18 +503,10 @@
                 searchData[id] = $("#" + id).val();
             }
         });
-        searchData['export'] = '1';
-
-       var data = [];
-
-        data['search'] = searchData;
-        data['type'] = 'ajax';
-        data['page'] = 1;
-        data['limit'] = 3000;
 
         var url = $(this).attr('data-export');
 
-        formCall( 'get',url, data, '_blank');
+        formCall( 'get',url, searchData, '_blank');
         return false;
 
     });

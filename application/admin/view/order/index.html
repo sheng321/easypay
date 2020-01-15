@@ -105,9 +105,8 @@
 
 
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn" data-export="{:url("$thisRequest")}">导出</a>
+            <a class="layui-btn layui-btn-sm layui-btn-normal " data-export='{:url("$thisClass/export")}'>导出</a>
         </div>
-
 
     </blockquote>
     <!--顶部操作栏--结束-->
@@ -165,7 +164,6 @@
         <a class="layui-btn layui-btn-danger layui-btn-sm" onclick="back_order('{:url("$thisClass/back_order")}?id={{d.id}}')" >手动退单</a>
         {/if}
         {{# } }}
-
     </script>
 </form>
 {/block}

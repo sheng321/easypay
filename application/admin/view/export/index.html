@@ -1,16 +1,76 @@
-{extend name="admin@public/basic" /}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$title|default=''}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__ADMIN__/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__ADMIN__/layuiadmin/style/admin.css" media="all">
+    <style>
+        .layui-table-cell {
+            padding: 0 0;
+            font-size:12px;
+        }
 
+    </style>
+</head>
+<body>
 
-{block name="cotent"}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
 
-1111111
+            <div class="layui-card">
+                <div class="layui-card-header"> 下载页面 </div>
+                <blockquote class="layui-elem-quote">3000条一页，需手动翻页下载</blockquote>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="test-table-cellEdit" lay-filter="test-table-cellEdit"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script src="__ADMIN__/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__ADMIN__/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var table = layui.table;
 
-{/block}
+        var field = JSON.parse('{$data["field"]|raw}');
+        var title1 = JSON.parse('{$data["title"]|raw}');
+        var col = {field:'id', title:'ID', minWidth:1, align: 'center'}
+        var cols = [];
 
-{block name="script"}
-<script  >
+        for(let key  in field){
+            col.field = field[key];
+            col.title = title1[field[key]];
+            if( typeof(col.title) !== 'undefined' && col.title != '' ){
+                cols.push(col);
+            }
 
+            col = {field:'id', title:'ID', minWidth:1, align: 'center'}
+        }
 
+        table.render({
+            elem: '#test-table-cellEdit'
+            ,url: '{$url|raw}'+'&type=ajax'
+            ,toolbar: true
+            ,defaultToolbar: ['filter','exports']
+            ,height: 315
+            ,limits: [3000]
+            ,limit: 3000
+            ,page: true
+            ,title:'{$title|default=""}'+'{:date("#Y-m-d")}'
+            ,id: '#test-table-cellEdit'
+            ,cols: [cols]
+        })
+    });
 </script>
-{/block}
+</body>
+</html>

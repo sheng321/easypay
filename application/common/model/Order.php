@@ -84,17 +84,25 @@ class Order extends ModelService {
         }else{
             if($type == 1){
                 $where[] = ['mch_id1|mch_id2', '>', 0];
-                //已经支付的订单 等待做。。
             }
         }
 
+        if(empty($search['field'])){
+            $field = "id,mch_id,out_trade_no,systen_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip";
+        }else{
+            //下载
+            $field =  $search['field'];
+        }
 
-        $field = "id,mch_id,out_trade_no,systen_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip";
+        $count = $this->where($where)->count();
+
         $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_admin',2)->order(['create_at'=>'desc'])->select()->toArray();
         empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
         $PayProduct =  PayProduct::idArr();//支付产品
 
+
+        $order = config('order.');
         foreach ($list as $k=>$v){
             $list[$k]['product_name'] = empty($PayProduct[$v['payment_id']])?'未知':$PayProduct[$v['payment_id']];
             $list[$k]['channelgroup_name'] = empty($ChannelGroup[$v['channel_group_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
@@ -105,13 +113,17 @@ class Order extends ModelService {
             $list[$k]['update_at'] = Str::substr($list[$k]['update_at'],8,11);
 
             if(($v['pay_status'] == 0) && (time() > $v['over_time'])) $list[$k]['pay_status'] = 3;//显示订单关闭
+
+            $list[$k]['pay_status_name'] = $order['pay_status'][$v['pay_status']];
+            $list[$k]['notice_name'] = $order['notice'][$v['notice']];
+
         }
 
         $list = [
             'code'  => 0,
             'msg'   => $msg,
-            'count' => count($list),
-            'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil(count($list) / $limit)],
+            'count' => $count,
+            'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
             'data'  => $list,
         ];
         return $list;
@@ -183,6 +195,12 @@ class Order extends ModelService {
 
 
         $field = "a.mch_id,a.out_trade_no,a.systen_no,a.transaction_no,a.amount,a.actual_amount,a.total_fee,a.upstream_settle,a.Platform,a.channel_id,a.channel_group_id,a.payment_id,a.pay_status,a.notice,a.pay_time,a.create_time,a.cost_rate,a.run_rate,a.mch_id1,a.mch_id2,a.agent_rate2,a.agent_rate,a.agent_amount,a.agent_amount2,a.over_time,a.ip,w.*,w.remark as remark1,a.remark as remark2";
+
+        $count = self::alias('a')
+            ->where($where)
+            ->join('order_dispose w','a.id = w.pid','right')
+            ->count();
+
         $list = self::alias('a')
              ->where($where)
             ->join('order_dispose w','a.id = w.pid','right')
@@ -207,14 +225,12 @@ class Order extends ModelService {
         $list = [
             'code'  => 0,
             'msg'   => $msg,
-            'count' => count($list),
-            'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil(count($list) / $limit)],
+            'count' => $count,
+            'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
             'data'  => $list,
         ];
         return $list;
     }
-
-
 
 
     //订单 回调数据
