@@ -16,7 +16,7 @@ class Test  extends Controller
         $data = 99999999;//传入的数据
         $queue = 'notify';//队列名，可以理解为组名
         //push()方法是立即执行
-        $res =  Queue::later(18000000,$job, $data, $queue);
+        $res =  Queue::push($job, $data, $queue);
 
         dump($res);
         dump(111);
