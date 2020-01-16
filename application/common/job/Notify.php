@@ -15,15 +15,15 @@ class Notify {
     {
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
-        if($job->attempts() > 6|| !$isJobStillNeedToBeDone ){
+        if($job->attempts() > 6|| $isJobStillNeedToBeDone === true ){
            // $job->delete();
             return;
         }
 
         $isJobDone = $this->doHelloJob($data);
-        if ($isJobDone) {
+        if ($isJobDone === true) {
             // 如果任务执行成功，记得删除任务
-            $job->delete();
+          //  $job->delete();
         }else{
             if ($job->attempts() > 6) {
                 //通过这个方法可以检查这个任务已经重试了几次了
