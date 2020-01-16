@@ -57,7 +57,6 @@ class Curl
             curl_setopt($conn[$i], CURLOPT_POST,true);
             curl_setopt($conn[$i], CURLOPT_POSTFIELDS,$strPOST);
 
-
             // 增加句柄
             curl_multi_add_handle($mh, $conn[$i]);
         }
@@ -78,7 +77,7 @@ class Curl
         foreach ($data as $i => $v) {
             //获取输出的文本流
             $content =  curl_multi_getcontent($conn[$i]);
-            $res[$i] = \think\helper\Str::substr($content,0,100);
+            $res[$i] = \think\helper\Str::substr($content,0,60);
             // 移除curl批处理句柄资源中的某个句柄资源
             curl_multi_remove_handle($mh, $conn[$i]);
             //关闭cURL会话

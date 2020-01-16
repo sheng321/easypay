@@ -36,17 +36,12 @@ class Api {
             //获取回调数据
             $notify = Order::notify($data['order']['systen_no']);
 
-            \think\Queue::push('app\\common\\job\\Notify', $notify, 'notify');
-
-            return true;
-
             $ok = \tool\Curl::post($notify['url'],$notify['data']);
-            if(md5(strtolower($ok)) == md5('ok')){
-                (new Order)->save(['id'=>$notify['order']['id'],'notice'=>2],['id'=>$notify['order']['id']]);
+            if(strtolower($ok) === 'ok'){
+                (new Order)->save(['id'=>$notify['order']['id'],'notice'=>2,'remark'=>$ok],['id'=>$notify['order']['id']]);
             }else{
                 (new Order)->save(['id'=>$notify['order']['id'],'notice'=>3],['id'=>$notify['order']['id']]);
-               // \think\Queue::later('60','app\\common\\job\\Notify', $notify, 'notify');
-                \think\Queue::push('app\\common\\job\\Notify', $notify, 'notify');
+                \think\Queue::later('60','app\\common\\job\\Notify', $notify, 'notify');
             }
             return $res;
         }
