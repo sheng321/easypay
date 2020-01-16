@@ -11,17 +11,8 @@ class Test  extends Controller
 {
     public function index()
     {
-        $data = array(
-            1=>[
-                'url' =>'http://120.24.166.163:66/pay.php/api',
-                'data'=>'1'
-            ]
-        );
-       $res =  Curl::curl_multi($data);
-       halt($res);
 
-
-
+        halt(11111);exit();
 
         $job = 'app\\common\\job\\Notify';//调用的任务名
         $data = 7777;//传入的数据
@@ -29,6 +20,7 @@ class Test  extends Controller
         //push()方法是立即执行
         $res =  Queue::push($job, $data, $queue);
 
+        dump($res);
 
 
         $model = (new StringModel())->instance();
