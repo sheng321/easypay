@@ -154,7 +154,7 @@ class Moneylog  extends AdminController
             //基础数据
             $basic_data = [
                 'title' => '平台资金',
-                'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除'],
+                'status' => [3=>'添加',4=>'扣除',9=>'人工冻结',10=>'人工解冻'],
                 'user'  => $user,//平台资金
             ];
             return $this->fetch('', $basic_data);
@@ -163,13 +163,13 @@ class Moneylog  extends AdminController
 
             //验证数据
             $validate = $this->validate($money, 'app\common\validate\Money.edit');
-            //if (true !== $validate) return __error($validate);
+            if (true !== $validate) return __error($validate);
+            unset($money['__token__']);
 
             //处理金额
             $res =  $Umoney->dispose($user,$money);
-            if (true !== $res['msg']) return __error($res['msg']);
 
-            unset($money['__token__']);
+            if (true !== $res['msg']) return __error($res['msg']);
 
             //使用事物保存数据
             $Umoney->startTrans();
@@ -180,12 +180,12 @@ class Moneylog  extends AdminController
             if (!$save || !$add) {
                 $Umoney->rollback();
                 $msg = '数据有误，请稍后再试！';
-                __log($uid.$res['log'].'失败');
+                __log($res['log'].'失败');
                 return __error($msg);
             }
             $Umoney->commit();
 
-            __log($uid.$res['log'].'成功');
+            __log($res['log'].'成功');
             empty($msg) && $msg = '操作成功';
             return __success($msg);
         }

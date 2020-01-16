@@ -49,7 +49,7 @@ class Umoney extends ModelService {
     }
 
     /**
-     * 处理金额 1.商户后台的金额操作
+     * 处理金额 1.后台的金额操作
      * @param $data  会员金额
      * @param $change 变动金额
      * @return mixed
@@ -62,21 +62,22 @@ class Umoney extends ModelService {
         $change['before_balance'] = $data['balance'];//变动前金额
 
         switch (true){
-            case ($data['uid'] == 0):
+            case ($data['uid'] == 0 && $data['channel_id'] > 0):
                 $temp = $data['channel_id'];
                 $change['type1'] = 1;//通道
                 break;
-            case ($data['channel_id'] == 0):
+            case ($data['channel_id'] == 0  && $data['uid'] > 0 ):
                 $temp = $data['uid'];
-                $change['type1'] = 0;//通道
+                $change['type1'] = 0;//会员
                 break;
             default:
                 $temp = '平台';
+                $change['type1'] = 2;//平台
                 break;
         }
 
-        //修改平台金额的情况
-        if(in_array($change['type'],[3,4])){
+        //修改平台金额的情况 (会员)
+        if(in_array($change['type'],[3,4]) &&  $change['type1'] == 0){
             $p = self::where(['id'=>0,'uid'=>0,'channel_id'=>0])->field('id,total_money,balance')->find()->toArray();//平台金额
             $change1['change'] = $change['change'];
             $change1['before_balance'] = $p['balance'];//变动前金额
@@ -92,9 +93,12 @@ class Umoney extends ModelService {
                 $data['balance'] = $data['balance'] + $change['change'];
                 $data['total_money'] = $data['total_money'] + $change['change'];
 
-                $p['balance'] = $p['balance'] - $change['change'];
-                $p['total_money'] = $p['total_money'] - $change['change'];
-                $change1['type'] = 4;
+                if($change['type1'] != 2){ //不是平台的情况
+                    $p['balance'] = $p['balance'] - $change['change'];
+                    $p['total_money'] = $p['total_money'] - $change['change'];
+                    $change1['type'] = 4;
+                }
+
 
                 $change['relate'] = '平台';
 
@@ -107,10 +111,11 @@ class Umoney extends ModelService {
 
                 $data['total_money'] = $data['total_money'] - $change['change'];
 
-
-                $p['balance'] = $p['balance'] + $change['change'];
-                $p['total_money'] = $p['total_money'] + $change['change'];
-                $change1['type'] = 3;
+                if($change['type1'] != 2){
+                    $p['balance'] = $p['balance'] + $change['change'];
+                    $p['total_money'] = $p['total_money'] + $change['change'];
+                    $change1['type'] = 3;
+                }
 
                 $change['relate'] = '平台';
 
@@ -143,6 +148,7 @@ class Umoney extends ModelService {
 
         $change['balance'] = $data['balance'];
         $res['change'][] = $change;
+
 
         if(!empty($p)){
             $res['data'][] = $p;
