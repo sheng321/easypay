@@ -13,6 +13,8 @@ class Notify {
      */
     public function fire(Job $job,$data)
     {
+        halt($data);
+
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
         if($job->attempts() > 6|| $isJobStillNeedToBeDone === true ){
