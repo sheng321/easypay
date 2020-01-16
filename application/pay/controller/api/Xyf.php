@@ -220,13 +220,16 @@ class Xyf extends PayController
         if(abs($orderAmt - $Order['amount']) >1) return ['code' => 0, 'msg' => '查询订单金额不匹配：'.$orderAmt, 'data' => []];
 
           //添加到订单查询日志
-         logs($res,$type = 'order/query/'.date('Ymd').'/'.$Order['channel_id']);
+         logs($res,$type = 'order/query/'.date('Ymd').'/'.$this->config['code']);
          return ['code' => 1, 'msg' => '查询成功！', 'data' => $res];
     }
     //回调
     public function notify(){
-
         $param =  $this->getParam('param');
+
+        //添加到订单回调日志
+        logs($param,$type = 'order/notify/'.date('Ymd').'/'.$this->config['code']);
+
         if(empty($param)) __jerror('no_data');
         if($param['status'] !== '1') __jerror('pay_fail');
 

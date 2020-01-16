@@ -87,7 +87,6 @@ class PayController extends BaseController
     }
 
     protected function async($order){
-
         //加入异步队列
         $job = 'app\\common\\job\\Api';//调用的任务名
         $data = [
@@ -107,6 +106,7 @@ class PayController extends BaseController
        // halt($res);
 
         if( $res === false ) __jerror('fail');
+
 
         return  $this->config['returnBack'];
     }

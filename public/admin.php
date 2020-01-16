@@ -4,11 +4,9 @@
 namespace think;
 
 
-
-/*if (version_compare(PHP_VERSION, '7.3.0', 'lt')) {
+if (version_compare(PHP_VERSION, '7.3.0', 'lt')) {
     exit('PHP版本需要7.3以上~');
-}*/
-
+}
 
 // 加载基础文件
 require __DIR__ . '/../thinkphp/base.php';
