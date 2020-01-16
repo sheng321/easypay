@@ -16,7 +16,7 @@ class Notify {
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
         if($job->attempts() > 6|| !$isJobStillNeedToBeDone ){
-            $job->delete();
+           // $job->delete();
             return;
         }
 
@@ -27,11 +27,11 @@ class Notify {
         }else{
             if ($job->attempts() > 6) {
                 //通过这个方法可以检查这个任务已经重试了几次了
-                $job->delete();
+              //  $job->delete();
             }
 
             // 重发，延迟 60 秒执行
-            $job->release(60);
+           // $job->release(60);
         }
     }
 
