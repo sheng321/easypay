@@ -28,6 +28,10 @@ class Api {
      */
     private function doHelloJob($data)
     {
+
+        logs($data['order']['systen_no'],$type = 'order/notify/'.$data['config']['code']);
+
+
         $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
 
 
