@@ -26,7 +26,7 @@ class Test  extends Controller
 
         dump(  $model->select(3));
         dump(1);
-        $data =  $model->lrange("queues:notify:*", 0 ,100);
+        $data =  $model->lrange("queues:notify:delayed", 0 ,100);
 
         halt($data);
         dump(222);
