@@ -102,7 +102,7 @@ class PayController extends BaseController
         $res =  Queue::push($job, $data, $queue);
 
         //同步
-        //$res = \app\common\service\MoneyService::api($data);
+        //$res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
        // halt($res);
 
         if( $res === false ) __jerror('fail');

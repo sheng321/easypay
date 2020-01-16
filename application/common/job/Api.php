@@ -28,19 +28,20 @@ class Api {
      */
     private function doHelloJob($data)
     {
-        $res = \app\common\service\MoneyService::api($data);
+
+        $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
 
         if($res === true){
-            $data = Order::notify($data);
+            //获取回调数据
+            $notify = Order::notify($data['order']['systen_no']);
 
-            $ok = \tool\Curl::post($data['url'],$data['data']);
+            $ok = \tool\Curl::post($notify['url'],$notify['data']);
             if(md5(strtolower($ok)) == md5('ok')){
-                (new Order)->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
+                (new Order)->save(['id'=>$notify['order']['id'],'notice'=>2],['id'=>$notify['order']['id']]);
             }else{
-                (new Order)->save(['id'=>$data['order']['id'],'notice'=>3],['id'=>$data['order']['id']]);
-                \think\Queue::later('60','app\\common\\job\\Notify', $data, 'notify');
+                (new Order)->save(['id'=>$notify['order']['id'],'notice'=>3],['id'=>$notify['order']['id']]);
+                \think\Queue::later('60','app\\common\\job\\Notify', $notify, 'notify');
             }
-
         }
 
         return $res;
