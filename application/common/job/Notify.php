@@ -55,7 +55,7 @@ class Notify {
         $key = "queues:notify";
         $model = (new StringModel())->instance();
         $model->select(3);
-        $data =  $model->lrange($key, 0 ,100);
+        $data =  $model->lrange($key, 0 ,60);
 
         foreach ($data as $k =>$v ){
             $data[$k] = json_decode($v,true);
