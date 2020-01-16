@@ -52,7 +52,7 @@ class Notify {
      */
     private function doHelloJob($data)
     {
-        $key = "queues:notify";
+        $key = "queues:notify*";
         $model = (new StringModel())->instance();
         $model->select(3);
         $data =  $model->lrange($key, 0 ,60);
