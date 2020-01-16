@@ -57,6 +57,8 @@ class Notify {
         $model->select(3);
         $data =  $model->lrange($key, 0 ,60);
 
+        halt($data);
+
         foreach ($data as $k =>$v ){
             $data[$k] = json_decode($v,true);
             if($data[$k]['attempts'] > 6){
