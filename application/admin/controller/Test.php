@@ -12,8 +12,6 @@ class Test  extends Controller
     public function index()
     {
 
-        halt(11111);exit();
-
         $job = 'app\\common\\job\\Notify';//调用的任务名
         $data = 7777;//传入的数据
         $queue = 'notify';//队列名，可以理解为组名
