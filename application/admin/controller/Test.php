@@ -35,7 +35,7 @@ class Test  extends Controller
         $data[0]['attempts'] = 66;
 
         //通过索引修改列表中元素的值，如果没有该索引，则返回false。
-        $model->lSet('queues:notify', 0, json_encode($data[0]));
+        //$model->lSet('queues:notify', 0, json_encode($data[0]));
 
 
         halt($data);
