@@ -57,7 +57,7 @@ class PayController extends BaseController
                 break;
         }
         //添加到订单回调日志
-        logs($param,$type = 'order/notify/'.date('Ymd').'/'.$this->config['code']);
+        logs($param,$type = 'order/notify/'.$this->config['code']);
         return $param;
     }
 

@@ -47,7 +47,7 @@ class Api {
 
         $data['res'] = $res;
         //错误添加到订单回调日志
-        logs($data,$type = 'order/notify/'.date('Ymd').'/'.$data['config']['code']);
+        logs($data,$type = 'order/notify/'.$data['config']['code']);
 
         return false;
     }
