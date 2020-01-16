@@ -28,8 +28,8 @@ class Api {
      */
     private function doHelloJob($data)
     {
-
         $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
+
 
         if($res === true){
             //获取回调数据
@@ -42,8 +42,13 @@ class Api {
                 (new Order)->save(['id'=>$notify['order']['id'],'notice'=>3],['id'=>$notify['order']['id']]);
                 \think\Queue::later('60','app\\common\\job\\Notify', $notify, 'notify');
             }
+            return $res;
         }
 
-        return $res;
+        $data['res'] = $res;
+        //错误添加到订单回调日志
+        logs($data,$type = 'order/notify/'.date('Ymd').'/'.$data['config']['code']);
+
+        return false;
     }
 }

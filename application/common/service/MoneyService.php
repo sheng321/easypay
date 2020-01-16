@@ -25,7 +25,7 @@ class MoneyService {
        $Order = Order::quickGet(['systen_no'=>$systen_no]);
 
        //不存在 或者下单失败 已支付
-       if(empty($Order) || $Order['pay_status'] == 1   ) return false;
+       if(empty($Order) || $Order['pay_status'] == 1  || $Order['pay_status'] == 3   ) return '订单不存在或者下单失败或者订单已关闭';
 
         //已支付
         if($Order['pay_status'] == 2 ) return true;
@@ -35,13 +35,12 @@ class MoneyService {
                         ->field('w.noentry,w.id,w.account')
                         ->cache('channel_pid_'.$Order['channel_id'],3)
                         ->find();
-        if(empty($Channel)) return false;
-
+        if(empty($Channel)) return  '通道不存在';
 
         //是否禁止回调
-        $noentry1 = config('set.noentry');//平台是否禁止入款
-        $noentry = max($Order['noentry'],$Channel['noentry'],$noentry1);
-        if(!empty($noentry))  return false;
+        $noentry1 = config('set.noentry');//平台是否禁止入款 （平台维护的情况）
+        $noentry = max($Channel['noentry'],$noentry1); //上游通道问题的情况
+        if(!empty($noentry))  return '禁止入款';
 
         $Umoney = model('app\common\model\Umoney');
 
@@ -275,7 +274,7 @@ class MoneyService {
 
         if (!$save || !$save1|| !$save2|| !$save3) {
             $Umoney->rollback();
-            return false;
+            return '事务更新数据失败';
         }
         $Umoney->commit();
         return true;
