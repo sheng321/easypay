@@ -63,8 +63,8 @@ class Notify {
                 unset($data[$k]);
                 continue;
             }
-             //每隔60秒发次回调
-            if((time() - $data[$k]['order']['pay_time']) < 60){
+             //每隔30秒发次回调
+            if((time() - $data[$k]['order']['pay_time']) < 30){
                 unset($data[$k]);
                 continue;
             }
@@ -80,9 +80,7 @@ class Notify {
     ["attempts"] => int(1)
   }*/
 
-
     $res =  Curl::curl_multi($data); //批量处理
-
     foreach ($res as $k1 => $v1){
         if(md5(strtolower($v1)) == md5('ok')){
             (new Order)->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
