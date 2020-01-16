@@ -63,7 +63,7 @@ class Notify {
                 unset($data[$k]);
                 continue;
             }
-             //每隔30秒发次回调
+             //最少间隔30秒
             if((time() - $data[$k]['order']['pay_time']) < 30){
                 unset($data[$k]);
                 continue;
