@@ -19,6 +19,7 @@ class Test  extends Controller
         $res =  Queue::push($job, $data, $queue);
 
         dump($res);
+        dump(111);
 
 
         $model = (new StringModel())->instance();
@@ -26,7 +27,7 @@ class Test  extends Controller
         dump(  $model->select(3));
         dump(1);
         $data =  $model->lrange("queues:notify*", 0 ,100);
-
+        dump(222);
         foreach ($data as $k =>$v ){
             $data[$k] = json_decode($v,true);
         }
