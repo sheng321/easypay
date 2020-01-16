@@ -244,7 +244,7 @@ class MoneyService {
             'pay_time'=>date('Y-m-d H:i:s'),
         ];
         if(!empty($transaction_no)) $Order_update['transaction_no'] = $transaction_no;
-        if(!empty($amount)) $Order_update['amount'] = $amount;
+        if(!empty($amount)) $Order_update['actual_amount'] = $amount;
 
 
         //添加到处理订单列表

@@ -92,7 +92,7 @@ class PayController extends BaseController
             'order'=>['systen_no'=>$order['systen_no']],
             'config'=>[
                 'transaction_no'=>empty($this->config['transaction_no'])?'':htmlspecialchars($this->config['transaction_no']),
-                'amount'=>empty($this->config['amount'])?'':floatval($this->config['amount']),
+                'amount'=>empty($this->config['amount'])?0:floatval($this->config['amount']),
                 'code'=>$this->config['code']
             ],
         ];//传入的数据
@@ -103,7 +103,7 @@ class PayController extends BaseController
         if( $res === true ) __jerror('fail');
 
         //同步
-       // $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
+        $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
        // halt($res);
 
         return  $this->config['returnBack'];
