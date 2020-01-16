@@ -13,7 +13,7 @@ class Test  extends Controller
     {
 
         $job = 'app\\common\\job\\Notify';//调用的任务名
-        $data = ['data'];//传入的数据
+        $data = 99999999;//传入的数据
         $queue = 'notify';//队列名，可以理解为组名
         //push()方法是立即执行
         $res =  Queue::later(18000000,$job, $data, $queue);
