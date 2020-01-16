@@ -172,15 +172,21 @@
 <script  >
 
     function query_order(url) {
-        $.request.post(url,{}, function (res) {
-            alert(res['data']);
-        }, true);
+        var Index = $.msg.confirm('确定要查询订单吗？', function () {
+            $.request.post(url,{}, function (res) {
+                alert(res['data']);
+            }, true);
+            $.msg.close(Index);
+        });
     }
 
     function back_order(url) {
-        $.request.post(url,{}, function (res) {
-            $.msg.success(res.msg)
-        }, true);
+        var Index = $.msg.confirm('确定要退单吗？', function () {
+            $.request.post(url,{}, function (res) {
+                $.msg.success(res.msg)
+            }, true);
+            $.msg.close(Index);
+        });
     }
 
     /**

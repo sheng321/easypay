@@ -235,7 +235,6 @@ class Order extends AdminController {
             $order['channelgroup_name'] = empty($ChannelGroup[$order['channel_group_id']])?'未知':$ChannelGroup[$order['channel_group_id']];
             $order['channel_name'] = empty($Channel[$order['channel_id']])?'未知':$Channel[$order['channel_id']]['title'];
 
-            if(($order['pay_status'] == 0) && (time() > $order['over_time'])) $order['pay_status'] = 3;//显示订单关闭
             $order['over_time'] = date('Y-m-d H:i:s',$order['over_time']);
 
             $order['pay_status1'] = config('order.pay_status.'.$order['pay_status']);
@@ -398,7 +397,7 @@ class Order extends AdminController {
             $id = $this->request->get('id/d',0);
 
             $order =  $this->model->quickGet($id);
-            if(empty($order) || $order['pay_status'] !== 2   ) return __error("订单不存在或者该订单未支付");
+            if(empty($order) || $order['pay_status'] != 2   ) return __error("订单不存在或者该订单未支付");
 
             $res = \app\common\service\MoneyService::back($order['systen_no']);//修改金额
             if($res !== true)  __error("系统异常，变动金额失败");
