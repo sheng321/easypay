@@ -22,8 +22,8 @@ class Test  extends Controller
         dump(111);
 
         $model = (new StringModel())->instance();
+        $model->select(3);
 
-        dump(  $model->select(3));
         dump(1);
         $data =  $model->lrange("queues:notify", 0 ,100);
 
