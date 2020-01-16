@@ -21,7 +21,6 @@ class Test  extends Controller
         dump($res);
         dump(111);
 
-
         $model = (new StringModel())->instance();
 
         dump(  $model->select(3));
