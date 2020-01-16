@@ -57,6 +57,7 @@ class Notify {
         $model->select(3);
         $data =  $model->lrange($key, 0 ,60);
 
+        dump(111111111);
         halt($data);
 
         foreach ($data as $k =>$v ){
