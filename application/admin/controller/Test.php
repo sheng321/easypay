@@ -27,6 +27,8 @@ class Test  extends Controller
         dump(  $model->select(3));
         dump(1);
         $data =  $model->lrange("queues:notify*", 0 ,100);
+
+        halt($data);
         dump(222);
         foreach ($data as $k =>$v ){
             $data[$k] = json_decode($v,true);
