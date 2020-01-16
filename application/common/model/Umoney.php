@@ -33,10 +33,77 @@ class Umoney extends ModelService {
      */
     protected $redis = [
         'is_open'=> true,
-        'ttl'=> 3360 ,
+        'ttl'=> 3,
         'key'=> "String:table:Umoney:channel_id:{channel_id}:uid:{uid}:id:{id}",
         'keyArr'=> ['id','uid','channel_id'],
     ];
+
+    /**
+     * 获取列表信息
+     * @param int $page  当前页
+     * @param int $limit 每页显示数量
+     * @return array
+     */
+    public function aList($page = 1, $limit = 10, $search = [],$type = 0) {
+        $where = [];
+
+        if($type == 0){
+            //会员
+            $where[] = ['channel_id', '=', 0];
+            $where[] = ['uid', '>', 0];
+        }else{
+            //通道
+            $where[] = ['uid', '=', 0];
+            $where[] = ['channel_id', '>', 0];
+            $Channel = Channel::idRate();
+            if(!empty($search['channel'])){
+                foreach ($Channel as $k =>$v){
+                    if($v['pid'] == 0 && $v['title'] == $search['channel']){
+                        $search['channel_id'] = $k;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+
+        //搜索条件
+        $searchField['eq'] = ['uid','channel_id'];
+        $searchField['time'] = ['update_at'];
+        $where = search($search,$searchField,$where);
+        $field = ['id','uid','update_at','balance','total_money','frozen_amount','frozen_amount_t1','artificial','channel_id'];
+
+        $count = $this->where($where)->count();
+        $data = $this->where($where)->field($field)->page($page, $limit)->order(['total_money'=>'desc','update_at'=>'desc'])->select();
+        empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+        if($type == 1) {
+            foreach ($data as $K=>$v) {
+                $data[$K]['channel'] = $Channel[$v['channel_id']]['title'];
+            }
+        }
+
+
+        $info = [
+            'limit'        => $limit,
+            'page_current' => $page,
+            'page_sum'     => ceil($count / $limit),
+        ];
+        $list = [
+            'code'  => 0,
+            'msg'   => $msg,
+            'count' => $count,
+            'info'  => $info,
+            'data'  => $data,
+        ];
+
+        return $list;
+    }
+
+
+
+
 
     /**
      * Undocumented 获取余额
