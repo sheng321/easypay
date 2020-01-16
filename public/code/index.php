@@ -26,15 +26,18 @@
             case 'look':
                 $action = 'look';
                 break;
-            case 'updata':
+           /* case 'updata':
                 $action = 'updata';
-                break;
-			case 'del':
+                break;*/
+/*			case 'del':
 				$onlineEditor->delFile(subFilePath($dirPath,$_GET['filename']));
 				$action = 'del';
 				echo subFilePath($dirPath,$_GET['filename']);
 				echo "<script>location.href = 'index.php';</script>";
-				break;
+				break;*/
+            default:
+                $action = null;
+                break;
 		}
 	} else{
 		$action = null;
