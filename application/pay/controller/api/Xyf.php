@@ -227,9 +227,6 @@ class Xyf extends PayController
     public function notify(){
         $param =  $this->getParam('param');
 
-        //添加到订单回调日志
-        logs($param,$type = 'order/notify/'.date('Ymd').'/'.$this->config['code']);
-
         if(empty($param)) __jerror('no_data');
         if($param['status'] !== '1') __jerror('pay_fail');
 

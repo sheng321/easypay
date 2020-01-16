@@ -24,7 +24,6 @@ class PayController extends BaseController
     }
 
     protected function getParam($type = '',$name = ''){
-
         switch (true){
             case ($type == 'param'):
                 if(empty($name)){
@@ -57,7 +56,8 @@ class PayController extends BaseController
                 $param = file_get_contents('php://input');
                 break;
         }
-
+        //添加到订单回调日志
+        logs($param,$type = 'order/notify/'.date('Ymd').'/'.$this->config['code']);
         return $param;
     }
 
