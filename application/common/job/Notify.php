@@ -91,7 +91,7 @@ class Notify {
             $data[$k1]['attempts'] = $data[$k1]['attempts'] + 1;
             $data[$k]['order']['pay_time'] = time();
         }
-        $model->lSet($key, 0, json_encode($data[$k1])); //更新队列
+       // $model->lSet($key, 0, json_encode($data[$k1])); //更新队列
     }
 
     return true;
