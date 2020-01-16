@@ -12,8 +12,6 @@ class Api {
     public function fire(Job $job,$data)
     {
 
-        halt($data);
-
         $isJobDone = $this->doHelloJob($data);
         if ($isJobDone) {
             // 如果任务执行成功，记得删除任务
