@@ -100,16 +100,14 @@ class PayController extends BaseController
 
         $queue = 'api';//队列名，可以理解为组名
         //push()方法是立即执行
-       // $res =  Queue::push($job, $data, $queue);
+        $res =  Queue::push($job, $data, $queue);
+        if( $res === true ) __jerror('fail');
 
         //同步
-        $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
-       halt($res);
+       // $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
+       // halt($res);
 
-        if( $res === false ) __jerror('fail');
-
-
-       // return  $this->config['returnBack'];
+        return  $this->config['returnBack'];
     }
 
 
