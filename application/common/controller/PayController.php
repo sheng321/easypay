@@ -61,11 +61,10 @@ class PayController extends BaseController
         return $param;
     }
 
-    protected function checkOrderNotify($sn){
-
-     $order =  Order::quickGet(['systen_no'=>$sn]);
-      //下单失败 订单号不存在
-     if(empty($order) || $order['pay_status'] == 1) __jerror('no_order');
+    protected function checkOrderNotify(){
+     $order =  Order::quickGet(['systen_no'=>$this->config['systen_no']]);
+      //下单失败 订单号不存在 订单关闭
+     if(empty($order) || $order['pay_status'] == 1 || $order['pay_status'] == 3) __jerror('no_order');
 
      //已支付
      if($order['pay_status'] == 2){

@@ -370,7 +370,6 @@ class Order extends AdminController {
             if(empty($code)) __jerror('支付服务不存在0');
 
             $Payment = Payment::factory($code);
-
             $res  = $Payment->query($order['systen_no']);
 
             if($res['code'] == 0) return json($res);
