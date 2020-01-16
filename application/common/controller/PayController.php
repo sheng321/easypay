@@ -109,7 +109,7 @@ class PayController extends BaseController
         if( $res === false ) __jerror('fail');
 
 
-        return  $this->config['returnBack'];
+       // return  $this->config['returnBack'];
     }
 
 
