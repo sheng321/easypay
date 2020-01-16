@@ -18,8 +18,8 @@ class Money extends Validate {
      */
     protected $rule = [
         'id'           => 'require|number',
-        'uid'     => 'require|number|token|checkUid',
-        'change'     => 'require|float|checkChange',//变动金额
+        'uid'     => 'number|checkUid',
+        'change'     => 'require|float|checkChange|token',//变动金额
         'type'     => 'require|in:1,2,3,4,5,6,7,8,9,10',//变动金额操作类型
         'remark' => 'chsDash|max:250',
     ];
