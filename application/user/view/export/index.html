@@ -11,7 +11,7 @@
     <style>
         .layui-table-cell {
             padding: 0 0;
-            font-size:12px;
+            font-size:14px;
         }
 
     </style>
@@ -58,7 +58,7 @@
             }
             col = {field:'id', title:'ID', minWidth:1, align: 'center'}
         }
-        var limit = 1;
+        var limit = 3000;
         var page = 1;
 
         var  data = {
@@ -92,7 +92,7 @@
                             data.where.page = obj.curr;
                             data.where.limit = obj.limit;
                             page = obj.curr;
-                            limit = obj.limit;
+
                             table.render(data)
                         }
                     }
@@ -100,10 +100,7 @@
 
                  if(res.code == 1){
                      var index = layer.confirm('是否下载当前 '+res.info.page_current+' 页数据', {title: '操作确认', btn: ['确认', '取消']}, function (){
-                         console.log(55555)
-                         console.log( data.where.page )
-
-                         table.exportFile('test-table-cellEdit', res.data, 'csv','#第'+data.where.page+'页');
+                         table.exportFile('test-table-cellEdit', res.data, 'csv');
                          layer.close(index);
                      });
                  }

@@ -11,7 +11,7 @@
     <style>
         .layui-table-cell {
             padding: 0 0;
-            font-size:12px;
+            font-size:14px;
         }
 
     </style>
@@ -27,20 +27,23 @@
                 <blockquote class="layui-elem-quote">3000条一页，需手动翻页下载</blockquote>
                 <div class="layui-card-body">
                     <table class="layui-hide" id="test-table-cellEdit" lay-filter="test-table-cellEdit"></table>
+                    <div id="page"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script src="__ADMIN__/layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script src="__ADMIN__/layuiadmin/layui/layui.all.js"></script>
 <script>
     layui.config({
         base: '__ADMIN__/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'table'], function(){
-        var table = layui.table;
+    }).use(['index', 'table', 'layer','laypage'], function(){
+        var table = layui.table,
+            layer = parent.layer === undefined ? layui.layer : top.layer,
+            laypage = layui.laypage;
 
         var field = JSON.parse('{$data["field"]|raw}');
         var title1 = JSON.parse('{$data["title"]|raw}');
@@ -53,24 +56,65 @@
             if( typeof(col.title) !== 'undefined' && col.title != '' ){
                 cols.push(col);
             }
-
             col = {field:'id', title:'ID', minWidth:1, align: 'center'}
         }
+        var limit = 3000;
+        var page = 1;
 
-        table.render({
+        var  data = {
             elem: '#test-table-cellEdit'
             ,url: '{$url|raw}'+'&type=ajax'
             ,toolbar: true
-            ,defaultToolbar: ['filter','exports']
-            ,height: 315
-            ,limits: [3000]
-            ,limit: 3000
-            ,page: true
+            ,defaultToolbar: ['filter']
+            ,where: {
+                "page":page,//当前页（必传参数，可改变参数名）
+                "limit":limit,//每页条数（必传参数，可改变参数名）
+            }
+            ,height: 200
+            ,page: false
             ,title:'{$title|default=""}'+'{:date("#Y-m-d")}'
-            ,id: '#test-table-cellEdit'
-            ,cols: [cols]
-        })
+            ,id: 'test-table-cellEdit'
+            ,cols: [cols],
+            done:function(res,curr,count){
+
+                laypage.render({
+                    elem: 'page', //注意，这里的 test1 是 ID，不用加 # 号
+                    count:count,
+                    curr:data.where.page,
+                    limit:data.where.limit,
+                    limits:[data.where.limit],
+                    prev:"<<",
+                    next:">>",
+                    theme:"#0099ff",
+                    layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+                    jump:function (obj,first) {
+                        if(!first){
+                            data.where.page = obj.curr;
+                            data.where.limit = obj.limit;
+                            page = obj.curr;
+
+                            table.render(data)
+                        }
+                    }
+                });
+
+                if(res.code == 1){
+                    var index = layer.confirm('是否下载当前 '+res.info.page_current+' 页数据', {title: '操作确认', btn: ['确认', '取消']}, function (){
+                        table.exportFile('test-table-cellEdit', res.data, 'csv');
+                        layer.close(index);
+                    });
+                }
+
+
+            }
+        };
+
+        table.render(data);
     });
+
+
+
+
 </script>
 </body>
 </html>

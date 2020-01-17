@@ -826,7 +826,7 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function(e) {
             data: a,
             isAll: !!l.length && t === l.length - i
         }
-    }, d.exportFile = function(e, t, i,name = '') {
+    }, d.exportFile = function(e, t, i) {
         t = t || d.clearCacheKey(d.cache[e]), i = i || "csv";
         var a = c.config[e] || {},
             l = {
@@ -847,7 +847,7 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function(e) {
                         a.field && "normal" == a.type && !a.hide && (0 == t && i.push(a.title || ""), n.push('"' + u(a, l[a.field], l, "text") + '"'))
                     }), a.push(n.join(","))
                 }), i.join(",") + "\r\n" + a.join("\r\n")
-            }()), n.download = (a.title + name || "table_" + (a.index || "")) + "." + i, document.body.appendChild(n), n.click(), void document.body.removeChild(n))
+            }()), n.download = (a.title + '_' + (a.index || "") || "table_" + (a.index || "")) + "." + i, document.body.appendChild(n), n.click(), void document.body.removeChild(n))
     }, d.resize = function(e) {
         if (e) {
             var t = s(e);
