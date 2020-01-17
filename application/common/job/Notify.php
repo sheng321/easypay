@@ -13,7 +13,6 @@ class Notify {
      */
     public function fire(Job $job,$data)
     {
-
         //错误添加到订单回调日志
         logs($data['order']['id'].'|'.$job->attempts(),$type = 'order/notify/'.$data['config']['code']);
 
@@ -72,7 +71,6 @@ class Notify {
             (new Order)->save(['id'=>$data['order']['id'],'notice'=>2,'remark'=>$ok],['id'=>$data['order']['id']]);
             return true;
         }
-
         return false;
     }
 }
