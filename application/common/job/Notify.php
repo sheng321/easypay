@@ -23,6 +23,10 @@ class Notify {
             return;
         }
 
+
+
+
+
         $isJobDone = $this->doHelloJob($data);
         if ($isJobDone === true) {
             // 如果任务执行成功，记得删除任务
