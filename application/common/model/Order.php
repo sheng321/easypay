@@ -120,7 +120,7 @@ class Order extends ModelService {
         }
 
         $list = [
-            'code'  => 0,
+            'code'  => 1,
             'msg'   => $msg,
             'count' => $count,
             'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
@@ -242,8 +242,9 @@ class Order extends ModelService {
      * @return void
      */
     public function clist($page = 1,$limit = 10,$search = [],$type = 0){
-        $where = [];
+        if(!empty(session('user_info.uid'))) $search['mch_id'] = session('user_info.uid');
 
+        $where = [];
         if(empty($search['create_at'])){
             $date = timeToDate(0,0,0,-3); //默认只搜索5天
             $where[] = ['create_at','>',$date];
@@ -264,7 +265,7 @@ class Order extends ModelService {
 
         $count = $this->where($where)->count();
 
-        $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_admin',2)->order(['create_at'=>'desc'])->select()->toArray();
+        $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_user',3)->order(['create_at'=>'desc'])->select()->toArray();
         empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
         $PayProduct =  PayProduct::idArr();//支付产品
@@ -285,7 +286,6 @@ class Order extends ModelService {
         ];
         return $list;
     }
-
 
 
     //订单 回调数据
