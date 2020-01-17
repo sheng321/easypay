@@ -333,6 +333,12 @@ if (!function_exists('search')) {
                 !empty($value) && $where[] = [$key, 'LIKE', '%' . $value . '%'];
                 continue;
             }
+            //为了节省性能
+            if(!empty($field['left_like']) && in_array($key,$field['left_like'])){
+                !empty($value) && $where[] = [$key, 'LIKE',  $value . '%'];
+                continue;
+            }
+
             //时间
             if(!empty($field['time']) && in_array($key,$field['time'])){
                 $value_list = explode(" - ", $value);

@@ -244,56 +244,16 @@ class Order extends ModelService {
     public function clist($page = 1,$limit = 10,$search = [],$type = 0){
         $where = [];
 
-        $ChannelGroup =  ChannelGroup::idArr();//通道分组
-        $Channel =  Channel::idRate();//通道
-
-        //通道分组模糊搜索
-        if(!empty($search['channelgroup_name'])){
-            foreach($ChannelGroup as $key=>$values ){
-                if (strstr( $values , $search['channelgroup_name']) !== false ){
-                    $search['channel_group_id'][] = $key;
-                }
-            }
-            if(empty($search['channel_group_id']))  $search['channel_group_id'][] = 0;
-            $searchField['in'][] = 'channel_group_id';
-        }
-
-        //通道模糊搜索
-        if(!empty($search['channel_name'])){
-            foreach($Channel as $key=>$values ){
-                if (strstr( $values['title'] , $search['channel_name']) !== false ){
-                    $search['channel_id'][] = $key;
-                }
-            }
-            if(empty($search['channel_id'])) $search['channel_id'][] = 0;
-            $searchField['in'][] = 'channel_id';
-        }
-
         if(empty($search['create_at'])){
-            $date = timeToDate(0,0,0,-5); //默认只搜索5天
+            $date = timeToDate(0,0,0,-3); //默认只搜索5天
             $where[] = ['create_at','>',$date];
         }
 
         //搜索条件
-        $searchField['eq'] = ['mch_id','payment_id','pay_status','notice','ip'];
-        $searchField['like'] = ['out_trade_no','systen_no','transaction_no'];
+        $searchField['eq'] = ['mch_id','payment_id','pay_status','notice'];
+        $searchField['left_like'] = ['out_trade_no','systen_no'];
         $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
-
-        //价格区间
-        if(!empty($search['amount'])){
-            $value_list = explode("-", $search['amount']);
-            $where[] = ['amount', 'BETWEEN', ["{$value_list[0]}", "{$value_list[1]}"]];
-        }
-        //代理
-        if(!empty($search['mch_id1'])){
-            $where[] = ['mch_id1|mch_id2', '=', $search['mch_id1']];
-        }else{
-            if($type == 1){
-                $where[] = ['mch_id1|mch_id2', '>', 0];
-            }
-        }
-
 
         if(empty($search['field'])){
             $field = "id,mch_id,out_trade_no,systen_no,amount,total_fee,payment_id,actual_amount,create_time,pay_time,productname,pay_status,notice,run_rate,settle";
