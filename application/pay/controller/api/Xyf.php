@@ -131,13 +131,12 @@ class Xyf extends PayController
 
         $res = json_decode(Curl::post($this->config['gateway'], http_build_query($data)),true);
 
-        if(empty($res['data']['payurl'])){
-            $msg = '获取支付链接失败!';
-            if(!empty($res['msg'])) $msg = Str::substr($res['msg'],0,100) ;
-            //下单失败
-            Order::save(['id'=>$create['id'],'pay_status'=>1,'remark'=>$msg]);
-            __jerror($msg);
-        }
+
+        $payurl = empty($res['data']['payurl'])?"":$res['data']['payurl'];
+        $msg =  empty($res['msg'])?"":$res['msg'];
+
+        //下单失败
+        $this->order_error($payurl,$msg,$create['id']);
 
      return msg_get($res['data']['payurl']);
     }
@@ -177,14 +176,12 @@ class Xyf extends PayController
     }
 
     //查询
-    public function query($sn){
-        $Order =  Order::quickGet(['systen_no'=>$sn]);
-        if(empty($Order))  return ['code' => 0, 'msg' => '订单不存在：'.$sn, 'data' => []];
+    public function query($Order){
 
         $gateway = 'http://api.xinyufu.com/pay/query';
         $data = array();
         $data['merId'] =  $this->config['mch_id'];
-        $data['orderId'] = $sn;
+        $data['orderId'] = $Order['systen_no'];
         $data['nonceStr'] = md5(time() . mt_rand(10000,99999));
         $data['sign'] = $this->getSign($data);
         $res = Curl::post($gateway, http_build_query($data));
@@ -205,19 +202,30 @@ class Xyf extends PayController
     ["sign"] => string(344) "iOrtZhmHzSrXSBEBXvzNQ5igDZDP7KbRggaKZ7x9l88Hw42sHG8u1gVfGaxEeNRWWrhjyHxdkfZ7xqmenFN6YNomaO5e/oTtiYL1bM8udBd3KSdz845c7Jg/XVVaBw38zx1FIw4fv1X9IoYBRX3d2NM7iTUkegYFpJ0mJCsAtS3Y8BlVCa32aVZkcyIMivDtdRBEQCJBxySkOQlMvQII7cGP6gOvwnaKYFJZnx8bwmgoR/EhQYsQJCvKYADyWKYdsYdKLXeV00i1pvVjG8030hpWbjmlqFoH9NMxVOQ7RXoJ7U0bVKmPQ39snbHPNtdz4RVku9pi1dq8FmtFEEinIQ=="
   }
 } */
+
+        $result = ['code' => 0, 'msg' => '查询失败', 'data' => []];
+
         if(empty($resp) ||$resp['code'] !== 1){
-            if($resp['msg']) return ['code' => 0, 'msg' => $resp['msg'], 'data' => []];
-           return  ['code' => 0, 'msg' => '查询失败', 'data' => []];
+            if($resp['msg']) return $result['msg'] = $resp['msg'];
+           return $result;
         }
         if( empty($resp['data']) || $resp['data']['status'] != '1'   ){
-            return ['code' => 0, 'msg' => '订单：'.$sn.'未支付', 'data' => []];
+            $result['msg'] =  '订单：'.$Order['systen_no'].'未支付';
+            return $result;
+
         }
 
         $flag = $this->verifys($resp['data']);
-        if(!$flag)  return ['code' => 0, 'msg' => '查询失败：验签不通过', 'data' => []];
+        if(!$flag){
+            $result['msg'] = '查询失败：验签不通过';
+            return $result;
+         }
 
         $orderAmt = floatval($resp['data']['orderAmt']);
-        if(abs($orderAmt - $Order['amount']) >1) return ['code' => 0, 'msg' => '查询订单金额不匹配：'.$orderAmt, 'data' => []];
+        if(abs($orderAmt - $Order['amount']) >1){
+            $result['msg'] = '查询订单金额不匹配：'.$orderAmt;
+            return $result;
+         }
 
           //添加到订单查询日志
          logs($res,$type = 'order/query/'.$this->config['code']);

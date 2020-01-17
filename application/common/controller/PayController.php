@@ -2,6 +2,7 @@
 
 namespace app\common\controller;
 use app\common\model\Order;
+use think\helper\Str;
 use think\Queue;
 
 
@@ -23,6 +24,28 @@ class PayController extends BaseController
         set_time_limit(60);
     }
 
+    /**
+     * 下单失败
+     * @param $payurl 支付链接
+     * @param $error_msg 错误信息
+     * @param $orderId 订单ID
+     */
+    protected function order_error($payurl,$error_msg,$orderId){
+        if(empty($payurl)){
+            $msg = '获取支付链接失败!';
+            if(!empty($error_msg)) $msg = Str::substr($error_msg,0,100) ;
+            //下单失败
+            Order::save(['id'=>$orderId,'pay_status'=>1,'remark'=>$msg]);
+            __jerror($msg);
+        }
+    }
+
+
+    /**获取回调信息
+     * @param string $type 类型
+     * @param string $name 指定参数
+     * @return array|mixed|string
+     */
     protected function getParam($type = '',$name = ''){
         switch (true){
             case ($type == 'param'):

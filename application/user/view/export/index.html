@@ -32,15 +32,16 @@
         </div>
     </div>
 </div>
-
+<script type="text/javascript" src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
 <script src="__ADMIN__/layuiadmin/layui/layui.js"></script>
 <script>
     layui.config({
         base: '__ADMIN__/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'table'], function(){
-        var table = layui.table;
+    }).use(['index', 'table', 'layer'], function(){
+        var table = layui.table,
+           layer = parent.layer === undefined ? layui.layer : top.layer;
 
         var field = JSON.parse('{$data["field"]|raw}');
         var title1 = JSON.parse('{$data["title"]|raw}');
@@ -57,19 +58,32 @@
             col = {field:'id', title:'ID', minWidth:1, align: 'center'}
         }
 
+
+
         table.render({
             elem: '#test-table-cellEdit'
             ,url: '{$url|raw}'+'&type=ajax'
             ,toolbar: true
             ,defaultToolbar: ['filter','exports']
             ,height: 315
-            ,limits: [3000]
-            ,limit: 3000
+            ,limits: [1]
+            ,limit: 1
             ,page: true
             ,title:'{$title|default=""}'+'{:date("#Y-m-d")}'
-            ,id: '#test-table-cellEdit'
-            ,cols: [cols]
-        })
+            ,id: 'test-table-cellEdit'
+            ,cols: [cols],
+            done:function(res,curr,count){
+               console.log(res);
+                console.log(curr);
+                console.log(count);
+
+                var index = layer.confirm('是否下载当前 '+curr+' 页数据', {title: '操作确认', btn: ['确认', '取消']}, function () {
+                    table.exportFile('test-table-cellEdit', res.data, 'csv','#第'+curr+'页');
+                    layer.close(index);
+                });
+
+            }
+        });
     });
 </script>
 </body>

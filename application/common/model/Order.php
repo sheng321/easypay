@@ -120,7 +120,7 @@ class Order extends ModelService {
         }
 
         $list = [
-            'code'  => 1,
+            'code'  => 0,
             'msg'   => $msg,
             'count' => $count,
             'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
