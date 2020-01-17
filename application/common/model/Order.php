@@ -278,12 +278,15 @@ class Order extends ModelService {
         }
 
         $list = [
-            'code'  => 0,
+            'code'  => 1,
             'msg'   => $msg,
             'count' => $count,
             'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
             'data'  => $list,
         ];
+
+        if(!empty($search['field'])) $list['code'] = 1 && $list['msg'] = $msg.'本页数据不显示。'; //下载
+
         return $list;
     }
 
