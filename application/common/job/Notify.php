@@ -11,10 +11,6 @@ class Notify {
      */
     public function fire(Job $job,$data)
     {
-        //错误添加到订单回调日志
-        logs($data,$type = 'order/notify/'.$data['order']['code']);
-
-
         $Order =  Order::quickGet($data['order']['id']);
         if(empty($Order)){
             $job->delete();
@@ -22,7 +18,7 @@ class Notify {
         }
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($Order);
-        if($job->attempts() > 6|| $isJobStillNeedToBeDone === false ){
+        if($isJobStillNeedToBeDone === false ){
             $job->delete();
             return;
         }
@@ -33,13 +29,13 @@ class Notify {
             $job->delete();
             return;
         }else{
-            if ($job->attempts() > 6) {
+            if($job->attempts() > 6) {
                 //通过这个方法可以检查这个任务已经重试了几次了
                 $job->delete();
                 return;
             }
             // 重发，延迟 60 秒执行
-            $job->release(1);
+            $job->release(60);
             return;
         }
     }
@@ -51,7 +47,7 @@ class Notify {
      */
     private function checkDatabaseToSeeIfJobNeedToBeDone($data){
         if($data['notice'] == 2) return false;//已回调
-        if($data['pay_status'] != 2) return false;//未支付
+        if($data['pay_status'] != 2) return false;//不是支付状态
         return true;
     }
 
@@ -60,23 +56,35 @@ class Notify {
      */
     private function doHelloJob($data,$Order)
     {
-/*        ['data'=>$data,
-            'url'=>$Order['notify_url'],
-            'order'=>[
-                'id'=>$Order['id'],
-                'notice'=>$Order['notice'],
-                'pay_time'=>strtotime($Order['pay_time']),
-                 'code'=>--,
-            ]*/
-
+/*
+ *  array (
+  'data' =>
+  array (
+    'amount' => '300.000',
+    'datetime' => '2020-01-17 10:16:23',
+    'memberid' => 20100002,
+    'orderid' => 'c2001171015501296455',
+    'returncode' => '00',
+    'transaction_id' => 's2001171015526909744',
+    'sign' => '3E2E23AFB267132B5040BDAAA2819ED1',
+    'attach' => '原样返回字段',
+  ),
+  'url' => 'http://120.24.166.163:66/Run/notify.php',
+  'order' =>
+  array (
+    'id' => 239,
+    'notice' => 1,
+    'pay_time' => 1579227383,
+    'code' => 'Xyf',
+  ),
+)*/
         $ok = \tool\Curl::post($data['url'],$data['data']);
         if(strtolower($ok) === 'ok'){
             (new Order)->save(['id'=>$data['order']['id'],'notice'=>2,'remark'=>$ok],['id'=>$data['order']['id']]);
             return true;
         }
-
         if($Order['notice'] != 3){
-            (new Order)->save(['id'=>$data['order']['id'],'notice'=>3,'remark'=>htmlspecialchars(\think\helper\Str::substr($ok,0,60))],['id'=>$data['order']['id']]);
+            (new Order)->save(['id'=>$data['order']['id'],'notice'=>3,'remark'=>htmlspecialchars(\think\helper\Str::substr($ok,0,100))],['id'=>$data['order']['id']]);
         }
         return false;
     }
