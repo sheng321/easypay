@@ -24,12 +24,6 @@
 
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
-                <input type="text" id="ip" class="layui-input" placeholder="请输入ip"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <div class="layui-input-inline">
                 <select id="payment_id" class="payment_id" lay-filter="payment_id">
                     <option value="">请选择支付类型</option>
                     {foreach $product as $k => $vo}
@@ -45,7 +39,6 @@
                     <option value="">请选择支付状态</option>
                     <option value="">所有</option>
                     <option value="2">已支付</option>
-
                 </select>
             </div>
         </div>
