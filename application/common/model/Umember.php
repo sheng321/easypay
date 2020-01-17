@@ -109,10 +109,10 @@ class Umember extends UserService {
     {
         if(isset($data['uid'])){
             $Umoney =  model('app\common\model\Umoney');
-            $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,status,artificial,frozen_amount_t1,frozen_amount,total_money')->find();
+            $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,artificial,frozen_amount_t1,frozen_amount,total_money')->find();
             if(empty($find)){
                 $Umoney->save(['uid'=>$data['uid']]);
-                $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,status,artificial,frozen_amount_t1,frozen_amount,total_money')->find();
+                $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,artificial,frozen_amount_t1,frozen_amount,total_money')->find();
             }
             $data =   $find->toArray();
             return $data;
