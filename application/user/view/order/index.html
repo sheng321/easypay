@@ -171,24 +171,6 @@
 {block name="script"}
 <script  >
 
-    function query_order(url) {
-        var Index = $.msg.confirm('确定要查询订单吗？', function () {
-            $.request.post(url,{}, function (res) {
-                alert(res['data']);
-            }, true);
-            $.msg.close(Index);
-        });
-    }
-
-    function back_order(url) {
-        var Index = $.msg.confirm('确定要退单吗？', function () {
-            $.request.post(url,{}, function (res) {
-                $.msg.success(res.msg)
-            }, true);
-            $.msg.close(Index);
-        });
-    }
-
     /**
      * 生成表单
      */
