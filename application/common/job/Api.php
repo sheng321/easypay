@@ -29,6 +29,9 @@ class Api {
      */
     private function doHelloJob($data)
     {
+        \think\Queue::later(1,'app\\common\\job\\Notify', [], 'notify'); return true;
+
+
         $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
 
         if($res === true){
