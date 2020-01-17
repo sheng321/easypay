@@ -36,7 +36,7 @@ class Notify {
             }
 
             // 重发，延迟 60 秒执行
-            $job->release(60);
+            $job->release(1);
         }
     }
 
@@ -66,7 +66,7 @@ class Notify {
             ]*/
 
         //最少间隔30秒
-        if((time() - $data['order']['pay_time']) < 30) return false;
+       // if((time() - $data['order']['pay_time']) < 30) return false;
 
         $ok = \tool\Curl::post($data['url'],$data['data']);
         if(strtolower($ok) === 'ok'){

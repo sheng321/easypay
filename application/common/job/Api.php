@@ -40,7 +40,7 @@ class Api {
                 (new Order)->save(['id'=>$notify['order']['id'],'notice'=>2,'remark'=>$ok],['id'=>$notify['order']['id']]);
             }else{
                 (new Order)->save(['id'=>$notify['order']['id'],'notice'=>3,'remark'=>htmlspecialchars(\think\helper\Str::substr($ok,0,60))],['id'=>$notify['order']['id']]);
-                \think\Queue::later('60','app\\common\\job\\Notify', $notify, 'notify');
+                \think\Queue::later(1,'app\\common\\job\\Notify', $notify, 'notify');
             }
             return $res;
         }
