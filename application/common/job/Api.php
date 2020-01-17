@@ -11,15 +11,16 @@ class Api {
      */
     public function fire(Job $job,$data)
     {
-
         $isJobDone = $this->doHelloJob($data);
         if ($isJobDone) {
             // 如果任务执行成功，记得删除任务
             $job->delete();
+            return;
         }else{
             if ($job->attempts() > 3) {
                 //通过这个方法可以检查这个任务已经重试了几次了
                 $job->delete();
+                return;
             }
         }
     }
@@ -35,20 +36,11 @@ class Api {
         if($res === true){
             //获取回调数据
             $notify = Order::notify($data['order']['systen_no'],$data['config']['code']);
-
             \think\Queue::push('app\\common\\job\\Notify', $notify, 'notify');
-
-            $ok = \tool\Curl::post($notify['url'],$notify['data']);
-            if(strtolower($ok) === 'ok'){
-                (new Order)->save(['id'=>$notify['order']['id'],'notice'=>2,'remark'=>$ok],['id'=>$notify['order']['id']]);
-            }else{
-                (new Order)->save(['id'=>$notify['order']['id'],'notice'=>3,'remark'=>htmlspecialchars(\think\helper\Str::substr($ok,0,60))],['id'=>$notify['order']['id']]);
-                \think\Queue::later(1,'app\\common\\job\\Notify', $notify, 'notify');
-            }
             return true;
         }
 
-        $data['res'] = $res;
+        $data['金额更新'] = $res;
         //错误添加到订单回调日志
         logs($data,$type = 'order/notify/'.$data['config']['code']);
 
