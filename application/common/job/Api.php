@@ -29,7 +29,7 @@ class Api {
      */
     private function doHelloJob($data)
     {
-        halt(11111);
+        dump(11111);
         \think\Queue::later(18000,'app\\common\\job\\Notify', [], 'notify'); return true;
 
 
