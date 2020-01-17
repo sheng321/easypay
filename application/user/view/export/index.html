@@ -73,14 +73,13 @@
             ,id: 'test-table-cellEdit'
             ,cols: [cols],
             done:function(res,curr,count){
-               console.log(res);
-                console.log(curr);
-                console.log(count);
 
-                var index = layer.confirm('是否下载当前 '+curr+' 页数据', {title: '操作确认', btn: ['确认', '取消']}, function () {
-                    table.exportFile('test-table-cellEdit', res.data, 'csv','#第'+curr+'页');
-                    layer.close(index);
-                });
+                if(res.code == 1){
+                    var index = layer.confirm('是否下载当前 '+curr+' 页数据', {title: '操作确认', btn: ['确认', '取消']}, function () {
+                        table.exportFile('test-table-cellEdit', res.data, 'csv','#第'+curr+'页');
+                        layer.close(index);
+                    });
+                }
 
             }
         });
