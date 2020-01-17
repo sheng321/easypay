@@ -12,7 +12,7 @@ class Notify {
     public function fire(Job $job,$data)
     {
         //错误添加到订单回调日志
-        logs($data.'|'.$job->attempts(),$type = 'order/notify/'.$data['order']['code']);
+        logs($data,$type = 'order/notify/'.$data['order']['code']);
 
         $Order =  Order::quickGet($data['order']['id']);
         if(empty($Order)){
