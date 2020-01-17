@@ -242,7 +242,7 @@ class Order extends ModelService {
      * @return void
      */
     public function clist($page = 1,$limit = 10,$search = [],$type = 0){
-        if(!empty(session('user_info.uid'))) $search['mch_id'] = session('user_info.uid');
+        if(!empty(session('user_info.uid'))) $uid = $search['mch_id'] = session('user_info.uid');
 
         $where = [];
         if(empty($search['create_at'])){
@@ -265,7 +265,7 @@ class Order extends ModelService {
 
         $count = $this->where($where)->count();
 
-        $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_user',3)->order(['create_at'=>'desc'])->select()->toArray();
+        $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_'.$uid,3)->order(['create_at'=>'desc'])->select()->toArray();
         empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
         $PayProduct =  PayProduct::idArr();//支付产品
