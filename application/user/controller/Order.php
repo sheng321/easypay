@@ -27,7 +27,7 @@ class Order extends UserController {
         $this->model = model('app\common\model\Order');
     }
     /**
-     * Undocumented 订单列表
+     *  订单列表
      * @return void
      */
     public function index(){
