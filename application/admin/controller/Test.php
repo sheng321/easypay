@@ -25,8 +25,9 @@ class Test  extends Controller
         $model->select(3);
 
         dump(1);
-        $data =  $model->lrange("queues:notify:delayed", 0 ,100);
+       // $data =  $model->lrange("queues:notify:delayed", 0 ,100);
 
+        $data =  $model->zRange("queues:notify:delayed",0,-1,true);
         halt($data);
         dump(222);
         foreach ($data as $k =>$v ){

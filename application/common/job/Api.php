@@ -31,7 +31,6 @@ class Api {
     {
         $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
 
-
         if($res === true){
             //获取回调数据
             $notify = Order::notify($data['order']['systen_no']);
@@ -40,7 +39,7 @@ class Api {
             if(strtolower($ok) === 'ok'){
                 (new Order)->save(['id'=>$notify['order']['id'],'notice'=>2,'remark'=>$ok],['id'=>$notify['order']['id']]);
             }else{
-                (new Order)->save(['id'=>$notify['order']['id'],'notice'=>3],['id'=>$notify['order']['id']]);
+                (new Order)->save(['id'=>$notify['order']['id'],'notice'=>3,'remark'=>htmlspecialchars(\think\helper\Str::substr($ok,0,60))],['id'=>$notify['order']['id']]);
                 \think\Queue::later('60','app\\common\\job\\Notify', $notify, 'notify');
             }
             return $res;

@@ -152,6 +152,9 @@ class Curl
         curl_setopt($oCurl, CURLOPT_POST,true);
         curl_setopt($oCurl, CURLOPT_POSTFIELDS,$strPOST);
         $sContent = curl_exec($oCurl);
+
+
+
        // $aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
         return $sContent;

@@ -13,7 +13,9 @@ class Notify {
      */
     public function fire(Job $job,$data)
     {
-        halt($data);
+
+        //错误添加到订单回调日志
+        logs($data['order']['id'].'|'.$job->attempts(),$type = 'order/notify/'.$data['config']['code']);
 
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
@@ -33,7 +35,7 @@ class Notify {
             }
 
             // 重发，延迟 60 秒执行
-           // $job->release(60);
+            $job->release(60);
         }
     }
 
@@ -54,54 +56,23 @@ class Notify {
      */
     private function doHelloJob($data)
     {
-        $key = "queues:notify*";
-        $model = (new StringModel())->instance();
-        $model->select(3);
-        $list =  $model->lrange($key, 0 ,60);
+/*        ['data'=>$data,
+            'url'=>$Order['notify_url'],
+            'order'=>[
+                'id'=>$Order['id'],
+                'notice'=>$Order['notice'],
+                'pay_time'=>strtotime($Order['pay_time']),
+            ]*/
 
-        /*
- *[1] => array(4) {
-["job"] => string(21) "app\common\job\Notify"
-["data"] =>['data'=>$data,
-    'url'=>$Order['notify_url'],
-    'order'=>[
-        'id'=>$Order['id'],
-        'notice'=>$Order['notice'],
-        'pay_time'=>strtotime($Order['pay_time']),
-    ]
-["id"] => string(32) "urcVbpOxYJxOKnzJHwKnPzDlQIpNrZqJ"
-["attempts"] => int(1)
-}*/
+        //最少间隔30秒
+        if((time() - $data['order']['pay_time']) < 30) return false;
 
-        foreach ($list as $k =>$v ){
-            $list[$k] = json_decode($v,true);
-            if($list[$k]['attempts'] > 8){
-                unset($list[$k]);
-                continue;
-            }
-             //最少间隔30秒
-            if((time() - $list[$k]["data"]['order']['pay_time']) < 30){
-                unset($list[$k]);
-                continue;
-            }
+        $ok = \tool\Curl::post($data['url'],$data['data']);
+        if(strtolower($ok) === 'ok'){
+            (new Order)->save(['id'=>$data['order']['id'],'notice'=>2,'remark'=>$ok],['id'=>$data['order']['id']]);
+            return true;
         }
 
-        if(empty($list)) return true;
-
-
-
-    $res =  Curl::curl_multi($list["data"]); //批量处理
-    foreach ($res as $k1 => $v1){
-        if(strtolower($v1) === 'ok'){
-            (new Order)->save(['id'=>$list["data"]['order']['id'],'notice'=>2,'remark'=>$v1],['id'=>$list["data"]['order']['id']]);
-            $list[$k1]['attempts'] = 66;
-        }else{
-            $list[$k1]['attempts'] = $list[$k1]['attempts'] + 1;
-            $list[$k]["data"]['order']['pay_time'] = time();
-        }
-       // $model->lSet($key, 0, json_encode($list[$k1])); //更新队列
-    }
-
-    return true;
+        return false;
     }
 }
