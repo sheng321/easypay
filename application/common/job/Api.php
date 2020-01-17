@@ -36,7 +36,7 @@ class Api {
             logs(22222222,$type = 'order/notify/'.$data['config']['code']);
 
             //获取回调数据
-            $notify = Order::notify($data['order']['systen_no']);
+            $notify = Order::notify($data['order']['systen_no'],$data['config']['code']);
 
             $ok = \tool\Curl::post($notify['url'],$notify['data']);
             if(strtolower($ok) === 'ok'){

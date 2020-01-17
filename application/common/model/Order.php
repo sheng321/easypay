@@ -234,7 +234,7 @@ class Order extends ModelService {
 
 
     //订单 回调数据
-    public static function notify($sn){
+    public static function notify($sn,$code){
         $Order = self::quickGet(['systen_no'=>$sn]);
         $Uprofile = Uprofile::quickGet(['uid'=>$Order['mch_id']]);
 
@@ -260,6 +260,7 @@ class Order extends ModelService {
                 'id'=>$Order['id'],
                 'notice'=>$Order['notice'],
                 'pay_time'=>strtotime($Order['pay_time']),
+                'code'=>$code,
             ]
         ];
     }

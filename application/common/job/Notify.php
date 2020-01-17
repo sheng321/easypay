@@ -14,7 +14,7 @@ class Notify {
     public function fire(Job $job,$data)
     {
         //错误添加到订单回调日志
-        logs($data.'|'.$job->attempts(),$type = 'order/notify/'.$data['config']['code']);
+        logs($data.'|'.$job->attempts(),$type = 'order/notify/'.$data['order']['code']);
 
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
@@ -22,8 +22,6 @@ class Notify {
             $job->delete();
             return;
         }
-
-
 
         $isJobDone = $this->doHelloJob($data);
         if ($isJobDone === true) {
@@ -63,6 +61,7 @@ class Notify {
                 'id'=>$Order['id'],
                 'notice'=>$Order['notice'],
                 'pay_time'=>strtotime($Order['pay_time']),
+                 'code'=>--,
             ]*/
 
         //最少间隔30秒
