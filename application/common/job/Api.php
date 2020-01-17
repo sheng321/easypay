@@ -29,18 +29,14 @@ class Api {
      */
     private function doHelloJob($data)
     {
-        dump(11111);
-        \think\Queue::later(18000,'app\\common\\job\\Notify', [], 'notify'); return true;
-
 
         $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
 
         if($res === true){
-
-            logs(22222222,$type = 'order/notify/'.$data['config']['code']);
-
             //获取回调数据
             $notify = Order::notify($data['order']['systen_no'],$data['config']['code']);
+
+            \think\Queue::push('app\\common\\job\\Notify', $notify, 'notify');
 
             $ok = \tool\Curl::post($notify['url'],$notify['data']);
             if(strtolower($ok) === 'ok'){
