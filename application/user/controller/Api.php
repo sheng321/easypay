@@ -48,7 +48,6 @@ class Api extends UserController
             $basic_data = [
                 'title'  => '通道费率',
                 'data'   => $data,
-
             ];
 
             return $this->fetch('', $basic_data);

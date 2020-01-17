@@ -169,7 +169,7 @@ class PayProduct extends ModelService {
      */
     public static function codeTitle(){
         \think\facade\Cache::remember('codeTitle', function () {
-            $data = self::where(['status'=>1,'cli'=>0])->column('id,code,title','code');
+            $data = self::where(['cli'=>0])->column('id,code,title,status','code');
             \think\facade\Cache::tag('PayProduct')->set('codeTitle',$data,3600);
             return \think\facade\Cache::get('codeTitle');
         });

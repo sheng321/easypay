@@ -13,29 +13,12 @@
 
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
-                <input type="text" id="mch_id" class="layui-input" placeholder="请输入商户号"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <div class="layui-input-inline">
-                <input type="text" id="mch_id1" class="layui-input" placeholder="请输入代理商户号"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <div class="layui-input-inline">
-                <input type="text" id="out_trade_no" class="layui-input" placeholder="商户单号"/>
+                <input type="text" id="out_trade_no" class="layui-input" placeholder="订单号"/>
             </div>
         </div>
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
                 <input type="text" id="systen_no" class="layui-input" placeholder="系统单号"/>
-            </div>
-        </div>
-        <div class="layui-form-item layui-inline">
-            <div class="layui-input-inline">
-                <input type="text" id="transaction_no" class="layui-input" placeholder="上游单号"/>
             </div>
         </div>
 
@@ -44,23 +27,13 @@
                 <input type="text" id="ip" class="layui-input" placeholder="请输入ip"/>
             </div>
         </div>
-        <div class="layui-form-item layui-inline">
-            <div class="layui-input-inline">
-                <input type="text" id="channel_name" class="layui-input" placeholder="通道"/>
-            </div>
-        </div>
-        <div class="layui-form-item layui-inline">
-            <div class="layui-input-inline">
-                <input type="text" id="channelgroup_name" class="layui-input" placeholder="通道分组"/>
-            </div>
-        </div>
 
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
                 <select id="payment_id" class="payment_id" lay-filter="payment_id">
                     <option value="">请选择支付类型</option>
                     {foreach $product as $k => $vo}
-                    <option value="{$k|default=''}">{$vo|default=''}</option>
+                    <option value="{$vo['id']|default=''}">{$vo['title']|default=''}</option>
                     {/foreach}
                 </select>
             </div>
@@ -68,17 +41,11 @@
 
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
-                <input type="text" id="amount" class="layui-input" placeholder="价格区间:1-200"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <div class="layui-input-inline">
                 <select id="pay_status"  class="pay_status" lay-filter="pay_status">
                     <option value="">请选择支付状态</option>
-                    {foreach $order['pay_status'] as $k => $vo}
-                    <option value="{$k|default=''}">{$vo|default=''}</option>
-                    {/foreach}
+                    <option value="">所有</option>
+                    <option value="2">已支付</option>
+
                 </select>
             </div>
         </div>
@@ -117,29 +84,15 @@
 
     <!--主表单渲染--结束-->
     <script type="text/html" id="pay_status1">
-        {{# if (d.pay_status == '0') { }}
-        <div>待支付</div>
-        {{# } else if(d.pay_status == 1) { }}
-          <div style="color:#EEDC82;">下单失败</div>
-        {{# } else if(d.pay_status == 2) { }}
-        <div style="color:#1E9FFF;">已支付</div>
+        {{# if (d.pay_status  == 2) { }}
+           <div style="color:#1E9FFF;">已支付</div>
         {{# } else { }}
-        <div style="color:red;">已关闭</div>
+           <div>未支付</div>
         {{# } }}
     </script>
 
     <script type="text/html" id="total_fee">
         {{d.total_fee}}-({{d.run_rate}})
-    </script>
-    <script type="text/html" id="profit">
-        平台:{{d.Platform}}
-        |上游:{{d.upstream_settle}}-({{d.cost_rate}})
-        {{# if (d.mch_id1 != '0') { }}
-        |上级代理:{{d.mch_id1}}-{{d.agent_amount}}-({{d.agent_rate}})
-        {{# } }}
-        {{# if (d.mch_id2 != '0') { }}
-        |上上级代理:{{d.mch_id2}}-{{d.agent_amount2}}-({{d.agent_rate2}})
-        {{# } }}
     </script>
 
     <script type="text/html" id="notice1">
@@ -149,20 +102,6 @@
         <div style="color:#1E9FFF;">已通知</div>
         {{# } else { }}
         <div style="color:red;">通知失败</div>
-        {{# } }}
-    </script>
-
-    <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/details")}?id={{d.id}}' data-title="订单详情">详情</a>
-        {{# if (d.pay_status != 1) { }}
-        {if auth("$thisClass/query_order")  }
-        <a class="layui-btn layui-btn-green layui-btn-sm"  onclick="query_order('{:url("$thisClass/query_order")}?id={{d.id}}')"  >查询状态</a>
-        {/if}
-        {{# } }}
-        {{# if (d.pay_status == 2) { }}
-        {if auth("$thisClass/back_order")  }
-        <a class="layui-btn layui-btn-danger layui-btn-sm" onclick="back_order('{:url("$thisClass/back_order")}?id={{d.id}}')" >手动退单</a>
-        {/if}
         {{# } }}
     </script>
 </form>
@@ -175,28 +114,18 @@
      * 生成表单
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
-        {field:'mch_id', title:'商户号', minwith:1, align: 'center'},
-        {field:'out_trade_no', title:'商户单号', minwith:1, align: 'center'},
+        {field:'mch_id', title:'商户编号', minwith:1, align: 'center'},
+        {field:'out_trade_no', title:'订单号', minwith:1, align: 'center'},
         {field:'systen_no', title:'系统单号', minwith:1, align: 'center'},
-        {field:'amount', title:'下单金额', minwith:1, align: 'center'},
+        {field:'amount', title:'交易金额', minwith:1, align: 'center'},
         {field:'total_fee', title:'手续费', minwith:1, align: 'center',toolbar: '#total_fee',},
-        {field:'profit', title:'利润', minwith:1, align: 'center',templet: '#profit'},
-        {field:'channelgroup_name', title:'通道分组', minwith:1, align: 'center'},
-        {field:'product_name', title:'支付类型',minwith:1, align: 'center'},
-        {field:'channel_name', title:'通道', minwith:1, align: 'center'},
+        {field:'settle', title:'结算', minwith:1, align: 'center',style: ' color: red;'},
+        {field:'create_time', title:'提交时间', minwith:1, align: 'center'},
+        {field:'pay_time', title:'成功时间', minwith:1, align: 'center'},
+        {field:'product_name', title:'支付银行',minwith:1, align: 'center'},
+        {field:'productname', title:'订单描述',minwith:1, align: 'center'},
         {field:'pay_status', title:'支付状态',toolbar: '#pay_status1', minwith:1, align: 'center'},
         {field:'notice', title:'通知状态', toolbar: '#notice1',minwith:1, align: 'center'},
-        {field:'actual_amount', title:'实际支付', minwith:1, align: 'center'},
-        {field:'transaction_no', title:'上游单号', minwith:1, align: 'center'},
-        {field:'create_time', title:'提交时间', minwith:1, align: 'center'},
-        {field:'pay_time', title:'支付时间', minwith:1, align: 'center'},
-        {field:'ip', title:'IP', minwith:1, align: 'center'},
-        {field:'remark', title:'备注', minwith:1, align: 'center'},
-        {field:'update_at', title:'最近更新时间', minwith:1, align: 'center'},
-
-        /**{if auth("$thisClass/details") || auth("$thisClass/replacement") }**/
-        {title: '操作', minWidth: 130, templet: '#barDemo', fixed: "right", align: "center"},
-        /**{/if}**/
     ]], true , '',100);
 
     /**

@@ -37,7 +37,7 @@ class Order extends UserController {
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 10);
             $search = (array)$this->request->get('search', []);
-            return json($this->model->alist($page, $limit, $search));
+            return json($this->model->clist($page, $limit, $search));
         }
 
         //基础数据
@@ -45,7 +45,7 @@ class Order extends UserController {
             'title'  => '订单列表',
             'data'   => '',
             'order' => config('order.'),
-            'product' => PayProduct::idArr(),//支付产品
+            'product' => PayProduct::codeTitle(),//支付产品
         ];
 
         return $this->fetch('', $basic_data);
