@@ -14,7 +14,7 @@ class Notify {
     public function fire(Job $job,$data)
     {
         //错误添加到订单回调日志
-        logs($data['order']['id'].'|'.$job->attempts(),$type = 'order/notify/'.$data['config']['code']);
+        logs($data.'|'.$job->attempts(),$type = 'order/notify/'.$data['config']['code']);
 
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
