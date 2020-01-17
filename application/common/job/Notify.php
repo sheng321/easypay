@@ -14,6 +14,7 @@ class Notify {
         //错误添加到订单回调日志
         logs($data,$type = 'order/notify/'.$data['order']['code']);
 
+
         $Order =  Order::quickGet($data['order']['id']);
         if(empty($Order)){
             $job->delete();
