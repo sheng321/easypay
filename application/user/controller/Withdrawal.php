@@ -31,6 +31,7 @@ class Withdrawal extends UserController {
         }
         return view('index');
     }
+
     /**
      *  申请提现
      */
@@ -60,7 +61,7 @@ class Withdrawal extends UserController {
             }
             return __error($result);
         }
-        $bank = Db::name("bank_card")->where("mch_id",$this->user['uid'])->field("id,card_number,bank_name,account_name")->select();
+        $bank = Db::name("bank_card")->where("uid",$this->user['uid'])->field("id,card_number,bank_name,account_name")->select();
         $this->assign("bank",$bank);
         return view('add_withdrawal');
     }
