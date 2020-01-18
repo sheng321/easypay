@@ -376,4 +376,23 @@ class User extends AdminController {
         }
     }
 
+
+    /**
+     *  银行卡列表
+     */
+    public function bank(){
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page/d', 1);
+            $limit = $this->request->get('limit/d', 10);
+            $search = (array)$this->request->get('search', []);
+            return json(model('app\common\model\Bank')->aList($page, $limit, $search));
+        }
+
+        $basic_data = [
+            'title' => '银行卡列表',
+        ];
+        return $this->fetch('', $basic_data);
+    }
+
+
 }

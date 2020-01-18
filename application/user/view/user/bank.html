@@ -6,6 +6,9 @@
 {block name="cotent"}
 
 <!--  搜索-->
+<div class="layui-card">
+    <div class="layui-card-header">{$title|default=''}</div>
+</div>
 <form class="layui-form">
 <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
 
@@ -18,7 +21,7 @@
     </div>
 
     <div class="layui-form-item layui-inline">
-        <label class="layui-form-label-99admin">创建时间</label>
+        <label class="layui-form-label-99admin">时间</label>
         <div class="layui-input-inline">
             <input type="text" id="update_at" class="layui-input " placeholder="请选择创建时间">
         </div>
@@ -30,7 +33,7 @@
 
     {if auth("$thisClass/add")}
     <div class="layui-form-item layui-inline">
-        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/saveBark")}' data-title="添加/编辑">添加</a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/saveBank")}' data-title="添加/编辑">添加</a>
     </div>
     {/if}
 

@@ -142,7 +142,6 @@ class User extends UserController {
     }
 
 
-
     /**
      *  银行卡
      */
@@ -163,7 +162,7 @@ class User extends UserController {
     /**
      *  添加/编辑银行卡
      */
-    public function saveBark(){
+    public function saveBank(){
 
         $Bank =  model('app\common\model\Bank');
         $uid =  $this->user['uid'];
@@ -221,12 +220,4 @@ class User extends UserController {
         return $del;
 
     }
-
-
-
-
-
-
-
-
 }
