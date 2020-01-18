@@ -17,7 +17,7 @@
         <tr><td>上上级代理费率：</td><td>{$order.agent_rate2}</td></tr>
         <tr><td>上上级代理结算：</td><td>{$order.agent_amount2}</td></tr>
     {/if}
-    <tr><td>系统订单号：</td><td><strong class="text-success">{$order.systen_no}</strong></td></tr>
+    <tr><td>系统订单号：</td><td><strong class="text-success">{$order.system_no}</strong></td></tr>
     <tr><td>商户订单号：</td><td><strong class="text-success">{$order.out_trade_no}</strong></td></tr>
     <tr><td>上游订单号：</td><td><strong class="text-success">{$order.transaction_no}</strong></td></tr>
     <tr><td>上游费率：</td><td><strong class="text-success">{$order.cost_rate}</strong></td></tr>
@@ -38,12 +38,12 @@
             {$order.pay_status1}
             {if $order.pay_status == 3}
                 {if auth("$thisRequest")  }
-                <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.systen_no}'   > 手动开启</a>
+                <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.system_no}'   > 手动开启</a>
                 {/if}
             {/if}
             {if $order.pay_status == 0}
                 {if auth("$thisRequest") }
-                <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.systen_no}&type=1'   > 手动关闭</a>
+                <a class="layui-btn layui-btn-danger  layui-btn-sm " id="open_order"   data-url='{:url("$thisRequest")}?id={$order.id}&order={$order.system_no}&type=1'   > 手动关闭</a>
                 {/if}
             {/if}
         </strong>

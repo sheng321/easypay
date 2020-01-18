@@ -116,7 +116,7 @@ class Umoney extends ModelService {
     }
 
     /**
-     * 处理金额 1.后台的金额操作
+     * 处理金额 1.金额操作
      * @param $data  会员金额
      * @param $change 变动金额
      * @return mixed
@@ -187,6 +187,14 @@ class Umoney extends ModelService {
                 $change['relate'] = '平台';
 
                 break;
+            case 5: //提现冻结
+                $res['log'] = $temp.'提现冻结'.$change['change'];
+                $data['balance'] = $data['balance'] - $change['change'];
+
+                if($data['balance'] < 0)   $res['msg'] = '变动金额大于可用金额';
+                $data['frozen_amount'] = $data['frozen_amount'] + $change['change'];
+
+                break;
             case 10:
                 $res['log'] = $temp.'人工解冻金额'.$change['change'];
                 $data['artificial'] = $data['artificial'] - $change['change'];
@@ -215,7 +223,6 @@ class Umoney extends ModelService {
 
         $change['balance'] = $data['balance'];
         $res['change'][] = $change;
-
 
         if(!empty($p)){
             $res['data'][] = $p;

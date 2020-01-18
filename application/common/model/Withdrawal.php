@@ -9,7 +9,7 @@ class Withdrawal extends UserService {
     
     public static function init()
     {
-        self::event('after_write', function ($withdrawal) {
+/*        self::event('after_write', function ($withdrawal) {
             if(!empty($withdrawal->mch_id)){
                 $balance = \app\common\model\Umoney::get_amount($withdrawal->mch_id);
                 if($withdrawal->status == 1){//商户申请提现
@@ -25,35 +25,42 @@ class Withdrawal extends UserService {
                     Db::name("mch_record")->insert(array('mch_id'=>$withdrawal->mch_id,'before_balance'=>$balance,'change'=>$withdrawal->total_amount,'balance'=>\app\common\model\Umoney::get_amount($withdrawal->mch_id),'type'=>2,'remark'=>'提现失败退款,加：'.$withdrawal->actual_amount)); 
                 }
             }
-        });
+        });*/
     }
+
     /**
-     * Undocumented 分页获取所有记录数
-     *
+     *  分页获取所有记录数
      * @param integer $page
      * @param integer $limit
-     * @param array $data 条件
-     * @return void
+     * @param array $search 条件
      */
-    public function list($page = 1,$limit = 10,$data = [],$mch){
-        $where = ['a.mch_id' => $mch];
-        $searchField['eq'] = ['status','system_sn'];
-        $searchField['like'] = ['account_name','create_time'];
-        $field = "a.id,a.system_sn,a.total_amount,a.total_fee,a.actual_amount,a.status,a.create_time,a.remark,b.account_name,b.card_number,b.bank_name,b.location";
-        $where = search($data,$searchField,$where);
+    public function alist($page = 1,$limit = 10,$search = [],$where = []){
+        $searchField['eq'] = ['status','system_no','mch_id'];
+        $searchField['like'] = ['account_name'];
+        $searchField['time'] = ['create_at'];
+        $field = "*";
+        $where = search($search,$searchField,$where);
         //获取总数
-        $count = $this->count();
-        $list = $this->alias('a')->where($where)->join('bank_card b','a.bank_card_id = b.id')->order('a.id','desc')->page($page,$limit)->field($field)->select()->toArray();
-        empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
+        $count = $this->where($where)->count();
+        $data = $this->alias('a')->where($where)->order(['id'=>'desc'])->page($page,$limit)->field($field)->select()->toArray();
+        empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+        foreach ($data as $k => $v){
+            $bank =  json_decode($v['bank'],true);
+
+        }
+
+
         $list = [
             'code'  => 0,
             'msg'   => $msg,
             'count' => $count,
             'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
-            'data'  => $list,
+            'data'  => $data,
         ];
         return $list;
     }
+
     public function wlist($page = 1,$limit = 10,$data = []){
         $where = array();
         $searchField['eq'] = ['status','system_sn'];

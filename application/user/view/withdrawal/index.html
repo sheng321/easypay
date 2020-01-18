@@ -5,6 +5,9 @@
 {/block}
 {block name="cotent"}
 <!--  搜索-->
+<div class="layui-card">
+    <div class="layui-card-header">{$title|default=''}</div>
+</div>
 <form class="layui-form">
 <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
 
@@ -66,20 +69,14 @@
 <script>
 
 $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
-        
-        {field: 'id', title: 'ID', width: 50, edit: 'text', align: "center"},
-        {field: 'system_sn', title: '订单号', minWidth: 100, align: 'center'},
-        {field: 'total_amount', title: '申请金额', width: 100, align: 'center'},
-        {field: 'total_fee', title: '手续费', width: 80, align: "center"},
+        {field: 'system_no', title: '订单号', minWidth: 100, align: 'center'},
+        {field: 'amount', title: '申请金额', width: 100, align: 'center'},
+        {field: 'fee', title: '手续费', width: 80, align: "center"},
         {field: 'actual_amount', title: '实际到账',width: 100,align: 'center'},
-        {field: 'card_number', title: '银行卡号', width: 150,  unresize: true, align: "center"},
-        {field: 'account_name', title: '开户人', width: 80,  unresize: true, align: "center"},
-        {field: 'bank_name', title: '开户行', width: 100,  unresize: true, align: "center"},
-        {field: 'location', title: '开卡地区', width: 190, unresize: true, align: "center"},
+        {field: 'info', title: '银行卡信息', width: 150,  unresize: true, align: "center"},
         {field: 'status', title: '状态', width: 90, templet: '#checkStatus', unresize: true, align: "center"},
-        {field: 'create_time', title: '申请时间', width: 170, unresize: true, align: "center"},
+        {field: 'create_at', title: '申请时间', width: 170, unresize: true, align: "center"},
         {field: 'remark', title: '备注', width: 80, unresize: true, align: "center"},
-        /**{/if}**/
     ]]);
     /**
      * 日期范围

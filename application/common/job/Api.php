@@ -31,11 +31,11 @@ class Api {
     private function doHelloJob($data)
     {
 
-        $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
+        $res = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
 
         if($res === true){
             //获取回调数据
-            $notify = Order::notify($data['order']['systen_no'],$data['config']['code']);
+            $notify = Order::notify($data['order']['system_no'],$data['config']['code']);
             \think\Queue::push('app\\common\\job\\Notify', $notify, 'notify');
             return true;
         }

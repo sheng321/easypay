@@ -9,7 +9,7 @@ class Test extends PayController
         $pay_memberid = config('set.memberid');   //商户ID
         $Md5key =  config('set.Md5key');   //密钥
 
-        $pay_orderid = getOrder('c');    //订单号
+        $pay_orderid = getOrder('c');    //测试订单号
         $pay_amount = $this->request->get('amount',100.00);    //交易金额
         $pay_applydate = date("Y-m-d H:i:s",time());  //订单时间
         $pay_bankcode = $this->request->get('code','');

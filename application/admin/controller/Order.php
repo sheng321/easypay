@@ -63,7 +63,7 @@ class Order extends AdminController {
             'mch_id1',
             'mch_id2',
             'out_trade_no',
-            'systen_no',
+            'system_no',
             'transaction_no',
             'amount',
             'actual_amount',
@@ -97,7 +97,7 @@ class Order extends AdminController {
             'mch_id1'=>'代理',
             'mch_id2'=>'上上代理',
             'out_trade_no'=>'商户单号',
-            'systen_no'=>'系统单号',
+            'system_no'=>'系统单号',
             'transaction_no'=>'上游单号',
             'amount'=>'下单金额',
             'actual_amount'=>'实际支付',
@@ -259,7 +259,7 @@ class Order extends AdminController {
                 if(empty($Dispose)){
                     $save1 =  $OrderDispose->create([
                         'pid'=>$id,
-                        'systen_no'=>$order,
+                        'system_no'=>$order,
                         'record'=>$this->user['username'].'-开启',
                     ]);
                 }else{
@@ -273,7 +273,7 @@ class Order extends AdminController {
                 if(empty($Dispose)){
                     $save1 =  $OrderDispose->create([
                         'pid'=>$id,
-                        'systen_no'=>$order,
+                        'system_no'=>$order,
                         'record'=>$this->user['username'].'-关闭',
                     ]);
                 }else{
@@ -318,22 +318,22 @@ class Order extends AdminController {
 
             //订单已关闭 订单未支付
             if( $order['pay_status'] == 0 || $order['pay_status'] == 3){
-                $res = \app\common\service\MoneyService::api($order['systen_no']);//修改金额
+                $res = \app\common\service\MoneyService::api($order['system_no']);//修改金额
                 if($res !== true)  msg_error("系统异常，变动金额失败");
 
                 $order['pay_status'] = 2;//已支付
             }
 
             if($order['pay_status'] == 2){
-                $data = $this->model->notify($order['systen_no']);
+                $data = $this->model->notify($order['system_no']);
                 $ok = \tool\Curl::post($data['url'],$data['data']);
                 if(md5(strtolower($ok)) == md5('ok')){
                     $this->model->save(['id'=>$data['order']['id'],'notice'=>2],['id'=>$data['order']['id']]);
 
-                    return __success('手动回调单号-'.$order['systen_no'].' 成功！ 商户返回： '.$ok);
+                    return __success('手动回调单号-'.$order['system_no'].' 成功！ 商户返回： '.$ok);
                 }else{
                     $this->model->save(['id'=>$data['order']['id'],'notice'=>3],['id'=>$data['order']['id']]);
-                    $str = '手动回调单号-'.$order['systen_no'].' 失败！ 商户返回： ';
+                    $str = '手动回调单号-'.$order['system_no'].' 失败！ 商户返回： ';
                     $str.=  "\n";
                     $str.=  "<code>";
                     $str.=  "\n";
@@ -373,7 +373,7 @@ class Order extends AdminController {
 
             if($res['code'] == 0) return json($res);
 
-            $msg = '查询订单号：'.$order['systen_no'].'支付成功';
+            $msg = '查询订单号：'.$order['system_no'].'支付成功';
             $msg .= "\n";
             $msg .= '返回报文：';
             $msg .= "\n";
@@ -399,7 +399,7 @@ class Order extends AdminController {
             $order =  $this->model->quickGet($id);
             if(empty($order) || $order['pay_status'] != 2   ) return __error("订单不存在或者该订单未支付");
 
-            $res = \app\common\service\MoneyService::back($order['systen_no']);//修改金额
+            $res = \app\common\service\MoneyService::back($order['system_no']);//修改金额
             if($res !== true)  __error("系统异常，变动金额失败");
 
             return __success('操作成功');

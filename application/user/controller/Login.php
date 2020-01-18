@@ -106,7 +106,6 @@ class Login extends BaseController
 
             //谷歌验证码
             if($this->UserInfo['UserGoole'] == 1){
-
                 $data1['google_token'] = $login['user']['google_token'];
                 $data1['google'] = $post['googlecode'];
                 $validate1 = $this->validate($data1, 'app\common\validate\common.google');

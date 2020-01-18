@@ -14,15 +14,15 @@ class MoneyService {
 
 
     /**回调成功，金额变动
-     * @param $systen_no 系统订单号
+     * @param $system_no 系统订单号
      * @param string $transaction_no 上游订单号
      * @param string $amount 实际支付金额
      * @return bool
      * 包括通道 商户 代理 平台
      */
-    public static function api($systen_no,$transaction_no = '',$amount = ''){
+    public static function api($system_no,$transaction_no = '',$amount = ''){
 
-       $Order = Order::quickGet(['systen_no'=>$systen_no]);
+       $Order = Order::quickGet(['system_no'=>$system_no]);
 
        //不存在 或者下单失败 已支付
        if(empty($Order) || $Order['pay_status'] == 1  || $Order['pay_status'] == 3   ) return '订单不存在或者下单失败或者订单已关闭';
@@ -64,7 +64,7 @@ class MoneyService {
                 'before_balance'=>$user['total_money'],
                 'balance'=>$user['total_money'] + $Order['settle'],
                 'change'=>$Order['settle'],
-                'relate'=>$Order['systen_no'],
+                'relate'=>$Order['system_no'],
                 'type'=>11,//T1入账
                 'type1'=>0,//会员
             ];
@@ -83,7 +83,7 @@ class MoneyService {
                 'before_balance'=>$user['total_money'],
                 'balance'=>$user['total_money'] + $Order['settle'],
                 'change'=>$Order['settle'],
-                'relate'=>$Order['systen_no'],
+                'relate'=>$Order['system_no'],
                 'type'=>7,//入账
                 'type1'=>0,//会员
             ];
@@ -109,7 +109,7 @@ class MoneyService {
                     'before_balance'=>$agent1['total_money'],
                     'balance'=>$agent1['total_money'] + $Order['agent_amount'],
                     'change'=>$Order['agent_amount'],
-                    'relate'=>$Order['systen_no'],
+                    'relate'=>$Order['system_no'],
                     'type'=>11,//T1入账
                     'type1'=>0,//会员
                 ];
@@ -128,7 +128,7 @@ class MoneyService {
                     'before_balance'=>$agent1['total_money'],
                     'balance'=>$agent1['total_money'] + $Order['agent_amount'],
                     'change'=>$Order['agent_amount'],
-                    'relate'=>$Order['systen_no'],
+                    'relate'=>$Order['system_no'],
                     'type'=>7,//入账
                     'type1'=>0,//会员
                 ];
@@ -153,7 +153,7 @@ class MoneyService {
                     'before_balance'=>$agent2['total_money'],
                     'balance'=>$agent2['total_money'] + $Order['agent_amount2'],
                     'change'=>$Order['agent_amount2'],
-                    'relate'=>$Order['systen_no'],
+                    'relate'=>$Order['system_no'],
                     'type'=>11,//T1入账
                     'type1'=>0,//会员
                 ];
@@ -171,7 +171,7 @@ class MoneyService {
                     'before_balance'=>$agent2['total_money'],
                     'balance'=>$agent2['total_money'] + $Order['agent_amount2'],
                     'change'=>$Order['agent_amount2'],
-                    'relate'=>$Order['systen_no'],
+                    'relate'=>$Order['system_no'],
                     'type'=>7,//入账
                     'type1'=>0,//会员
                 ];
@@ -196,7 +196,7 @@ class MoneyService {
                 'before_balance'=>$channel_money['total_money'],
                 'balance'=>$channel_money['total_money'] + $Order['upstream_settle'],
                 'change'=>$Order['upstream_settle'],
-                'relate'=>$Order['systen_no'],
+                'relate'=>$Order['system_no'],
                 'type'=>11,//T1入账
                 'type1'=>1,//通道
             ];
@@ -213,7 +213,7 @@ class MoneyService {
                 'before_balance'=>$channel_money['total_money'],
                 'balance'=>$channel_money['total_money'] + $Order['upstream_settle'],
                 'change'=>$Order['upstream_settle'],
-                'relate'=>$Order['systen_no'],
+                'relate'=>$Order['system_no'],
                 'type'=>7,//入账
                 'type1'=>1,//通道
             ];
@@ -250,7 +250,7 @@ class MoneyService {
         //添加到处理订单列表
         if(!empty(session('admin_info.id'))){
             $OrderDispose =  model('app\common\model\OrderDispose');
-            $Dispose =   $OrderDispose->quickGet(['systen_no'=>$systen_no]);
+            $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
         }
 
         $Umoney->startTrans();
@@ -262,10 +262,10 @@ class MoneyService {
         $save3 = true;
         if(!empty(session('admin_info.id'))){
             if(empty($Dispose)){
-                $save3 = $OrderDispose->create(['systen_no'=>$systen_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动回调']);
+                $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动回调']);
             }else{
                 $save3 = $OrderDispose->save([
-                    'systen_no'=>$systen_no,
+                    'system_no'=>$system_no,
                     'pid'=>$Order['id'],
                     'record'=>$Dispose['record']."|".session('admin_info.username').'-手动回调'
                 ],['id'=>$Dispose['id']]);
@@ -283,11 +283,11 @@ class MoneyService {
 
     /**
      * 手动退单
-     * @param $systen_no 系统订单号
+     * @param $system_no 系统订单号
      * 只修改商户，代理和平台的金额
      */
-    public static function back($systen_no){
-        $Order = Order::quickGet(['systen_no'=>$systen_no]);
+    public static function back($system_no){
+        $Order = Order::quickGet(['system_no'=>$system_no]);
 
         if(empty($Order) || $Order['pay_status'] !== 2) __jerror('该订单不存在，或者未支付');
 
@@ -320,7 +320,7 @@ class MoneyService {
             'before_balance'=>$user['total_money'],
             'balance'=>$user['total_money'] - $Order['settle'],
             'change'=>$Order['settle'],
-            'relate'=>$Order['systen_no'],
+            'relate'=>$Order['system_no'],
             'type'=>12,//手动退单
             'type1'=>0,//会员
         ];
@@ -343,7 +343,7 @@ class MoneyService {
                 'before_balance'=>$agent1['total_money'],
                 'balance'=>$agent1['total_money'] - $Order['agent_amount'],
                 'change'=>$Order['agent_amount'],
-                'relate'=>$Order['systen_no'],
+                'relate'=>$Order['system_no'],
                 'type'=>12,
                 'type1'=>0,//会员
             ];
@@ -366,7 +366,7 @@ class MoneyService {
                 'before_balance'=>$agent2['total_money'],
                 'balance'=>$agent2['total_money'] - $Order['agent_amount2'],
                 'change'=>$Order['agent_amount2'],
-                'relate'=>$Order['systen_no'],
+                'relate'=>$Order['system_no'],
                 'type'=>12,
                 'type1'=>0,//会员
             ];
@@ -388,7 +388,7 @@ class MoneyService {
             'before_balance'=>$channel_money['total_money'],
             'balance'=>$channel_money['total_money'] - $Order['upstream_settle'],
             'change'=>$Order['upstream_settle'],
-            'relate'=>$Order['systen_no'],
+            'relate'=>$Order['system_no'],
             'type'=>12,
             'type1'=>1,//通道
         ];
@@ -409,7 +409,7 @@ class MoneyService {
             'before_balance'=>$platform['total_money'],
             'balance'=>$platform['total_money'] - $Order['Platform'],
             'change'=>$Order['Platform'],
-            'relate'=>$Order['systen_no'],
+            'relate'=>$Order['system_no'],
             'type'=>12,
             'type1'=>2,//会员
         ];
@@ -422,7 +422,7 @@ class MoneyService {
 
         //添加到处理订单列表
         $OrderDispose =  model('app\common\model\OrderDispose');
-        $Dispose =   $OrderDispose->quickGet(['systen_no'=>$systen_no]);
+        $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
 
 
         $Umoney->startTrans();
@@ -432,10 +432,10 @@ class MoneyService {
 
         //添加到处理订单列表
         if(empty($Dispose)){
-            $save3 = $OrderDispose->create(['systen_no'=>$systen_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动退单']);
+            $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动退单']);
         }else{
             $save3 = $OrderDispose->save([
-                'systen_no'=>$systen_no,
+                'system_no'=>$system_no,
                 'pid'=>$Order['id'],
                 'record'=>$Dispose['record']."|".session('admin_info.username').'-手动退单'
             ],['id'=>$Dispose['id']]);

@@ -84,7 +84,7 @@ class Xyf extends PayController
   ["mch_id1"] => int(0)
   ["mch_id2"] => int(0)
   ["out_trade_no"] => string(20) "c2001051404014341565"
-  ["systen_no"] => string(20) "s2001051404033232070"
+  ["system_no"] => string(20) "s2001051404033232070"
   ["amount"] => string(6) "300.00"
   ["cost_rate"] => string(6) "0.0380"
   ["run_rate"] => string(6) "0.5556"
@@ -115,7 +115,7 @@ class Xyf extends PayController
     public function pay($create){
         $data = array();
         $data['merId'] = $this->config['mch_id'];
-        $data['orderId'] = $create['systen_no'];
+        $data['orderId'] = $create['system_no'];
         $data['orderAmt'] = number_format($create['amount'],2,'.','');
         $data['channel'] = $create['code'];
         $data['desc'] = 'xyf';
@@ -181,7 +181,7 @@ class Xyf extends PayController
         $gateway = 'http://api.xinyufu.com/pay/query';
         $data = array();
         $data['merId'] =  $this->config['mch_id'];
-        $data['orderId'] = $Order['systen_no'];
+        $data['orderId'] = $Order['system_no'];
         $data['nonceStr'] = md5(time() . mt_rand(10000,99999));
         $data['sign'] = $this->getSign($data);
         $res = Curl::post($gateway, http_build_query($data));
@@ -210,7 +210,7 @@ class Xyf extends PayController
            return $result;
         }
         if( empty($resp['data']) || $resp['data']['status'] != '1'   ){
-            $result['msg'] =  '订单：'.$Order['systen_no'].'未支付';
+            $result['msg'] =  '订单：'.$Order['system_no'].'未支付';
             return $result;
 
         }
@@ -239,7 +239,7 @@ class Xyf extends PayController
         if($param['status'] !== '1') __jerror('pay_fail');
 
         $this->config['returnBack'] = 'success';//返回数据
-        $this->config['systen_no'] = $param['orderId'];//返回数据
+        $this->config['system_no'] = $param['orderId'];//返回数据
         $this->config['transaction_no'] =$param['sysOrderId']; //第三方订单号
         $this->config['amount'] = $param['orderAmt'];//下订单金额
         //$this->config['upstream_settle'] = 0;//上游结算金额

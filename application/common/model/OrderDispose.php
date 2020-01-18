@@ -23,8 +23,8 @@ class OrderDispose extends ModelService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 3600,
-        'key'=> "String:table:OrderDispose:pid:{pid}:systen_no:{systen_no}:id:{id}",
-        'keyArr'=> ['id','pid','systen_no'],
+        'key'=> "String:table:OrderDispose:pid:{pid}:system_no:{system_no}:id:{id}",
+        'keyArr'=> ['id','pid','system_no'],
     ];
 
     /**
@@ -69,7 +69,7 @@ class OrderDispose extends ModelService {
 
         //搜索条件
          $searchField['eq'] = ['mch_id','payment_id','pay_status','notice'];
-         $searchField['like'] = ['out_trade_no','systen_no','transaction_no'];
+         $searchField['like'] = ['out_trade_no','system_no','transaction_no'];
          $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
 
@@ -84,7 +84,7 @@ class OrderDispose extends ModelService {
         }
 
 
-        $field = "id,mch_id,out_trade_no,systen_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time";
+        $field = "id,mch_id,out_trade_no,system_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time";
         $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_admin',2)->order(['create_at'=>'desc'])->select()->toArray();
         empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
 

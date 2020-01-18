@@ -85,7 +85,7 @@ class PayController extends BaseController
     }
 
     protected function checkOrderNotify(){
-     $order =  Order::quickGet(['systen_no'=>$this->config['systen_no']]);
+     $order =  Order::quickGet(['system_no'=>$this->config['system_no']]);
       //下单失败 订单号不存在 订单关闭
      if(empty($order) || $order['pay_status'] == 1 || $order['pay_status'] == 3) __jerror('no_order');
 
@@ -112,7 +112,7 @@ class PayController extends BaseController
         //加入异步队列
         $job = 'app\\common\\job\\Api';//调用的任务名
         $data = [
-            'order'=>['systen_no'=>$order['systen_no']],
+            'order'=>['system_no'=>$order['system_no']],
             'config'=>[
                 'transaction_no'=>empty($this->config['transaction_no'])?'':htmlspecialchars($this->config['transaction_no']),
                 'amount'=>empty($this->config['amount'])?0:floatval($this->config['amount']),
@@ -126,7 +126,7 @@ class PayController extends BaseController
         if( $res === false ) __jerror('fail');
 
         //同步
-        $res = \app\common\service\MoneyService::api($data['order']['systen_no'],$data['config']['transaction_no'],$data['config']['amount']);
+        $res = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
        // halt($res);
 
         return  $this->config['returnBack'];

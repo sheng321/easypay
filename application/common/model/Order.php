@@ -23,8 +23,8 @@ class Order extends ModelService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 300,
-        'key'=> "String:table:Order:transaction_no:{transaction_no}:out_trade_no:{out_trade_no}:systen_no:{systen_no}:id:{id}",
-        'keyArr'=> ['id','out_trade_no','systen_no','transaction_no'],
+        'key'=> "String:table:Order:transaction_no:{transaction_no}:out_trade_no:{out_trade_no}:system_no:{system_no}:id:{id}",
+        'keyArr'=> ['id','out_trade_no','system_no','transaction_no'],
     ];
 
     /**
@@ -69,7 +69,7 @@ class Order extends ModelService {
 
         //搜索条件
          $searchField['eq'] = ['mch_id','payment_id','pay_status','notice','ip'];
-         $searchField['like'] = ['out_trade_no','systen_no','transaction_no'];
+         $searchField['like'] = ['out_trade_no','system_no','transaction_no'];
          $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
 
@@ -88,7 +88,7 @@ class Order extends ModelService {
         }
 
         if(empty($search['field'])){
-            $field = "id,mch_id,out_trade_no,systen_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip";
+            $field = "id,mch_id,out_trade_no,system_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip";
         }else{
             //下载
             $field =  $search['field'];
@@ -166,7 +166,7 @@ class Order extends ModelService {
 
         //搜索条件
         $searchField['eq'] = ['mch_id','payment_id','pay_status','notice','ip'];
-        $searchField['like'] = ['out_trade_no','systen_no','transaction_no'];
+        $searchField['like'] = ['out_trade_no','system_no','transaction_no'];
         $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
 
@@ -194,7 +194,7 @@ class Order extends ModelService {
         }
 
 
-        $field = "a.mch_id,a.out_trade_no,a.systen_no,a.transaction_no,a.amount,a.actual_amount,a.total_fee,a.upstream_settle,a.Platform,a.channel_id,a.channel_group_id,a.payment_id,a.pay_status,a.notice,a.pay_time,a.create_time,a.cost_rate,a.run_rate,a.mch_id1,a.mch_id2,a.agent_rate2,a.agent_rate,a.agent_amount,a.agent_amount2,a.over_time,a.ip,w.*,w.remark as remark1,a.remark as remark2";
+        $field = "a.mch_id,a.out_trade_no,a.system_no,a.transaction_no,a.amount,a.actual_amount,a.total_fee,a.upstream_settle,a.Platform,a.channel_id,a.channel_group_id,a.payment_id,a.pay_status,a.notice,a.pay_time,a.create_time,a.cost_rate,a.run_rate,a.mch_id1,a.mch_id2,a.agent_rate2,a.agent_rate,a.agent_amount,a.agent_amount2,a.over_time,a.ip,w.*,w.remark as remark1,a.remark as remark2";
 
         $count = self::alias('a')
             ->where($where)
@@ -252,12 +252,12 @@ class Order extends ModelService {
 
         //搜索条件
         $searchField['eq'] = ['mch_id','payment_id','pay_status','notice'];
-        $searchField['left_like'] = ['out_trade_no','systen_no'];
+        $searchField['left_like'] = ['out_trade_no','system_no'];
         $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
 
         if(empty($search['field'])){
-            $field = "id,mch_id,out_trade_no,systen_no,amount,total_fee,payment_id,actual_amount,create_time,pay_time,productname,pay_status,notice,run_rate,settle";
+            $field = "id,mch_id,out_trade_no,system_no,amount,total_fee,payment_id,actual_amount,create_time,pay_time,productname,pay_status,notice,run_rate,settle";
         }else{
             //下载
             $field =  $search['field'];
@@ -293,12 +293,12 @@ class Order extends ModelService {
 
     //订单 回调数据
     public static function notify($sn,$code = ''){
-        $Order = self::quickGet(['systen_no'=>$sn]);
+        $Order = self::quickGet(['system_no'=>$sn]);
         $Uprofile = Uprofile::quickGet(['uid'=>$Order['mch_id']]);
 
         $data['memberid'] = $Order['mch_id'];
         $data['orderid'] = $Order['out_trade_no'];
-        $data['transaction_id'] = $Order['systen_no'];
+        $data['transaction_id'] = $Order['system_no'];
         $data['amount'] = $Order['amount'];
         $data['datetime'] = $Order['pay_time'];
         $data['returncode'] = '00';
