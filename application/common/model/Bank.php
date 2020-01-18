@@ -30,12 +30,10 @@ class Bank extends ModelService {
         $searchField['eq'] = ['uid'];
         $searchField['like'] = ['account_name'];
         $where = search($search,$searchField,$where);
-
-        halt($where);
-
         $field = '*';
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['update_at'=>'desc'])->select()->each(function ($item, $key) {
+            $item['update_name'] =  getUnamebyId($item['update_by']);
         });
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
         $info = [

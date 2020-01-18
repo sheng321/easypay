@@ -416,6 +416,8 @@ class Level extends AdminController {
             }
         }
 
+        if(empty($get)) return __error('数据异常');
+
         //执行操作
         $del = $this->model->__del($get);
 

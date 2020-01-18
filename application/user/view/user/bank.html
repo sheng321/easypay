@@ -20,7 +20,7 @@
     <div class="layui-form-item layui-inline">
         <label class="layui-form-label-99admin">创建时间</label>
         <div class="layui-input-inline">
-            <input type="text" id="create_time" class="layui-input " placeholder="请选择创建时间">
+            <input type="text" id="update_at" class="layui-input " placeholder="请选择创建时间">
         </div>
     </div>
 
@@ -30,7 +30,7 @@
 
     {if auth("$thisClass/add")}
     <div class="layui-form-item layui-inline">
-        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/saveBark")}' data-title="添加管理员">添加</a>
+        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/saveBark")}' data-title="添加/编辑">添加</a>
     </div>
     {/if}
 
@@ -65,15 +65,17 @@ $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'card_number', title: '银行卡号', minwidth: 1, align: "center"},
         {field: 'bank_name', title: '开户银行', align: 'center'},
         {field: 'branch_name', title: '所在支行', minwidth: 1,   align: "center"},
-        {field: 'location', title: '开户地址', minwidth: 1, align: "center"},
+        {field: 'province', title: '省份', minwidth: 1, align: "center"},
+        {field: 'city', title: '城市', minwidth: 1, align: "center"},
+        {field: 'areas', title: '地区', minwidth: 1, align: "center"},
         {field: 'update_at', title: '最近更新时间', minwidth: 1, align: "center", sort: true},
-        {field: 'location', title: '更新人', minwidth: 1, align: "center"},
+        {field: 'update_name', title: '操作人', minwidth: 1, align: "center"},
         {title: '操作', minWidth: 1, templet: '#currentTableBar', fixed: "right", align: "center"},
     ]]);
     /**
      * 日期范围
      */
-     $.laydate.range('create_time',7);
+     $.laydate.range('update_at',7);
 
 </script>
 {/block}

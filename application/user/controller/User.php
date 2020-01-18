@@ -164,62 +164,62 @@ class User extends UserController {
      *  添加/编辑银行卡
      */
     public function saveBark(){
-        if (!$this->request->isPost()) {
 
-            $data['username'] = $this->user['username'];
+        $Bank =  model('app\common\model\Bank');
+        $uid =  $this->user['uid'];
+
+        if (!$this->request->isPost()){
+           $bank_id =  $this->request->get('id/d',0);
+           if(!empty($bank_id)){
+               $find = $Bank->where(['uid'=>$uid,"id"=>$bank_id])->find();
+               if(empty($find)) return msg_error('该银行卡不存在');
+           }else{
+               $find = [];
+           }
             $basic_data = [
-                'title' => '修改支付密码',
-                'user'  => $data,
+                'title' => '添加/编辑银行卡',
+                'info' => $find,
             ];
             return $this->fetch('', $basic_data);
         } else {
-            $post = $this->request->only(['password','password1','old_password','__token__'], 'post');
-            $post['paypwd1'] =  $this->user['profile']['pay_pwd'];
-
+            $post = $this->request->only(['id','card_number','bank_name','branch_name','province','city','areas','account_name','__token__'], 'post');
+            $post['uid'] = $uid;
             //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Umember.paypwd1');
+            $validate = $this->validate($post, 'app\common\validate\Bank.edit');
             if (true !== $validate) return __error($validate);
-            $data['pay_pwd'] = password($post['password']);
-            $data['id'] = $this->user['profile']['id'];
-            return model('app\common\model\Uprofile')->__edit($data);
-
-        }
-
-
-        $info = array();
-        if($this->request->isPost()){
-            $data = $this->request->param();
-            unset($data['bank_id']);unset($data['__token__']);
-            if(!empty($this->request->param('bank_id'))){//编辑
-                $result = Db::name("bank_card")->where("id",$this->request->param('bank_id'))->update($data);
-            }else{//新增
-                $data['mch_id'] = $this->user['uid'];
-                $result = Db::name("bank_card")->insert($data);
+            unset($post['__token__']);
+            if(empty($post['id'])){
+                return $Bank->__add($post);
+            }else{
+                return $Bank->__edit($post);
             }
-            if($result){
-                return __success('操作成功');
-            }
-            return __error('操作失败');
-        }else{//查看
-            $info = Db::name("bank_card")->where("id",$this->request->param('id'))->find();
         }
-        $this->assign("info",$info);
-        return view("withdrawal/save_bark");
     }
     /**
      *  删除银行卡
      */
     public function delBank(){
-        $id = $this->request->param('id');
-        if(!is_array($id)){
-            $info = Db::name("bank_card")->where("id",$id)->find();
-            if(empty($info)) return __error('数据不存在');
+        $get = $this->request->only('id');
+
+        //验证数据
+        if (!is_array($get['id'])) {
+            $get['uid'] = $this->user['uid'];
+            $validate = $this->validate($get, 'app\common\validate\Bank.del');
+            if (true !== $validate) return __error($validate);
+        }else{
+            foreach ($get['id'] as $k => $val){
+                $data['id'] = $val;
+                $data['uid'] = $this->user['uid'];
+                $validate = $this->validate($data, 'app\common\validate\Bank.del');
+                if (true !== $validate) unset($get['id'][$k]);
+            }
         }
-        $result = Db::name("bank_card")->where("id",'in',$id)->delete();
-        if($result){
-            return __success('删除成功');
-        }
-        return __error('删除失败');
+        if(empty($get)) return __error('数据异常');
+
+        //执行操作
+        $del = model('app\common\model\Bank')->__del($get);
+        return $del;
+
     }
 
 
