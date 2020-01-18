@@ -63,10 +63,7 @@ class Withdrawal extends UserController {
                 }
             }
 
-            //token
-            $__token__ = $this->request->param('__token__/s','');
-            $__hash__ = Session::pull('__token__');
-           // if($__token__ !== $__hash__)  return __error("令牌验证无效，请刷新重试");
+
 
             //谷歌验证码
             if($this->UserInfo['UserGoole'] == 1){
@@ -83,6 +80,13 @@ class Withdrawal extends UserController {
             $validate2 = $this->validate($data2, 'app\common\validate\Umember.paypwd');
             if (true !== $validate2) return __error($validate2);
 
+
+            //token
+            $__token__ = $this->request->param('__token__/s','');
+            $__hash__ = Session::pull('__token__');
+            // if($__token__ !== $__hash__)  return __error("令牌验证无效，请刷新重试");
+
+
            $amount =  $this->request->post('amount/d',0);
 
             if($withdrawal['min_amount'] > $amount) return __error('不能小于最小提现金额！');
@@ -93,7 +97,7 @@ class Withdrawal extends UserController {
             if(empty($bank[$bank_card_id])) return __error('选择银行卡不存在！');
 
             $data['mch_id'] = $uid;
-            $data['systen_no'] = getOrder('w');//提现订单号
+            $data['system_no'] = getOrder('w');//提现订单号
             $data['amount'] = $amount;
             $data['bank_card_id'] = $bank_card_id;
             $data['bank'] = json_encode($bank[$bank_card_id]);
@@ -101,7 +105,7 @@ class Withdrawal extends UserController {
 
 
             $change['change'] = $data['amount'];//变动金额
-            $change['relate'] = $data['systen_no'];//关联订单号
+            $change['relate'] = $data['system_no'];//关联订单号
             $change['type'] = 5;//提现冻结金额类型
 
             $res = Umoney::dispose($Umoney,$change); //处理

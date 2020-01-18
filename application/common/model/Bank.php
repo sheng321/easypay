@@ -58,7 +58,7 @@ class Bank extends ModelService {
 
 
     public static function bList($uid){
-        return self::where("uid",$uid)->cache('bank_list_'.$uid,3)->column("id,card_number,bank_name,account_name",'id');
+        return self::where("uid",$uid)->cache('bank_list_'.$uid,3)->column("id,card_number,bank_name,account_name,province,city,areas",'id');
     }
 
 }

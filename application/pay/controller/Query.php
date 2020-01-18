@@ -33,7 +33,7 @@ class Query extends PayController
         }
 
         $data['memberid'] = $Order['pay_memberid'];
-        $data['orderid'] = $Order['systen_no'];
+        $data['orderid'] = $Order['system_no'];
         $data['amount'] = $Order['amount'];
         $data['time_end'] = $Order['pay_time'];
         $data['transaction_id'] = $Order['out_trade_no'];

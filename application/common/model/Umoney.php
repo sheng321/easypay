@@ -222,6 +222,8 @@ class Umoney extends ModelService {
         $res['data'][] = $data;
 
         $change['balance'] = $data['balance'];
+
+        $change['remark'] = $res['log'];
         $res['change'][] = $change;
 
         if(!empty($p)){

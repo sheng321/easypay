@@ -47,7 +47,10 @@ class Withdrawal extends UserService {
 
         foreach ($data as $k => $v){
             $bank =  json_decode($v['bank'],true);
-
+            $data[$k]['card_number'] = $bank['card_number'];
+            $data[$k]['account_name'] = $bank['account_name'];
+            $data[$k]['bank_name'] = $bank['bank_name'];
+            $data[$k]['location'] = $bank['province'].$bank['city'].$bank['areas'];
         }
 
 

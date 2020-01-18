@@ -187,7 +187,7 @@ class Api extends PayController
         $data['mch_id1'] = $uid1;//上级代理
         $data['mch_id2'] = $uid2;//上上级代理
         $data['out_trade_no'] = $param['pay_orderid'];//商户订单号
-        $data['systen_no'] =  getOrder('s');//平台订单号
+        $data['system_no'] =  getOrder('s');//平台订单号
         $data['amount'] = number_format($param['pay_amount'],2,'.','');//下单金额
         $data['cost_rate'] = $Channel['c_rate'];//成本费率
         $data['run_rate'] = $MemRate;//运营费率
