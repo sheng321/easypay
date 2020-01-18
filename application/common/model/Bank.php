@@ -32,9 +32,14 @@ class Bank extends ModelService {
         $where = search($search,$searchField,$where);
         $field = '*';
         $count = $this->where($where)->count();
-        $data = $this->where($where)->field($field)->page($page, $limit)->order(['update_at'=>'desc'])->select()->each(function ($item, $key) {
-            $item['update_name'] =  getUnamebyId($item['update_by']);
+
+        $order = ['update_at'=>'desc'];
+        if(empty($search['uid']))  $order = ['uid'=>'desc','update_at'=>'desc'];
+
+        $data = $this->where($where)->field($field)->page($page, $limit)->order($order)->select()->each(function ($item, $key) {
+            $item['update_name'] =  getUnamebyId(empty($item['update_by'])?$item['create_by']:$item['update_by']);
         });
+
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
         $info = [
             'limit'        => $limit,

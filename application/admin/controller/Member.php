@@ -1090,7 +1090,6 @@ class Member extends AdminController {
         }
     }
 
-
     /**
      *  银行卡列表
      */
@@ -1105,6 +1104,19 @@ class Member extends AdminController {
             'title' => '银行卡列表',
         ];
         return $this->fetch('', $basic_data);
+    }
+
+    /**
+     *  删除银行卡
+     */
+    public function delBank(){
+        $get = $this->request->only('id');
+        if(empty($get)) return __error('数据异常');
+
+        //执行操作
+        $del = model('app\common\model\Bank')->__del($get);
+        return $del;
+
     }
 
 }

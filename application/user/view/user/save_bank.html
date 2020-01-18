@@ -71,7 +71,7 @@
     /**
      * 添加、编辑
      */
-    $.form.on('submitBtn', "{:url('@user/user/saveBark')}", function (res) {
+    $.form.on('submitBtn','{:url("$thisRequest")}', function (res) {
         $.msg.success(res.msg, function () {
             $.tool.reload('open');
         });
