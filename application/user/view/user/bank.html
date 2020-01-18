@@ -61,14 +61,13 @@
 
 $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 50,},
-        {field: 'id', title: '排序', minwidth: 1, edit: 'text', align: "center", sort: true},
-        {field: 'mch_id', title: '商户号', minwidth: 1, align: 'center', sort: true},
-        {field: 'account_name', title: '开户人', minwidth: 1, align: 'center', sort: true},
-        {field: 'card_number', title: '银行卡号', minwidth: 1, align: "center", sort: true},
-        {field: 'bank_name', title: '开户银行', align: 'center', sort: true},
-        {field: 'branch_name', title: '所在支行', minwidth: 1,  unresize: true, align: "center"},
-        {field: 'location', title: '开户地址', minwidth: 1, unresize: true, align: "center"},
-        {field: 'location', title: '开户地址', minwidth: 1, unresize: true, align: "center"},
+        {field: 'account_name', title: '开户人', minwidth: 1, align: 'center'},
+        {field: 'card_number', title: '银行卡号', minwidth: 1, align: "center"},
+        {field: 'bank_name', title: '开户银行', align: 'center'},
+        {field: 'branch_name', title: '所在支行', minwidth: 1,   align: "center"},
+        {field: 'location', title: '开户地址', minwidth: 1, align: "center"},
+        {field: 'update_at', title: '最近更新时间', minwidth: 1, align: "center", sort: true},
+        {field: 'location', title: '更新人', minwidth: 1, align: "center"},
         {title: '操作', minWidth: 1, templet: '#currentTableBar', fixed: "right", align: "center"},
     ]]);
     /**

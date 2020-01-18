@@ -2,8 +2,6 @@
 
 
 namespace app\user\controller;
-
-
 use app\common\controller\UserController;
 use think\Db;
 class Withdrawal extends UserController {
