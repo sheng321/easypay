@@ -1,0 +1,204 @@
+{extend name="user@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{/block}
+{block name="cotent"}
+<div class="layui-fluid" id="LAY-app-message">
+    <div class="layui-card">
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">批量代付</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-form-item">
+                    <blockquote class="layui-elem-quote" id="amountTip">可申请代付金额: <span style="color: red">0</span> 元</blockquote>
+                </div>
+
+                <div class="layui-tab-item layui-show">
+                    <form class="layui-form center" id="agentpayForm">
+                        <table id="agentpayTable" class="layui-table">
+                            <colgroup>
+                                <col width="200">
+                                <col width="350">
+                                <col width="120">
+                                <col width="100">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>银行账户名</th>
+                                <th>银行账号(卡号)</th>
+                                <th>下发金额</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><input type="text" name="accountName_0" lay-verify="required" placeholder="请输入账户名" autocomplete="off" class="layui-input"></td>
+                                <td><input type="text" name="accountNo_0" lay-verify="required|number" placeholder="请输入账号" autocomplete="off" class="layui-input"></td>
+                                <td><input type="text" name="agentpayAmount_0" lay-verify="required|number" placeholder="请输入金额" autocomplete="off" class="layui-input"></td>
+                                <td><button id="addRow" class="layui-btn layui-btn-sm">增加</button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="layui-form-item" id="payAuthDiv" style="">
+                            <label class="layui-form-label">支付密码</label>
+                            <div class="layui-input-block">
+                                <input type="password" required="" id="payPassword" name="payPassword" placeholder="请输入支付密码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item" id="googleAuthDiv" style="display: none">
+                            <label class="layui-form-label">谷歌验证码</label>
+                            <div class="layui-input-block">
+                                <input type="text" required="" id="googleCode" name="googleCode" placeholder="请输入谷歌验证码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item ">
+                            <div class="layui-input-block">
+                                <button type="button" lay-submit="" lay-filter="btnJSJ" class="layui-btn">提交申请</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="ibox-content">
+    <div class="layui-card">
+        <div class="layui-card-header">{$title|default=''}</div>
+    </div>
+    <blockquote class="layui-elem-quote">
+        <span style="margin:0 10px;" class="text-danger">可提现：{$money.balance|default='0.00'} 元</span>
+        <span style="margin:0 10px;" class="text-muted">冻结资金：{$money.frozen_amount|default='0.00'} 元</span>
+        <span style="margin:0 10px;" class="text-warning">结算方式：T+0</span> <br>
+        <span style="margin:0 10px;" class="text-danger">最低提现：{$withdrawal.min_amount|default='1'} 元</span>
+        <span style="margin:0 10px;" class="text-success">单笔最高：{$withdrawal.max_amount|default='4999'} 元</span>
+        <span style="margin:0 10px;" class="text-muted">提现时间：{$withdrawal.time|default='24小时'}</span>
+    </blockquote>
+</div>
+
+<form class="layui-form form-width-99admin">
+</br>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">提现金额</label>
+        <div class="layui-input-block">
+            <input type="number" name="amount" id="amount"      autocomplete="off"    onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" class="layui-input" lay-verify="required"  placeholder="例如：100">
+            <div class="layui-form-mid layui-word-aux">注：提现金额最小 {$withdrawal.min_amount|default='1'} 元,最高 {$withdrawal.max_amount|default='4999'} 元，提现手续费单笔 {$withdrawal.fee|default='5'} 元，直接在提现金额中扣除。</div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">到账金额：</label>
+            <div class="layui-input-block">
+                <input type="text"  lay-verify="" id="amount1" readonly="" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">手续费：</label>
+            <div class="layui-input-block">
+                <input type="text"  lay-verify="" readonly="" value="{$withdrawal.fee|default='5'}"   autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">银行卡号</label>
+        <div class="layui-input-block">
+            <select id="bank_card_id"  lay-filter="bank_card_id"  name="bank_card_id" lay-verify="required">
+                <option value="">请选择银行卡</option>
+                {volist name="bank" id="vo"}
+                <option value="{$vo.id}">{$vo.card_number}==[{$vo.bank_name}]==[{$vo.account_name}]</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">支付密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="paypwd" id="paypwd"  autocomplete="off"  onfocus="this.removeAttribute('readonly');"  class="layui-input" lay-verify="required"  placeholder="请输入支付密码">
+        </div>
+    </div>
+
+    <!--{if $UserInfo.UserGoole == 1}-->
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">谷歌验证码</label>
+            <div class="layui-input-block">
+                <input type="text" name="google" id="google"  autocomplete="off"  onfocus="this.removeAttribute('readonly');"  class="layui-input" lay-verify="required"  placeholder="请输入谷歌验证码">
+            </div>
+        </div>
+    <!--{/if}-->
+
+    {:token('__token__', 'sha1')}
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+
+<script>
+
+    /**
+     * 添加
+     */
+    $.form.on('submitBtn', '{:url("$thisRequest")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },function (obj) {
+        var data = [];
+        data.data = obj;
+        data.code = 1;
+        data.msg = '';
+
+        if( $.tool.isEmpty($("#amount1").val())){
+            data.code = 0;
+            data.msg = '到账金额异常';
+            return data;
+        }
+
+        if(!$.tool.isEmpty(obj.paypwd)){
+            obj.paypwd = $.md5(obj.paypwd);
+        }
+        return data;
+    });
+
+    $("#amount").blur(function(){
+      var amount =   $("#amount").val();
+      if( $.tool.isEmpty(amount)){
+          return false;
+      }
+      var fee = "{$withdrawal.fee|default='5'}",
+          min_amount = "{$withdrawal.min_amount|default='1'}",
+          max_amount = "{$withdrawal.max_amount|default='4999'}",
+          balance = "{$money.balance|default='0.00'}";
+      if(amount - min_amount < 0){
+          $.msg.error('不能小于最小提现金额！');
+          $("#amount1").val('')
+          return false;
+      }
+
+        if(amount - max_amount > 0){
+            $.msg.error('不能大于最高提现金额！');
+            $("#amount1").val('')
+            return false;
+        }
+        if(balance - amount < 0 ||amount - fee <= 0 ){
+            $.msg.error('金额不正确！');
+            $("#amount1").val('')
+            return false;
+        }
+        $("#amount1").val(amount - fee);
+    });
+
+</script>
+{/block}
