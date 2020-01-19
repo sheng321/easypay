@@ -3,6 +3,7 @@
 namespace app\common\service;
 use app\common\model\Channel;
 use app\common\model\Order;
+use think\Db;
 
 
 /**
@@ -18,7 +19,7 @@ class MoneyService {
      * @param string $transaction_no 上游订单号
      * @param string $amount 实际支付金额
      * @return bool
-     * 包括通道 商户 代理 平台
+     * 包括 通道 商户 代理
      */
     public static function api($system_no,$transaction_no = '',$amount = ''){
 
@@ -54,8 +55,8 @@ class MoneyService {
         if($Channel['account'] == 1){
             $update[] = [
                 'id'=>$user['id'],
-                'total_money'=>$user['total_money'] + $Order['settle'],
-                'frozen_amount_t1'=>$user['frozen_amount_t1'] + $Order['settle'],
+                'total_money'=>Db::raw('total_money+'.$Order['settle']),
+                'frozen_amount_t1'=>Db::raw('frozen_amount_t1+'.$Order['settle']),
             ];
 
             $log[] = [
@@ -73,8 +74,8 @@ class MoneyService {
         }else{
             $update[] = [
                 'id'=>$user['id'],
-                'total_money'=>$user['total_money'] + $Order['settle'],
-                'balance'=>$user['balance'] + $Order['settle'],
+                'total_money'=>Db::raw('total_money+'.$Order['settle']),
+                'balance'=>Db::raw('balance+'.$Order['settle']),
             ];
 
             $log[] = [
@@ -89,7 +90,6 @@ class MoneyService {
             ];
         }
 
-
         //上级代理
         if(!empty($Order['agent_amount']) && !empty($Order['mch_id1']) ){
             $agent1 = $Umoney::quickGet(['uid'=>$Order['mch_id1'],'channel_id'=>0]);
@@ -99,8 +99,8 @@ class MoneyService {
             if($Channel['account'] == 1){
                 $update[] = [
                     'id'=>$agent1['id'],
-                    'total_money'=>$agent1['total_money'] + $Order['agent_amount'],
-                    'frozen_amount_t1'=>$agent1['frozen_amount_t1'] + $Order['agent_amount'],
+                    'total_money'=>Db::raw('total_money+'.$Order['agent_amount']),
+                    'frozen_amount_t1'=>Db::raw('frozen_amount_t1+'.$Order['agent_amount']),
                 ];
 
                 $log[] = [
@@ -118,8 +118,9 @@ class MoneyService {
             }else{
                 $update[] = [
                     'id'=>$agent1['id'],
-                    'total_money'=>$agent1['total_money'] + $Order['agent_amount'],
-                    'balance'=>$agent1['balance'] + $Order['agent_amount'],
+                    'total_money'=>Db::raw('total_money+'.$Order['agent_amount']),
+                    'balance'=>Db::raw('balance+'.$Order['agent_amount']),
+
                 ];
 
                 $log[] = [
@@ -144,8 +145,8 @@ class MoneyService {
             if($Channel['account'] == 1){
                 $update[] = [
                     'id'=>$agent2['id'],
-                    'total_money'=>$agent2['total_money'] + $Order['agent_amount2'],
-                    'frozen_amount_t1'=>$agent2['frozen_amount_t1'] + $Order['agent_amount2'],
+                    'total_money'=>Db::raw('total_money+'.$Order['agent_amount2']),
+                    'frozen_amount_t1'=>Db::raw('frozen_amount_t1+'.$Order['agent_amount2']),
                 ];
                 $log[] = [
                     'uid'=>$agent2['uid'],
@@ -161,8 +162,8 @@ class MoneyService {
             }else{
                 $update[] = [
                     'id'=>$agent2['id'],
-                    'total_money'=>$agent2['total_money'] + $Order['agent_amount2'],
-                    'balance'=>$agent2['balance'] + $Order['agent_amount2'],
+                    'total_money'=>Db::raw('total_money+'.$Order['agent_amount2']),
+                    'balance'=>Db::raw('balance+'.$Order['agent_amount2']),
                 ];
 
                 $log[] = [
@@ -182,13 +183,12 @@ class MoneyService {
         $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
         if(empty($channel_money))  $channel_money = $Umoney->create(['uid'=>0,'channel_id'=>$Channel['id'],'type1'=>1,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
 
-
         //T1 结算
         if($Channel['account'] == 1){
             $update[] = [
                 'id'=>$channel_money['id'],
-                'total_money'=>$channel_money['total_money'] + $Order['upstream_settle'],
-                'frozen_amount_t1'=>$channel_money['frozen_amount_t1'] + $Order['upstream_settle'],
+                'total_money'=>Db::raw('total_money+'.$Order['upstream_settle']),
+                'frozen_amount_t1'=>Db::raw('frozen_amount_t1+'.$Order['upstream_settle']),
             ];
             $log[] = [
                 'uid'=>0,
@@ -204,8 +204,8 @@ class MoneyService {
         }else{
             $update[] = [
                 'id'=>$channel_money['id'],
-                'total_money'=>$channel_money['total_money'] + $Order['upstream_settle'],
-                'balance'=>$channel_money['balance'] + $Order['upstream_settle'],
+                'total_money'=>Db::raw('total_money+'.$Order['upstream_settle']),
+                'balance'=>Db::raw('balance+'.$Order['upstream_settle']),
             ];
             $log[] = [
                 'uid'=>0,
@@ -219,25 +219,6 @@ class MoneyService {
             ];
         }
 
-        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0,'id'=>0]);
-        if(empty($platform)) $platform = $Umoney->create(['id'=>0,'uid'=>0,'channel_id'=>0,'type1'=>2,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
-
-        //T1 结算 平台
-        if($Channel['account'] == 1){
-            $update[] = [
-                'id'=>0,
-                'total_money'=>$platform['total_money'] + $Order['Platform'],
-                'frozen_amount_t1'=>$platform['frozen_amount_t1'] + $Order['Platform'],
-            ];
-        }else{
-            $update[] = [
-                'id'=>0,
-                'total_money'=>$platform['total_money'] + $Order['Platform'],
-                'balance'=>$platform['balance'] + $Order['Platform'],
-            ];
-        }
-
-
         $Order_update = [
             'id'=>$Order['id'],
             'pay_status'=>2,
@@ -246,7 +227,6 @@ class MoneyService {
         if(!empty($transaction_no)) $Order_update['transaction_no'] = $transaction_no;
         if(!empty($amount)) $Order_update['actual_amount'] = $amount;
 
-
         //添加到处理订单列表
         if(!empty(session('admin_info.id'))){
             $OrderDispose =  model('app\common\model\OrderDispose');
@@ -254,9 +234,9 @@ class MoneyService {
         }
 
         $Umoney->startTrans();
-        $save = $Umoney->saveAll($update);//批量修改金额
-        $save1 = model('app\common\model\UmoneyLog')->saveAll($log);//批量添加变动记录
-        $save2 = model('app\common\model\Order')->save($Order_update,['id'=>$Order['id']]);
+        $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
+        $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
+        $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
 
         //添加到处理订单列表
         $save3 = true;
@@ -264,7 +244,7 @@ class MoneyService {
             if(empty($Dispose)){
                 $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动回调']);
             }else{
-                $save3 = $OrderDispose->save([
+                $save3 = $OrderDispose->isUpdate(true)->save([
                     'system_no'=>$system_no,
                     'pid'=>$Order['id'],
                     'record'=>$Dispose['record']."|".session('admin_info.username').'-手动回调'
@@ -274,7 +254,7 @@ class MoneyService {
 
         if (!$save || !$save1|| !$save2|| !$save3) {
             $Umoney->rollback();
-            return '事务更新数据失败';
+            return '订单入账事务更新数据失败';
         }
         $Umoney->commit();
         return true;
@@ -284,7 +264,7 @@ class MoneyService {
     /**
      * 手动退单
      * @param $system_no 系统订单号
-     * 只修改商户，代理和平台的金额
+     * 只修改商户，代理的金额
      */
     public static function back($system_no){
         $Order = Order::quickGet(['system_no'=>$system_no]);
@@ -310,8 +290,8 @@ class MoneyService {
 
         $update[] = [
             'id'=>$user['id'],
-            'total_money'=>$user['total_money'] - $Order['settle'],
-            'balance'=>$user['balance'] - $Order['settle'],
+            'total_money'=>Db::raw('total_money-'.$Order['settle']),
+            'balance'=>Db::raw('balance-'.$Order['settle']),
         ];
 
         $log[] = [
@@ -333,8 +313,8 @@ class MoneyService {
 
             $update[] = [
                 'id'=>$agent1['id'],
-                'total_money'=>$agent1['total_money'] - $Order['agent_amount'],
-                'balance'=>$agent1['balance'] - $Order['agent_amount'],
+                'total_money'=>Db::raw('total_money-'.$Order['agent_amount']),
+                'balance'=>Db::raw('balance-'.$Order['agent_amount']),
             ];
 
             $log[] = [
@@ -356,8 +336,8 @@ class MoneyService {
 
             $update[] = [
                 'id'=>$agent2['id'],
-                'total_money'=>$agent2['total_money'] - $Order['agent_amount2'],
-                'balance'=>$agent2['balance'] - $Order['agent_amount2'],
+                'total_money'=>Db::raw('total_money-'.$Order['agent_amount2']),
+                'balance'=>Db::raw('balance-'.$Order['agent_amount2']),
             ];
 
             $log[] = [
@@ -370,7 +350,6 @@ class MoneyService {
                 'type'=>12,
                 'type1'=>0,//会员
             ];
-
         }
 
 
@@ -379,8 +358,8 @@ class MoneyService {
 
         $update[] = [
             'id'=>$channel_money['id'],
-            'total_money'=>$channel_money['total_money'] - $Order['upstream_settle'],
-            'balance'=>$channel_money['balance'] - $Order['upstream_settle'],
+            'total_money'=>Db::raw('total_money-'.$Order['upstream_settle']),
+            'balance'=>Db::raw('balance-'.$Order['upstream_settle']),
         ];
         $log[] = [
             'uid'=>0,
@@ -394,27 +373,6 @@ class MoneyService {
         ];
 
 
-        //平台金额
-        $platform  = $Umoney::quickGet(['uid'=>0,'channel_id'=>0,'id'=>0]);
-        if(empty($platform)) $platform = $Umoney->create(['id'=>0,'uid'=>0,'channel_id'=>0,'type1'=>2,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
-
-        $update[] = [
-            'id'=>0,
-            'total_money'=>$platform['total_money'] - $Order['Platform'],
-            'balance'=>$platform['balance'] - $Order['Platform'],
-        ];
-        $log[] = [
-            'uid'=>0,
-            'channel_id'=>0,
-            'before_balance'=>$platform['total_money'],
-            'balance'=>$platform['total_money'] - $Order['Platform'],
-            'change'=>$Order['Platform'],
-            'relate'=>$Order['system_no'],
-            'type'=>12,
-            'type1'=>2,//会员
-        ];
-
-
         $Order_update = [
             'id'=>$Order['id'],
             'pay_status'=>0,
@@ -424,17 +382,16 @@ class MoneyService {
         $OrderDispose =  model('app\common\model\OrderDispose');
         $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
 
-
         $Umoney->startTrans();
-        $save = $Umoney->saveAll($update);//批量修改金额
-        $save1 = model('app\common\model\UmoneyLog')->saveAll($log);//批量添加变动记录
-        $save2 = model('app\common\model\Order')->save($Order_update,['id'=>$Order['id']]);
+        $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
+        $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
+        $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
 
         //添加到处理订单列表
         if(empty($Dispose)){
             $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动退单']);
         }else{
-            $save3 = $OrderDispose->save([
+            $save3 = $OrderDispose->isUpdate(true)->save([
                 'system_no'=>$system_no,
                 'pid'=>$Order['id'],
                 'record'=>$Dispose['record']."|".session('admin_info.username').'-手动退单'
