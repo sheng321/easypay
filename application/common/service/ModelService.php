@@ -68,7 +68,6 @@ class ModelService extends Model {
         return date('Y-m-d H:i:s');
     }
 
-
     protected function setLocationAttr()
     {
         $location = get_location();
@@ -96,6 +95,8 @@ class ModelService extends Model {
         self::$redisModel = new StringModel();
     }
 
+
+
     //模型事件
     static protected function init()
     {
@@ -109,6 +110,9 @@ class ModelService extends Model {
             $model->redisEvent($model);
         });
 
+        self::event('before_update', function (ModelService $model) {
+            $model->checkVer($model);
+        });
 
 
         // 一定要用save 和 saveAll 模型方法  必须要加 更新数据主键id参数  否则不会及时更新Redis
@@ -129,6 +133,20 @@ class ModelService extends Model {
 
 
      }
+
+    /**
+     * 检测版本号
+     * 乐观锁
+     * @return bool
+     */
+    static protected function checkVer(ModelService $model){
+        $getData =  $model->getData();
+        if(!isset($getData['verson']) || !isset($getData['id'])) return true;
+        $verson = $model::where(['id' => $getData['id']])->value('verson');
+        if ($verson !== $getData['verson']-1) exceptions('多人同时操作，请刷新再试！');
+        return true;
+    }
+
 
     /**
      * 自动根据标签清除缓存

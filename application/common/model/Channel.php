@@ -136,12 +136,64 @@ class Channel extends ModelService {
 
 
     /**
+     * 出款通道列表信息
+     * @param int $page  当前页
+     * @param int $limit 每页显示数量
+     * @return array
+     */
+    public function wList($page = 1, $limit = 10, $search = []) {
+        $where = [
+            ['pid','=',0],
+        ];
+
+        //搜索条件
+        $searchField['like'] = ['title'];
+
+        $where = search($search,$searchField,$where);
+
+        $field = ['id','title','fee','min_pay','max_pay','inner'];
+
+        $count = $this->where($where)->count();
+        $data = $this->where($where)->field($field)->page($page, $limit)->order(['update_at'=>'desc'])->select();
+        empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+        $Umoney =    model('app\common\model\Umoney')->get_amount(0,'all');
+
+        foreach ($data as $k => $val){
+            $data[$k]['balance'] = $Umoney[$val['id']]["balance"];
+            $data[$k]['frozen_amount'] = $Umoney[$val['id']]["frozen_amount"];
+
+            $data[$k]['LAY_CHECKED'] = false;
+            if($val['id'] ==  $search['channel_id']){
+                $data[$k]['LAY_CHECKED'] = true;
+            }
+        }
+
+        $info = [
+            'limit'        => $limit,
+            'page_current' => $page,
+            'page_sum'     => ceil($count / $limit),
+        ];
+        $list = [
+            'code'  => 0,
+            'msg'   => $msg,
+            'count' => $count,
+            'info'  => $info,
+            'data'  => $data,
+        ];
+
+        return $list;
+    }
+
+
+
+    /**
      * ID与成本费率和运营费率
      * @param array $modules
      */
     public static function idRate(){
         \think\facade\Cache::remember('ChannelIdRate', function () {
-            $data = self::column('id,c_rate,s_rate,title,pid','id');
+            $data = self::column('id,c_rate,s_rate,title,pid,fee','id');
             \think\facade\Cache::tag('Channel')->set('ChannelIdRate',$data,60);
             return \think\facade\Cache::get('ChannelIdRate');
         });

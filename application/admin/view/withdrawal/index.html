@@ -25,7 +25,6 @@
             </div>
         </div>
 
-
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label-99admin">状态</label>
             <div class="layui-input-inline">
@@ -35,7 +34,6 @@
                     <option value="2">处理中</option>
                     <option value="3">已完成</option>
                     <option value="4">失败退款</option>
-                   
                 </select>
             </div>
         </div>
@@ -43,7 +41,7 @@
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label-99admin">创建时间</label>
             <div class="layui-input-inline">
-                <input type="text" id="create_time" class="layui-input " placeholder="请选择创建时间">
+                <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间">
             </div>
         </div>
 
@@ -91,41 +89,57 @@
         
 
     </script>
+
+    <script type="text/html" id="channel">
+        {{#  if(d.channel_id == '0'){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-danger  "  data-width="100%"   data-open='{:url("$thisClass/channel")}?channel_id={{d.channel_id}}&id={{d.id}}' data-title="出款通道---商户号：{{d.mch_id}}---申请金额：{{d.amount}}">没有通道</a>
+        {{#  } else { }}
+            {{d.channel_title}}
+        {{#  } }}
+
+        <a class="layui-btn layui-btn-xs layui-btn-danger  "  data-width="100%"   data-open='{:url("$thisClass/channel")}?channel_id={{d.channel_id}}&id={{d.id}}&verson={{d.verson + 1}}' data-title="出款通道---商户号：{{d.mch_id}}---申请金额：{{d.amount}}">没有通道</a>
+    </script>
+
     <!--表单操作栏--结束-->
 </form>
 {/block}
 
 {block name="script"}
 <script>
-
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
-        {field: 'id', title: 'ID', minWidth: 80, align: "center"},
-        {field: 'system_sn', title: '订单号',  minWidth: 80, align: "center"},
-        {field: 'mch_id', title: '商户号',  minWidth: 120,  align: "center"},
-        {field: 'channel', title: '出款渠道', minWidth: 120,edit: 'text',  unresize: true, align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
-        {field: 'lock_name', title: '锁定人', unresize: true, align: "center"},
-        {title: '操作', minWidth: 180, templet: '#currentTableBar',  align: "center"},
-        {field: 'status', title: '状态',templet: '#checkStatus', align: 'center'},
-        {field: 'total_fee', title: '手续费', align: 'center'},
-        {field: 'total_amount', title: '申请金额',  minWidth: 100, align: "center"},
-        {field: 'actual_amount', title: '实际到账', align: 'center'},
-        {field: 'card_number', title: '银行卡号', minWidth: 20, unresize: true, align: "center"},
-        {field: 'account_name', title: '开户人', align: 'center'},
-        {field: 'bank_name', title: '银行名称', minWidth: 80,  unresize: true, align: "center"},
-        {field: 'location', title: '开卡地址', minWidth: 80,unresize: true, align: "center"},
-        {field: 'create_time', title: '申请时间', minWidth: 80, unresize: true, align: "center"},
-        {field: 'update_time', title: '更新时间', minWidth: 80, unresize: true, align: "center"},
+        {field: 'id', title: 'ID', Width: 5, align: "center",  unresize: true},
+        {field: 'mch_id', title: '商户号',  minWidth: 1,  align: "center"},
+        {field: 'system_no', title: '订单号',  minWidth: 1, align: "center"},
+        {field: 'amount', title: '申请金额',  minWidth: 1, align: "center"},
+        {field: 'fee', title: '手续费', align: 'center'},
+        {field: 'card_number', title: '银行卡号', minWidth: 1,  align: "center"},
+        {field: 'account_name', title: '开户人', align: 'center', minWidth: 1},
+        {field: 'bank_name', title: '银行名称', minWidth: 1, align: "center"},
+        {field: 'branch_name', title: '支行', minWidth: 1,  align: "center"},
+        {field: 'status', title: '状态',templet: '#checkStatus', align: 'center', minWidth: 1},
+
+        {field: 'channel_id', title: '出款', minWidth: 1, align: "center", templet: '#channel'},
+        {field: 'lock_name', title: '锁定人',  align: "center", minWidth: 1},
+        {field: 'channel_fee', title: '通道手续费', minWidth: 1, align: "center"},
+        {title: '操作', minWidth: 1, templet: '#currentTableBar',  align: "center", minWidth: 1},
+
+        {field: 'remark', title: '备注', minWidth: 1,edit: 'text',   align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
+        {field: 'remark1', title: '商户说明', minWidth: 1,edit: 'text',   align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
+
+        {field: 'actual_amount', title: '实际到账', align: 'center', minWidth: 1},
+        {field: 'location', title: '开卡地址', minWidth: 1, align: "center"},
+        {field: 'create_at', title: '申请时间', minWidth: 1,  align: "center"},
+        {field: 'update_at', title: '更新时间', minWidth: 1,  align: "center"},
+        {field: 'record', title: '操作记录', minWidth: 1,  align: "center"},
     ]]);
 
     /**
      * 日期范围
      */
-    $.laydate.range('create_time',7);
+    $.laydate.range('create_at',7);
     /**
      * 监听字段值编辑
      */
      $.form.editField('currentTable', '{:url("$thisRequest")}');
-
-  
 </script>
 {/block}

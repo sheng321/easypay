@@ -102,17 +102,19 @@ class Umoney extends ModelService {
     }
 
 
-
-
-
     /**
-     * Undocumented 获取余额
-     *
+     *  获取金额信息
      * @param [type] $mch
-     * @return void
      */
-    public static function get_amount($mch){
-        return self::where("uid",$mch)->value("balance");
+    public static function get_amount($mch = '0',$channel = '0'){
+        $mch = strval($mch);
+        $channel = strval($channel);
+
+        if($mch === '0' && $channel === '0') return self::where(['uid'=>$mch,'channel_id'=>$channel])->column(['total_money','frozen_amount','balance'],'id');
+        if($mch === '0' && $channel === 'all') return self::where([['uid','=',$mch],['channel_id','>',0]])->column(['id','total_money','frozen_amount','balance'],'channel_id');
+        if($mch === 'all' && $channel === '0') return self::where([['uid','>',$mch],['channel_id','=',0]])->column(['id','total_money','frozen_amount','balance','df'],'id');
+        if($mch === '0' ) return self::where(['uid'=>$mch,'channel_id'=>$channel])->column(['id','total_money','frozen_amount','balance'],'channel_id');
+        if($channel === '0') return self::where(['uid'=>$mch,'channel_id'=>$channel])->column(['id','total_money','frozen_amount','balance','df'],'id');
     }
 
     /**

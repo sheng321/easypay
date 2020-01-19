@@ -152,16 +152,4 @@ class Channel extends Validate {
         return true;
     }
 
-
-
-    /**
-     * 检测ID版本号
-     * 乐观锁
-     */
-    protected function checkVer($value, $rule, $data = []) {
-       if(!isset($data['verson'])) return true;
-        $verson = \app\common\model\Channel::where(['id' => $value])->value('verson');
-        if ($verson !== $data['verson']-1) return '多人同时操作，请刷新再试！';
-        return true;
-    }
 }
