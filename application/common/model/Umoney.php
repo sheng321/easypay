@@ -157,30 +157,40 @@ class Umoney extends ModelService {
         switch ($change['type']){
             case 3:
                 $res['log'] = $temp.'添加金额'.$change['change'];
+
                 $data['balance'] = $data['balance'] + $change['change'];
                 $data['total_money'] = $data['total_money'] + $change['change'];
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1']);
+                $change['balance'] = $data['balance'];//变动后的金额
+
+                $data['balance'] =  Db::raw('balance+'.$change['change']);
+                $data['total_money'] = Db::raw('total_money+'.$change['change']);
 
                 if($change['type1'] != 2){ //不是平台的情况
-                    $p['balance'] = $p['balance'] - $change['change'];
-                    $p['total_money'] = $p['total_money'] - $change['change'];
+                    $p['balance'] = Db::raw('balance-'.$change['change']);
+                    $p['total_money'] = Db::raw('total_money-'.$change['change']);
                     $change1['type'] = 4;
                 }
-
 
                 $change['relate'] = '平台';
 
                 break;
             case 4:
                 $res['log'] = $temp.'扣除金额'.$change['change'];
+
                 $data['balance'] = $data['balance'] - $change['change'];
-
                 if($data['balance'] < 0)   $res['msg'] = '变动金额大于可用金额';
-
                 $data['total_money'] = $data['total_money'] - $change['change'];
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1']);
+                $change['balance'] = $data['balance'];//变动后的金额
+
+                $data['balance'] =  Db::raw('balance-'.$change['change']);
+                $data['total_money'] = Db::raw('total_money-'.$change['change']);
+
 
                 if($change['type1'] != 2){
-                    $p['balance'] = $p['balance'] + $change['change'];
-                    $p['total_money'] = $p['total_money'] + $change['change'];
+                    $p['balance'] =  Db::raw('balance+'.$change['change']);
+                    $p['total_money'] =  Db::raw('total_money+'.$change['change']);
                     $change1['type'] = 3;
                 }
 
@@ -189,46 +199,74 @@ class Umoney extends ModelService {
                 break;
             case 5: //提现冻结
                 $res['log'] = $temp.'提现冻结'.$change['change'];
-                $data['balance'] = $data['balance'] - $change['change'];
 
+                $data['balance'] = $data['balance'] - $change['change'];
                 if($data['balance'] < 0)   $res['msg'] = '变动金额大于可用金额';
                 $data['frozen_amount'] = $data['frozen_amount'] + $change['change'];
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1']);
+                $change['balance'] = $data['balance'];//变动后的金额
+
+                $data['balance'] =  Db::raw('balance-'.$change['change']);
+                $data['frozen_amount'] = Db::raw('frozen_amount+'.$change['change']);
 
                 break;
             case 10:
                 $res['log'] = $temp.'人工解冻金额'.$change['change'];
+
                 $data['artificial'] = $data['artificial'] - $change['change'];
-
                 if($data['artificial'] < 0)   $res['msg'] = '变动金额大于人工冻结金额';
-
                 $data['balance'] = $data['balance'] + $change['change'];
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1']);
+                $change['balance'] = $data['balance'];//变动后的金额
+
+                $data['balance'] =  Db::raw('balance+'.$change['change']);
+                $data['artificial'] = Db::raw('artificial-'.$change['change']);
+
                 break;
             case 9:
                 $res['log'] = $temp.'人工冻结金额'.$change['change'];
+
                 $data['balance'] = $data['balance'] - $change['change'];
-
                 if($data['balance'] < 0)   $res['msg'] = '变动金额大于可用余额:'.$data['balance'];
-
                 $data['artificial'] = $data['artificial'] +  $change['change'];
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1']);
+                $change['balance'] = $data['balance'];//变动后的金额
+
+                $data['balance'] =  Db::raw('balance-'.$change['change']);
+                $data['artificial'] = Db::raw('artificial+'.$change['change']);
+
                 break;
             default:
+                $total_money = false;
                 $res['msg'] = '资金异常!';
                 break;
         }
 
-        $total_money =  $data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'];
-        if($total_money != $data['total_money'])  $res['msg'] = '资金异常!';
+        if($total_money != 0)  $res['msg'] = '资金异常!';
 
         $res['data'][] = $data;
 
-        $change['balance'] = $data['balance'];
+        switch (true){
+            case (session('admin_info.username')):
+                $username = '系统操作人:'.session('admin_info.username').'-';
+                break;
+            case (session('user_info.username')):
+                $username = '商户操作人:'.session('admin_info.username').'-';
+                break;
+            case (session('agent_info.username')):
+                $username = '代理操作人:'.session('admin_info.username').'-';
+                break;
+            default:
+                $username = '';
+                break;
+        }
 
-        $change['remark'] = $res['log'];
+        $change['remark'] = $username.$res['log'];
         $res['change'][] = $change;
 
         if(!empty($p)){
             $res['data'][] = $p;
-            $change1['balance'] = $p['balance'];
+            $change1['balance'] = $p['balance']; //平台变动后的金额
             $res['change'][] = $change1;
         }
 
