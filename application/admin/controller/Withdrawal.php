@@ -88,26 +88,8 @@ class Withdrawal extends AdminController {
             $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
             if (true !== $validate) return __error($validate);
 
-            //权重 和 并发 编辑
-            if($post['field'] == 'weight' || $post['field'] == 'concurrent'){
-
-                $ChannelProduct = model('app\common\model\ChannelProduct');
-
-                $id = $ChannelProduct->where(['channel_id'=>$post['id']])->value('id');
-                if(empty($id)) return '数据错误，请重试';
-
-                $data2['id'] = $id;
-                $data2['field'] = $post['field'];
-                $data2['value'] = $post['value'];
-
-                //保存数据,返回结果
-                return $ChannelProduct->editField($data2);
-
-            }else{
-                //保存数据,返回结果
-                return model('app\common\model\Channel')->editField($post);
-            }
-
+            //保存数据,返回结果
+            return model('app\common\model\Channel')->editField($post);
         }
 
 
@@ -140,17 +122,16 @@ class Withdrawal extends AdminController {
        $res =  $this->model->save([
              'id'=>$pid,
             'channel_id'=>$Channel['id'],
-            'fee'=>$Channel['fee'],
+            'channel_fee'=>$Channel['fee'],
+           'lock_id'=>$this->user['id'],
             'record'=>empty($order['record'])?$this->user['username']."选择下发通道:".$Channel['title']:$order['record']."|".$this->user['username']."选择下发通道:".$Channel['title'],
-           'verson'=>$verson,
+           'verson'=>$verson, //防止多人操作
         ],['id'=>$pid]);
 
        if(!$res) return __error("操作失败");
 
        return __success('操作成功');
     }
-
-
 
 
     /**

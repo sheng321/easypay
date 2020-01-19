@@ -24,7 +24,7 @@ class ChannelGroup extends Validate {
      * @var array
      */
     protected $rule = [
-        'id'      => 'require|number|checkProductId|checkVer',
+        'id'      => 'require|number',
         'title'   => 'require|max:30|token',
         'sort'    => 'member',
         'remark'  => 'max:250',
@@ -75,8 +75,8 @@ class ChannelGroup extends Validate {
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id','title','remark','code','p_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num'])
-            ->remove('id', 'checkProductId');
+        return $this->only(['id','title','remark','code','p_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num']);
+
     }
 
     /**用户添加通道分组
@@ -84,26 +84,11 @@ class ChannelGroup extends Validate {
      */
     public function sceneChannel() {
         return $this->only(['id'])
-            ->remove('id', 'checkProductId')
             ->remove('id', 'checkVer');
     }
 
 
-    /**
-     * 检测ID是否存在
-     * @param $value
-     * @param $rule
-     * @param array $data
-     * @return bool|string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    protected function checkProductId($value, $rule, $data = []) {
-        $user = \app\common\model\ChannelGroup::where(['id' => $value])->find();
-        if (empty($user)) return '暂无支付产品数据，请稍后再试！';
-        return true;
-    }
+
 
 
 }

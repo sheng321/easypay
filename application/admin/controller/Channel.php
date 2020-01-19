@@ -583,4 +583,26 @@ class Channel  extends AdminController
 
 
 
+    /**
+     * 更改通道手续费状态
+     * @return \think\response\Json
+     */
+    public function inner() {
+        $get = $this->request->get();
+
+        //验证数据
+        $validate = $this->validate($get, 'app\common\validate\Channel.inner');
+        if (true !== $validate) return __error($validate);
+
+        //判断菜单状态
+        $status = $this->model->where('id', $get['id'])->value('inner');
+        $status == 1 ? list($msg, $status) = ['内扣开启成功', $status = 0] : list($msg, $status) = ['外扣启用成功', $status = 1];
+
+        //执行更新操作操作
+        $update =  $this->model->__edit(['inner' => $status,'id' => $get['id']],$msg);
+        return $update;
+    }
+
+
+
 }

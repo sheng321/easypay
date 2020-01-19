@@ -19,8 +19,10 @@
         </div>
 
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-sm"  data-search-top="currentTableId">查找</a>
+            <a class="layui-btn layui-btn-sm" data-search="currentTableId">查找</a>
         </div>
+
+
 
         {if auth("$thisClass/add")}
         <div class="layui-form-item layui-inline">
@@ -49,79 +51,70 @@
 
 {block name="script"}
 <script       >
-    ;layui.use(['laydate', 'form', 'layer', 'table', 'laytpl', 'jquery'], function () {
-        var table = layui.table,
-            $ = layui.jquery;
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax&channel_id={$Think.get.channel_id}', [[
+        {type: "checkbox",fixed: "left", width: 30,},
+        {field: 'id', title: 'ID', minWidth: 20, align: 'center',sort:true},
+        {field: 'title', title: '通道', minWidth: 20, align: 'center'},
+        {field: 'fee',title: '手续费',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;',sort:true},
+        {field: 'inner', title: '状态', width: 100, templet: '#checkInner', unresize: true, align: "center"},
+        {field: 'min_pay', title: '最低', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;',sort:true},
+        {field: 'max_pay', title: '最高', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;',sort:true},
+        {field: 'balance', title: '余额', minWidth: 20, align: 'center', style: ' color: red;',sort:true},
+        {field: 'frozen_amount', title: '冻结', minWidth: 20, align: 'center',sort:true},
 
-        // 当前页面Bogy对象
-        var $body = $('body');
-
-        /**
-         * 生成表单
-         */
-        $.form.table('current', '{:url("$thisRequest")}?type=ajax&channel_id={$Think.get.channel_id}', [[
-            {type: "checkbox",fixed: "left", width: 30,},
-            {field: 'title', title: '通道', minWidth: 20, align: 'center'},
-            {field: 'fee',title: '手续费',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;'},
-            {field: 'inner', title: '状态', width: 100, templet: '#checkInner', unresize: true, align: "center"},
-            {field: 'min_pay', title: '最低', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;'},
-            {field: 'max_pay', title: '最高', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;'},
-            {field: 'balance', title: '余额', minWidth: 20, align: 'center', style: ' color: red;'},
-            {field: 'frozen_amount', title: '冻结', minWidth: 20, align: 'center'},
-
-        ]], false,function (res,curr,count){
-            $('tr').each(function(index, element){
-                var id = index -1;
-                if(id >=0 && id < $('tr').length -3){
-                    if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
-                        $(element).find('td').each(function(index1, element1){
-                            $(element1).removeAttr("data-edit");
-                            $(element1).removeAttr("style");
-                        });
-                    }
+    ]], false,function (res,curr,count){
+        $('tr').each(function(index, element){
+            var id = index -1;
+            if(id >=0 && id < $('tr').length -3){
+                if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
+                    $(element).find('td').each(function(index1, element1){
+                        $(element1).removeAttr("data-edit");
+                        $(element1).removeAttr("style");
+                    });
                 }
-            });
-        },100);
+            }
+        });
+    },100);
 
-        /**
-         * 监听字段值编辑
-         */
-        $.form.editField('currentTable', '{:url("$thisRequest")}');
+    /**
+     * 监听字段值编辑
+     */
+    $.form.editField('currentTable', '{:url("$thisRequest")}');
 
-        /**
-         * 修改状态
-         */
-        $.form.switch('modifyInner', '{:url("$thisClass/inner")}');
+    /**
+     * 修改状态
+     */
+    $.form.switch('modifyInner', '{:url("@admin/channel/inner")}');
 
-
-        /**
-         * 注册 data-check-all 事件
-         */
-        $body.on('click', '[data-check-all]', function () {
-            var url = $(this).attr('data-check-all');
-            var checkStatus = table.checkStatus($(this).attr('data-table-id')),
-                data = checkStatus.data,
-                id = [];
-                for (let i in data) {
-                    id.push(data[i].id);
-                }
-               var num  = id.length;
-                if(num != 1){
-                    $.msg.error('请选择一条通道！！');
-                    return false;
-                }
-
-                $.msg.confirm($(this).attr('data-title'), function () {
-                    $.request.get(url, {id: id}, function (res) {
-                        $.msg.success(res.msg, function () {
-                            $.tool.reload();
-                        })
-                    })
-                });
-
+    /**
+     * 注册 data-check-all 事件
+     */
+    $('body').on('click', '[data-check-all]', function () {
+        var url = $(this).attr('data-check-all');
+        var checkStatus = table.checkStatus($(this).attr('data-table-id')),
+            data = checkStatus.data,
+            id = [];
+        for (let i in data) {
+            id.push(data[i].id);
+        }
+        var num  = id.length;
+        if(num != 1){
+            $.msg.error('请选择一条通道！！');
             return false;
+        }
+
+        $.msg.confirm($(this).attr('data-title'), function () {
+            $.request.get(url, {id: id}, function (res) {
+                $.msg.success(res.msg, function () {
+                    $.tool.reload('open');
+                })
+            })
         });
 
+        return false;
     });
 </script>
 {/block}

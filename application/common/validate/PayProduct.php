@@ -24,7 +24,7 @@ class PayProduct extends Validate {
      * @var array
      */
     protected $rule = [
-        'id'      => 'require|number|checkProductId|checkVer',
+        'id'      => 'require|number|checkProductId',
         'title'   => 'require|max:30|token',
         'sort'    => 'member',
         'remark'  => 'max:250',

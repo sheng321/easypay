@@ -13,7 +13,7 @@ class Channel extends Validate {
      * @var array
      */
     protected $rule = [
-        'id'      => 'require|number|checkProductId|checkVer',
+        'id'      => 'require|number',
         'pid'      => 'require|number|checkPid',
         'title'   => 'require|max:30',
         'sort'    => 'member',
@@ -92,6 +92,7 @@ class Channel extends Validate {
 
         //更改角色状态
         'status'     => ['id'],
+        'inner'     => ['id'],
         'visit'     => ['id'],
 
     ];
@@ -101,13 +102,11 @@ class Channel extends Validate {
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge','limit_time','limit_money'])
-            ->remove('id', 'checkProductId');
+        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge','limit_time','limit_money']);
     }
 
     public function sceneSort() {
-        return $this->only(['sort','id'])
-            ->remove('id', 'checkProductId');
+        return $this->only(['sort','id']);
     }
 
     /**
@@ -115,26 +114,11 @@ class Channel extends Validate {
      * @return Node
      */
     public function scenePedit() {
-        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num'])
-            ->remove('id', 'checkProductId');
+        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num']);
     }
 
 
-    /**
-     * 检测ID是否存在
-     * @param $value
-     * @param $rule
-     * @param array $data
-     * @return bool|string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    protected function checkProductId($value, $rule, $data = []) {
-        $user = \app\common\model\Channel::where(['id' => $value])->find();
-        if (empty($user)) return '暂无支付通道数据，请稍后再试！';
-        return true;
-    }
+
 
     /**
      * 检测PID是否存在
