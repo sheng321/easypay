@@ -34,6 +34,7 @@ class Umember extends Validate {
 
     ];
 
+
     /**
      * 错误提示
      * @var array
@@ -55,6 +56,9 @@ class Umember extends Validate {
 
         'google_token.require'        => '绑定谷歌失败，请联系商户',
         'google_token.length'        => '绑定谷歌失败，请联系商户',
+
+        'paypwd.require'        => '支付密码不存在',
+        'paypwd.length'        => '支付密码格式不正确',
 
     ];
 

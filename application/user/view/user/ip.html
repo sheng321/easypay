@@ -1,0 +1,116 @@
+{extend name="user@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+{block name="cotent"}
+
+<!--  搜索-->
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <form class="layui-form">
+                    <blockquote id="searchBlock" class=" quoteBox">
+
+                        <div class="layui-form-item layui-inline">
+                            <label class="layui-form-label-99admin">IP</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="ip" class="layui-input" placeholder="请输入IP"/>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item layui-inline">
+                            <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+                        </div>
+
+                        {if auth("$thisClass/save_ip")}
+                        <div class="layui-form-item layui-inline">
+                            <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/save_ip")}' data-title="添加IP">添加</a>
+                        </div>
+                        {/if}
+
+                        {if auth("$thisClass/del_ip")}
+                        <div class="layui-form-item layui-inline">
+                            <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del_ip")}' data-table-id="currentTableId">删除</a>
+                        </div>
+                        {/if}
+                    </blockquote>
+
+                    <!-- end --->
+                    <table id="currentTable" lay-filter="currentTable"></table>
+                    <script type="text/html" id="currentTableBar">
+
+                        {if auth("$thisClass/del_ip")}
+                        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del_ip")}?id={{d.id}}'>删除</a>
+                        {/if}
+
+                    </script>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="script"}
+<script>
+
+$.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {type: "checkbox", fixed: "left", width: 50,},
+        {field: 'type', title: '类型', minwidth: 1, align: "center",templet:function (d) {
+            if (d.type == 0) {
+                return '登入IP';
+            } else if (d.type == 1) {
+                return '结算提现IP';
+            } else if (d.type == 2) {
+                return '代付提现IP';
+            }
+        }},
+        {field: 'ip', title: 'ip', minwidth: 1, align: "center"},
+        {field: 'create_at', title: '创建时间', minwidth: 1, align: "center", sort: true},
+        {field: 'create_name', title: '操作人', minwidth: 1, align: "center"},
+        {title: '操作', minWidth: 1, templet: '#currentTableBar', fixed: "right", align: "center"},
+    ]], false,function (res,curr,count){
+    merge(res)
+},100);
+
+function merge(res) {
+    var data = res.data;
+    var mergeIndex = 0;//定位需要添加合并属性的行数
+    var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+    var columsName = ['type'];//需要合并的列名称
+    var columsIndex = [1];//需要合并的列索引值
+
+    for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+        var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+        for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+            var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+            var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+            if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                mark += 1;
+                //相同列的第一列增加rowspan属性
+                tdPreArr.each(function () {
+                    $(this).attr("rowspan", mark);
+                });
+                //当前行隐藏
+                tdCurArr.each(function () {
+                    $(this).css("display", "none");
+                });
+            }else {
+                mergeIndex = i;
+                mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+            }
+        }
+        mergeIndex = 0;
+        mark = 1;
+    }
+}
+
+</script>
+{/block}

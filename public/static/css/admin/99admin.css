@@ -46,7 +46,7 @@
     text-align: right;
 }
 
-.layui-elem-quote {
+/*.layui-elem-quote {
     word-break: break-all;
     margin-bottom: 10px;
     padding: 1px !important;
@@ -54,7 +54,7 @@
     border-left: 5px !important;
     border-radius: 0 2px 2px 0;
     background-color: #ffffff !important;
-}
+}*/
 
 .form-width-99admin {
     width: 98%;

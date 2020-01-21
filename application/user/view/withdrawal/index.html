@@ -17,6 +17,7 @@
             <input type="text" id="account_name" class="layui-input" placeholder="请输入开户人"/>
         </div>
     </div>
+
     <div class="layui-form-item layui-inline">
         <label class="layui-form-label-99admin">订单号</label>
         <div class="layui-input-inline">
@@ -45,7 +46,7 @@
         <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
     </div>
 
-    {if auth("$thisClass/add")}
+    {if auth("$thisClass/addWithdrawal")}
     <div class="layui-form-item layui-inline">
         <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/addWithdrawal")}' data-title="申请提现">申请提现</a>
     </div>
@@ -76,11 +77,12 @@ $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'actual_amount', title: '实际到账',width: 100,align: 'center'},
         {field: 'card_number', title: '银行卡号', width: 150,  unresize: true, align: "center"},
         {field: 'account_name', title: '开户人', width: 80,  unresize: true, align: "center"},
-        {field: 'bank_name', title: '开户行', width: 100,  unresize: true, align: "center"},
+        {field: 'bank_name', title: '银行名称', width: 100,  unresize: true, align: "center"},
         {field: 'location', title: '开卡地区', width: 190, unresize: true, align: "center"},
         {field: 'status', title: '状态', width: 90, templet: '#checkStatus', unresize: true, align: "center"},
         {field: 'create_at', title: '申请时间', width: 170, unresize: true, align: "center"},
-        {field: 'remark', title: '备注', width: 80,  align: "center"},
+        {field: 'remark1', title: '备注', width: 80,  align: "center"},
+    {field: 'ip', title: 'IP', width: 80,  align: "center"},
     ]]);
     /**
      * 日期范围

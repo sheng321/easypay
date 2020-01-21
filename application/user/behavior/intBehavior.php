@@ -14,12 +14,8 @@ class intBehavior extends Controller
     public function run()
     {
 
-        //halt(\app\common\model\SysMenu::getUserMenuApi());
-
-
         Policy();
-
-      $this->check_param();
+        $this->check_param();
     }
 
 

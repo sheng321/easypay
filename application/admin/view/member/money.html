@@ -18,6 +18,12 @@
         </div>
     </div>
     <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">代付金额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input "  value="{$user.df|default=''}" readonly  >
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">人工冻结金额</label>
         <div class="layui-input-block">
             <input type="text"   class="layui-input " value="{$user.artificial|default=''}" readonly >

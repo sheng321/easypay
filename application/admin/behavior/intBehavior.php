@@ -93,6 +93,12 @@ class intBehavior extends Controller
                     $v = str_replace("*","",$v);
                 }
 
+                if($k == 'time'){ //提现时间
+                    $v = str_replace("|","",$v);
+                    $v = str_replace(":","",$v);
+                }
+
+
                 $data['param'] = $v;
                 $data['param_k'] = $k;
 
@@ -100,7 +106,6 @@ class intBehavior extends Controller
                 $validate1 = $this->validate($data, 'app\common\validate\Common.check_param'); //必须为数组或者字母
                 if (true !== $validate1){
                     logs(json_encode(array($k=>$v),320),'error');
-
                     exceptions($validate1);
                 }
             }else{

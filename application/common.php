@@ -4,6 +4,33 @@
 
 
 if (!function_exists('convertAmountToCn')) {
+/**
+ * 修改config的函数
+ *  @param $name 文件名
+ * @param $arr 一维数组
+ * @return bool 返回状态
+ */
+function setconfig($name,$arr)
+{
+    $pats = array();
+    $reps = array();
+    foreach ($arr as $k => $v){
+        $pats[$k] = '/\'' . $k . '\'(.*?),/';
+        $reps[$k] = "'". $k. "'". "=>" . "'".$v ."',";
+    }
+
+    $fileurl = Env::get('config_path'). $name.".php";
+    $string = file_get_contents($fileurl); //加载配置文件
+    $string = preg_replace($pats, $reps, $string); // 正则查找然后替换
+    file_put_contents($fileurl, $string); // 写入配置文件
+    return true;
+}
+}
+
+
+
+
+if (!function_exists('convertAmountToCn')) {
 
 /**
  * 将数值金额转换为中文大写金额
@@ -479,13 +506,14 @@ if (!function_exists('exceptions')) {
             throw new \think\exception\HttpResponseException(json($result));
         }else{
             if (is_null($url)) {
-                $url = Request()->isAjax() ? '' : 'javascript:history.back(-1);';
+                $url = Request()->isAjax() ? '' : 'javascript:history.back(-2);';
             } elseif ('' !== $url) {
                 $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('url')->build($url);
             }
 
             $result['url'] = $url;
             $result['wait'] = 4;
+
             $response = \think\facade\Response::create($result, 'jump')->options(['jump_template' => config('app.dispatch_error_tmpl') ]);
             throw new \think\exception\HttpResponseException( $response);
         }
@@ -900,7 +928,7 @@ function Policy(){
     $report = '';
     header('Content-Type: text/javascript; charset=utf-8');
     //设置heard头
-    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;child-src 'self';form-action 'self';object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:; report-uri $report ");
+    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com  http://cdn.bootcss.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;child-src 'self';form-action 'self';object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:; report-uri $report ");
 }
 
 
@@ -914,7 +942,7 @@ function PolicyApi(){
     $report = '';
     header('Content-Type: text/javascript; charset=utf-8');
     //设置heard头
-    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;child-src 'self';form-action *;object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:; report-uri $report ");
+    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com http://cdn.bootcss.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;child-src 'self';form-action *;object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:; report-uri $report ");
 }
 
 

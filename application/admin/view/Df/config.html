@@ -1,0 +1,61 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+
+<form class="layui-form" style="width:80%;" method="post"  >
+    <br>
+    <div class="layui-card">
+        <div class="layui-card-header">{$title|default=''}</div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">是否开启：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="1" title="开启"    {eq name='$data.status|default=false' value='1' }checked="checked"{/eq}    ><div class="layui-unselect layui-form-radio layui-form-radioed"       ><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>开启</div></div>
+                <input type="radio" name="status" value="0" title="关闭"   {eq name='$data.status|default=false' value='0' }checked="checked"{/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"       ><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>关闭</div></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">手续费：</label>
+            <div class="layui-input-block">
+                <input type="text" name="fee" lay-verify="required" id="fee" autocomplete="off" class="layui-input"  value="{$data.fee|default=''}"   >
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">单笔最低：</label>
+            <div class="layui-input-block">
+                <input type="text" name="min_amount" lay-verify="required" id="min_amount" autocomplete="off" class="layui-input"  value="{$data.min_amount|default=''}"   >
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">单笔最高：</label>
+            <div class="layui-input-block">
+                <input type="text" id="max_amount"  name="max_amount"    lay-verify="required"  value="{$data.max_amount|default=''}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">提现时间</label>
+        <div class="layui-input-block">
+            <input type="text" id="time" name="time"  class="layui-input " value="{$data.time|default=''}" placeholder="请输入提现时间 格式：02:00|11:00 不填表示任何时间都可以提现">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn">提交</button>
+        </div>
+    </div>
+</form>
+{/block}
+

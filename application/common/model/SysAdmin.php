@@ -44,14 +44,6 @@ class SysAdmin extends AdminService {
 
 
     /**
-     * 是否复制到分表
-     * 默认以日期分表
-     * @var bool
-     */
-    protected $salve = false;
-
-
-    /**
      * 登录验证
      * @param $username 管理员账户
      * @param $password 管理员密码

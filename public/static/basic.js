@@ -151,12 +151,13 @@
             form.render();
             //提交
             form.on('submit('+elem+')', function(obj){
-
                 //验证参数
                 if( typeof check === "function"){
                   var data = check(obj.field);
                   if(data.code == 0){
-                      $.msg.error(data.msg);
+                      if(data.msg != ''){
+                          $.msg.error(data.msg);
+                      }
                       return false;
                   }
                     obj.field = data.data;

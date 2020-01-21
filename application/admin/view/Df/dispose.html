@@ -16,6 +16,11 @@
                 <input type="text" id="mch_id" class="layui-input" placeholder="请输入商户号"/>
             </div>
         </div>
+        <div class="layui-form-item layui-inline">
+            <div class="layui-input-inline">
+                <input type="text" id="out_trade_no" class="layui-input" placeholder="请输入商户单号"/>
+            </div>
+        </div>
 
         <div class="layui-form-item layui-inline">
             <div class="layui-input-inline">
@@ -138,12 +143,11 @@
         }},
         {field: 'fee', title: '手续费',  width: 50,align: 'center'},
         {field: 'channel_fee', title: '通道手续费', width: 70, align: "center"},
-        {field: 'transaction_no', title: '上游订单号', width: 100,edit: 'text',   align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
-
         {field: 'remark', title: '备注', width: 100,edit: 'text',   align: "center",style: 'background-color: #009688; color: #fff;'},
         {field: 'remark1', title: '商户说明', width: 100,edit: 'text',   align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
-
-        {field: 'actual_amount', title: '实际到账', align: 'center', width: 100,edit: 'text',style: 'background-color: #009688; color: #fff; '},
+        {field: 'out_trade_no', title: '商户单号', width: 100,   align: "center",},
+        {field: 'transaction_no', title: '上游订单号', width: 100,   align: "center",},
+        {field: 'actual_amount', title: '实际到账', align: 'center', width: 100,},
         {field: 'location', title: '开卡地址', width: 100, align: "center"},
         {field: 'create_at', title: '申请时间', width: 100,  align: "center"},
         {field: 'update_at', title: '更新时间', width: 100,  align: "center"},

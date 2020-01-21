@@ -49,6 +49,17 @@ class Bank extends Validate {
         'del' => ['id'],
     ];
 
+    /**
+     * 代付批量添加的情况
+     * @return $this
+     */
+    public function sceneAdd_more() {
+        return $this->only(['account_name','card_number','bank_name','branch_name'])
+            ->remove('account_name', 'token')
+            ->remove('branch_name', 'require');
+
+    }
+
 
     /**
      * 检测ID是否存在

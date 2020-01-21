@@ -28,14 +28,14 @@ class Member extends AdminController {
     public function money(){
         $uid = $this->request->get('uid/d',0);
         $Umoney =  model('app\common\model\Umoney');
-        $user =$Umoney->where(['uid'=>$uid])->field('id,uid,balance,total_money,frozen_amount,frozen_amount_t1,artificial,channel_id')->find();
+        $user =$Umoney->where(['uid'=>$uid])->field('id,uid,balance,total_money,frozen_amount,frozen_amount_t1,artificial,channel_id,df')->find();
         if(empty($user)) return msg_error('数据错误，请重试！');
         $user = $user->toArray();
 
         if (!$this->request->isPost()){
             //基础数据
             $basic_data = [
-                'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除'],
+                'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除',13=>'余额转代付金额',14=>'代付金额转余额'],
                 'user'  => $user,//用户金额
             ];
             return $this->fetch('', $basic_data);
@@ -1105,7 +1105,6 @@ class Member extends AdminController {
         ];
         return $this->fetch('', $basic_data);
     }
-
     /**
      *  删除银行卡
      */
@@ -1118,5 +1117,23 @@ class Member extends AdminController {
         return $del;
 
     }
+
+    /**
+     *  会员IP列表
+     */
+    public function ip(){
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page/d', 1);
+            $limit = $this->request->get('limit/d', 10);
+            $search = (array)$this->request->get('search', []);
+            return json(model('app\common\model\Ip')->aList($page, $limit, $search));
+        }
+        $basic_data = [
+            'title' => '会员IP列表',
+        ];
+        return $this->fetch('', $basic_data);
+    }
+
+
 
 }

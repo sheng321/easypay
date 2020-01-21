@@ -22,7 +22,7 @@
             <a class="layui-btn layui-btn-sm"  data-search-top="currentTableId">置顶</a>
         </div>
 
-        {if auth("$thisClass/add")}
+        {if auth("$thisClass/confirm")}
         <div class="layui-form-item layui-inline">
             <a class="layui-btn layui-btn-normal  layui-btn-sm " data-check-all='{:url("$thisClass/confirm")}?pid={$Think.get.id}' data-title="确认保存选择通道"   data-table-id="currentTableId"  >保存选择通道</a>
         </div>

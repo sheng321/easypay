@@ -3,15 +3,17 @@
 namespace app\common\model;
 use app\common\service\ModelService;
 
-class Withdrawal extends ModelService {
+class Df extends ModelService {
 
     /**
      * 绑定的数据表
      * @var string
      */
-    protected $table = 'cm_withdrawal';
+    protected $table = 'cm_withdrawal_api';
+
 
     protected $insert = [ 'create_by','ip'];
+
     /**
      * redis (复制的时候不要少数组参数)
      * key   字段值要唯一
@@ -20,9 +22,10 @@ class Withdrawal extends ModelService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 60,
-        'key'=> "String:table:Withdrawal:system_no:{system_no}:id:{id}",
+        'key'=> "String:table:Df:out_trade_no:{out_trade_no}:transaction_no:{transaction_no}:system_no:{system_no}:id:{id}",
         'keyArr'=> ['id','system_no'],
     ];
+    
 
     /**
      *  分页获取所有记录数
@@ -75,8 +78,8 @@ class Withdrawal extends ModelService {
 
             $data[$k]['status_title'] = $status[$v['status']];
 
-            $data[$k]['lock_name'] = getNamebyId($v['lock_id']);
-            $data[$k]['channel_title'] = $channel[$v['channel_id']]['title'];
+            !empty($v['lock_id']) && $data[$k]['lock_name'] = getNamebyId($v['lock_id']);
+             $data[$k]['channel_title'] =!empty($v['channel_id'])?$channel[$v['channel_id']]['title']: '';
 
             $bank =  json_decode($v['bank'],true);
             $data[$k]['card_number'] = $bank['card_number'];
@@ -95,6 +98,5 @@ class Withdrawal extends ModelService {
         ];
         return $list;
     }
-
 
 }

@@ -87,6 +87,9 @@ class UserController extends BaseController
         // 登录会员信息
         $this->user = $user;
 
+        //ip 白名单验证
+        $ip =  \app\common\model\Ip::bList($this->user['uid'],0);
+        if(!in_array(get_client_ip(),$ip))   exceptions('登入IP白名单不包含此IP:'.get_client_ip());
     }
 
     /**

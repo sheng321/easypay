@@ -76,6 +76,7 @@
 
         {if auth("$thisClass/money")}
         <span  data-open='{:url("$thisClass/money")}?uid={{d.uid}}' data-title="商户号：{{d.uid}}">总金额：{{d.money.total_money}}，可用余额：{{d.money.balance}}
+                 {{ d.money.df != '0.000' ? ',代付金额:'+d.money.df : '' }}
                 {{ d.money.artificial != '0.000' ? ',人工冻结:'+d.money.artificial : '' }}
                 {{ d.money.frozen_amount != '0.000' ? ',冻结:'+d.money.frozen_amount : '' }}
                 {{ d.money.frozen_amount_t1 != '0.000' ? ',T1冻结:'+d.money.frozen_amount_t1 : '' }}

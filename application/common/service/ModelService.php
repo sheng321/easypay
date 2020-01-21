@@ -17,12 +17,7 @@ use think\Db;
  * @package service
  */
 class ModelService extends Model {
-    /**
-     * 是否复制到分表
-     * 默认以日期分表
-     * @var bool
-     */
-    protected $salve = false;
+
 
     protected $createTime = 'create_at';
     protected $updateTime = 'update_at';
@@ -106,12 +101,12 @@ class ModelService extends Model {
         self::event('after_insert', function (ModelService $model) {
 
             $model->clearCachebyModel($model);
-            $model->slave($model);
+
             $model->redisEvent($model);
         });
 
         self::event('before_update', function (ModelService $model) {
-            $model->checkVer($model);
+            $model->checkVer($model);//数据库反应慢的时候防止多次操作
         });
 
 
@@ -119,7 +114,7 @@ class ModelService extends Model {
         self::event('after_update', function (ModelService $model) {
 
             $model->clearCachebyModel($model);
-            $model->slave($model);
+
             $model->redisEvent($model);
 
         });
@@ -159,46 +154,6 @@ class ModelService extends Model {
     }
 
 
-
-
-    //插入/更新到分表
-    static protected function slave(ModelService $model){
-        $obj = get_object_vars($model);
-        $getData =  $model->getData();
-        switch (true){
-            case (!empty($model->id)):
-                $id = $model->id;
-                break;
-            case (!empty($getData['id'])):
-                $id = $getData['id'];
-                break;
-            default:
-                return false;
-                break;
-        }
-
-
-        //判断是否复制
-        if(!isset($obj['salve']) || $obj['salve']==false) return true;
-
-        //以日期分表
-        $newTable = $obj['table'].'_'.date('Ym');
-
-        // 启动事务
-        Db::startTrans();
-        try {
-            $sql =  "CREATE TABLE IF NOT EXISTS  {$newTable}  LIKE {$obj['table']}";
-            Db::execute($sql);
-            $data =  Db::table($obj['table'])->find($id);
-            if(empty($data)) throw new Exception("未查询到数据！");
-            Db::table($newTable)->insert($data, true);//存在就更新
-            // 提交事务
-            Db::commit();
-        } catch (\Exception $e) {
-            // 回滚事务
-            Db::rollback();
-        }
-    }
 
 
     //更新插入redis

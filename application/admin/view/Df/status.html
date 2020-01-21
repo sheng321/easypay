@@ -1,0 +1,63 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form" style="width:80%;">
+    <br>
+
+    <div class="layui-form-item layui-row">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            {foreach $status as $k => $vo}
+
+            {if  $Think.get.status <  $k  }
+                <input type="radio" name="status" value="{$k}" title="{$vo}"  {eq name='$k|default=false' value='$Think.get.status' }checked="checked"{/eq}     ><div class="layui-unselect layui-form-radio layui-form-radioed"       ><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>{$vo}</div></div>
+            {/if}
+            {/foreach}
+        </div>
+    </div>
+
+    {if  $Think.get.lock_id >  0}
+    <div class="layui-form-item layui-row">
+        <label class="layui-form-label">解除锁定</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="9" title="解除锁定"    ><div class="layui-unselect layui-form-radio layui-form-radioed"       ><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>解除锁定</div></div>
+        </div>
+    </div>
+    {/if}
+
+    <input type="hidden"   name="id" value="{$Think.get.id|default='0'}">
+    <input type="hidden"   name="verson" value="{$Think.get.verson|default='0'}">
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script  >
+
+    var  channel_id = "{$Think.get.channel_id|default='0'}";
+    if(channel_id == '0'){
+       var index = $.msg.confirm('没有选择出款通道，确认该订单不选择通道出款吗？！', function () {
+           $.msg.close(index);
+        },function () {
+            $.tool.reload('open');
+        });
+    }
+    /**
+     * 添加、编辑
+     */
+    $.form.on('submitBtn', '{:url("$thisClass/status")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    });
+
+</script>
+{/block}

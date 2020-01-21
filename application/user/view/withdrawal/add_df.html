@@ -4,13 +4,18 @@
 {/block}
 {block name="cotent"}
 <div class="ibox-content">
-    <blockquote class="layui-elem-quote">
-        <span style="margin:0 10px;" class="text-danger">可提现：{$money.balance|default='0.00'} 元</span>
-        <span style="margin:0 10px;" class="text-muted">冻结资金：{$money.frozen_amount|default='0.00'} 元</span>
-        <span style="margin:0 10px;" class="text-warning">结算方式：T+0</span> <br>
+    <blockquote class="layui-elem-quote" id="amountTip">
+        <span style="margin:0 10px;" class="text-info">可申请代付金额：{$money.df|default='0.00'} 元</span>
+        <span style="margin:0 10px;" class="text-warning">结算方式：T+0</span> <br><br>
+
+        {if $withdrawal['status'] != '1' }
+        <span style="margin:0 10px;" class="text-danger">代付通道维护中。。。</span>
+        {else /}
         <span style="margin:0 10px;" class="text-danger">最低提现：{$withdrawal.min_amount|default='1'} 元</span>
         <span style="margin:0 10px;" class="text-success">单笔最高：{$withdrawal.max_amount|default='4999'} 元</span>
-        <span style="margin:0 10px;" class="text-muted">提现时间：{$withdrawal.time|default='24小时'}</span>
+        <span style="margin:0 10px;" class="text-muted">代付提现时间：{$withdrawal.time|default='24小时'}</span>
+        {/if}
+
     </blockquote>
 </div>
 
@@ -94,6 +99,14 @@
         data.code = 1;
         data.msg = '';
 
+        var status = "{$withdrawal.status|default='0'}";
+        if( status != '1'){
+            data.code = 0;
+            data.msg = '代付通道维护中。。';
+            return data;
+        }
+
+
         if( $.tool.isEmpty($("#amount1").val())){
             data.code = 0;
             data.msg = '到账金额异常';
@@ -114,20 +127,20 @@
       var fee = "{$withdrawal.fee|default='5'}",
           min_amount = "{$withdrawal.min_amount|default='1'}",
           max_amount = "{$withdrawal.max_amount|default='4999'}",
-          balance = "{$money.balance|default='0.00'}";
+          balance = "{$money.df|default='0.00'}";
       if(amount - min_amount < 0){
-          $.msg.error('不能小于最小提现金额！');
+          $.msg.error('不能小于最小代付提现金额！');
           $("#amount1").val('')
           return false;
       }
 
         if(amount - max_amount > 0){
-            $.msg.error('不能大于最高提现金额！');
+            $.msg.error('不能大于最高代付提现金额！');
             $("#amount1").val('')
             return false;
         }
         if(balance - amount < 0 ||amount - fee <= 0 ){
-            $.msg.error('提现金额不正确！');
+            $.msg.error('代付提现金额不正确！');
             $("#amount1").val('')
             return false;
         }

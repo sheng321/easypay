@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
 {/block}
 {block name="cotent"}
-<div class="layui-fluid" id="LAY-app-message">
+
     <div class="layui-card">
         <div class="layui-tab layui-tab-brief">
             <ul class="layui-tab-title">
@@ -11,13 +11,28 @@
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-form-item">
-                    <blockquote class="layui-elem-quote" id="amountTip">可申请代付金额: <span style="color: red">0</span> 元</blockquote>
+                    <blockquote class="layui-elem-quote" id="amountTip">
+                        <span style="margin:0 10px;" class="text-info">可申请代付金额：{$money.df|default='0.00'} 元</span>
+                        <span style="margin:0 10px;" class="text-warning">结算方式：T+0</span> <br><br>
+
+                        {if $withdrawal['status'] != '1' }
+                           <span style="margin:0 10px;" class="text-danger">代付通道维护中。。。</span>
+                        {else /}
+                            <span style="margin:0 10px;" class="text-danger">单笔手续费：{$withdrawal.fee|default='4999'} 元，直接在代付金额中扣除。</span>
+                            <span style="margin:0 10px;" class="text-primary">最低提现：{$withdrawal.min_amount|default='1'} 元</span>
+                            <span style="margin:0 10px;" class="text-success">单笔最高：{$withdrawal.max_amount|default='4999'} 元</span>
+                            <span style="margin:0 10px;" class="text-muted">代付提现时间：{$withdrawal.time|default='24小时'}</span>
+                        {/if}
+
+                    </blockquote>
                 </div>
 
                 <div class="layui-tab-item layui-show">
                     <form class="layui-form center" id="agentpayForm">
                         <table id="agentpayTable" class="layui-table">
                             <colgroup>
+                                <col width="120">
+                                <col width="120">
                                 <col width="200">
                                 <col width="350">
                                 <col width="120">
@@ -25,36 +40,45 @@
                             </colgroup>
                             <thead>
                             <tr>
-                                <th>银行账户名</th>
-                                <th>银行账号(卡号)</th>
+                                <th>账户名</th>
+                                <th>银行名称</th>
+                                <th>卡号</th>
+                                <th>支行名称</th>
                                 <th>下发金额</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td><input type="text" name="accountName_0" lay-verify="required" placeholder="请输入账户名" autocomplete="off" class="layui-input"></td>
-                                <td><input type="text" name="accountNo_0" lay-verify="required|number" placeholder="请输入账号" autocomplete="off" class="layui-input"></td>
-                                <td><input type="text" name="agentpayAmount_0" lay-verify="required|number" placeholder="请输入金额" autocomplete="off" class="layui-input"></td>
+                                <td><input type="text" name="account_name[]" lay-verify="required" placeholder="请输入账户名" autocomplete="off" class="layui-input"></td>
+                                <td><input type="text" name="bank_name[]" lay-verify="required" placeholder="请输入银行名称" autocomplete="off" class="layui-input"></td>
+                                <td><input type="text" name="card_number[]" lay-verify="required" placeholder="请输入卡号" autocomplete="off" class="layui-input"></td>
+                                <td><input type="text" name="branch_name[]"  placeholder="请输入支行名称" autocomplete="off" class="layui-input"></td>
+                                <td><input type="text" name="amount[]" lay-verify="required|number" placeholder="请输入金额" autocomplete="off" class="layui-input"></td>
                                 <td><button id="addRow" class="layui-btn layui-btn-sm">增加</button></td>
                             </tr>
                             </tbody>
                         </table>
-                        <div class="layui-form-item" id="payAuthDiv" style="">
+                        <div class="layui-form-item"  >
                             <label class="layui-form-label">支付密码</label>
                             <div class="layui-input-block">
-                                <input type="password" required="" id="payPassword" name="payPassword" placeholder="请输入支付密码" autocomplete="off" class="layui-input">
+                                <input type="password" required="" id="paypwd" name="paypwd" placeholder="请输入支付密码" autocomplete="off" class="layui-input">
                             </div>
                         </div>
-                        <div class="layui-form-item" id="googleAuthDiv" style="display: none">
+
+                        <!--{if $UserInfo.UserGoole == 1}-->
+                        <div class="layui-form-item" id="googleAuthDiv" >
                             <label class="layui-form-label">谷歌验证码</label>
                             <div class="layui-input-block">
-                                <input type="text" required="" id="googleCode" name="googleCode" placeholder="请输入谷歌验证码" autocomplete="off" class="layui-input">
+                                <input type="text" required="" id="google" name="google" placeholder="请输入谷歌验证码" autocomplete="off" class="layui-input">
                             </div>
                         </div>
+                        <!--{/if}-->
+
+                        {:token('__token__', 'sha1')}
                         <div class="layui-form-item ">
                             <div class="layui-input-block">
-                                <button type="button" lay-submit="" lay-filter="btnJSJ" class="layui-btn">提交申请</button>
+                                <button type="butto " lay-submit="" lay-filter="submitBtn" class="layui-btn">提交申请</button>
                             </div>
                         </div>
                     </form>
@@ -63,93 +87,93 @@
             </div>
         </div>
     </div>
-</div>
-
 
 {/block}
 
 {block name="script"}
 
 <script>
-    layui.use(['form','util',], function(){
-        var form = layui.form
-            ,$ = layui.$
+    /**
+     * 添加
+     */
+    $.form.on('submitBtn', '{:url("$thisRequest")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload();
+        });
+        return false;
+    },function (obj) {
+        var data = [];
+        data.data = obj;
+        data.code = 1;
+        data.msg = '';
 
-            ,upload = layui.upload
-            ,element = layui.element;
+        var status = "{$withdrawal.status|default='0'}";
+        if( status != '1'){
+            data.code = 0;
+            data.msg = '代付通道维护中。。';
+            return data;
+        }
 
-        var agentpayRowNum = 1;
-        var delNum = 1;
-        var rowNumArray = [0];
+        if(!$.tool.isEmpty(obj.paypwd)){
+            obj.paypwd = $.md5(obj.paypwd);
+        }
+        return data;
+    });
 
-        element.render('breadcrumb', 'breadcrumb');//渲染导航信息
-        var paySecurityType;
 
-        form.on('submit(btnJSJ)', function(data){
+    var agentpayRowNum = 1;
+    var delNum = 1;
+    var rowNumArray = [0];
+    $("#addRow").click( function () {
+        addRow(this);
+        return false;//阻止跳转
+    });
 
-            // 校验
-            var payPassword = $("#payPassword").val();
-            var googleCode = $("#googleCode").val();
-            if(paySecurityType == 0) {
-            }else if(paySecurityType == 1) {
-                if(payPassword == '') {
-                    layer.alert("请填写支付密码!", function(index){
-                        layer.close(index);
-                    });
-                    return false;
-                }
-            }else if(paySecurityType == 2) {
-                if(googleCode == '') {
-                    layer.alert("请填写谷歌验证码!", function(index){
-                        layer.close(index);
-                    });
-                    return false;
-                }
-            }else if(paySecurityType == 3) {
-                if(payPassword == '') {
-                    layer.alert("请填写支付密码!", function(index){
-                        layer.close(index);
-                    });
-                    return false;
-                }
-                if(googleCode == '') {
-                    layer.alert("请填写谷歌验证码!", function(index){
-                        layer.close(index);
-                    });
-                    return false;
-                }
-            }
+    function addRow(obj) {
+        var status = "{$withdrawal.status|default='0'}";
+        if( status != '1'){
+            $.msg.error('代付通道维护中。。');
+            return false;
+        }
 
-            var agentpayAmount = $("#agentpayAmount").val();
+        if(rowNumArray.length >= 10) return false;
+        var add = obj.parentNode.parentNode;
+        var account_name = $(add).find(':input[name="account_name[]"]').val();
+        var bank_name = $(add).find(':input[name="bank_name[]"]').val();
+        var card_number = $(add).find(':input[name="card_number[]"]').val();
+        var branch_name = $(add).find(':input[name="branch_name[]"]').val();
+        var amount = $(add).find(':input[name="amount[]"]').val();
+
+        delNum++;
+        var agentpayRowHtml = '<tr>' +
+            '<td><input type="text" name="account_name[]" value="'+account_name+'"   lay-verify="required" placeholder="请输入账户名" autocomplete="off" class="layui-input"></td>' +
+            '<td><input type="text" name="bank_name[]"   value="'+bank_name+'"   lay-verify="required" placeholder="请输入银行名称" autocomplete="off" class="layui-input"></td>' +
+            '<td><input type="text" name="card_number[]" value="'+card_number+'"   lay-verify="required" placeholder="请输入卡号" autocomplete="off" class="layui-input"></td>' +
+            '<td><input type="text" name="branch_name[]"  value="'+branch_name+'"    placeholder="请输入支行名称" autocomplete="off" class="layui-input"></td>' +
+            '<td><input type="text" name="amount[]"   value="'+amount+'"     lay-verify="required|number" placeholder="请输入金额" autocomplete="off" class="layui-input"></td>' +
+
+            '<td><button id="addRow'+ delNum +'" class="layui-btn layui-btn-sm">增加</button><button id="delRow'+ delNum +'" value="'+agentpayRowNum+'" class="layui-btn layui-btn-danger layui-btn-sm">删除</button></td>' +
+            '</tr>';
+        $("#agentpayTable tr:last").after( agentpayRowHtml );
+
+        $("#delRow" + delNum).bind('click', function(event) {
+            var cur = this.parentNode.parentNode;
+            cur.remove();
+            //console.log("v:"+ this.value);
+            delValue(rowNumArray, this.value);
+            //console.log("rowNumArray: " + JSON.stringify(rowNumArray));
             return false;//阻止跳转
         });
-        form.render();
-
-        $("#addRow").click( function () {
-            if(rowNumArray.length >= 10) return false;
-            delNum++;
-            var agentpayRowHtml = '<tr>' +
-                '<td><input type="text" name="accountName_'+agentpayRowNum+'" lay-verify="required" placeholder="请输入账户名" autocomplete="off" class="layui-input"></td>' +
-                '<td><input type="text" name="accountNo_'+agentpayRowNum+'" lay-verify="required|number" placeholder="请输入账号" autocomplete="off" class="layui-input"></td>' +
-                '<td><input type="text" name="agentpayAmount_'+agentpayRowNum+'" lay-verify="required|number" placeholder="请输入金额" autocomplete="off" class="layui-input"></td>' +
-                '<td><button id="delRow'+ delNum +'" value="'+agentpayRowNum+'" class="layui-btn layui-btn-danger layui-btn-sm">删除</button></td>' +
-                '</tr>';
-            $("#agentpayTable tr:last").after( agentpayRowHtml );
-
-            $("#delRow" + delNum).bind('click', function(event) {
-                var cur = this.parentNode.parentNode;
-                cur.remove();
-                console.log("v:"+ this.value);
-                delValue(rowNumArray, this.value);
-                console.log("rowNumArray: " + JSON.stringify(rowNumArray));
-            });
-            rowNumArray.push(agentpayRowNum);
-            agentpayRowNum++;
-            console.log("rowNumArray: " + JSON.stringify(rowNumArray));
+        $("#addRow" + delNum).bind('click', function(event) {
+            addRow(this);
             return false;//阻止跳转
         });
 
-    })
+        rowNumArray.push(agentpayRowNum);
+        agentpayRowNum++;
+        //console.log("rowNumArray: " + JSON.stringify(rowNumArray));
+        return false;//阻止跳转
+    }
 
     function delValue(array, val) {
         for(var i=0; i<array.length; i++) {
