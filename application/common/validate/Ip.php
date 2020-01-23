@@ -15,7 +15,7 @@ class Ip extends Validate {
         'id'      => 'require|number|checkId',
         'uid'   => 'require',
         'ip'    => 'require|ip|token',
-        'type'    => 'require|in:0,1,2',
+        'type'    => 'require|in:0,1,2,3',
     ];
 
     /**

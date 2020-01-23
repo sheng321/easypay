@@ -1,0 +1,70 @@
+{extend name="admin@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+{block name="cotent"}
+
+<!--  搜索-->
+
+<form class="layui-form">
+<blockquote id="searchBlock" class=" quoteBox">
+
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">账号名称</label>
+        <div class="layui-input-inline">
+            <input type="create_name" id="create_name" class="layui-input" placeholder="请输入账号名称"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">IP</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ip" class="layui-input" placeholder="请输入IP"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+    </div>
+    {if auth("$thisClass/save_ip")}
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/save_ip")}' data-title="添加IP">添加</a>
+    </div>
+    {/if}
+
+    {if auth("$thisClass/del_ip")}
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del_ip")}' data-table-id="currentTableId">删除</a>
+    </div>
+    {/if}
+</blockquote>
+
+<!-- end --->
+<table id="currentTable" lay-filter="currentTable"></table>
+<script type="text/html" id="currentTableBar">
+
+
+
+    {if auth("$thisClass/del_ip")}
+    <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del_ip")}?id={{d.id}}'>删除</a>
+    {/if}
+
+</script>
+</form>
+{/block}
+{block name="script"}
+<script>
+
+$.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {type: "checkbox", fixed: "left", width: 50,},
+        {field: 'id', title: 'ID', minwidth: 1, align: 'center'},
+        {field: 'username', title: '所属账号', minwidth: 1, align: "center"},
+        {field: 'ip', title: 'ip', minwidth: 1, align: "center"},
+        {field: 'create_at', title: '创建时间', minwidth: 1, align: "center", sort: true},
+        {field: 'create_name', title: '操作人', minwidth: 1, align: "center"},
+        {title: '操作', minWidth: 1, templet: '#currentTableBar', fixed: "right", align: "center"},
+    ]],false);
+
+</script>
+{/block}

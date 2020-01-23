@@ -170,16 +170,9 @@ class User extends UserController {
         $uid =  $this->user['uid'];
 
         if (!$this->request->isPost()){
-            $bank_id =  $this->request->get('id/d',0);
-            if(!empty($bank_id)){
-                $find = $Bank->where(['uid'=>$uid,"id"=>$bank_id])->find();
-                if(empty($find)) return msg_error('该银行卡不存在');
-            }else{
-                $find = [];
-            }
+
             $basic_data = [
                 'title' => '添加IP',
-                'info' => $find,
             ];
             return $this->fetch('', $basic_data);
         } else {

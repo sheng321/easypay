@@ -25,7 +25,14 @@ class Bank extends ModelService {
      * @return array
      */
     public function aList($page = 1, $limit = 10, $search = [], $where = []) {
-        
+
+        $order = ['update_at'=>'desc'];
+
+        if(empty($search['uid']) && $search['uid'] != 0 ){
+            $order['uid'] = 'desc';
+            $where[] = ['uid','>',0];
+        }
+
         //搜索条件
         $searchField['eq'] = ['uid'];
         $searchField['like'] = ['account_name'];
@@ -33,11 +40,11 @@ class Bank extends ModelService {
         $field = '*';
         $count = $this->where($where)->count();
 
-        $order = ['update_at'=>'desc'];
-        if(empty($search['uid']))  $order = ['uid'=>'desc','update_at'=>'desc'];
+
 
         $data = $this->where($where)->field($field)->page($page, $limit)->order($order)->select()->each(function ($item, $key) {
-            $item['update_name'] =  getUnamebyId(empty($item['update_by'])?$item['create_by']:$item['update_by']);
+            !empty($item['update_by']) &&   $item['update_name'] =  getUnamebyId($item['update_by']);
+            if($item['uid'] == 0)  $item['update_name'] =  getNamebyId($item['create_by']);
         });
 
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';

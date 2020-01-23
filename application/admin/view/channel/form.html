@@ -48,6 +48,13 @@
     </div>
 
     <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">查询网关地址</label>
+        <div class="layui-input-block">
+            <input type="text"   name="queryway"   class="layui-input"  value="{$auth.queryway|default=''}" placeholder="请输入查询网关地址">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">通道限额</label>
         <div class="layui-input-block">
             <input type="text"   name="limit_money"   class="layui-input"  value="{$auth.limit_money|default=''}" placeholder="请输入通道限额">
@@ -101,8 +108,6 @@
 
         </div>
     </div>
-
-
 
 
     <div class="layui-form-item layui-row layui-col-xs12">

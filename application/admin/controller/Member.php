@@ -1098,6 +1098,7 @@ class Member extends AdminController {
             $page = $this->request->get('page/d', 1);
             $limit = $this->request->get('limit/d', 10);
             $search = (array)$this->request->get('search', []);
+
             return json(model('app\common\model\Bank')->aList($page, $limit, $search));
         }
         $basic_data = [
@@ -1126,6 +1127,7 @@ class Member extends AdminController {
             $page = $this->request->get('page/d', 1);
             $limit = $this->request->get('limit/d', 10);
             $search = (array)$this->request->get('search', []);
+            $search['type'] = [0,1,2];
             return json(model('app\common\model\Ip')->aList($page, $limit, $search));
         }
         $basic_data = [

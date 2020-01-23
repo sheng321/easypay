@@ -34,8 +34,20 @@ class Withdrawal extends Validate {
      */
     protected $scene = [
         'status' => ['id','status'],
-        'add_more' => [],
+        'status_df' => ['id','status'],
+
     ];
+
+    /**
+     * 代付批量添加的情况
+     * @return $this
+     */
+    public function sceneStatus_df() {
+        return $this->only(['id','status'])
+            ->remove('id', 'checkId')
+            ->append('id', 'checkDfId');
+
+    }
 
 
     /**
@@ -50,6 +62,18 @@ class Withdrawal extends Validate {
      */
     protected function checkId($value, $rule, $data = []) {
         $Withdrawal = \app\common\model\Withdrawal::quickGet($value);
+        if (empty($Withdrawal)) return '暂无数据，请稍后再试！';
+
+        if (app('request')->module() == 'admin') {
+            if (!empty($Withdrawal['lock_id']) && session('admin_info.id') != $Withdrawal['lock_id']) return '该订单已经锁定，无权操作！';
+        }
+        if (!empty($data['verson']) && $data['verson'] !=  $Withdrawal['verson'] + 1 ) return '重复操作，请刷新重试';
+        if ($Withdrawal['status'] == 3 || $Withdrawal['status'] == 4 ) return '该订单已处理，不可更改！';
+
+        return true;
+    }
+    protected function checkDfId($value, $rule, $data = []) {
+        $Withdrawal = \app\common\model\Df::quickGet($value);
         if (empty($Withdrawal)) return '暂无数据，请稍后再试！';
 
         if (app('request')->module() == 'admin') {

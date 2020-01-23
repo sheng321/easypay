@@ -376,8 +376,57 @@ class User extends AdminController {
         }
     }
 
+    /**
+     *  后台IP列表
+     */
+    public function ip(){
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page/d', 1);
+            $limit = $this->request->get('limit/d', 10);
+            $search = (array)$this->request->get('search', []);
+            $search['type'] = [3];
+            return json(model('app\common\model\Ip')->aList($page, $limit, $search));
+        }
+        $basic_data = [
+            'title' => '后台登入IP列表',
+        ];
+        return $this->fetch('', $basic_data);
+    }
 
+    /**
+     *  删除ip
+     */
+    public function del_ip(){
+        $get = $this->request->only('id');
 
+        if(empty($get)) return __error('数据异常');
+        //执行操作
+        $del = model('app\common\model\Ip')->__del($get);
+        return $del;
 
+    }
 
+    /**
+     *  添加ip
+     */
+    public function save_ip(){
+
+        $Bank =  model('app\common\model\Ip');
+
+        if (!$this->request->isPost()){
+
+            $basic_data = [
+                'title' => '添加IP',
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->only(['ip','uid','__token__'], 'post');
+            $post['type'] = 3;
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Ip.edit');
+            if (true !== $validate) return __error($validate);
+            unset($post['__token__']);
+            return $Bank->__add($post);
+        }
+    }
 }

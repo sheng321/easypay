@@ -277,26 +277,70 @@ class Withdrawal extends AdminController {
        return __success('操作成功');
     }
 
-
     /**
-     *  锁定/解锁 出款/退款
+     *  异常银行卡
      */
-    public function with_save(){
-        $data = $this->request->param();
-        $info = $this->model->where("id",$data['id'])->find();
-        if(!$info) return __error("数据不存在");
-        return $this->model->saveWith($data,$info,$this->user->username);
+    public function bank(){
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page/d', 1);
+            $limit = $this->request->get('limit/d', 10);
+            $search = (array)$this->request->get('search', []);
+            $search['uid'] = 0;
+            return json(model('app\common\model\Bank')->aList($page, $limit, $search));
+        }
+
+        $basic_data = [
+            'title' => '异常银行卡列表',
+        ];
+        return $this->fetch('', $basic_data);
+    }
+    /**
+     *  添加/编辑异常银行卡
+     */
+    public function saveBank(){
+
+        $Bank =  model('app\common\model\Bank');
+
+        if (!$this->request->isPost()){
+            $basic_data = [
+                'title' => '添加异常银行卡',
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->only(['card_number','bank_name','branch_name','account_name','__token__'], 'post');
+            $post['uid'] = 0;
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Bank.edit');
+            if (true !== $validate) return __error($validate);
+            unset($post['__token__']);
+            return $Bank->__add($post);
+        }
+    }
+    /**
+     *  删除异常银行卡
+     */
+    public function delBank(){
+        $get = $this->request->only('id');
+
+        //验证数据
+        if (!is_array($get['id'])) {
+            $get['uid'] = 0;
+            $validate = $this->validate($get, 'app\common\validate\Bank.del');
+            if (true !== $validate) return __error($validate);
+        }else{
+            foreach ($get['id'] as $k => $val){
+                $data['id'] = $val;
+                $data['uid'] = 0;
+                $validate = $this->validate($data, 'app\common\validate\Bank.del');
+                if (true !== $validate) unset($get['id'][$k]);
+            }
+        }
+        if(empty($get)) return __error('数据异常');
+
+        //执行操作
+        $del = model('app\common\model\Bank')->__del($get);
+        return $del;
+
     }
 
-
-
-
-
-
-
-
-
-
-
-    
 }

@@ -1,0 +1,182 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+    <br>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">代付通道名称</label>
+        <div class="layui-input-block">
+            <input type="text"  name="title"  lay-verify="required"  class="layui-input" value = "{$data.title|default=''}" placeholder="请输入代付通道名称"  >
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">关联控制器</label>
+        <div class="layui-input-block">
+            <input type="text"   name="code"   class="layui-input" lay-verify="required" value="{$data.code|default=''}" placeholder="请输入关联控制器">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">商户号</label>
+        <div class="layui-input-block">
+            <input type="text"   name="mch_id"   class="layui-input"  value="{$data.mch_id|default=''}" placeholder="请输入MCHID">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">证书密钥</label>
+        <div class="layui-input-block">
+            <input type="text"   name="signkey"   class="layui-input"  value="{$data.signkey|default=''}" placeholder="请输入证书密钥">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">自定义密钥</label>
+        <div class="layui-input-block">
+            <textarea  name="secretkey"  placeholder="请输入 字段名|字段值,一行只输入一个密钥" class="layui-textarea">{$data.secretkey|default=''}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">下单网关地址</label>
+        <div class="layui-input-block">
+            <input type="text"   name="gateway"   class="layui-input"  value="{$data.gateway|default=''}" placeholder="请输入下单网关地址">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">查询网关地址</label>
+        <div class="layui-input-block">
+            <input type="text"   name="queryway"   class="layui-input"  value="{$data.queryway|default=''}" placeholder="请输入查询网关地址">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">余额网关地址</label>
+        <div class="layui-input-block">
+            <input type="text"   name="balanceway"   class="layui-input"  value="{$data.balanceway|default=''}" placeholder="请输入余额网关地址">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">充值费率</label>
+        <div class="layui-input-block">
+            <input type="text"    name="c_rate"   class="layui-input"    value="{$data.c_rate|default=''}" placeholder="请输入充值费率">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">下发手续费</label>
+        <div class="layui-input-block">
+            <input type="text"    name="fee"   class="layui-input"    value="{$data.fee|default=''}" placeholder="请输入下发手续费">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">最低限额</label>
+        <div class="layui-input-block">
+            <input type="text"   name="min_pay"  class="layui-input"     value="{$data.min_pay|default=''}" placeholder="请输入最低限额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">最高限额</label>
+        <div class="layui-input-block">
+            <input type="text"    name="max_pay"     class="layui-input"  value="{$data.max_pay|default=''}" placeholder="请输入最高限额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">单卡单日次数</label>
+        <div class="layui-input-block">
+            <input type="text"   name="limit_times"  class="layui-input"     value="{$data.limit_times|default=''}" placeholder="请输入单卡单日次数">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">单卡单日限额</label>
+        <div class="layui-input-block">
+            <input type="text"   name="limit_money"  class="layui-input"     value="{$data.limit_money|default=''}" placeholder="请输入单卡单日限额">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">下发方式</label>
+        <div class="layui-input-block">
+            <input type="radio" name="inner" value="0" title="内扣" {eq name='$data.inner|default=false' value='0' }checked="checked"{/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>内扣</div></div>
+            <input type="radio" name="inner" value="1" title="外扣" {eq name='$data.inner|default=false' value='1' }checked="checked"{/eq}   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>外扣</div></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">付款方式</label>
+        <div class="layui-input-block">
+            <input type="radio" name="visit" value="0" title="都可以" {eq name='$data.visit|default=false' value='0' }checked="checked"{/eq}  ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
+            <input type="radio" name="visit" value="1" title="对公"  {eq name='$data.visit|default=false' value='1' }checked="checked"{/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>对公</div></div>
+            <input type="radio" name="visit" value="2" title="对私"  {eq name='$data.visit|default=false' value='2' }checked="checked"{/eq} ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>对私</div></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">绑定支付通道金额</label>
+        <div class="layui-input-block">
+            <select id="channel_id"  lay-filter="channel_id" lay-search="">
+                <option value="">无关联</option>
+                {foreach $channel as $k=> $vo}
+                <option value="{$k|default='0'}"  {eq name='$data.channel_id|default=false' value='$k' }checked="checked"{/eq}     >{$vo}</option>
+                {/foreach}
+            </select>
+            <span class="text-danger"> * 绑定后不可更改！！！</span>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">运营时间</label>
+        <div class="layui-input-block">
+            <input type="text"   name="time"  class="layui-input"     value="{$data.time|default=''}" placeholder="请输入格式：02:00|11:00 不填表示任何时间都可以提现">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="开启" {eq name='$data.status|default=false' value='1' }checked="checked"{/eq}   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>开启</div></div>
+            <input type="radio" name="status" value="0" title="禁用"  {eq name='$data.status|default=false' value='0' }checked="checked"{/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁用</div></div>
+        </div>
+    </div>
+
+    {:token('__token__', 'sha1')}
+
+    {if !empty($data)}
+    <input type="hidden"   name="id"  value="{$data.id|default=''}">
+    <input type="hidden"   name="verson"  value="{$data.verson+1}">
+    {/if}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+
+    /**
+     * 添加、编辑
+     */
+
+    $.form.on('submitBtn', "{if empty($data)}{:url('@admin/df/add_df')}{else/}{:url('@admin/df/edit_df')}{/if}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+
+</script>
+{/block}

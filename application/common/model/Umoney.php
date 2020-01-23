@@ -35,8 +35,8 @@ class Umoney extends ModelService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 3,
-        'key'=> "String:table:Umoney:channel_id:{channel_id}:uid:{uid}:id:{id}",
-        'keyArr'=> ['id','uid','channel_id'],
+        'key'=> "String:table:Umoney:df_id:{df_id}:channel_id:{channel_id}:uid:{uid}:id:{id}",
+        'keyArr'=> ['id','uid','channel_id','df_id'],
     ];
 
     /**
@@ -107,15 +107,21 @@ class Umoney extends ModelService {
      *  获取金额信息
      * @param [type] $mch
      */
-    public static function get_amount($mch = '0',$channel = '0'){
+    public static function get_amount($mch = '0',$channel = '0',$df = '0'){
         $mch = strval($mch);
         $channel = strval($channel);
 
-        if($mch === '0' && $channel === '0') return self::where(['uid'=>$mch,'channel_id'=>$channel])->column(['total_money','frozen_amount','balance'],'id');
+        if($mch === '0' && $channel === '0'&& $df === '0') return self::where(['uid'=>$mch,'channel_id'=>$channel,'df_id'=>$df])->column(['total_money','frozen_amount','balance'],'id');  //平台账户
+
+
         if($mch === '0' && $channel === 'all') return self::where([['uid','=',$mch],['channel_id','>',0]])->column(['id','total_money','frozen_amount','balance'],'channel_id');
-        if($mch === 'all' && $channel === '0') return self::where([['uid','>',$mch],['channel_id','=',0]])->column(['id','total_money','frozen_amount','balance','df'],'id');
-        if($mch === '0' ) return self::where(['uid'=>$mch,'channel_id'=>$channel])->column(['id','total_money','frozen_amount','balance'],'channel_id');
-        if($channel === '0') return self::where(['uid'=>$mch,'channel_id'=>$channel])->column(['id','total_money','frozen_amount','balance','df'],'id');
+        if($mch === '0' && $df === 'all') return self::where([['uid','=',$mch],['df_id','>',0]])->column(['id','total_money','frozen_amount','balance'],'df_id');
+        if($mch === 'all' && $channel === '0' && $df === '0') return self::where([['uid','>',$mch],['channel_id','=',0],['df_id','=',0]])->column(['id','total_money','frozen_amount','balance','df'],'id');
+
+
+        if($mch === '0' && $channel > 0 ) return self::where(['uid'=>$mch,'channel_id'=>$channel])->column(['id','total_money','frozen_amount','balance'],'channel_id');
+        if($mch === '0' && $df > 0 ) return self::where(['uid'=>$mch,'df_id'=>$df])->column(['id','total_money','frozen_amount','balance'],'df_id');
+        if($channel === '0'  && $df === '0' ) return self::where(['uid'=>$mch,'channel_id'=>$channel,'df_id'=>$df])->column(['id','total_money','frozen_amount','balance','df'],'id');
     }
 
     /**
@@ -160,13 +166,14 @@ class Umoney extends ModelService {
         switch ($change['type']){
             case 1: //成功-解冻扣除  (把解冻金额去掉)
                 $res['log'] = $temp.'成功-解冻扣除'.$change['change'];
+                $change1['before_balance'] = $data['frozen_amount'];//变动前金额
 
                 $data['frozen_amount'] = $data['frozen_amount'] - $change['change'];
                 $data['total_money'] = $data['total_money'] - $change['change'];
                 if($data['frozen_amount'] < 0)   $res['msg'] = '成功-解冻扣除大于冻结金额';
 
                 $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
-                $change['balance'] = $data['balance'];//变动后的金额
+                $change['balance'] = $data['frozen_amount'];//变动后的金额
 
                 $data['total_money'] =  Db::raw('total_money-'.$change['change']);
                 $data['frozen_amount'] = Db::raw('frozen_amount-'.$change['change']);

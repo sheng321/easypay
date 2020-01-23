@@ -1,0 +1,67 @@
+{extend name="admin@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+{block name="cotent"}
+
+<!--  搜索-->
+
+<form class="layui-form">
+<blockquote id="searchBlock" class=" quoteBox">
+
+    <div class="layui-form-item layui-inline">
+        <label class="layui-form-label-99admin">开户人</label>
+        <div class="layui-input-inline">
+            <input type="text" id="account_name" class="layui-input" placeholder="请输入开户人"/>
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+    </div>
+
+    {if auth("$thisClass/saveBank")}
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/saveBank")}' data-title="添加异常卡">添加</a>
+    </div>
+    {/if}
+
+
+    {if auth("$thisClass/del")}
+    <div class="layui-form-item layui-inline">
+        <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/delBank")}' data-table-id="currentTableId">删除</a>
+    </div>
+    {/if}
+</blockquote>
+
+<!-- end --->
+<table id="currentTable" lay-filter="currentTable"></table>
+<script type="text/html" id="currentTableBar">
+
+    {if auth("$thisClass/del")}
+    <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/delBank")}?id={{d.id}}'>删除</a>
+    {/if}
+
+</script>
+</form>
+{/block}
+{block name="script"}
+<script>
+
+$.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {type: "checkbox", fixed: "left", width: 50,},
+         {field: 'id', title: 'ID', minwidth: 1, align: 'center'},
+        {field: 'account_name', title: '开户人', minwidth: 1, align: 'center'},
+        {field: 'card_number', title: '银行卡号', minwidth: 1, align: "center"},
+        {field: 'bank_name', title: '开户银行', align: 'center'},
+
+        {field: 'update_at', title: '最近更新时间', minwidth: 1, align: "center", sort: true},
+        {field: 'update_name', title: '操作人', minwidth: 1, align: "center"},
+        {title: '操作', minWidth: 1, templet: '#currentTableBar', fixed: "right", align: "center"},
+    ]],true);
+
+</script>
+{/block}

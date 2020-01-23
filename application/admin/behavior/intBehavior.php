@@ -93,12 +93,6 @@ class intBehavior extends Controller
                     $v = str_replace("*","",$v);
                 }
 
-                if($k == 'time'){ //提现时间
-                    $v = str_replace("|","",$v);
-                    $v = str_replace(":","",$v);
-                }
-
-
                 $data['param'] = $v;
                 $data['param_k'] = $k;
 

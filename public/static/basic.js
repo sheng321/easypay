@@ -290,6 +290,24 @@
             });
         }
 
+        this.radio = function (layFilter, url) {
+            form.on('radio(' + layFilter + ')', function (obj) {
+                //乐观锁
+                var verson = this.getAttribute('verson');
+                if( $.tool.isEmpty(verson)){
+                    var feild = {id: this.name,value: this.value};
+                }else {
+                    var feild = {id: this.name,verson:verson,value: this.value};
+                }
+                //提交
+                $.request.get(url, feild, function (res) {
+                    $.msg.success(res.msg);
+                }, true);
+                return false;
+            });
+        }
+
+
         /**
          * 弹出新窗口
          * @param title 标题

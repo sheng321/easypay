@@ -59,6 +59,7 @@
 
 $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 50,},
+         {field: 'id', title: 'ID', minwidth: 1, align: 'center'},
         {field: 'uid', title: '所属商户号', minwidth: 1, align: 'center'},
         {field: 'account_name', title: '开户人', minwidth: 1, align: 'center'},
         {field: 'card_number', title: '银行卡号', minwidth: 1, align: "center"},
@@ -71,7 +72,7 @@ $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'update_name', title: '操作人', minwidth: 1, align: "center"},
         {title: '操作', minWidth: 1, templet: '#currentTableBar', fixed: "right", align: "center"},
     ]],true,function (res,curr,count){
-    merge(res,['uid'],['1']);
+    merge(res,['uid'],['2']);
 });
 
     /**

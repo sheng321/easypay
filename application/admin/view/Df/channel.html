@@ -9,12 +9,13 @@
 <form class="layui-form">
 
     <!--顶部操作栏--开始-->
-    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+    <blockquote id="searchBlock" class=" quoteBox">
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">通道名称</label>
+            <label class="layui-form-label-99admin">代付通道名称</label>
             <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入通道名称"/>
+                <input type="text" id="title"    class="layui-input" placeholder="请输入代付通道名称"/>
+
             </div>
         </div>
 
@@ -24,7 +25,7 @@
 
         {if auth("$thisClass/confirm")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-check-all='{:url("$thisClass/confirm")}?pid={$Think.get.id}&verson={$Think.get.verson}' data-title="确认保存选择单条通道"   data-table-id="currentTableId"  >保存选择单条通道</a>
+            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-check-all='{:url("$thisClass/confirm")}?pid={$Think.get.id}&verson={$Think.get.verson}' data-title="确认保存选择单条代付通道"   data-table-id="currentTableId"  >保存选择单条代付通道</a>
         </div>
         {/if}
 
@@ -44,6 +45,7 @@
         <input type="checkbox" name="{{d.id}}"    value="{{d.inner}}" lay-skin="switch" lay-text="外扣|内扣" lay-filter="modifyInner" {{ d.inner== 1 ? 'checked' : '' }}>
     </script>
 
+
 </form>
 {/block}
 
@@ -58,27 +60,27 @@
     $.form.table('current', '{:url("$thisRequest")}?type=ajax&channel_id={$Think.get.channel_id}', [[
         {type: "checkbox",fixed: "left", width: 30,},
         {field: 'id', title: 'ID', minWidth: 20, align: 'center',sort:true},
-        {field: 'title', title: '通道', minWidth: 20, align: 'center'},
+        {field: 'title', title: '代付通道', minWidth: 20, align: 'center'},
+        {field: 'fee',title: '充值费率',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;',sort:true},
         {field: 'fee',title: '手续费',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;',sort:true},
-        {field: 'inner', title: '状态', width: 100, templet: '#checkInner', unresize: true, align: "center"},
+        {field: 'visit', title: '付款方式', width: 100, unresize: true, align: "center", templet: function (d) {
+            if(d.visit == '0'){
+                return '对公和对私';
+            }else if(d.visit == '1') {
+                return '对公';
+            }else {
+                return '对私';
+            }
+        }},
+        {field: 'inner', title: '下发方式', width: 100, templet: '#checkInner', unresize: true, align: "center"},
         {field: 'min_pay', title: '最低', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;',sort:true},
         {field: 'max_pay', title: '最高', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;',sort:true},
         {field: 'balance', title: '余额', minWidth: 20, align: 'center', style: ' color: red;',sort:true},
         {field: 'frozen_amount', title: '冻结', minWidth: 20, align: 'center',sort:true},
+        {field: 'time', title: '运营时间', minWidth: 20, align: 'center'},
 
     ]], false,function (res,curr,count){
-        $('tr').each(function(index, element){
-            var id = index -1;
-            if(id >=0 && id < $('tr').length -3){
-                if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
-                    $(element).find('td').each(function(index1, element1){
-                        $(element1).removeAttr("data-edit");
-                        $(element1).removeAttr("style");
-                    });
-                }
-            }
-        });
-    },100);
+        },100);
 
     /**
      * 监听字段值编辑
@@ -88,7 +90,7 @@
     /**
      * 修改状态
      */
-    $.form.switch('modifyInner', '{:url("@admin/channel/inner")}');
+    $.form.switch('modifyInner', '{:url("$thisClass/inner")}');
 
     /**
      * 注册 data-check-all 事件
@@ -103,7 +105,7 @@
         }
         var num  = id.length;
         if(num != 1){
-            $.msg.error('请选择一条通道！！');
+            $.msg.error('请选择一条代付通道！！');
             return false;
         }
 

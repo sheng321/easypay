@@ -8,7 +8,7 @@
 <!--  搜索-->
 
 <form class="layui-form">
-<blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+<blockquote id="searchBlock" class=" quoteBox">
 
     <div class="layui-form-item layui-inline">
         <label class="layui-form-label-99admin">商户号</label>
@@ -18,16 +18,9 @@
     </div>
 
     <div class="layui-form-item layui-inline">
-        <label class="layui-form-label-99admin">开户人</label>
+        <label class="layui-form-label-99admin">IP</label>
         <div class="layui-input-inline">
-            <input type="text" id="account_name" class="layui-input" placeholder="请输入开户人"/>
-        </div>
-    </div>
-
-    <div class="layui-form-item layui-inline">
-        <label class="layui-form-label-99admin">时间</label>
-        <div class="layui-input-inline">
-            <input type="text" id="update_at" class="layui-input " placeholder="请选择创建时间">
+            <input type="text" id="ip" class="layui-input" placeholder="请输入IP"/>
         </div>
     </div>
 
@@ -36,9 +29,9 @@
     </div>
 
 
-    {if auth("$thisClass/del")}
+    {if auth("$thisModule/user/del_ip")}
     <div class="layui-form-item layui-inline">
-        <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/delBank")}' data-table-id="currentTableId">删除</a>
+        <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisModule/user/del_ip")}' data-table-id="currentTableId">删除</a>
     </div>
     {/if}
 </blockquote>
@@ -47,8 +40,8 @@
 <table id="currentTable" lay-filter="currentTable"></table>
 <script type="text/html" id="currentTableBar">
 
-    {if auth("$thisClass/delBank")}
-    <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/delBank")}?id={{d.id}}'>删除</a>
+    {if auth("$thisModule/user/del_ip")}
+    <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisModule/user/del_ip")}?id={{d.id}}'>删除</a>
     {/if}
 
 </script>
@@ -59,26 +52,24 @@
 
 $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 50,},
+        {field: 'id', title: 'ID', minwidth: 1, align: 'center'},
         {field: 'uid', title: '所属商户号', minwidth: 1, align: 'center'},
-        {field: 'account_name', title: '开户人', minwidth: 1, align: 'center'},
-        {field: 'card_number', title: '银行卡号', minwidth: 1, align: "center"},
-        {field: 'bank_name', title: '开户银行', align: 'center'},
-        {field: 'branch_name', title: '所在支行', minwidth: 1,   align: "center"},
-        {field: 'province', title: '省份', minwidth: 1, align: "center"},
-        {field: 'city', title: '城市', minwidth: 1, align: "center"},
-        {field: 'areas', title: '地区', minwidth: 1, align: "center"},
-        {field: 'update_at', title: '最近更新时间', minwidth: 1, align: "center", sort: true},
-        {field: 'update_name', title: '操作人', minwidth: 1, align: "center"},
+        {field: 'type', title: '类型', minwidth: 1, align: "center",templet:function (d) {
+            if (d.type == 0) {
+                return '登入IP';
+            } else if (d.type == 1) {
+                return '结算提现IP';
+            } else if (d.type == 2) {
+                return '代付提现IP';
+            }
+        }},
+        {field: 'ip', title: 'ip', minwidth: 1, align: "center"},
+        {field: 'create_at', title: '创建时间', minwidth: 1, align: "center", sort: true},
+        {field: 'create_name', title: '操作人', minwidth: 1, align: "center"},
         {title: '操作', minWidth: 1, templet: '#currentTableBar', fixed: "right", align: "center"},
     ]],true,function (res,curr,count){
-    merge(res,['uid'],['1']);
+    merge(res,['uid'],['2']);
 });
-
-    /**
-     * 日期范围
-     */
-     $.laydate.range('update_at',7);
-
 
 function merge(res,columsName,columsIndex) {
 

@@ -39,7 +39,18 @@ class Channel extends Validate {
 
         'charge'   => 'in:0,1',//话费
 
+        'fee'   => 'number',
+        'min_pay'   => 'number',
+        'max_pay'   => 'number',
+        'limit_times'   => 'number',
+
+        'gateway'   => 'activeUrl',
+        'queryway'   => 'activeUrl',
+        'balanceway'   => 'activeUrl',
+
     ];
+
+
 
     /**
      * 错误提示
@@ -66,13 +77,19 @@ class Channel extends Validate {
         'f_num.number'     => '固定尾数必须为整数',
         'sort.in'     => '置顶必须在0,2之间',
 
-        'gateway.activeUrl'     => '网关或者IP不正确',
+        'gateway.activeUrl'     => '下单网关或者IP不正确',
+        'queryway.activeUrl'     => '查询网关或者IP不正确',
+        'balanceway.activeUrl'     => '余额查询网关或者IP不正确',
+
         'limit_money.number'     => '限额必须为纯数字',
         'limit_time.number'     => '限额必须为纯数字',
 
         'p_id.require'     => '请选择支付类型',
 
     ];
+
+
+
 
     /**
      * 应用场景
@@ -108,6 +125,17 @@ class Channel extends Validate {
     public function sceneSort() {
         return $this->only(['sort','id']);
     }
+
+    /**
+     * 代付通道
+     * @return $this
+     */
+    public function sceneDf() {
+        return $this->only(['title','remark','code','c_rate','min_pay','max_pay','limit_times','limit_money','gateway','queryway','balanceway','fee','min_pay' ,'max_pay','limit_times'])
+            ->remove('code','checkCode')
+            ->append('title','token');
+    }
+
 
     /**
      * 自定义验证场景

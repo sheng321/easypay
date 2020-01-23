@@ -18,13 +18,32 @@
             </div>
         </div>
     </div>
-
-
     <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">充值费率：</label>
+            <div class="layui-input-block">
+                <input type="text" name="rate"  lay-verify="number" id="rate" autocomplete="off" class="layui-input"  value="{$data.rate|default='0'}"   >
+            </div>
+        </div>
         <div class="layui-inline">
             <label class="layui-form-label">手续费：</label>
             <div class="layui-input-block">
-                <input type="text" name="fee" lay-verify="required" id="fee" autocomplete="off" class="layui-input"  value="{$data.fee|default=''}"   >
+                <input type="text" name="fee"  lay-verify="number" id="fee" autocomplete="off" class="layui-input"  value="{$data.fee|default='0'}"   >
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">单卡次数：</label>
+            <div class="layui-input-block">
+                <input type="text" name="limit_times"  lay-verify="number" id="limit_times" autocomplete="off" class="layui-input"  value="{$data.limit_times|default='0'}"   >
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">单卡单日限额：</label>
+            <div class="layui-input-block">
+                <input type="text" name="limit_money"  lay-verify="number" id="limit_money" autocomplete="off" class="layui-input"  value="{$data.limit_money|default='0'}"   >
             </div>
         </div>
     </div>
@@ -33,13 +52,49 @@
         <div class="layui-inline">
             <label class="layui-form-label">单笔最低：</label>
             <div class="layui-input-block">
-                <input type="text" name="min_amount" lay-verify="required" id="min_amount" autocomplete="off" class="layui-input"  value="{$data.min_amount|default=''}"   >
+                <input type="text" name="min_pay"  lay-verify="number" id="min_pay" autocomplete="off" class="layui-input"  value="{$data.min_pay|default='0'}"   >
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">单笔最高：</label>
             <div class="layui-input-block">
-                <input type="text" id="max_amount"  name="max_amount"    lay-verify="required"  value="{$data.max_amount|default=''}" autocomplete="off" class="layui-input">
+                <input type="text" id="max_pay"  name="max_pay"     lay-verify="number"  value="{$data.max_pay|default='0'}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">付款方式：</label>
+            <div class="layui-input-block">
+                <select class="visit" lay-filter="visit" name="visit"  >
+                    <option value="对公和对私"  {eq name='$data.visit' value='对公和对私'} selected="selected"   {/eq}  >对公和对私</option>
+                    <option value="对公"  {eq name='$data.visit' value='对公'} selected="selected"   {/eq}   >对公</option>
+                    <option value="对私" {eq name='$data.visit' value='对私'} selected="selected"   {/eq}   >对私</option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+
+        <div class="layui-inline">
+            <label class="layui-form-label">下发方式：</label>
+            <div class="layui-input-block">
+                <select class="inner" lay-filter="inner" name="inner"  >
+                    <option value="内扣" {eq name='$data.inner' value='内扣'} selected="selected"   {/eq}   >内扣</option>
+                    <option value="外扣" {eq name='$data.inner' value='外扣'} selected="selected"   {/eq}   >外扣</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">单日代付额度：</label>
+            <div class="layui-input-block">
+                <input type="text" id="total_money"  name="total_money"    lay-verify="number"  value="{$data.total_money|default='0'}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -53,7 +108,7 @@
 
     <div class="layui-form-item layui-row layui-col-xs12">
         <div class="layui-input-block">
-            <button class="layui-btn layui-btn-sm" id="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
         </div>
     </div>
 </form>

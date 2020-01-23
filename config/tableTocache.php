@@ -40,5 +40,10 @@ return [
     'ChannelGroup'=>[
         'ChannelGroup',
     ],
+    'Ip'=>[
+        'Ip',
+    ],
+
+
 
 ];

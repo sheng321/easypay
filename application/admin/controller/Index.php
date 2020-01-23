@@ -21,7 +21,7 @@ class Index  extends AdminController
      * 首页欢迎界面
      * @return mixed
      */
-    public function welcome() {
+    public function welcome(){
 
         return $this->fetch('');
     }

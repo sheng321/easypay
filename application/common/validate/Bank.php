@@ -18,7 +18,7 @@ class Bank extends Validate {
         'account_name'    => 'require|chsDash|max:15|token',
         'card_number'  => 'require|number|max:30',
         'bank_name' => 'require|chsDash|max:50',
-        'branch_name' => 'require|chsDash|max:50',
+        'branch_name' => 'chsDash|max:50',
         'areas'   => 'chsDash|max:50',
         'province'   => 'chsDash|max:20',
         'city'   => 'chsDash|max:20',

@@ -94,7 +94,7 @@ class Df extends AdminController {
 
 
     /**
-     * 选择出款通道
+     * 选择出款代付通道
      */
     public function channel()
     {
@@ -106,12 +106,12 @@ class Df extends AdminController {
                 $limit = $this->request->get('limit', 1000);
                 $search = (array)$this->request->get('search', []);
                 $search['channel_id'] = $this->request->get('channel_id/d', 0);
-                return json(model('app\common\model\Channel')->wList($page, $limit, $search));
+                return json(model('app\common\model\ChannelDf')->wList($page, $limit, $search));
             }
 
             //基础数据
             $basic_data = [
-                'title'  => '出款通道列表',
+                'title'  => '出款代付通道列表',
             ];
 
             return $this->fetch('', $basic_data);
@@ -127,6 +127,9 @@ class Df extends AdminController {
             return model('app\common\model\Channel')->editField($post);
         }
     }
+
+
+
 
 
     /**
@@ -167,7 +170,7 @@ class Df extends AdminController {
             $post = $this->request->only(['id', 'status', 'verson'], 'post');
 
             //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Withdrawal.status');
+            $validate = $this->validate($post, 'app\common\validate\Withdrawal.status_df');
             if (true !== $validate) return __error($validate);
 
             $order = $this->model->quickGet($post['id']);
@@ -189,7 +192,8 @@ class Df extends AdminController {
 
             //如果选择了出款通道
             if ($order['channel_id'] > 0) {
-                $channel_money = Umoney::quickGet(['uid' => 0, 'channel_id' => $order['channel_id']]); //通道金额
+                $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $order['channel_id']]); //通道金额
+                if(empty($channel_money)) __error('数据异常!');
             }
 
             //处理中
@@ -213,7 +217,7 @@ class Df extends AdminController {
 
             //处理完成
             if ($post['status'] == 3){
-                $Umoney = Umoney::quickGet(['uid' =>  $order['mch_id'], 'channel_id' =>0]); //会员金额
+                $Umoney = Umoney::quickGet(['uid' =>  $order['mch_id'], 'channel_id' =>0, 'df_id' =>0]); //会员金额
                 $change['change'] = $order['amount'];//变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
                 $change['type'] = 1;//成功解冻入账
@@ -287,7 +291,7 @@ class Df extends AdminController {
         $channel = $this->request->param('id', 0);
         if(empty($channel[0])) return __error('请选择一条通道！！');
 
-        $Channel = model('app\common\model\Channel')->quickGet($channel[0]);
+        $Channel = model('app\common\model\ChannelDf')->quickGet($channel[0]);
         if(empty($Channel)) return __error('数据异常');
 
         $pid = $this->request->get('pid/d', 0);
@@ -301,7 +305,7 @@ class Df extends AdminController {
             'channel_id'=>$Channel['id'],
             'channel_fee'=>$Channel['fee'],
             'lock_id'=>$this->user['id'],
-            'record'=>empty($order['record'])?$this->user['username']."选择下发通道:".$Channel['title']:$order['record']."|".$this->user['username']."选择下发通道:".$Channel['title'],
+            'record'=>empty($order['record'])?$this->user['username']."选择下发代付通道:".$Channel['title']:$order['record']."|".$this->user['username']."选择下发代付通道:".$Channel['title'],
             'verson'=>$verson, //防止多人操作
         ],['id'=>$pid]);
 
@@ -309,5 +313,313 @@ class Df extends AdminController {
 
         return __success('操作成功');
     }
+
+
+    /**代付通道列表
+     * @return mixed|\think\response\Json
+     */
+    public function df()
+    {
+        $this->model = model('app\common\model\ChannelDf');
+
+        if (!$this->request->isPost()) {
+
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                return json($this->model->cList($page, $limit, $search));
+            }
+
+            //基础数据
+            $basic_data = [
+                'title'  => '代付通道列表',
+                'data'   => '',
+                'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->post();
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            if (true !== $validate) return __error($validate);
+
+            //保存数据,返回结果
+            $result = $this->model->editField($post);
+
+            return $result;
+
+        }
+    }
+
+    /**
+     * 会员金额
+     * @return mixed
+     */
+    public function money(){
+        $id = $this->request->get('id/d',0);
+        $Umoney =  model('app\common\model\Umoney');
+        $user =$Umoney->quickGet(['df_id'=>$id,'uid'=>0]);
+        if(empty($user)) return msg_error('数据错误，请重试！');
+
+        if (!$this->request->isPost()){
+            //基础数据
+            $basic_data = [
+                'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除'],
+                'user'  => $user,//用户金额
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $money = $this->request->only('remark,change,type,__token__','post');
+
+            //验证数据
+            $validate = $this->validate($money, 'app\common\validate\Money.edit');
+            if (true !== $validate) return __error($validate);
+
+            //处理金额
+            $res =  $Umoney->dispose($user,$money);
+            if (true !== $res['msg']) return __error($res['msg']);
+
+            unset($money['__token__']);
+
+            //使用事物保存数据
+            $Umoney->startTrans();
+
+            $save = $Umoney->saveAll($res['data']);
+            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+
+            if (!$save || !$add) {
+                $Umoney->rollback();
+                $msg = '数据有误，请稍后再试！';
+                __log($id.$res['log'].'失败');
+                return __error($msg);
+            }
+            $Umoney->commit();
+
+            __log($res['log'].'成功');
+            empty($msg) && $msg = '操作成功';
+            return __success($msg);
+        }
+    }
+
+
+
+    /**
+     * 添加代付通道
+     * @return mixed|\think\response\Json
+     */
+    public function add_df(){
+        $this->model = model('app\common\model\ChannelDf');
+        if (!$this->request->isPost()) {
+
+            //代付通道列表
+            $Channel = \app\common\model\Channel::where(['pid'=>0,'type'=>0])->cache('Channel_0',3)->column('id,title','id');
+
+            //基础数据
+            $basic_data = [
+                'title' => '添加代付支付通道',
+                'data'  => [],
+                'channel' => $Channel
+            ];
+            $this->assign($basic_data);
+
+            return $this->fetch('form');
+        } else {
+            $post = $this->request->post();
+
+            if(!empty($post['secretkey']))  $post['secretkey'] = (new Channel())->check_secretkey($post['secretkey']);
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Channel.df');
+            if (true !== $validate) return __error($validate);
+            unset($post['__token__']);
+
+            $money = ['uid'=>0];
+            if(!empty($post['channel_id'])){
+                $channel_money = Umoney::quickGet(['uid'=>0,'channel_id'=>$post['channel_id']]);
+                if(empty($channel_money)) __error('绑定支付通道的金额账户不存在');
+                $money['id'] = $channel_money['id'];
+            }
+
+
+            //保存数据,返回结果
+            //使用事物保存数据
+            $this->model->startTrans();
+            $channel = $this->model->create($post);//创建通道
+            //创建代付通道金额账户
+            $money['df_id'] = $channel['id'];
+            $Umoney = model('app\common\model\Umoney')->save($money);
+
+            if (!$channel || !$Umoney ) {
+                $this->model->rollback();
+                empty($msg) && $msg = '数据有误，请稍后再试！!';
+                return __error($msg);
+            }
+            $this->model->commit();
+            empty($msg) && $msg = '添加成功!';
+            return __success($msg);
+
+        }
+    }
+
+    //置顶
+    public function top() {
+        $get = $this->request->get();
+
+        //验证数据
+        $validate = $this->validate($get, 'app\common\validate\Channel.sort');
+        if (true !== $validate) return __error($validate);
+
+        $this->model = model('app\common\model\ChannelDf');
+        //判断菜单状态
+        $get['sort'] == 2 && $msg = '置顶成功';
+        $get['sort'] == 0 && $msg = '置后成功';
+
+        //执行更新操作操作
+        $update =  $this->model->__edit(['sort' => $get['sort'],'id' => $get['id']],$msg);
+
+        return $update;
+    }
+
+
+
+    public function edit_df(){
+        $this->model = model('app\common\model\ChannelDf');
+        if (!$this->request->isPost()) {
+
+          $data = $this->model->quickGet($this->request->get('id/d',0));
+            if (empty($data)) return msg_error('暂无数据，请重新刷新页面！');
+
+
+            //支付通道列表
+            $Channel = \app\common\model\Channel::where(['pid'=>0,'type'=>0])->cache('Channel_0',3)->column('id,title','id');
+
+
+            if(!empty($data['secretkey'])){
+                $data1 = json_decode($data['secretkey']);
+                $str = '';
+                foreach ($data1 as $k => $v){
+                    $str.= $k.'|'.$v."\n";
+                }
+
+                $data['secretkey'] = $str;
+            }
+
+
+            //基础数据
+            $basic_data = [
+                'title' => '添加代付支付通道',
+                'data'  => $data,
+                'channel' => $Channel
+            ];
+            $this->assign($basic_data);
+
+            return $this->fetch('form');
+        } else {
+            $post = $this->request->post();
+
+            if(!empty($post['secretkey']))  $post['secretkey'] = (new Channel())->check_secretkey($post['secretkey']);
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Channel.df');
+            if (true !== $validate) return __error($validate);
+            unset($post['__token__']);
+
+            //保存数据,返回结果
+            //使用事物保存数据
+            $this->model->startTrans();
+
+            $channel = $this->model->save($post);//更新通道
+            //创建代付通道金额账户
+            if(empty($post['channel_id'])) $post['channel_id'] = 0;
+            $Umoney = model('app\common\model\Umoney')->save(['uid'=>0,'channel_id'=>$post['channel_id'],'df_id'=>$channel['id']]);
+
+            if (!$channel || !$Umoney ) {
+                $this->model->rollback();
+                empty($msg) && $msg = '数据有误，请稍后再试！!';
+                return __error($msg);
+            }
+            $this->model->commit();
+            empty($msg) && $msg = '添加成功!';
+            return __success($msg);
+        }
+    }
+
+
+    /**
+     * 更改代付状态
+     * @return \think\response\Json
+     */
+    public function status_df() {
+        $get = $this->request->get();
+
+        //验证数据
+        $validate = $this->validate($get, 'app\common\validate\Channel.status');
+        if (true !== $validate) return __error($validate);
+
+        $this->model =  model('app\common\model\ChannelDf');
+
+        //判断菜单状态
+        $status = $this->model->where('id', $get['id'])->value('status');
+        $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
+
+        //执行更新操作操作
+        $update =  $this->model->__edit(['status' => $status,'id' => $get['id']],$msg);
+
+        return $update;
+    }
+
+    public function inner() {
+        $get = $this->request->get();
+
+        //验证数据
+        $validate = $this->validate($get, 'app\common\validate\Channel.status');
+        if (true !== $validate) return __error($validate);
+
+        $this->model =  model('app\common\model\ChannelDf');
+
+        //判断菜单状态
+        $status = $this->model->where('id', $get['id'])->value('inner');
+        $status == 1 ? list($msg, $status) = ['内扣成功', $status = 0] : list($msg, $status) = ['外扣成功', $status = 1];
+
+        //执行更新操作操作
+        $update =  $this->model->__edit(['inner' => $status,'id' => $get['id']],$msg);
+
+        return $update;
+    }
+
+
+    public function visit() {
+        $get = $this->request->get();
+        $this->model =  model('app\common\model\ChannelDf');
+
+        $data = ['visit'=>(int)$get['value'],'id' => (int)$get['id']];
+        if(!empty($get['verson'])) $data['verson'] = (int)$get['verson'];//锁
+
+        //执行更新操作操作
+        $update =  $this->model->__edit($data);
+
+        return $update;
+    }
+
+
+    /**
+     * 删除代付通道
+     * @return \think\response\Json
+     * @throws \Exception
+     */
+    public function del_df() {
+        $get = $this->request->get();
+        if(empty($get['id'])) __error('数据异常！');
+
+        return   model('app\common\model\ChannelDf')->__del($get);
+    }
+
+
+
+
 
 }

@@ -71,6 +71,17 @@ class Withdrawal extends ModelService {
 
         $status =   config('custom.status');
 
+        $card_number = [];
+        $account_name = [];
+        if(app('request')->module() === 'admin'){
+            $bad =  Bank::bList(0);//异常卡
+            foreach ($bad as $k => $v){
+                $card_number[] = $v['card_number'];
+                $account_name[] = $v['account_name'];
+            }
+        }
+
+
         foreach ($data as $k => $v){
 
             $data[$k]['status_title'] = $status[$v['status']];
@@ -84,6 +95,12 @@ class Withdrawal extends ModelService {
             $data[$k]['bank_name'] = $bank['bank_name'];
             !empty($bank['branch_name']) &&  $data[$k]['branch_name'] = $bank['branch_name'];
             !empty($bank['province']) && $data[$k]['location'] =  $bank['province'].$bank['city'].$bank['areas'];
+
+
+            //异常卡
+            if(in_array($data[$k]['card_number'],$card_number))  $data[$k]['card_number'] = "<span  class='text-danger'  >".$data[$k]['card_number']."-异常</span>";
+            if(in_array($data[$k]['account_name'],$account_name))  $data[$k]['account_name'] = "<span  class='text-danger'  >".$data[$k]['account_name']."-异常</span>";
+
         }
 
         $list = [
