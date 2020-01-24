@@ -92,12 +92,27 @@
 
     <div class="layui-form-item layui-row layui-col-xs12">
         <div class="layui-inline">
-            <label class="layui-form-label">单日代付额度：</label>
+            <label class="layui-form-label">Api代付接口：</label>
+            <div class="layui-input-block">
+                <select class="api" lay-filter="api" name="api"  >
+                    <option value="0" {eq name='$data.api' value='0'} selected="selected"   {/eq}   >关闭</option>
+                    <option value="1" {eq name='$data.api' value='1'} selected="selected"   {/eq}   >开启</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">会员单日额度：</label>
             <div class="layui-input-block">
                 <input type="text" id="total_money"  name="total_money"    lay-verify="number"  value="{$data.total_money|default='0'}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
+
+
+
 
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">提现时间</label>

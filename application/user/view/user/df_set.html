@@ -1,0 +1,107 @@
+{extend name="user@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+        <div class="layui-tab-content">
+
+            <div class="layui-form-item layui-show">
+                <blockquote class="layui-elem-quote" >
+                    <span style="margin:0 10px;" class="text-info">可申请代付金额：{$user.df|default='0.00'} 元   </span>
+                    <span style="margin:0 10px;" class="text-warning">可用余额：{$user.balance|default='0.00'} 元</span>
+                    <span style="margin:0 10px;" class="text-warning">总金额：{$user.total_money|default='0.00'} 元</span>
+                    <span style="margin:0 10px;" class="text-warning">冻结金额：{$user.frozen_amount|default='0.00'} 元</span>
+                </blockquote>
+            </div>
+
+            <div class="layui-tab-item layui-show">
+
+                <form class="layui-form" style="width:80%;">
+                    <br>
+
+                    <div class="layui-form-item layui-row layui-col-xs12">
+                        <label class="layui-form-label">Api代付接口</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="api"  value="0" title="关闭"    {eq name='$api|default=false' value='0' }checked="checked" {/eq}   >
+                            <input type="radio" name="api"  value="1" title="开启"     {eq name='$api|default=false' value='1' }checked="checked" {/eq}    >
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-row layui-col-xs12">
+                        <label class="layui-form-label">操作代付金额</label>
+                        <div class="layui-input-block">
+                            <select name="type"  class="type" lay-filter="type" lay-verify="required"   >
+                                {foreach $status as $k=> $vo}
+                                <option value="{$k|default='0'}" >{$vo}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-row layui-col-xs12">
+                        <label class="layui-form-label">变动金额</label>
+                        <div class="layui-input-block">
+                            <input type="number" id="change" name="change" class="layui-input change"   placeholder="请输入变动金额(正数)"  >
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item"  >
+                        <label class="layui-form-label">支付密码</label>
+                        <div class="layui-input-block">
+                            <input type="password"  id="paypwd" name="paypwd" lay-verify="required" placeholder="请输入支付密码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <!--{if $UserInfo.UserGoole == 1}-->
+                    <div class="layui-form-item" id="googleAuthDiv" >
+                        <label class="layui-form-label">谷歌验证码</label>
+                        <div class="layui-input-block">
+                            <input type="text" required="" id="google" name="google" placeholder="请输入谷歌验证码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <!--{/if}-->
+
+                    {:token('__token__', 'sha1')}
+
+                    <div class="layui-form-item layui-row layui-col-xs12">
+                        <div class="layui-input-block">
+                            <button type="button " lay-submit="" lay-filter="submitBtn" class="layui-btn">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="script"}
+<script >
+
+    $.form.on('submitBtn', '{:url("$thisRequest")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload();
+        });
+        return false;
+    },function (obj) {
+        var data = [];
+        data.data = obj;
+        data.code = 1;
+        data.msg = '';
+
+        if(!$.tool.isEmpty(obj.paypwd)){
+            obj.paypwd = $.md5(obj.paypwd);
+        }
+        return data;
+    });
+
+</script>
+{/block}

@@ -94,7 +94,7 @@ class Withdrawal extends ModelService {
             $data[$k]['account_name'] = $bank['account_name'];
             $data[$k]['bank_name'] = $bank['bank_name'];
             !empty($bank['branch_name']) &&  $data[$k]['branch_name'] = $bank['branch_name'];
-            !empty($bank['province']) && $data[$k]['location'] =  $bank['province'].$bank['city'].$bank['areas'];
+            !empty($bank['province']) && $data[$k]['location'] =  $bank['province'].$bank['city'];
 
 
             //异常卡

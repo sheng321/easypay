@@ -1009,6 +1009,33 @@ class Member extends AdminController {
 
 
 
+    /**Api接口代付
+     * @return \think\response\Json
+     */
+    public function api() {
+        $id = $this->request->get('id/d',0);
+        $value = $this->request->get('value/d',0);
+
+        $find =  $this->model->quickGet($id);
+        if(empty($find['profile']['id'])) return __error('操作失败');
+        $data['id'] = $find['profile']['id'];
+
+        if($value == 3){
+            $data['id'] = $find['profile']['id'];
+            $data['df_secret'] = password($find['uid'].mt_rand(1,200),$key = '1233');
+            return (new Uprofile)->__edit($data,'重置代付秘钥成功');
+        }
+
+        if($value == $find['profile']['df_api1']) return __success('操作成功');
+
+        $data['df_api1'] = $value;
+        if(empty($find['profile']['df_secret']))  $data['df_secret'] = password($find['uid'].mt_rand(1,200),$key = '1233');
+
+        return (new Uprofile)->__edit($data,'操作成功');
+    }
+
+
+
     /**
      * 商户单点登入
      * @return \think\response\Json

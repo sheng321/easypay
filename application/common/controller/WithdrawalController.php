@@ -7,11 +7,11 @@ use think\Queue;
 
 
 /**
- * 下单基础控制器
+ * 代付下单基础控制器
  * Class AdminController
  * @package controller
  */
-class PayController extends BaseController
+class WithdrawalController extends BaseController
 {
 
     //通道配置信息
@@ -126,7 +126,7 @@ class PayController extends BaseController
         if( $res === false ) __jerror('fail');
 
         //同步
-        //$res = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
+       // $res = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
        // halt($res);
 
         return  $this->config['returnBack'];

@@ -2,6 +2,10 @@
 
 namespace app\user\controller;
 use app\common\controller\UserController;
+use app\common\model\Umoney;
+use app\common\model\Uprofile;
+use think\facade\Session;
+
 class User extends UserController {
 
     /**
@@ -18,6 +22,89 @@ class User extends UserController {
 
         $this->model = model('app\common\model\Umember');
     }
+
+
+    /**
+     * 代付设置
+     * @return mixed|string|\think\response\Json
+     */
+    public function df_set() {
+        $Umoney =  model('app\common\model\Umoney');
+        $user =$Umoney->quickGet(['uid'=>$this->user['uid']]);
+        if(empty($user)) return exceptions('数据错误，请重试！');
+
+        if (!$this->request->isPost()){
+
+            //基础数据
+            $basic_data = [
+                'title'  => '代付设置',
+                'status' => [13=>'余额转代付金额',14=>'代付金额转余额'],
+                'user'  => $user,//用户金额
+                'api'  => $this->user['profile']['df_api'],
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $money = $this->request->only('change,type,api','post');
+
+
+            //谷歌验证码
+            if ($this->UserInfo['UserGoole'] == 1) {
+                $data1['google_token'] = $this->user['google_token'];
+                $data1['google'] = $this->request->post('google/d', 0);
+                $validate1 = $this->validate($data1, 'app\common\validate\common.google');
+                if (true !== $validate1) return __error($validate1);
+            }
+
+            //支付密码
+            $data2['paypwd1'] = $this->user['profile']['pay_pwd'];
+            $data2['paypwd'] = $this->request->post('paypwd/s', '');
+
+            //验证数据
+            $validate2 = $this->validate($data2, 'app\common\validate\Umember.paypwd');
+            if (true !== $validate2) return __error($validate2);
+
+            //token
+            $__token__ = $this->request->param('__token__/s', '');
+            $__hash__ = Session::pull('__token__');
+            if ($__token__ !== $__hash__) return __error("令牌验证无效，请刷新重试");
+
+            if(!in_array($money['type'],[13,14]) || !in_array($money['api'],[0,1])) return __error('数据异常');
+            if($money['api'] === $this->user['profile']['df_api']) unset($money['api']);
+
+            $money['change'] =   floatval($money['change']);
+
+            if($money['change'] > 0){
+                //处理金额
+                $res =  $Umoney->dispose($user,$money);
+                if (true !== $res['msg']) return __error($res['msg']);
+            }
+
+            //使用事物保存数据
+            $Umoney->startTrans();
+            if($money['change'] > 0) {
+                $save = $Umoney->saveAll($res['data']);
+                $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+            }else{
+                $save = true;
+                $add = true;
+            }
+            $save2 = true;
+            if(in_array($money['api'],[0,1]))  $save2 = model('app\common\model\Uprofile')->save(['df_api'=>$money['api'],'id'=>$this->user['profile']['id']],['id'=>$this->user['profile']['id']]);
+
+            if (!$save || !$add || !$save2) {
+                $Umoney->rollback();
+                $msg = '数据有误，请稍后再试！';
+                if($money['change'] > 0)   __log($res['log'].'失败',2);
+                return __error($msg);
+            }
+            $Umoney->commit();
+            if($money['change'] > 0) __log($res['log'].'成功',2);
+            empty($msg) && $msg = '操作成功';
+            return __success($msg);
+        }
+    }
+
+
 
 
     /**
@@ -253,7 +340,7 @@ class User extends UserController {
             ];
             return $this->fetch('', $basic_data);
         } else {
-            $post = $this->request->only(['id','card_number','bank_name','branch_name','province','city','areas','account_name','__token__'], 'post');
+            $post = $this->request->only(['id','card_number','bank_name','branch_name','province','city','account_name','__token__'], 'post');
             $post['uid'] = $uid;
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Bank.edit');

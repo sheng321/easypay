@@ -2,25 +2,59 @@
 {block name="style"}{/block}
 
 {block name="cotent"}
-<div class="layui-fluid">
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-md12">
-            <div class="layui-card">
-                <div class="layui-card-header">API设置</div>
-                <div class="layui-card-body">
-                    <blockquote class="layui-elem-quote layui-quote-nm">
-                        <strong>API对接参数：</strong><br><br>
-                        商户号：{$Think.session.user_info.uid|default='无名'}<br><br>
-                        网关地址：{:config('set.api')}<br><br>
-                        商户APIKEY：<button id="apikey-query" onclick="apikey(this)"  class="layui-btn layui-btn-small layui-btn-normal">点击查看密钥</button><span id='apikey' class="hide"></span>
-                    </blockquote>
-                </div>
+
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <blockquote class="layui-elem-quote" id="amountTip">
+                    <span class="text-danger"  > 结算方式： T+0</span>
+                </blockquote>
             </div>
+
+            <div class="layui-tab-item layui-show">
+                <blockquote class="layui-elem-quote layui-quote-nm">
+                    <strong>API支付对接参数：</strong><br><br>
+                    商户号：{$Think.session.user_info.uid|default='无名'}<br><br>
+                    网关地址：{:config('set.api')}<br><br>
+                    商户支付APIKEY：<button id="apikey-query" onclick="apikey(this)"  class="layui-btn layui-btn-small layui-btn-normal">点击查看支付密钥</button><span id='apikey' class="hide"></span>
+                </blockquote>
+            </div>
+
+
+            {if auth("$thisClass/df") }
+                <br><br>
+                <div class="layui-tab-item layui-show">
+                    <blockquote class="layui-elem-quote layui-quote-nm">
+                        <strong>API代付对接参数：</strong><br><br>
+                        商户号：{$Think.session.user_info.uid|default='无名'}<br><br>
+                        发起代付网关地址：{:config('set.df_api')}<br><br>
+                        订单查询网关地址：{:config('set.df_qurey')}<br><br>
+                        余额查询网关地址：{:config('set.df_balance')}<br><br>
+                        商户代付APIKEY：<button id="apidf-query" onclick="apidf(this)"  class="layui-btn layui-btn-small layui-btn-normal">点击查看代付密钥</button><span id='apidf' class="hide"></span>
+                    </blockquote>
+                    <script>
+                        function apidf(){
+                            $.msg.prompt('为了安全起见，请输入支付密码','{:url("$thisClass/secret")}?type=0975458tyyuuuiiiooopp',{}, function (res) {
+                                if(res.code == 1){
+                                    $('#apidf-query').hide();
+                                    $('#apidf').text(res.data).removeClass('hide')
+                                }else {
+                                    $.msg.error(res.msg);
+                                }
+                            });
+                        }
+                    </script>
+
+                </div>
+            {/if}
 
         </div>
     </div>
 </div>
-
 
 {/block}
 

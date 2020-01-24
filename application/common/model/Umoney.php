@@ -140,25 +140,43 @@ class Umoney extends ModelService {
         switch (true){
             case ($data['uid'] == 0 && $data['channel_id'] > 0):
                 $temp = $data['channel_id'];
-                $change['type1'] = 1;//通道
+                $change['type1'] = 1;//通道记录
                 break;
             case ($data['channel_id'] == 0  && $data['uid'] > 0 ):
                 $temp = $data['uid'];
-                $change['type1'] = 0;//会员
+                $change['type1'] = 0;//会员记录
                 break;
             default:
                 $temp = '平台';
-                $change['type1'] = 2;//平台
+                $change['type1'] = 2;//平台记录
                 break;
         }
 
-        //修改平台金额的情况 (会员)
+        //操作人类型
+        switch (true){
+            case (app('request')->module() === 'user'):
+                $change['type2'] = 2;
+                break;
+            case (app('request')->module() === 'agent'):
+                $change['type2'] = 3;
+                break;
+            case (app('request')->module() === 'admin'):
+                $change['type2'] = 1;
+                break;
+            default:
+                $change['type2'] = 0;
+                break;
+        }
+
+
+        //关联修改平台金额的情况
         if(in_array($change['type'],[3,4]) &&  $change['type1'] == 0){
-            $p = self::where(['id'=>0,'uid'=>0,'channel_id'=>0])->field('id,total_money,balance')->find()->toArray();//平台金额
+            $p = self::where(['id'=>1,'uid'=>0,'channel_id'=>0])->field('id,total_money,balance')->find()->toArray();//平台金额
             $change1['change'] = $change['change'];
             $change1['before_balance'] = $p['balance'];//变动前金额
             $change1['relate'] = $temp;//关联
-            $change1['type1'] = 2;
+            $change1['type2'] = $change['type2'];
+            $change1['type1'] = 2;//平台记录
             $change1['type'] = $change['type'];
             $change1['remark'] = $change['remark'];
         }
@@ -341,22 +359,8 @@ class Umoney extends ModelService {
 
         $res['data'][] = $data;
 
-        switch (true){
-            case (session('admin_info.username')):
-                $username = '系统操作人:'.session('admin_info.username').'-';
-                break;
-            case (session('user_info.username')):
-                $username = '商户操作人:'.session('admin_info.username').'-';
-                break;
-            case (session('agent_info.username')):
-                $username = '代理操作人:'.session('admin_info.username').'-';
-                break;
-            default:
-                $username = '';
-                break;
-        }
 
-        $change['remark'] = $username.$res['log'];
+        $change['remark'] = $res['log'];
         $res['change'][] = $change;
 
         if(!empty($p)){

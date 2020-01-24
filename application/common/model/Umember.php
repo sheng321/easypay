@@ -89,10 +89,10 @@ class Umember extends UserService {
     {
         if(isset($data['uid'])&&isset($data['who'])){
            $Uprofile =  model('app\common\model\Uprofile');
-            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,secret,group_id,who')->find();
+            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,secret,group_id,who,df_secret,df_api,df_api1')->find();
             if(empty($find)){
                 $Uprofile->save(['uid'=>$data['uid'],'who'=>$data['who']]);
-                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,secret,group_id,who')->find();
+                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,secret,group_id,who,df_secret,df_api,df_api1')->find();
             }
             $data = $find->toArray();
             return $data;

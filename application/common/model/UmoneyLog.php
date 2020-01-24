@@ -53,12 +53,21 @@ class UmoneyLog extends ModelService {
 
         $money  =  config('money.');
 
-        $field = ['id','uid','create_at','create_by','balance','before_balance','change','type','remark','relate','type1,channel_id'];
+        $field = ['id','uid','create_at','create_by','balance','before_balance','change','type','remark','relate','type1,channel_id','type2'];
 
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['create_at'=>'desc'])->select()->each(function ($item, $key)use ($money) {
-            $item['nickname'] = $item['create_by'] > 0? getNamebyId($item['create_by']):0;
-            $item['auth_title'] = $item['create_by'] > 0? getTitlebyId($item['create_by']):0;
+            $item['nickname'] = 0;
+            $item['auth_title'] = 0;
+            if($item['type2'] == 2|| $item['type2'] == 3 &&  $item['create_by'] > 0){
+                $item['nickname'] = getUnamebyId($item['create_by']);
+                $item['auth_title'] =  getUtitlebyId($item['create_by']);
+            }
+            if($item['type2'] == 1 &&  $item['create_by'] > 0) {
+                $item['nickname'] = getNamebyId($item['create_by']);
+                $item['auth_title'] =  getTitlebyId($item['create_by']);
+            }
+
             $item['title'] = $money[$item['type']];
         });
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';

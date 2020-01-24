@@ -89,6 +89,14 @@
         <input type="checkbox" name="{{d.id}}" value="" lay-skin="switch" lay-text="启用|已重置" lay-filter="modifyPaypwd" {{ 1 ? 'checked' : '' }}>
     </script>
 
+
+    <script type="text/html" id="Api">
+        <input type="radio" name="{{d.id}}" value="1" title="开启"  {{ d.profile.df_api1 == 1 ? 'checked' : '' }}   lay-filter="modifyApi" >
+        <input type="radio" name="{{d.id}}" value="3" title="重置秘钥"     lay-filter="modifyApi"  >
+        <input type="radio" name="{{d.id}}" value="0" title="关闭"  {{ d.profile.df_api1 == 0 ? 'checked' : '' }}    lay-filter="modifyApi" >
+    </script>
+
+
     <script type="text/html" id="checkGoogle">
         <input type="checkbox" name="{{d.id}}" value="{{d.google_token}}" lay-skin="switch" lay-text="启用|未绑定" lay-filter="modifyGoogle" {{ d.google_token == 1 ? 'checked' : '' }}>
     </script>
@@ -176,6 +184,9 @@
             /**{if auth("$thisClass/paypwd")}**/
             {field: 'paypwd', title: '重置支付密码', minWidth: 30,  align: "center", templet: '#paypwd'},
             /**{/if}**/
+           /**{if auth("$thisClass/api")}**/
+           {field: 'api', title: 'API代付', width: 180,  align: "center", templet: '#Api'},
+           /**{/if}**/
 
             {field: 'username', title: '用户名', minWidth: 80, align: "center"},
             {field: 'nickname', title: '昵称',  minWidth: 80, align: "center"},
@@ -190,6 +201,10 @@
             /**{if auth("$thisClass/google")}**/
             {field: 'status', title: '重置谷歌', minWidth: 20, templet: '#checkGoogle', unresize: true, align: "center"},
             /**{/if}**/
+
+
+
+
             /**{if auth("$thisClass/status")}**/
             {field: 'status', title: '启用状态', minWidth: 80, templet: '#checkStatus', unresize: true, align: "center"},
             /**{/if}**/
@@ -202,7 +217,7 @@
             {field: 'qq', title: '用户QQ', align: 'center'},
             {field: 'create_at', title: '创建时间', align: 'center', minWidth: 150},
         ]], 'username','pid',true,function (res,curr,count){
-           merge(res,['uid','group_title','uid','uid','uid','uid'],[1,2,3,4,5,6]);
+           merge(res,['uid','group_title','uid','uid','uid','uid','uid'],[1,2,3,4,5,6,7]);
        });
 
         /**
@@ -224,6 +239,7 @@
         $.form.switch('modifyGoogle', '{:url("$thisClass/google")}');
         $.form.switch('modifySecret', '{:url("$thisClass/secret")}');
         $.form.switch('modifyPaypwd', '{:url("$thisClass/paypwd")}');
+        $.form.radio('modifyApi', '{:url("$thisClass/api")}');
 
 {/block}
 

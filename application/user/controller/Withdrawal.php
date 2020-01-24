@@ -231,7 +231,7 @@ class Withdrawal extends UserController {
 
         $this->assign("bank",$bank);
         $basic_data = [
-            'title' => '提现记录列表',
+            'title' => '代付记录列表',
             'withdrawal' => $withdrawal,
             'money' => ['balance'=>$Umoney['balance'],'df'=>$Umoney['df'],'frozen_amount'=>$Umoney['frozen_amount'] + $Umoney['frozen_amount_t1'] + $Umoney['artificial']],
         ];

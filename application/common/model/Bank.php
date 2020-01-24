@@ -28,7 +28,7 @@ class Bank extends ModelService {
 
         $order = ['update_at'=>'desc'];
 
-        if(empty($search['uid']) && $search['uid'] != 0 ){
+        if(empty($search['uid']) || $search['uid'] == 0 ){
             $order['uid'] = 'desc';
             $where[] = ['uid','>',0];
         }
@@ -64,7 +64,7 @@ class Bank extends ModelService {
     }
 
     public static function bList($uid){
-        return self::where("uid",$uid)->cache('bank_list_'.$uid,3)->column("id,card_number,bank_name,account_name,branch_name,province,city,areas",'id');
+        return self::where("uid",$uid)->cache('bank_list_'.$uid,3)->column("id,card_number,bank_name,account_name,branch_name,province,city",'id');
     }
 
 }

@@ -163,6 +163,8 @@
                     obj.field = data.data;
                 }
 
+
+
                 $.request.post(url,obj.field,function (res) {
                         callback(res);
                     });

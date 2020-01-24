@@ -97,7 +97,7 @@ class Df extends ModelService {
             $data[$k]['account_name'] = $bank['account_name'];
             $data[$k]['bank_name'] = $bank['bank_name'];
             !empty($bank['branch_name']) &&  $data[$k]['branch_name'] = $bank['branch_name'];
-            !empty($bank['province']) && $data[$k]['location'] =  $bank['province'].$bank['city'].$bank['areas'];
+            !empty($bank['province']) && $data[$k]['location'] =  $bank['province'].$bank['city'];
 
             //异常卡
             if(in_array($data[$k]['card_number'],$card_number))  $data[$k]['card_number'] = "<span  class='text-danger'  >".$data[$k]['card_number']."-异常</span>";
@@ -115,4 +115,21 @@ class Df extends ModelService {
         return $list;
     }
 
+    //单卡 单日次数
+    public static function times($cardnumber){
+       $time = date('Y-m-d');
+      return  self::where([['card_number','=',$cardnumber],['status','<',4],['create_at','BETWEEN',["{$time} 00:00:00", "{$time} 23:59:59"]]])->count();
+    }
+
+    //单卡 单日金额
+    public static function card_money($cardnumber){
+        $time = date('Y-m-d');
+        return  self::where([['card_number','=',$cardnumber],['status','<',4],['create_at','BETWEEN',["{$time} 00:00:00", "{$time} 23:59:59"]]])->sum('amount');
+    }
+
+    //会员 单日金额
+    public static function mch_id_money($mch_id){
+        $time = date('Y-m-d');
+        return  self::where([['mch_id','=',$mch_id],['status','<',4],['create_at','BETWEEN',["{$time} 00:00:00", "{$time} 23:59:59"]]])->sum('amount');
+    }
 }

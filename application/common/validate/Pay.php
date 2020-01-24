@@ -27,6 +27,17 @@ class Pay extends Validate {
         "pay_productname" => 'chsDash|max:100',
         "pay_attach" => 'chsDash|max:100',
 
+        "mchid" => 'require|number',
+        "money" => 'require|checkAmount',
+        "out_trade_no" => 'require|alphaDash|max:25',
+
+        "accountname" => 'require|chsAlphaNum|max:25',//汉字、字母和数字
+        "bankname" => 'require|number|max:5|checkBank',
+        "cardnumber" => 'require|alphaNum|max:30',//数字和字母
+        "city" => 'require|chsAlphaNum|max:20',
+        "province" => 'require|chsAlphaNum|max:20',
+        "subbranch" => 'require|chsAlphaNum|max:50',
+        "extends" => 'max:250|checkExtends',
     ];
 
     /**
@@ -66,7 +77,44 @@ class Pay extends Validate {
         'pay_productname.max' => '服务器通知地址不能大于100个字符',
         'pay_attach.max' => '页面返回地址不能大于100个字符',
 
+
+        'mchid.require' => '商户号不存在',
+        'mchid.number' => '商户号不存在',
+
+        'out_trade_no.require' => '订单号不存在',
+        'out_trade_no.alphaDash' => '订单号格式不正确',
+        'out_trade_no.max' => '订单号不能多于25个字符',
+
+        'money.require' => '代付金额不存在',
+
+        'accountname.require' => '开户名不存在',
+        'accountname.alphaDash' => '开户名格式不正确',
+        'accountname.max' => '开户名不能多于25个字符',
+
+        'bankname.require' => '开户行不存在',
+        'bankname.number' => '开户行格式不正确',
+        'bankname.max' => '开户行不能多于5个字符',
+
+        'cardnumber.require' => '卡号不存在',
+        'cardnumber.alphaNum' => '卡号格式不正确',
+        'cardnumber.max' => '卡号不能多于30个字符',
+
+        'city.require' => '城市不存在',
+        'city.chsAlphaNum' => '城市格式不正确',
+        'city.max' => '城市不能多于20个字符',
+
+        'province.require' => '省份不存在',
+        'province.chsAlphaNum' => '省份格式不正确',
+        'province.max' => '省份不能多于20个字符',
+
+        'subbranch.require' => '支行名称不存在',
+        'subbranch.chsAlphaNum' => '支行名称不正确',
+        'subbranch.max' => '支行名称不能多于50个字符',
+
     ];
+
+
+
 
     /**
      * 验证场景
@@ -74,8 +122,26 @@ class Pay extends Validate {
      */
     protected $scene = [
          'check_api' => ["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign","pay_productname","pay_attach"],
-        'check_query' => ["pay_memberid" ,"pay_orderid","pay_md5sign"]
+        'check_query' => ["pay_memberid" ,"pay_orderid","pay_md5sign"],
+
+        //代付
+         'check_withdrawal' => ["accountname" ,"bankname","cardnumber","city","extends" ,"mchid","money","out_trade_no","province","subbranch","pay_md5sign"],
+
     ];
+
+    public function checkExtends($value, $rule, $data = [])
+    {
+        if(empty($value))  return true;
+        if($value !== base64_encode(base64_decode($value)))  return "extends需要base64字符串";
+        return true;
+    }
+
+    public function checkBank($value, $rule, $data = [])
+    {
+        $bank = config('bank.');
+        if(empty($bank[$value]))  return '不支持此银行卡。';
+        return true;
+    }
 
 
     public function sceneCheck_amount()

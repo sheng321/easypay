@@ -19,7 +19,7 @@ class Bank extends Validate {
         'card_number'  => 'require|number|max:30',
         'bank_name' => 'require|chsDash|max:50',
         'branch_name' => 'chsDash|max:50',
-        'areas'   => 'chsDash|max:50',
+
         'province'   => 'chsDash|max:20',
         'city'   => 'chsDash|max:20',
 
@@ -35,7 +35,7 @@ class Bank extends Validate {
         'card_number'  => '银行卡号 格式不正确或者太长',
         'bank_name' => '银行名称 格式不正确或者太长',
         'branch_name' =>  '所在支行 格式不正确或者太长',
-        'areas'   =>  '地区 格式不正确或者太长',
+
         'province'   =>  '省份 格式不正确或者太长',
         'city'   =>  '城市 格式不正确或者太长',
     ];
@@ -45,7 +45,7 @@ class Bank extends Validate {
      * @var array
      */
     protected $scene = [
-        'edit' => ['id', 'uid', 'account_name', 'card_number', 'bank_name', 'branch_name', 'areas', 'province', 'city'],
+        'edit' => ['id', 'uid', 'account_name', 'card_number', 'bank_name', 'branch_name',  'province', 'city'],
         'del' => ['id'],
     ];
 

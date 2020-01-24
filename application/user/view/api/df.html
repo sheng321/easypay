@@ -1,0 +1,121 @@
+{extend name="user@public/basic" /}
+
+{block name="style"}
+
+{/block}
+
+{block name="cotent"}
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <blockquote class="layui-elem-quote" id="amountTip">
+                   <span class="text-danger"  > 结算方式： T+0</span>
+                </blockquote>
+            </div>
+
+            <div class="layui-tab-item layui-show">
+                <div class="layui-col-md12">
+                    <table class="layui-table"   >
+                        <colgroup>
+                            <col >
+                            <col >
+                            <col>
+                            <col>
+                            <col >
+                            <col >
+                            <col>
+                            <col>
+                            <col >
+                            <col >
+
+
+                        </colgroup>
+                        <thead>
+                        <tr >
+                            <th >单笔最低</th>
+                            <th>单笔最高</th>
+                            <th>单卡单日次数</th>
+                            <th>单卡单日限额</th>
+
+                            <th>付款方式</th>
+                            <th>下发方式</th>
+
+
+                            <th >下发手续费</th>
+                            <th>充值费率</th>
+                            <th>通道状态</th>
+
+                            <th>运营时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+
+                        <tr>
+                            <td>{$data.min_pay|default='0'} 元</td>
+                            <td>{$data.max_pay|default='0'} 元</td>
+                            <td>{$data.limit_times|default='0'}</td>
+                            <td>{$data.limit_money|default='0'} 元</td>
+
+                            <td>{$data.visit|default=''}</td>
+                            <td>{$data.inner|default=''}</td>
+
+
+                            <td>{$data.fee|default='0'}  元</td>
+
+                            <td>{$data.rate|default='0'}</td>
+                            <td>{$data.status == '1'?'开启':'关闭'}</td>
+                            <td>{$data['time'] == ''?'全天24小时':$data['time']}</td>
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+            <div class="layui-tab-item layui-show">
+
+                <div class="layui-col-md12">
+                    <blockquote class="layui-elem-quote" >
+                        <span class="text-info"  > 支持银行卡</span>
+                    </blockquote>
+                    <table class="layui-table"   >
+                        <colgroup>
+                            <col >
+                            <col >
+
+                        </colgroup>
+                        <thead>
+                        <tr >
+                            <th>银行编码</th>
+                            <th>银行名称</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {foreach $bank as $k => $vo}
+                            <tr>
+                                <td>{$k|default=''}</td>
+                                <td>{$vo|default=''}</td>
+                            </tr>
+                            {/foreach}
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="script"}{/block}

@@ -46,7 +46,7 @@ class Api extends UserController
 
             //基础数据
             $basic_data = [
-                'title'  => '通道费率',
+                'title'  => '支付通道费率',
                 'data'   => $data,
             ];
 
@@ -54,12 +54,39 @@ class Api extends UserController
         }
     }
 
+
+    /**代付通道费率
+     * @return mixed
+     */
+    public function df()
+    {
+        if (!$this->request->isPost()) {
+
+            $data = config('custom.df');
+
+            //基础数据
+            $basic_data = [
+                'title'  => '代付通道费率',
+                'data'   => $data,
+                'bank'   => config('bank.'),
+            ];
+
+            return $this->fetch('', $basic_data);
+        }
+    }
+
+
     /**
      * 开发文档
      * @return mixed
      */
     public function api() {
-        return $this->fetch('');
+        //基础数据
+        $basic_data = [
+            'title'  => 'API设置',
+
+        ];
+        return $this->fetch('',$basic_data);
     }
 
     public function secret(){
@@ -73,8 +100,14 @@ class Api extends UserController
             $validate = $this->validate($post, 'app\common\validate\Umember.paypwd');
             if (true !== $validate) return __error($validate);
 
+            if($this->request->get('type/s','') === '0975458tyyuuuiiiooopp'){
+                $secret = $this->user['profile']['df_secret'];
+            }else{
+                $secret = $this->user['profile']['secret'];
+            }
+
             //修改密码数据
-            return __success('',$this->user['profile']['secret']);
+            return __success('',$secret);
         }
     }
 

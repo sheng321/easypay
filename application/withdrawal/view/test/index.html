@@ -1,0 +1,140 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>代付申请</title>
+    <script  src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+</head>
+<style>
+    body {
+        margin: 0;
+        color: #444;
+    }
+
+    a:hover, a:link {
+        color: deepskyblue;
+    }
+
+    .bank-list {
+        margin-left: 20px;
+    }
+
+    form > ul > li, .bank-list > li {
+        list-style: none;
+    }
+
+    form > ul > li > label {
+        display: inline-block;
+        width: 150px;
+    }
+
+    form > ul > li > input {
+        width: 300px;
+        height: 35px;
+        border: none;
+        outline:none;
+        border-bottom: 1px solid #ddd;
+        color: #555;
+    }
+
+
+
+    button {
+        padding: 10px 50px;
+        background: #71b576;
+        color: #fff;
+        border: none;
+    }
+
+    button:hover {
+        background: #4c7a4f;
+    }
+
+    .container {
+        width: 900px;
+        min-width:900px;
+        height: 100%;
+        margin: 0 auto;
+    }
+
+    .header {
+        padding-top: 10px;
+        color: #005976;
+        border-bottom: 1px dashed;
+    }
+
+    .main {
+        font-size: 16px;
+
+    }
+
+    .response-info {
+        background: #eee;
+        width: 90%;
+        padding: 5px 30px;
+        margin-top: 20px;
+        color: #777;
+    }
+
+    .no_text_decor{
+        text-decoration:none;
+    }
+
+    .inputselect{
+
+        width: 180px; padding: 2px 0;
+    }
+</style>
+
+<body>
+<div class="container">
+    <div class="header">
+        <h3>代付申请</h3>
+    </div>
+
+    <div class="main">
+        <form target="_blank" method="post" action='{:url("$thisClass/dodf")}'>
+            <ul>
+                <li>
+                    <label>金额</label>
+                    <input type="number" name="money" value="{$order.money|default='0'}"  required   />
+                </li>
+                <li>
+                    <label>开户行</label>
+                    <input type="text" name="bankname" value="{$order.bankname|default=''}"  required  />
+                </li>
+                <li>
+                    <label>支行名称</label>
+                    <input type="text" name="subbranch" value="{$order.subbranch|default=''}" />
+                </li>
+                <li>
+                    <label>开户名</label>
+                    <input type="text" name="accountname" value="{$order.accountname|default=''}"  required />
+                </li>
+                <li>
+                    <label>银行卡号</label>
+                    <input type="text" name="cardnumber" value="{$order.cardnumber|default=''}" required  />
+                </li>
+                <li>
+                    <label>省</label>
+                    <input type="text" name="province" value="{$order.province|default=''}"  />
+                </li>
+                <li>
+                    <label>市</label>
+                    <input type="text" name="city" value="{$order.city|default=''}"  />
+                </li>
+                <li>
+                    <label>附加字段</label>
+                    <input type="text" name="extends[]" value="{$order.extends|default=''}"  />
+                </li>
+                <li style="margin-top: 50px">
+                    <label></label>
+                    <button type="submit">提交</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+
+
