@@ -13,14 +13,12 @@ class intBehavior extends Controller
 {
     public function run(){
 
+        Policy();
         if($this->request->controller() == 'Api' && $this->request->action() == 'index'){
-            PolicyApi();
             $this->check_api();
         }elseif($this->request->controller() == 'Query' && $this->request->action() == 'index') {
-            Policy();
             $this->check_query();
         }else{
-            Policy(); //同源协议
             $this->check_param();
         }
     }

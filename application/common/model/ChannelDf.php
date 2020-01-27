@@ -43,7 +43,6 @@ class ChannelDf extends ModelService {
 
         $where = search($search,$searchField,$where);
 
-       // $field = ['id','pid','p_id','visit','update_at','remark','title','status','sort','verson','code','c_rate','s_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','limit_money'];
         $field = '*';
 
         $count = $this->where($where)->count();
@@ -119,6 +118,19 @@ class ChannelDf extends ModelService {
         return $list;
     }
 
+
+    /**
+     * ID与详情
+     * @param array $modules
+     */
+    public static function info(){
+      $list =  \think\facade\Cache::remember('ChannelDfInfo', function () {
+            $data = self::column('id,title,inner','id');
+            \think\facade\Cache::tag('ChannelDf')->set('ChannelDfInfo',$data,60);
+            return \think\facade\Cache::get('ChannelDfInfo');
+        });
+        return $list;
+    }
 
 
 }

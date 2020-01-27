@@ -25,7 +25,6 @@ class Df extends ModelService {
         'key'=> "String:table:Df:out_trade_no:{out_trade_no}:transaction_no:{transaction_no}:system_no:{system_no}:id:{id}",
         'keyArr'=> ['id','system_no'],
     ];
-    
 
     /**
      *  分页获取所有记录数

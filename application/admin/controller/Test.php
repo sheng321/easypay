@@ -14,11 +14,8 @@ class Test  extends Controller
     public function index()
     {
 
-        $login =    Umember::where(['username'=>'test'])->find();
 
-
-        halt($login);
-
+        return $this->fetch('', []);
     }
 
 }

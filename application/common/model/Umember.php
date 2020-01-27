@@ -89,13 +89,29 @@ class Umember extends UserService {
     {
         if(isset($data['uid'])&&isset($data['who'])){
            $Uprofile =  model('app\common\model\Uprofile');
-            $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,secret,group_id,who,df_secret,df_api,df_api1')->find();
+            $find = $Uprofile->quickGet(['uid'=>$data['uid']]);
+
             if(empty($find)){
-                $Uprofile->save(['uid'=>$data['uid'],'who'=>$data['who']]);
-                $find =  $Uprofile->where([['uid','=',$data['uid']]])->field('id,uid,level,pid,pay_pwd,secret,group_id,who,df_secret,df_api,df_api1')->find();
+                $profile = [
+                    'uid'=>$data['uid'],
+                    'who'=>$data['who'],
+                    'pay_pwd'=>password(md5(123456)),
+                    'secret'=>password($data['uid'],mt_rand(1,200)),
+                    'df_secret'=>password($data['uid'],mt_rand(1,200))
+                ];
+
+                $agent_level = 0;
+                if($data['who'] == 2){
+                    if(!empty($data['profile_pid'])){
+                        $profile['pid']  = $data['profile_pid'];
+                        $agent_level  = $Uprofile->where('uid',$data['profile_pid'])->value('level');//代理等级
+                    }
+                    $agent_level = $agent_level + 1;
+                }
+                $profile['level'] = $agent_level;
+                $find = $Uprofile->create($profile);
             }
-            $data = $find->toArray();
-            return $data;
+            return $find;
         }
     }
 
@@ -109,13 +125,9 @@ class Umember extends UserService {
     {
         if(isset($data['uid'])){
             $Umoney =  model('app\common\model\Umoney');
-            $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,artificial,frozen_amount_t1,frozen_amount,total_money,df')->find();
-            if(empty($find)){
-                $Umoney->save(['uid'=>$data['uid']]);
-                $find =  $Umoney->where([['uid','=',$data['uid']]])->field('id,uid,balance,artificial,frozen_amount_t1,frozen_amount,total_money,df')->find();
-            }
-            $data =   $find->toArray();
-            return $data;
+            $find = $Umoney->quickGet(['uid'=>$data['uid']]);
+            if(empty($find)) $find = $Umoney->create(['uid'=>$data['uid']]);
+            return $find;
         }
     }
 
@@ -208,7 +220,8 @@ class Umember extends UserService {
      */
     public function aList($page = 1, $limit = 10, $search = []) {
         $where = [
-            ['who', 'in', [0,1]]
+            ['who', 'in', [0,1]],
+            ['status', 'in', [0,1]]
         ];
         //搜索条件
         $searchField['like'] = ['username'];
@@ -223,9 +236,9 @@ class Umember extends UserService {
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) use ($group) {
-                $item['auth_title'] =  $item['auth'];
 
-                $item['group_title'] = isset($group[$item['profile']['group_id']])?$group[$item['profile']['group_id']]:'未分组' ;
+                $item['auth_title'] =  $item['auth'];
+                $item['group_title'] = !empty($item['profile']['group_id'])&& isset($group[$item['profile']['group_id']])  ?$group[$item['profile']['group_id']]:'未分组' ;
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;

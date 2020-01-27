@@ -110,8 +110,8 @@ class Api extends WithdrawalController
 
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
 
-        $return = ['transaction_id'=>$create['system_no'],'date'=>date('Y-m-d H:i:s')];
-        $return['sign'] = create_sign($return,$Uprofile['df_secret']);
+        $return = ['refCode'=>'4','transaction_id'=>$create['system_no'],'out_trade_no'=>$create['out_trade_no'],'date'=>date('Y-m-d H:i:s')]; //待处理
+        $return['pay_md5sign'] = create_sign($return,$Uprofile['df_secret']);
 
         logs('请求:'.json_encode($param).'返回报文:'.json_encode($return),'withdrawal/api/'.$param['mchid']);
         __jsuccess('创建成功',$return);

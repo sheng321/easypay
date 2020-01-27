@@ -35,7 +35,7 @@ class Uprofile extends ModelService {
      */
     protected $redis = [
         'is_open'=> true,
-        'ttl'=> 3360 ,
+        'ttl'=> 60 ,
         'key'=> "String:table:Uprofile:uid:{uid}:id:{id}",
         'keyArr'=> ['uid','id'],
         'relate'=> ['Umember'=>'uid'],

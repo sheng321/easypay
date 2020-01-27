@@ -153,21 +153,21 @@
             form.on('submit('+elem+')', function(obj){
                 //验证参数
                 if( typeof check === "function"){
-                  var data = check(obj.field);
-                  if(data.code == 0){
-                      if(data.msg != ''){
-                          $.msg.error(data.msg);
-                      }
-                      return false;
-                  }
+                    var data = check(obj.field);
+                    if(data.code == 0){
+                        if(data.msg != ''){
+                            $.msg.error(data.msg);
+                        }
+                        return false;
+                    }
                     obj.field = data.data;
                 }
 
 
 
                 $.request.post(url,obj.field,function (res) {
-                        callback(res);
-                    });
+                    callback(res);
+                });
                 return false;
 
             });
@@ -195,7 +195,7 @@
                     cols: cols,
                     done:function(res,curr,count){
                         if (done != '')  done(res,curr,count);
-                }
+                    }
                 };
             } else {
                 var data = {
@@ -210,7 +210,7 @@
                     cols: cols,
                     done:function(res,curr,count){
                         if (done != '')  done(res,curr,count);
-                }
+                    }
                 };
             }
             if (size != '') data.size = size;
@@ -284,7 +284,7 @@
                 }else {
                     var feild = {id: this.name,verson:verson};
                 }
-               //提交
+                //提交
                 $.request.get(url, feild, function (res) {
                     $.msg.success(res.msg);
                 }, true);
@@ -433,9 +433,9 @@
             laydate.render({elem: '#' + elem, type: 'datetime'});
         }
         //日期范围
-/*        this.range = function (elem) {
-            laydate.render({elem: '#' + elem, range: true});
-        }*/
+        /*        this.range = function (elem) {
+         laydate.render({elem: '#' + elem, range: true});
+         }*/
 
 
         //日期范围
@@ -581,7 +581,7 @@
      * 注册 data-del 事件
      */
     $body.on('click', '[data-prompt]', function () {
-       
+
         var url = $(this).attr('data-prompt');
         var text = $(this).attr('data-text');
         $.msg.confirm($(this).attr('data-title'), function () {
@@ -593,7 +593,7 @@
                         $.tool.reload();
                     })
                 })
-              });
+            });
         });
         return false;
     });
@@ -790,7 +790,7 @@
     function request(type, url, data, callback, isReload = false) {
         //$.msg.loading('正在加载，请稍等！');
 
-       var fag = true;
+        var fag = true;
         if(!$.isEmptyObject(window.word)){
 
             for (var i in window.word) {
@@ -930,4 +930,3 @@
     }
 
 });
-

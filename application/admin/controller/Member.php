@@ -566,7 +566,7 @@ class Member extends AdminController {
         } else {
 
             $member = $this->request->only('username,password,password1,nickname,phone,qq,who,remark,auth_id');
-            $profile = $this->request->only('pid');
+            $pid = $this->request->post('pid/d',0);
 
             !isset($member['auth_id']) && $member['auth_id'] = [];
             //数组转json
@@ -579,46 +579,24 @@ class Member extends AdminController {
             //保存数据,返回结果
             $member['password'] = password($member['password']);
             $member['status'] = 1;
+            $member['profile_pid'] = $pid; //上级代理UID
 
             //保存数据,返回结果
             //使用事物保存数据
             $this->model->startTrans();
-            $result = $this->model->save($member);
+            $result = $this->model->create($member);
 
-            if (!$result || !$this->model->id ) {
+            //如果属性账户和金额账户创建失败则返回
+            if (!$result || empty($result['id'])  || empty($result['profile'])  || empty($result['money']) ) {
                 $this->model->rollback();
-                empty($msg) && $msg = '数据有误，请稍后再试!';
-                return __error($msg);
+                return __error('数据有误，请稍后再试!');
             }
             $this->model->commit();
-            $find = $this->model->field('uid')->get($this->model->id);
-
-            if(!empty($profile)){
-
-                $Uprofile =  model('\app\common\model\Uprofile');
-
-                $agent_level = 0;
-                if($member['who'] == 2){
-                    if(!empty($profile['pid'])){
-                        //代理等级
-                        $agent_level  = $Uprofile->where('uid',$profile['pid'])->value('level');
-                    }
-                    $agent_level = $agent_level + 1;
-                }
-                $profile['level'] = $agent_level;
-
-                $profile['id'] = $find['profile']['id'];
-                $profile['uid'] = $find['profile']['uid'];
-                $Uprofile->__edit($profile);
-            }
-
-            empty($msg) && $msg = '添加成功!';
-            return __success($msg);
+            return __success('添加成功!');
 
         }
 
     }
-
 
 
     /**
@@ -811,23 +789,26 @@ class Member extends AdminController {
     public function del() {
         $get = $this->request->get();
 
-        //验证数据
-        if (!is_array($get['id'])) {
-            $validate = $this->validate($get, 'app\common\validate\Umember.del');
-            if (true !== $validate) return __error($validate);
-        }
-
+        $data = array();
         //执行删除操作
         if (!is_array($get['id'])) {
+            $pid =   $this->model->where('pid', $get['id'])->column('id');
+            foreach ($pid as $k =>$v){
+                $data[$k]['id'] = $v;
+                $data[$k]['status'] = '3';
+            }
+            $data[]['id'] = $get['id'];
+            $data[]['status'] = 3;
 
-            $del = $this->model->where('id', $get['id'])->update(['status' => 3]);
         } else {
-
-            $del = $this->model->whereIn('id', $get['id'])->update(['status' => 3]);
+            foreach ($get['id'] as $k =>$v){
+                $data[$k]['id'] = $v;
+                $data[$k]['status'] = 3;
+            }
         }
+        $del = $this->model->saveAll($data);
 
-        if ($del >= 1) {
-
+        if (!!$del ) {
             return __success('删除成功！');
         } else {
             return __error('数据有误，请刷新重试！');

@@ -124,7 +124,7 @@ class Df extends AdminController {
             if (true !== $validate) return __error($validate);
 
             //保存数据,返回结果
-            return model('app\common\model\Channel')->editField($post);
+            return model('app\common\model\ChannelDf')->editField($post);
         }
     }
 
@@ -183,7 +183,6 @@ class Df extends AdminController {
                 unset($post['status']);
                 $post['lock_id'] = 0;
                 $post['record'] = empty($order['record']) ? $this->user['username'] . "解除锁定"  : $order['record'] . "|" . $this->user['username'] . "解除锁定" ;
-
                 return $this->model->__edit($post);
             }
 
@@ -201,13 +200,14 @@ class Df extends AdminController {
 
                 //冻结通道金额
                 if ($order['channel_id'] > 0) {
+                    $change['change'] = $order['amount'] - $order['fee'] + $order['channel_fee'] ;//变动金额
+                    if(empty($change['change'])) __error('数据异常2!');
 
-                    $change['change'] = $order['amount'];//变动金额
                     $change['relate'] = $order['system_no'];//关联订单号
                     $change['type'] = 5;//代付冻结金额类型
 
-                    $res = Umoney::dispose($channel_money, $change); //处理
-                    if (true !== $res['msg'] && $res['msg'] != '代付冻结大于可用金额') return __error('通道:' . $res['msg']);
+                    $res = Umoney::dispose($channel_money, $change); //处理 通道金额
+                    if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') return __error('代付通道:' . $res['msg']);
 
                     $Umoney_data = $res['data'];
                     $UmoneyLog_data = $res['change'];
@@ -288,10 +288,10 @@ class Df extends AdminController {
      * 保存通道
      */
     public function confirm(){
-        $channel = $this->request->param('id', 0);
-        if(empty($channel[0])) return __error('请选择一条通道！！');
+        $channel_id = $this->request->param('id', 0);
+        if(empty($channel_id[0]) || count($channel_id) > 1) return __error('请选择一条代付通道！！');
 
-        $Channel = model('app\common\model\ChannelDf')->quickGet($channel[0]);
+        $Channel = model('app\common\model\ChannelDf')->quickGet($channel_id[0]);
         if(empty($Channel)) return __error('数据异常');
 
         $pid = $this->request->get('pid/d', 0);
@@ -300,10 +300,17 @@ class Df extends AdminController {
         if(empty($order)) return __error('订单不存在!');
         if($order['status'] != 1) return __error('只有订单未处理状态，才可以选择出款通道!');
 
+        $channel_amount = 0;//通道金额
+        //内扣
+        if($Channel['inner'] == 0) $channel_amount = $order['amount'] - $order['fee'] + $Channel['channel_fee'];
+        //外扣
+        if($Channel['inner'] == 1) $channel_amount = $order['amount'] - $order['fee'];
+
         $res =  $this->model->save([
             'id'=>$pid,
             'channel_id'=>$Channel['id'],
             'channel_fee'=>$Channel['fee'],
+            'channel_amount'=> $channel_amount,
             'lock_id'=>$this->user['id'],
             'record'=>empty($order['record'])?$this->user['username']."选择下发代付通道:".$Channel['title']:$order['record']."|".$this->user['username']."选择下发代付通道:".$Channel['title'],
             'verson'=>$verson, //防止多人操作

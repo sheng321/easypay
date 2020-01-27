@@ -1,0 +1,69 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+
+    <!--顶部操作栏--开始-->
+    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">代付通道名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="channel" class="layui-input" placeholder="请输入代付通道名称"/>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">时间</label>
+            <div class="layui-input-inline">
+                <input type="text" id="update_at" class="layui-input " placeholder="请选择创建时间"    >
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
+        </div>
+
+    </blockquote>
+    <!--顶部操作栏--结束-->
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+</form>
+{/block}
+
+{block name="script"}
+
+<script   >
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        // {field: 'id', title: 'ID', minWidth: 1, align: "center"},
+        {field: 'df_id', title: '代付通道ID', minWidth: 1, align: "center"},
+        {field: 'channel', title: '通道名称', minWidth: 1, align: "center"},
+        {field: 'total_money', title: '总金额', minWidth: 1, align: "center" ,sort:true },
+        {field: 'balance', title: '可用余额', minWidth: 1, align: "center",sort:true },
+        {field: 'artificial', title: '人工冻结金额', align: 'center', minWidth: 20,sort:true },
+        {field: 'frozen_amount', title: '冻结金额', align: 'center', minWidth: 20,sort:true },
+        {field: 'frozen_amount_t1', title: 'T1冻结金额', align: 'center', minWidth: 20,sort:true },
+        {field: 'update_at', title: '最近更新时间', align: 'center', minWidth: 20,sort:true },
+    ]],true,'',100);
+
+    /**
+     * 日期范围
+     */
+    $.laydate.range('update_at',30);
+
+
+</script>
+{/block}

@@ -76,6 +76,30 @@ class Moneylog  extends AdminController
         return $this->fetch('', $basic_data);
     }
 
+    /**
+     * 代付通道流水
+     * @return mixed
+     */
+    public function df()
+    {
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 15);
+            $search = (array)$this->request->get('search', []);
+            $search['type1'] = 3;
+            return json($this->model->aList($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '代付通道流水列表',
+            'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
 
     /**
      * 平台流水
@@ -142,6 +166,26 @@ class Moneylog  extends AdminController
         return $this->fetch('', $basic_data);
     }
 
+    //代付通道资金
+    public function df_money()
+    {
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 15);
+            $search = (array)$this->request->get('search', []);
+            return json(model('app\common\model\Umoney')->aList($page, $limit, $search,2));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '代付通道资金',
+            'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
     public function sys_money()
     {
         $Umoney =  model('app\common\model\Umoney');
@@ -188,26 +232,6 @@ class Moneylog  extends AdminController
             empty($msg) && $msg = '操作成功';
             return __success($msg);
         }
-
-
-
-
-        //ajax访问
-        if ($this->request->get('type') == 'ajax') {
-            $page = $this->request->get('page', 1);
-            $limit = $this->request->get('limit', 15);
-            $search = (array)$this->request->get('search', []);
-            $search['type1'] = 0;
-            return json($this->model->aList($page, $limit, $search));
-        }
-
-        //基础数据
-        $basic_data = [
-            'title' => '平台资金',
-            'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除'],
-            'data'  => '',
-        ];
-        return $this->fetch('', $basic_data);
     }
 
 }

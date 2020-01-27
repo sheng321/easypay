@@ -112,7 +112,7 @@ class Ulevel extends ModelService {
 
         \think\facade\Cache::remember('UlevelIdArr', function () {
             $data = self::column('id,title');
-            \think\facade\Cache::tag('Ulevel')->set('UlevelIdArr',$data,3600);
+            \think\facade\Cache::tag('Ulevel')->set('UlevelIdArr',$data,60);
             return \think\facade\Cache::get('UlevelIdArr');
         });
         return \think\facade\Cache::get('UlevelIdArr');

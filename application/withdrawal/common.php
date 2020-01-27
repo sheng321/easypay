@@ -27,7 +27,6 @@ if (!function_exists('create_sign')) {
 
     function create_sign($data,$secret)
     {
-
         ksort($data);
         $md5str = "";
         foreach ($data as $key => $val) {

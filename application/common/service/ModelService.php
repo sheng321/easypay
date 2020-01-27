@@ -332,12 +332,12 @@ class ModelService extends Model {
         $res =  $quickGet->first();
 
         //调试模式 先关闭
-      if(!empty($res))  return json_decode($res,true);
+       if(!empty($res))  return json_decode($res,true);
 
         //查询数据库
         $res = $data::where($search)->order(['id'=>'desc'])->find();
         if(empty($res))  return false;
-        $res =  $res->toArray();
+        $res = $res->toArray();
         self::saveRedis($obj,$res);
 
         return $res;

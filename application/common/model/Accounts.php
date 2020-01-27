@@ -15,17 +15,17 @@ use app\common\service\ModelService;
 use think\Db;
 
 /**
- * 商户金额模型
+ * 金额金额模型
  * Class Auth
  * @package app\common\model
  */
-class Umoney extends ModelService {
+class Accounts extends ModelService {
 
     /**
      * 绑定的数据表
      * @var string
      */
-    protected $table = 'cm_money';
+    protected $table = 'cm_accounts';
 
     /**
      * redis (复制的时候不要少数组参数)
@@ -34,7 +34,7 @@ class Umoney extends ModelService {
      */
     protected $redis = [
         'is_open'=> true,
-        'ttl'=> 1,
+        'ttl'=> 3,
         'key'=> "String:table:Umoney:df_id:{df_id}:channel_id:{channel_id}:uid:{uid}:id:{id}",
         'keyArr'=> ['id','uid','channel_id','df_id'],
     ];

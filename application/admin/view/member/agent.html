@@ -165,14 +165,15 @@
     <!--表单操作栏--结束-->
 </form>
 {/block}
-
-{block name="script"}
+<script>
+//{block name="script"}
 
         /**
          * 生成表单
          */
         $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
-            {type: "checkbox", fixed: "left", width: 50},
+            {type: "checkbox",  width: 50},
+            {field: 'id', title: 'ID', width: 80, align: "center"},
             {field: 'uid', title: '代理号', minWidth: 20, align: "center"},
             {field: 'group_title', title: '用户分组', minWidth: 20,  align: "center", templet: '#group'},
             {field: 'channel', title: '通道与费率', minWidth: 30,   align: "center", templet: '#channel'},
@@ -185,7 +186,7 @@
             {field: 'username', title: '用户名', minWidth: 80, align: "center"},
             {field: 'nickname', title: '昵称',  minWidth: 80, align: "center"},
 
-            {field: 'remark', title: '备注',  minWidth: 80, edit: 'text', align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
+            {field: 'remark', title: '备注',  minWidth: 80,  align: "center"},
             {field: 'auth_title', title: '权限配置',  minWidth: 80, align: "center"},
 
             /**{if auth("$thisClass/single")}**/
@@ -206,11 +207,7 @@
             {field: 'phone', title: '用户手机', align: 'center'},
             {field: 'qq', title: '用户QQ', align: 'center'},
             {field: 'create_at', title: '创建时间', align: 'center', minWidth: 150},
-        ]], 'username','pid',true,function (res,curr,count){
-            merge(res,['uid','group_title','uid','uid','uid'],[1,2,3,4,5]);
-        });
-
-
+        ]], 'id','pid',true);
 
         /**
          * 日期范围
@@ -232,4 +229,5 @@
         $.form.switch('modifyPaypwd', '{:url("$thisClass/paypwd")}');
 
 
-{/block}
+//{/block}
+</script>
