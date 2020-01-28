@@ -74,7 +74,7 @@ class Api extends PayController
 
 
 
-        $redis = (new StringModel())->instance();//redis
+        $redis = (new StringModel())->instance();
         $redis->select(2);
 
         $train['channel_id'] = [];
@@ -84,12 +84,34 @@ class Api extends PayController
         foreach ($ChannelProduct as $k =>$v){
             $Channel = Channel::quickGet($v['channel_id']);
 
+            //1.通道关闭
             if(empty($Channel) || $Channel['status'] != 1){
                 unset($ChannelProduct[$k]);
+                //话费通道 清除库存的缓存
+                if(!empty($Channel) && $Channel['charge'] == 1) \think\facade\Cache::rm('charge_num_'.$Channel['id']);
                 continue;
             }
 
-            //验证支付通道金额
+            //2.判断并发 （每分钟多少单）
+            if(!empty($v['concurrent']) &&  is_int($v['concurrent']) && $v['concurrent'] > 0){
+                //存入redis，判断数量
+                $key = date('YmdHi').'to'.$Channel['id'];
+                $num = $redis->get($key);
+                if(empty($num)){
+                    $redis->set($key,0);
+                    $redis->expire($key,61);
+                    $num = 0;
+                }
+                if($v['concurrent'] < $num){
+                    unset($ChannelProduct[$k]);
+                    continue;
+                }
+                $redis->incr($key);
+            }
+
+
+
+            //3.验证支付通道金额
             $amount['amount'] = $param['pay_amount'];
             $amount['min_amount'] = $Channel['min_amount'];
             $amount['max_amount'] = $Channel['max_amount'];
@@ -106,36 +128,29 @@ class Api extends PayController
             unset($amount);
 
 
-            //话费通道 查询库存
-           if($Channel['charge'] == 1){
 
+            //4.商户费率 大于或者通道成本的情况
+            $Rate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$Channel['id']);//商户费率
+            if(empty($Rate) || ($Rate <= $Channel['c_rate'])){
+                unset($ChannelProduct[$k]);
+                continue;
+            }
+            unset($Rate);
+
+
+            //5.话费通道 查询库存
+           if($Channel['charge'] == 1){
+              $charge_num = $this->charge_num($Channel);
+              //当前金额库存量
+              if(empty($charge_num[$param['pay_amount']]) || $charge_num[$param['pay_amount']] < 2){
+                  unset($ChannelProduct[$k]);
+                  continue;
+              }
+               unset($charge_num);
            }
 
-            //判断并发 （每分钟多少单）
-             if(!empty($v['concurrent']) &&  is_int($v['concurrent']) && $v['concurrent'] > 0){
-               //存入redis，判断数量
-                 $key = date('YmdHi').'to'.$Channel['id'];
-                 $num = $redis->get($key);
-                 if(empty($num)){
-                     $redis->set($key,0);
-                     $redis->expire($key,61);
-                     $num = 0;
-                 }
-                 dump($num);
-                 dump($v['concurrent']);
-                 if($v['concurrent'] < $num){
-                     dump($num);
-                     dump('out');
-                     unset($ChannelProduct[$k]);
-                     continue;
-                 }
-                 $redis->incr($key);
-             }
-            $num = $redis->get($key);
-             halt($num);
 
-
-            //轮训-数据填充  （权重！！）
+            //6.轮训-数据填充  （权重！！）
             if(!empty($v['weight']) &&  is_int($v['weight']) && $v['weight'] > 0 ){
                $temp2 = array_fill(0, $v['weight'], $Channel['id']);//填充数组   支付通道ID
                 $temp3 = array_fill(0, $v['weight'], $v['group_id']);//填充数组  支付通道分组ID
@@ -178,17 +193,16 @@ class Api extends PayController
         if($Uprofile['pid'] > 0){
             $uid1 = $Uprofile['pid'];
             $AgentRate1 =  RateService::getAgentRate($Uprofile['pid'],$ChannelProduct[$channel_id]['group_id']);
-             //如果商户费率大于代理费率  不给代理分配费率
-            if($MemRate <= $AgentRate1) $AgentRate1 = 0;
+             //如果商户费率小于或者等于代理费率  不给代理分配费率
+            if(empty($AgentRate1) || ($MemRate <= $AgentRate1)) $AgentRate1 = 0;
 
-           $Uprofile1 = Uprofile::quickGet(['uid'=>$Uprofile['pid']]);
-            if($Uprofile1['pid'] > 0){
+           $Uprofile1 = Uprofile::quickGet(['uid'=>$Uprofile['pid']]);//一级代理
+            if(!empty($Uprofile1) || $Uprofile1['pid'] > 0){
                 $uid2 = $Uprofile1['pid'];
                 $AgentRate2 =  RateService::getAgentRate($Uprofile1['pid'],$ChannelProduct[$channel_id]['group_id']);
-                //如果下级费率大于代理费率  不给代理分配费率
-                if($AgentRate1 <= $AgentRate2) $AgentRate2 = 0;
-                //如果商户费率大于代理费率  不给代理分配费率
-                if($MemRate <= $AgentRate2) $AgentRate2 = 0;
+                //二级代理费率费率查询失败 商户费率小于或者等于二级代理费率 一级代理小于或者等于二级代理费率
+                if(empty($AgentRate2) || ($MemRate <= $AgentRate2) ||  ($AgentRate1 <= $AgentRate2) ) $AgentRate2 = 0;
+
             }
         }
 

@@ -9,6 +9,8 @@ return [
     // 模块初始化
     'module_init'  => function () {
         if (app('request')->module() == 'pay') {
+            //话费通道调取实时数据
+
 
         }
     },

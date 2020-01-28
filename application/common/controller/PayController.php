@@ -1,7 +1,9 @@
 <?php
 
 namespace app\common\controller;
+use app\common\model\Channel;
 use app\common\model\Order;
+use app\pay\service\Payment;
 use think\helper\Str;
 use think\Queue;
 
@@ -21,8 +23,45 @@ class PayController extends BaseController
     {
         parent::__construct();
         date_default_timezone_set("PRC");
-        set_time_limit(60);
+        set_time_limit(100);
+
     }
+
+    /**
+     * 获取话费通道库存
+     * @param $code 通道数据
+     */
+     protected  function charge_num($Channel){
+         //通道
+         $Channel_father = Channel::quickGet($Channel['pid']);
+         if(empty($Channel_father) || empty($Channel_father['code']) || empty($Channel_father['limit_time'])){
+             return [];
+         }
+         $code = $Channel_father['code'];
+         $id = $Channel['id'];
+        switch ($code){
+            case 'xyf':
+               $num = \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id) {
+                   try{
+                        $Payment = Payment::factory($code);
+                        $num = $Payment->num();
+                   }catch (\Exception $exception){
+                       logs($exception->getMessage().'|'.$exception->getFile().'|查询话费库存失败','api');
+                       $num = [];
+                   }
+                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,5);
+                    return \think\facade\Cache::get('charge_num_'.$code);
+                });
+                break;
+            default:
+                $num = [];
+                break;
+        }
+       return $num;
+    }
+
+
+
 
     /**
      * 下单失败

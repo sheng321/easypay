@@ -7,4 +7,6 @@ class Index extends PayController
     public function index(){
        exit();
     }
+
+
 }

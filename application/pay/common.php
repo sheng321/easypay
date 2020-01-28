@@ -46,6 +46,20 @@ if (!function_exists('msg_get')) {
 }
 
 
+if (!function_exists('charge_num')) {
+
+    function charge_num($url = '')
+    {
+        $success = '<meta charset="utf-8">';
+        $success .= '<script type="text/javascript">';
+        $success .= "window.location.href='{$url}';";
+        $success .= '</script>';
+
+        return $success;
+    }
+}
+
+
 
 
 

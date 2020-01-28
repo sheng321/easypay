@@ -11,7 +11,6 @@ use app\common\controller\AdminController;
  */
 class Common extends AdminController {
 
-
     /**
      * 打开图片上传窗口
      * @return \think\response\Json
@@ -23,7 +22,6 @@ class Common extends AdminController {
         }
         $this->redirect(url("{$SysInfo['AdminModuleName']}.php\\tool.upload\image") . "?type=" . $type);
     }
-
     /**
      * 后台刷新缓存接口
      * @return \think\response\Json
