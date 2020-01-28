@@ -114,7 +114,7 @@ class Api extends PayController
             //判断并发 （每分钟多少单）
              if(!empty($v['concurrent']) &&  is_int($v['concurrent']) && $v['concurrent'] > 0){
                //存入redis，判断数量
-                 $key = date('YmdHis').'to'.$Channel['id'];
+                 $key = date('YmdHi').'to'.$Channel['id'];
                  $num = $redis->get($key);
                  if(empty($num)){
                      $redis->set($key,0);
