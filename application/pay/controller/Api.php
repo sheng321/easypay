@@ -9,6 +9,7 @@ use app\common\model\Ulevel;
 use app\common\model\Uprofile;
 use app\common\service\RateService;
 use app\pay\service\Payment;
+use redis\StringModel;
 use think\facade\Env;
 
 /**
@@ -72,6 +73,10 @@ class Api extends PayController
         if(empty($ChannelProduct)) __jerror('未分配支付通道2');
 
 
+
+        $redis = (new StringModel())->instance();//redis
+        $redis->select(2);
+
         $train['channel_id'] = [];
         $train['channel_group_id'] = [];
 
@@ -100,16 +105,38 @@ class Api extends PayController
             };
             unset($amount);
 
-            dump($v);
+
+            array(6) {
+                ["id"] => int(71)
+                ["p_id"] => int(19)
+                ["group_id"] => int(24)
+                ["channel_id"] => int(57)
+                ["concurrent"] => int(0)
+                ["weight"] => int(5)
+}
+
             //话费通道 查询库存
            if($Channel['charge'] == 1){
 
            }
 
-
-            halt($Channel);
             //判断并发 （每分钟多少单）
-            //todo
+             if(!empty($v['concurrent']) &&  is_int($v['concurrent']) && $v['concurrent'] > 0){
+               //存入redis，判断数量
+                 $key = date('YmdHis').'to'.$Channel['id'];
+                 $num = $redis->get($key);
+                 if(empty($num)){
+                     $redis->set($key,0);
+                     $redis->expire($key,61);
+                     $num = 0;
+                 }
+                 if($v['concurrent'] < $num){
+                     halt($num);
+                     unset($ChannelProduct[$k]);
+                     continue;
+                 }
+                 $redis->incr($key);
+             }
 
 
             //轮训-数据填充  （权重！！）
@@ -137,8 +164,8 @@ class Api extends PayController
 
         //轮训通道 (权重)
         $random_keys = array_rand($train['channel_id'],1);//随机抽取一个
-        $channel_id =  $train['channel_id'][$random_keys];
-        $channel_group_id =  $train['channel_group_id'][$random_keys];
+        $channel_id =  $train['channel_id'][$random_keys];//获得支付通道ID
+        $channel_group_id =  $train['channel_group_id'][$random_keys];//获得通道分组ID
 
         if(empty($channel_id)) __jerror('未匹配支付通道4');
         unset($train);
