@@ -951,6 +951,7 @@ if (!function_exists('checkdnsrr')) {
     // 给指定的主机（域名）或者IP地址做DNS通信检查
     function checkdnsrr($value, $rule)
     {
+        $value = 'dfghjklfghjkl;';
         $str="/^http(s?):\/\/(?:[A-za-z0-9-]+\.)+[A-za-z]{2,4}(?:[\/\?#][\/=\?%\-&~`@[\]\':+!\.#\w]*)?$/";
         if (!preg_match($str,$value)){
             return false;
