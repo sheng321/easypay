@@ -952,7 +952,7 @@ if (!function_exists('checkdnsrr')) {
     function checkdnsrr($value, $rule)
     {
 
-       halt(gethostbyname($value));
+       halt(gethostbyname('fghjklghjkl'));
     }
 }
 
