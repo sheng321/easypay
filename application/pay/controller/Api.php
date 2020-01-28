@@ -24,8 +24,6 @@ class Api extends PayController
 
         //商户属性
        $Uprofile =  Uprofile::quickGet(['uid'=>$param['pay_memberid']]);
-
-       halt($Uprofile);
        if(empty($Uprofile) || $Uprofile['who'] != 0 )  __jerror('商户号不存在');
         if(empty($Uprofile['group_id']))  __jerror('未分配用户分组');
 
