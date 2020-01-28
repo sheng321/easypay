@@ -118,9 +118,11 @@ class Api extends PayController
                  $num = $redis->get($key);
                  if(empty($num)){
                      $redis->set($key,0);
-                     $redis->expire($key,61);
+                     $redis->expire($key,100061);
                      $num = 0;
                  }
+                 dump($num);
+                 dump($v['concurrent']);
                  if($v['concurrent'] < $num){
                      halt($num);
                      unset($ChannelProduct[$k]);
@@ -128,6 +130,8 @@ class Api extends PayController
                  }
                  $redis->incr($key);
              }
+            $num = $redis->get($key);
+             halt($num);
 
 
             //轮训-数据填充  （权重！！）
