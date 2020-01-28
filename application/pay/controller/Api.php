@@ -106,15 +106,6 @@ class Api extends PayController
             unset($amount);
 
 
-            array(6) {
-                ["id"] => int(71)
-                ["p_id"] => int(19)
-                ["group_id"] => int(24)
-                ["channel_id"] => int(57)
-                ["concurrent"] => int(0)
-                ["weight"] => int(5)
-}
-
             //话费通道 查询库存
            if($Channel['charge'] == 1){
 
