@@ -20,8 +20,8 @@ class Pay extends Validate {
         "pay_amount" => 'require|checkAmount',
         "pay_applydate" => 'require|dateFormat:Y-m-d H:i:s|checkDate',
         "pay_bankcode" => 'require|checkBankcode',
-        "pay_notifyurl" => 'require|url|max:250',
-        "pay_callbackurl" => 'require|url|max:250',
+        "pay_notifyurl" => 'require|activeUrl|max:250',
+        "pay_callbackurl" => 'require|activeUrl|max:250',
         "pay_md5sign" => 'require|alphaDash|length:32',
 
         "pay_productname" => 'chsDash|max:100',
@@ -62,8 +62,8 @@ class Pay extends Validate {
         'pay_notifyurl.require' => '服务器通知地址不存在',
         'pay_callbackurl.require' => '页面返回地址不存在',
 
-        'pay_notifyurl.url' => '服务器通知地址不是有效的',
-        'pay_callbackurl.url' => '页面返回地址不是有效的',
+        'pay_notifyurl.activeUrl' => '服务器通知地址不是有效的',
+        'pay_callbackurl.activeUrl' => '页面返回地址不是有效的',
 
         'pay_notifyurl.max' => '服务器通知地址不能大于250个字符',
         'pay_callbackurl.max' => '页面返回地址不能大于250个字符',
