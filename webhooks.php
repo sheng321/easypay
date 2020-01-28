@@ -2,6 +2,7 @@
 //本地路径
 $local = '/www/wwwroot/easypay';
 
+set_time_limit(120);
 //文件排它锁 非阻塞模式
 $fp = fopen($local."/hooklock/git.txt", "w+");
 if(flock($fp,LOCK_EX | LOCK_NB))
