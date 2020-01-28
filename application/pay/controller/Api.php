@@ -124,7 +124,8 @@ class Api extends PayController
                  dump($num);
                  dump($v['concurrent']);
                  if($v['concurrent'] < $num){
-                     halt($num);
+                     dump($num);
+                     dump('out');
                      unset($ChannelProduct[$k]);
                      continue;
                  }
