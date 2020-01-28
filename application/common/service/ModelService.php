@@ -69,9 +69,10 @@ class ModelService extends Model {
         return $location['country'].$location['area'];
     }
 
-    protected function setIpAttr()
+    protected function setIpAttr($v)
     {
-        return get_client_ip();
+        if(empty($v))  return get_client_ip();
+        return $v;
     }
 
 
