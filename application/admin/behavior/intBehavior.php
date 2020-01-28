@@ -49,11 +49,6 @@ class intBehavior extends Controller
                 }
                 session('word_num',null);
 
-                //超过一定次数，锁定
-                if($num < 5){
-
-                }
-
             }
         }
     }
