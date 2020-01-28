@@ -948,7 +948,7 @@ function PolicyApi(){
 
 
 if (!function_exists('checkdnsrr')) {
-    // 给指定的主机（域名）或者IP地址做DNS通信检查
+    // 给指定的主机（域名）或者IP地址做DNS通信检查（重写）
     function checkdnsrr($value, $rule)
     {
         $value = 'dfghjklfghjkl;';
