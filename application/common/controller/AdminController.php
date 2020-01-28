@@ -91,7 +91,6 @@ class AdminController extends BaseController
         //ip 白名单验证
         $ip =  \app\common\model\Ip::bList($this->user['id'],3);
 
-        halt($ip);
         if(!in_array(get_client_ip(),$ip)){
             __log( session('admin_info.username').'登入IP白名单不包含此IP:'.get_client_ip());
             session('admin_info', null);
