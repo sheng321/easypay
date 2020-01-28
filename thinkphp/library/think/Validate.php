@@ -824,7 +824,6 @@ class Validate
         if (!in_array($rule, ['A', 'MX', 'NS', 'SOA', 'PTR', 'CNAME', 'AAAA', 'A6', 'SRV', 'NAPTR', 'TXT', 'ANY'])) {
             $rule = 'MX';
         }
-
         return checkdnsrr($value, $rule);
     }
 
