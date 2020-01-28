@@ -35,7 +35,7 @@ class Notify {
                 return;
             }
             // 重发，延迟 60 秒执行
-            $job->release(60);
+           // $job->release(60);
             return;
         }
     }
