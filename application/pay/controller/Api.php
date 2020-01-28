@@ -118,7 +118,7 @@ class Api extends PayController
                  $num = $redis->get($key);
                  if(empty($num)){
                      $redis->set($key,0);
-                     $redis->expire($key,100061);
+                     $redis->expire($key,61);
                      $num = 0;
                  }
                  dump($num);
