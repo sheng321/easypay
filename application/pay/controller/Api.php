@@ -100,26 +100,28 @@ class Api extends PayController
             };
             unset($amount);
 
-            //判断并发
-            //todo
 
             //话费通道 查询库存
 
 
-            //轮训
+            halt($Channel);
+            //判断并发 （每分钟多少单）
+            //todo
+
+
+            //轮训-数据填充  （权重！！）
             if(!empty($v['weight']) &&  is_int($v['weight']) && $v['weight'] > 0 ){
                $temp2 = array_fill(0, $v['weight'], $Channel['id']);//填充数组   支付通道ID
                 $temp3 = array_fill(0, $v['weight'], $v['group_id']);//填充数组  支付通道分组ID
                $train['channel_id'] =  array_merge($temp2,$train['channel_id']);
                 $train['channel_group_id'] =  array_merge($temp3,$train['channel_group_id']);
+                unset($temp2);
+                unset($temp3);
             }else{
                 array_push($train['channel_id'],$Channel['id']);
                 array_push($train['channel_group_id'],$v['group_id']);
             }
         }
-        unset($v);
-        unset($temp2);
-        unset($temp3);
         unset($Channel);
 
 
@@ -129,7 +131,7 @@ class Api extends PayController
             __jerror('未匹配支付通道3');
         }
 
-        //轮训通道
+        //轮训通道 (权重)
         $random_keys = array_rand($train['channel_id'],1);//随机抽取一个
         $channel_id =  $train['channel_id'][$random_keys];
         $channel_group_id =  $train['channel_group_id'][$random_keys];
