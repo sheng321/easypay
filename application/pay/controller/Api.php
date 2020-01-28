@@ -66,6 +66,7 @@ class Api extends PayController
         foreach ($channel_group_idArr[$PayProduct['id']] as $k => $v){
             $temp1['group_id'] = $v;
             $temp1['p_id'] = $PayProduct['id'];
+            dump($temp1);
             $temp = ChannelProduct::where($temp1)->select()->toArray();
             halt($temp);
             if(!empty($temp)){
