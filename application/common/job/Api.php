@@ -36,7 +36,10 @@ class Api {
         if($res === true){
             //获取回调数据
             $notify = Order::notify($data['order']['system_no'],$data['config']['code']);
-            \think\Queue::push('app\\common\\job\\Notify', $notify, 'notify');
+            \think\Queue::later(60,'app\\common\\job\\Notify', $notify, 'notify');//一分钟
+            \think\Queue::later(240,'app\\common\\job\\Notify', $notify, 'notify');//
+            \think\Queue::later(60,'app\\common\\job\\Notify', $notify, 'notify');
+            \think\Queue::later(60,'app\\common\\job\\Notify', $notify, 'notify');
             return true;
         }
 

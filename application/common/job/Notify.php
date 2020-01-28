@@ -29,7 +29,7 @@ class Notify {
             $job->delete();
             return;
         }else{
-            if($job->attempts() > 5) {
+            if($job->attempts() > 1) {
                 //通过这个方法可以检查这个任务已经重试了几次了
                 $job->delete();
                 return;
