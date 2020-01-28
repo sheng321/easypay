@@ -63,6 +63,7 @@ class Api extends PayController
 
         //所有在线的支付通道分组及其支付通道
         $ChannelProduct = [];
+        halt($channel_group_idArr[$PayProduct['id']] );
         foreach ($channel_group_idArr[$PayProduct['id']] as $k => $v){
             $temp1['group_id'] = $v;
             $temp1['p_id'] = $PayProduct['id'];
