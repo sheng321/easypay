@@ -77,7 +77,7 @@ class Ip extends ModelService {
             foreach ($data as $k=>$v){
                 $data1[$v['type']][] = $v['ip'];
             }
-            \think\facade\Cache::tag('Ip')->set('IP_'.$uid,$data1,60);
+            \think\facade\Cache::tag('Ip')->set('IP_'.$uid,$data1,30);
             return \think\facade\Cache::get('IP_'.$uid);
         });
 
