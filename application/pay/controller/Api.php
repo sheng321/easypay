@@ -100,8 +100,11 @@ class Api extends PayController
             };
             unset($amount);
 
-
+            dump($v);
             //话费通道 查询库存
+           if($Channel['charge'] == 1){
+
+           }
 
 
             halt($Channel);
@@ -121,8 +124,9 @@ class Api extends PayController
                 array_push($train['channel_id'],$Channel['id']);
                 array_push($train['channel_group_id'],$v['group_id']);
             }
+            unset($Channel);
         }
-        unset($Channel);
+
 
 
         if(empty($ChannelProduct) || empty($train)){
