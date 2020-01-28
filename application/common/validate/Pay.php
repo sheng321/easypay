@@ -20,8 +20,8 @@ class Pay extends Validate {
         "pay_amount" => 'require|checkAmount',
         "pay_applydate" => 'require|dateFormat:Y-m-d H:i:s|checkDate',
         "pay_bankcode" => 'require|checkBankcode',
-        "pay_notifyurl" => 'require|activeUrl|max:250',
-        "pay_callbackurl" => 'require|activeUrl|max:250',
+        "pay_notifyurl" => 'require|checkUrl|max:250',
+        "pay_callbackurl" => 'require|checkUrl|max:250',
         "pay_md5sign" => 'require|alphaDash|length:32',
 
         "pay_productname" => 'chsDash|max:100',
@@ -62,8 +62,8 @@ class Pay extends Validate {
         'pay_notifyurl.require' => '服务器通知地址不存在',
         'pay_callbackurl.require' => '页面返回地址不存在',
 
-        'pay_notifyurl.activeUrl' => '服务器通知地址不是有效的',
-        'pay_callbackurl.activeUrl' => '页面返回地址不是有效的',
+        'pay_notifyurl.checkUrl' => '服务器通知地址不是有效的',
+        'pay_callbackurl.checkUrl' => '页面返回地址不是有效的',
 
         'pay_notifyurl.max' => '服务器通知地址不能大于250个字符',
         'pay_callbackurl.max' => '页面返回地址不能大于250个字符',
@@ -220,6 +220,17 @@ class Pay extends Validate {
         $date = strtotime($value);
         if($date < $now) return '订单时间与当前时间相差太大';
         return true;
+    }
+
+
+    public function checkUrl($value, $rule, $data = [])
+    {
+        $str="/^http(s?):\/\/(?:[A-za-z0-9-]+\.)+[A-za-z]{2,4}(?:[\/\?#][\/=\?%\-&~`@[\]\':+!\.#\w]*)?$/";
+        if( preg_match($str,$value)) return true;
+
+        $urlarr = parse_url($value);
+        if(filter_var($urlarr['host'], FILTER_VALIDATE_IP)) return true;
+        return false;
     }
 
 

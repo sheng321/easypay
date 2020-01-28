@@ -947,21 +947,6 @@ function PolicyApi(){
 
 
 
-if (!function_exists('checkdnsrr')) {
-    // 给指定的主机（域名）或者IP地址做DNS通信检查（重写）
-    function checkdnsrr($value, $rule)
-    {
-        $value = 'http://120.24.166.163:66/pay.php/api';
-        $str="/^http(s?):\/\/(?:[A-za-z0-9-]+\.)+[A-za-z]{2,4}(?:[\/\?#][\/=\?%\-&~`@[\]\':+!\.#\w]*)?$/";
-        if (!preg_match($str,$value)){
-            return false;
-        }else{
-            return true;
-        }
-    }
-}
-
-
 
 
 
