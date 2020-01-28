@@ -129,7 +129,7 @@ class Api extends PayController
 
 
 
-            //4.商户费率 大于或者通道成本的情况
+            //4.商户费率 小于或者等于通道成本的情况
             $Rate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$Channel['id']);//商户费率
             if(empty($Rate) || ($Rate <= $Channel['c_rate'])){
                 unset($ChannelProduct[$k]);
