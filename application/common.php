@@ -948,7 +948,7 @@ function PolicyApi(){
 
 
 if (!function_exists('checkdnsrr')) {
-    //
+    // 给指定的主机（域名）或者IP地址做DNS通信检查
     function checkdnsrr($value, $rule)
     {
         if(filter_var($value, FILTER_VALIDATE_IP) || filter_var($value, FILTER_VALIDATE_URL)) return true;
