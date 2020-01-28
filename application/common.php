@@ -948,12 +948,7 @@ function PolicyApi(){
 
 
 if (!function_exists('checkdnsrr')) {
-
-    /**
-     * 驼峰转下划线规则
-     * @param string $node
-     * @return string
-     */
+    //
     function checkdnsrr($value, $rule)
     {
         if(filter_var($value, FILTER_VALIDATE_IP) || filter_var($value, FILTER_VALIDATE_URL)) return true;
