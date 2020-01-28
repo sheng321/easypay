@@ -825,7 +825,7 @@ class Validate
             $rule = 'MX';
         }
 
-        return checkdnsrr($value, $rule);
+        return dns_check_record($value, $rule);
     }
 
     /**
