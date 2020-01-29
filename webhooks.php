@@ -33,7 +33,8 @@ if(flock($fp,LOCK_EX | LOCK_NB))
         die('secret is error');
     }
 
-    echo shell_exec("cd {$local} && /usr/bin/git pull {$remote} 2>&1");
+   // echo shell_exec("cd {$local} && /usr/bin/git pull {$remote} 2>&1");
+    echo shell_exec("cd {$local} && /usr/bin/git fetch --all && /usr/bin/git reset --hard origin/master && /usr/bin/git pull {$remote} 2>&1");
 
     flock($fp,LOCK_UN);
 }else{
