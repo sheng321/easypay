@@ -46,9 +46,6 @@ class PayController extends BaseController
         $config = Channel::get_config($code);
         if(empty($config)) __jerror('无权访问2');
 
-        //通道出现问题时，可以禁止上分
-        if($config['noentry'] == 1) __jerror('无法访问');
-
         //IP 白名单
         $back_ip = array_filter(json_decode($config['back_ip'],true));
         if(!empty($back_ip) && !in_array('*',$back_ip)){
