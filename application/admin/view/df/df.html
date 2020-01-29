@@ -80,6 +80,7 @@
         {if auth("$thisClass/money")}
         <span  data-open='{:url("$thisClass/money")}?id={{d.id}}' data-title="代付通道：{{d.title}}">
             总金额：{{d.money.total_money}}，可用余额：{{d.money.balance}}
+            查询总金额：{{d.total_money}}，查询可用余额：{{d.balance}}
              {{ d.money.frozen_amount != '0.000' ? ',冻结:'+d.money.frozen_amount : '' }}
                 {{ d.money.artificial != '0.000' ? ',人工冻结:'+d.money.artificial : '' }}
                 {{ d.money.frozen_amount_t1 != '0.000' ? ',T1冻结:'+d.money.frozen_amount_t1 : '' }}
@@ -123,7 +124,7 @@ $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
 {field: 'code', title: '编码', minWidth: 40, align: 'center'},
 {field: 'title', title: '代付通道名称', minWidth: 200, align: 'center'},
 
-    {field: 'money', title: '通道金额', minWidth: 250, align: 'center', templet: '#money',style: 'background-color: #A2B5CD; color: #fff; '},
+    {field: 'money', title: '代付通道金额', minWidth: 250, align: 'center', templet: '#money',style: 'background-color: #A2B5CD; color: #fff; '},
 
 {field: 'c_rate', title: '成本费率', maxWidth: 50, align: 'center'},
 {field: 'fee', title: '下发手续费', maxWidth: 50, align: 'center'},
