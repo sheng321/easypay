@@ -27,10 +27,10 @@ class Query extends PayController
         $data = array();
         if($Order['pay_status'] == 2){
             //已支付
-            $data['returncode'] = '00';
+            $data['returncode'] = "00";
             $data['trade_state'] = 'SUCCESS';
         }else{
-            $data['returncode'] = '01';
+            $data['returncode'] = "01";
             $data['trade_state'] = 'NOTPAY';
         }
 
