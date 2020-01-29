@@ -248,6 +248,12 @@ class Order extends AdminController {
             $order = $this->request->get('order/s',0);
             $type = $this->request->get('type/d',0);
 
+
+            $thisOrder = $this->model->quickGet($id);
+            if(empty($thisOrder) ||$thisOrder['pay_status'] == 1 ||$thisOrder['pay_status'] == 2 ) return __error('订单状态为下单失败和已支付不可以更改');
+
+
+
             $OrderDispose = model('app\common\model\OrderDispose');
 
             $Dispose = $OrderDispose->quickGet(['pid'=>$id]);
