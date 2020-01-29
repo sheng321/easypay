@@ -24,6 +24,7 @@ class Query extends PayController
         $Order =  Order::quickGet(['out_trade_no'=>$param['pay_orderid']]);
         if(empty($Order))   __jerror('订单号不存在');
 
+        $data = array();
         if($Order['pay_status'] == 2){
             $data['returncode'] = '00';
             $data['trade_state'] = 'SUCCESS';
