@@ -119,8 +119,7 @@ class Channel extends Validate {
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge','limit_time','limit_money'])
-            ->remove('code','checkCode');
+        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge','limit_time','limit_money']);
     }
 
     public function sceneSort() {
@@ -153,14 +152,15 @@ class Channel extends Validate {
      * 检测PID是否存在
      */
     protected function checkPid($value, $rule, $data = []) {
-        $user = \app\common\model\Channel::where(['id' => $value,'pid' => 0])->find();
+        $user = \app\common\model\Channel::where(['id' => $value,'pid' => 0])->value('id');
         if (empty($user)) return '暂无支付上级通道数据，请稍后再试！';
         return true;
     }
 
 
     protected function checkCode($value, $rule, $data = []) {
-        $code = \app\common\model\Channel::where(['code'=>$value,'pid'=>0])->value('code');
+        $code = \app\common\model\Channel::where(['code'=>$value,'pid'=>0])->field('id,code')->find();
+        if(!empty($data['id']) && !empty($code) && $code['id'] != $data['id'])  return '编辑状态通道编码重复';
         if (!empty($code)) return '通道编码重复';
         return true;
     }
