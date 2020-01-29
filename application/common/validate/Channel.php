@@ -119,7 +119,7 @@ class Channel extends Validate {
      * @return Node
      */
     public function sceneEdit() {
-        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge','limit_time','limit_money']);
+        return $this->only(['id','title','remark','code','c_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','charge','limit_time','limit_money'])->append('title','token');
     }
 
     public function sceneSort() {
