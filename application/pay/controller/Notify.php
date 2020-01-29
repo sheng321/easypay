@@ -21,6 +21,7 @@ class Notify extends PayController
 
         //http://www.test4.com/pay.php/notify/index/Pay/Xyf.html
         $code =  $this->request->param('Pay/s','');
+        //ctype_alnum  字母和数字或字母数字的组合
         if(empty($code) || !ctype_alnum($code)) __jsuccess('无权访问');
         $config = Channel::get_config($code);
         if(empty($config)) __jerror('无权访问2');
