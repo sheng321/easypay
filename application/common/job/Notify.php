@@ -12,10 +12,7 @@ class Notify {
     public function fire(Job $job,$data)
     {
         $Order =  Order::quickGet($data['order']['id']);
-        if(empty($Order)){
-            $job->delete();
-            return;
-        }
+
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($Order);
         if($isJobStillNeedToBeDone === false ){
@@ -35,6 +32,7 @@ class Notify {
      * @return boolean                 任务执行的结果
      */
     private function checkDatabaseToSeeIfJobNeedToBeDone($data){
+        if(empty($data)) return false;//订单不存在
         if($data['notice'] == 2) return false;//已回调
         if($data['pay_status'] != 2) return false;//不是支付状态
         return true;
