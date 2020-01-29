@@ -122,7 +122,7 @@
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">绑定支付通道金额</label>
         <div class="layui-input-block">
-            <select id="channel_id"  lay-filter="channel_id" lay-search="">
+            <select id="channel_id"  lay-filter="channel_id" lay-search=""  disabled="disabled"  >
                 <option value="">无关联</option>
                 {foreach $channel as $k=> $vo}
                 <option value="{$k|default='0'}"  {eq name='$data.channel_id|default=false' value='$k' }checked="checked"{/eq}     >{$vo}</option>

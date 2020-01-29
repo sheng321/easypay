@@ -77,7 +77,7 @@ class Yl extends WithdrawalController
         $data['pay_memberid'] = $this->config['mch_id'];
         $data['tkid'] = $Order['system_no'];
 
-        $res = Curl::post($this->config['gateway'], $data);
+        $res = Curl::post($this->config['queryway'], $data);
         $resp = json_decode($res,true);
 
         halt($res);
@@ -117,7 +117,7 @@ class Yl extends WithdrawalController
         $data = array();
         $data['pay_memberid'] = $this->config['mch_id'];
 
-        $res = Curl::post($this->config['gateway'], $data);
+        $res = Curl::post($this->config['balanceway'], $data);
 
         halt($res);
 
