@@ -41,6 +41,7 @@ class Query extends PayController
         $data['transaction_id'] = $Order['system_no'];
 
         ksort($data);
+        reset($data);
         $md5str = "";
         foreach ($data as $key => $val) {
             $md5str = $md5str . $key . "=" . $val . "&";
