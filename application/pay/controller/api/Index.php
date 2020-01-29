@@ -24,8 +24,8 @@ class Index extends PayController
     //下单
     public function pay($create,$channel_id){
 
-    // return msg_post('https://www.baidu.com',[]);
-    // return msg_get('https://www.baidu.com');
+    // return msg_post('https://www.baidu.com',[]);post 提交
+    // return msg_get('https://www.baidu.com');get 提交
     }
 
     //查询
