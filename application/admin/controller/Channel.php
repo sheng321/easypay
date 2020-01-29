@@ -318,8 +318,6 @@ class Channel  extends AdminController
             if (true !== $validate) return __error($validate);
 
 
-            halt($post);
-
             //保存数据,返回结果
             $result =  $this->model->__edit($post);
 
