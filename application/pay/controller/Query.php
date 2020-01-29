@@ -32,11 +32,11 @@ class Query extends PayController
             $data['trade_state'] = 'NOTPAY';
         }
 
-        $data['memberid'] = $Order['pay_memberid'];
-        $data['orderid'] = $Order['system_no'];
+        $data['memberid'] = $param['pay_memberid'];
+        $data['orderid'] = $param['pay_orderid'];
         $data['amount'] = $Order['amount'];
         $data['time_end'] = $Order['pay_time'];
-        $data['transaction_id'] = $Order['out_trade_no'];
+        $data['transaction_id'] = $Order['system_no'];
 
         ksort($data);
         $md5str = "";

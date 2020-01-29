@@ -19,7 +19,6 @@ class intBehavior extends Controller
             PolicyApi();
             $this->check_api();
         }elseif($this->request->controller() == 'Query' && $this->request->action() == 'index'){
-            Policy();
             $this->check_query();
         }elseif($this->request->controller() == 'Notify' && $this->request->action() == 'index'){
             PolicyApi();
