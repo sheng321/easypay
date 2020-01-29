@@ -1,7 +1,7 @@
 <?php
 namespace app\withdrawal\controller;
 use app\common\controller\WithdrawalController;
-use app\common\model\Order;
+use app\common\model\Df;
 use app\common\model\Uprofile;
 
 
@@ -18,11 +18,13 @@ class Query extends WithdrawalController
         //商户属性
        $Uprofile =  Uprofile::quickGet(['uid'=>$param['pay_memberid']]);
        if(empty($Uprofile) || $Uprofile['who'] != 0 )  __jerror('商户号不存在');
+        if(empty($Uprofile['df_api1']) || $Uprofile['df_api1'] != '1' )  __jerror('API代付接口未开通，请联系客服处理。');
+        if( $Uprofile['df_api'] != '1' )  __jerror('商户未开启API代付接口功能。。。');
 
-        if(!check_sign($param,$Uprofile['secret']))  __jerror('签名错误');
+        if(!check_sign($param,$Uprofile['df_secret']))  __jerror('签名错误');
 
-        $Order =  Order::quickGet(['out_trade_no'=>$param['pay_orderid']]);
-        if(empty($Order))   __jerror('订单号不存在');
+        $Order =  Df::quickGet(['out_trade_no'=>$param['pay_orderid']]);
+        if(empty($Order) || $Order['mch_id'] != $param['pay_memberid'] )   __jerror('订单号不存在');
 
         if($Order['pay_status'] == 2){
             $data['returncode'] = '00';
@@ -43,7 +45,7 @@ class Query extends WithdrawalController
         foreach ($data as $key => $val) {
             $md5str = $md5str . $key . "=" . $val . "&";
         }
-        $data['sign'] = strtoupper(md5($md5str . "key=" . $Uprofile['secret']));
+        $data['sign'] = strtoupper(md5($md5str . "key=" . $Uprofile['df_secret']));
 
         return __jsuccess('查询成功',$data);
     }

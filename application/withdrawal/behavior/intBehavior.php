@@ -28,8 +28,7 @@ class intBehavior extends Controller
      */
     protected function check_api(){
 
-
-         if(config('custom.df.status') != '1')  __jerror('API代付通道维护中。。。');
+        if(config('custom.df.status') != '1')  __jerror('API代付通道维护中。。。');
 
         if(config('custom.df.api') != '1')  __jerror('API代付接口维护中。。。');
 
