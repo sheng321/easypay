@@ -16,7 +16,9 @@ return [
     'memberid'=> '20100002',//测试商户号
 
     'Md5key'=> 'd6f3fa704e7748f52f3a08fb3f1af6038be9cf3f',//测试秘钥
-    'api'=>'http://120.24.166.163:66/pay.php/api',//网关
+    'api'=>'http://120.24.166.163:66/pay.php/api',//支付网关
+    'query'=>'http://120.24.166.163:66/pay.php/query',//网关
+
 
     'DfMd5key'=> '8cd55dfb5a322cf4bd5a0f7629275d195e6c7fee',//代付测试秘钥
     //'df_api'=>'http://120.24.166.163:66/withdrawal.php/api',
