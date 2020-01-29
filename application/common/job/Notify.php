@@ -34,7 +34,7 @@ class Notify {
     private function checkDatabaseToSeeIfJobNeedToBeDone($data){
         if(empty($data)) return false;//订单不存在
         if($data['notice'] == 2) return false;//已回调
-        if($data['pay_status'] != 2) return false;//不是支付状态
+        if($data['pay_status'] != 2) return false;//不是已支付状态
         return true;
     }
 
