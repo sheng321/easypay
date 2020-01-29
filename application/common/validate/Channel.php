@@ -161,7 +161,7 @@ class Channel extends Validate {
     protected function checkCode($value, $rule, $data = []) {
         $code = \app\common\model\Channel::where(['code'=>$value,'pid'=>0])->field('id,code')->find();
         if(!empty($data['id']) && !empty($code) && $code['id'] != $data['id'])  return '编辑状态通道编码重复';
-        if (!empty($code)) return '通道编码重复';
+        if (empty($data['id']) && !empty($code)) return '通道编码重复';
         return true;
     }
 
