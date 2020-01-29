@@ -37,6 +37,8 @@ class ChannelDf extends ModelService {
     public function cList($page = 1, $limit = 10, $search = []) {
         $where = [];
 
+        if(!isset($search['status'])) $where[]=['status','in',[1,2]];
+
         //搜索条件
         $searchField['eq'] = ['status'];
         $searchField['like'] = ['remark','title','code'];
@@ -79,6 +81,7 @@ class ChannelDf extends ModelService {
      */
     public function wList($page = 1, $limit = 10, $search = [],$where = []) {
 
+        $where[]=['status','=',1];
         //搜索条件
         $searchField['like'] = ['title'];
 

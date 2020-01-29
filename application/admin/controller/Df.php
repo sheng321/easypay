@@ -571,6 +571,7 @@ class Df extends AdminController {
 
         //判断菜单状态
         $status = $this->model->where('id', $get['id'])->value('status');
+        if($status == 3)  return __error('该通道已删除');
         $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
 
         //执行更新操作操作
@@ -621,8 +622,8 @@ class Df extends AdminController {
     public function del_df() {
         $get = $this->request->get();
         if(empty($get['id'])) __error('数据异常！');
-
-        return   model('app\common\model\ChannelDf')->__del($get);
+        $get['status'] = 3;
+        return  model('app\common\model\ChannelDf')->__edit($get,'删除代付通道成功');
     }
 
 
