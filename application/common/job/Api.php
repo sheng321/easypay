@@ -42,6 +42,7 @@ class Api {
             \think\Queue::later(540,'app\\common\\job\\Notify', $notify, 'notify');//五分钟
             return true;
         }
+        if($res == '禁止入款') return true;
 
         $data['金额更新'] = $res;
         //错误添加到订单回调日志

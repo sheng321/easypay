@@ -21,18 +21,7 @@ class Notify extends PayController
 
         //http://www.test4.com/pay.php/notify/index/Pay/Xyf.html
         $code =  $this->request->param('Pay/s','');
-        //ctype_alnum  字母和数字或字母数字的组合
-        if(empty($code) || !ctype_alnum($code)) __jsuccess('无权访问');
-        $config = Channel::get_config($code);
-        if(empty($config)) __jerror('无权访问2');
-
-        //IP 白名单
-        $back_ip = array_filter(json_decode($config['back_ip'],true));
-        if(!empty($back_ip) && !in_array('*',$back_ip)){
-            $ip = get_client_ip();
-            if(!in_array($ip,$back_ip))  __jerror('无权访问3');
-        }
-        $this->config = $config;
+        $this->config = $this->set_notify_config($code);
     }
 
     public function index(){

@@ -29,15 +29,7 @@ class Xyf extends PayController
     {
         parent::__construct();
         $classArr = explode('\\',get_class());
-        $code =  end($classArr);
-        $config = Channel::get_config($code);
-        if(empty($config)) __jerror('支付服务不存在6');
-        $this->config = $config;
-
-        //http://www.test4.com/pay.php/notify/index/Pay/Xyf.html
-        $this->config['notifyUrl'] = Url::build('notify/index',['Pay'=>$code],true,true);
-        //http://www.test4.com/pay.php/notify/callback.html
-        $this->config['returnUrl'] = Url::build('notify/callback',[],true,true);
+        $this->config = $this->set_api_config($classArr);
     }
     /*
      * array(35) {

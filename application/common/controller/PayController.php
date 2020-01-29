@@ -4,6 +4,7 @@ namespace app\common\controller;
 use app\common\model\Channel;
 use app\common\model\Order;
 use app\pay\service\Payment;
+use think\facade\Url;
 use think\helper\Str;
 use think\Queue;
 
@@ -26,6 +27,38 @@ class PayController extends BaseController
         set_time_limit(100);
 
     }
+
+    protected  function set_api_config($class){
+        $code =  end($class);
+        $config = Channel::get_config($code);
+        if(empty($config)) __jerror('支付服务不存在6');
+
+        //http://www.test4.com/pay.php/notify/index/Pay/Xyf.html
+        $config['notifyUrl'] = Url::build('notify/index',['Pay'=>$code],true,true);
+        //http://www.test4.com/pay.php/notify/callback.html
+        $config['returnUrl'] = Url::build('notify/callback',[],true,true);
+        return $config;
+    }
+
+    protected  function set_notify_config($code){
+        //ctype_alnum  字母和数字或字母数字的组合
+        if(empty($code) || !ctype_alnum($code)) __jsuccess('无权访问');
+        $config = Channel::get_config($code);
+        if(empty($config)) __jerror('无权访问2');
+
+        //通道出现问题时，可以禁止上分
+        if($config['noentry'] == 1) __jerror('无法访问');
+
+        //IP 白名单
+        $back_ip = array_filter(json_decode($config['back_ip'],true));
+        if(!empty($back_ip) && !in_array('*',$back_ip)){
+            $ip = get_client_ip();
+            if(!in_array($ip,$back_ip))  __jerror('无权访问3');
+        }
+        return $config;
+    }
+
+
 
     /**
      * 获取话费通道库存
@@ -126,7 +159,8 @@ class PayController extends BaseController
     protected function checkOrderNotify(){
      $order =  Order::quickGet(['system_no'=>$this->config['system_no']]);
       //下单失败 订单号不存在 订单关闭
-     if(empty($order) || $order['pay_status'] == 1 || $order['pay_status'] == 3) __jerror('no_order');
+     if(empty($order) || $order['pay_status'] == 1) __jerror('no_order');
+        if($order['pay_status'] == 3) __jerror('订单已关闭，请联系客服处理');
 
      //已支付
      if($order['pay_status'] == 2){
