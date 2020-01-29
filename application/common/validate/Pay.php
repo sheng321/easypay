@@ -122,7 +122,7 @@ class Pay extends Validate {
      */
     protected $scene = [
          'check_api' => ["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign","pay_productname","pay_attach"],
-        'check_query' => ["pay_memberid" ,"pay_orderid","pay_md5sign"],
+        'check_query' => ["out_trade_no" ,"mchid","pay_md5sign"],
 
         //代付
          'check_withdrawal' => ["accountname" ,"bankname","cardnumber","city","extends" ,"mchid","money","out_trade_no","province","subbranch","pay_md5sign"],

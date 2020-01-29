@@ -46,7 +46,7 @@ class intBehavior extends Controller
      * 验证查询订单接口
      */
     protected function check_query(){
-        $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_md5sign"],'post');
+        $param =   $this->request->only(["out_trade_no" ,"mchid","pay_md5sign"],'post');
         if(empty($param))  __jerror('提交方式错误！');
 
         //验证数据

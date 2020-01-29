@@ -28,6 +28,7 @@ class Api extends WithdrawalController
         if(empty($Uprofile['df_api1']) || $Uprofile['df_api1'] != '1' )  __jerror('API代付接口未开通，请联系客服处理。');
         if( $Uprofile['df_api'] != '1' )  __jerror('商户未开启API代付接口功能。。。');
 
+        //白名单验证
         $ips = Ip::bList($param['mchid'],2);
         if(!in_array(get_client_ip(),$ips)) return __error('异常IP');
 
@@ -111,7 +112,7 @@ class Api extends WithdrawalController
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
 
         $return = ['refCode'=>'4','transaction_id'=>$create['system_no'],'out_trade_no'=>$create['out_trade_no']]; //待处理
-        $return['pay_md5sign'] = create_sign($return,$Uprofile['df_secret']);
+        $return['sign'] = create_sign($return,$Uprofile['df_secret']);
 
         logs('请求:'.json_encode($param).'返回报文:'.json_encode($return),'withdrawal/api/'.$param['mchid']);
         __jsuccess('代付申请成功',$return);

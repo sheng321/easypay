@@ -22,7 +22,7 @@ class Query extends PayController
         if(!check_sign($param,$Uprofile['secret']))  __jerror('签名错误');
 
         $Order =  Order::quickGet(['out_trade_no'=>$param['pay_orderid']]);
-        if(empty($Order) ||$Order['mch_id'] != $param['pay_memberid'] )   __jerror('订单号不存在');
+        if(empty($Order) ||$Order['mch_id'] !== $param['pay_memberid'] )   __jerror('订单号不存在');
 
         $data = array();
         if($Order['pay_status'] == 2){
