@@ -178,13 +178,12 @@ class Xyf extends PayController
     //查询
     public function query($Order){
 
-        $gateway = 'http://api.xinyufu.com/pay/query';
         $data = array();
         $data['merId'] =  $this->config['mch_id'];
         $data['orderId'] = $Order['system_no'];
         $data['nonceStr'] = md5(time() . mt_rand(10000,99999));
         $data['sign'] = $this->getSign($data);
-        $res = Curl::post($gateway, http_build_query($data));
+        $res = Curl::post($this->config['queryway'], http_build_query($data));
         $resp = json_decode($res,true);
 
         /*

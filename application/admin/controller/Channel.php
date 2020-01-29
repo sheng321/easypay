@@ -313,7 +313,6 @@ class Channel  extends AdminController
             if(empty($post['p_id']))  $p_id = [];
             $post['p_id'] = json_encode($p_id);
 
-
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Channel.edit');
             if (true !== $validate) return __error($validate);
