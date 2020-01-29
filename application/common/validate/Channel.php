@@ -44,9 +44,9 @@ class Channel extends Validate {
         'max_pay'   => 'number',
         'limit_times'   => 'number',
 
-        'gateway'   => 'activeUrl',
-        'queryway'   => 'activeUrl',
-        'balanceway'   => 'activeUrl',
+        'gateway'   => 'checkUrl',
+        'queryway'   => 'checkUrl',
+        'balanceway'   => 'checkUrl',
 
     ];
 
@@ -77,9 +77,9 @@ class Channel extends Validate {
         'f_num.number'     => '固定尾数必须为整数',
         'sort.in'     => '置顶必须在0,2之间',
 
-        'gateway.activeUrl'     => '下单网关或者IP不正确',
-        'queryway.activeUrl'     => '查询网关或者IP不正确',
-        'balanceway.activeUrl'     => '余额查询网关或者IP不正确',
+        'gateway.checkUrl'     => '下单网关或者IP不正确',
+        'queryway.checkUrl'     => '查询网关或者IP不正确',
+        'balanceway.checkUrl'     => '余额查询网关或者IP不正确',
 
         'limit_money.number'     => '限额必须为纯数字',
         'limit_time.number'     => '限额必须为纯数字',
@@ -163,6 +163,17 @@ class Channel extends Validate {
         if(!empty($data['id']) && !empty($code) && $code['id'] != $data['id'])  return '编辑状态通道编码重复';
         if (empty($data['id']) && !empty($code)) return '通道编码重复';
         return true;
+    }
+
+
+    public function checkUrl($value, $rule, $data = [])
+    {
+        $str="/^http(s?):\/\/(?:[A-za-z0-9-]+\.)+[A-za-z]{2,4}(?:[\/\?#][\/=\?%\-&~`@[\]\':+!\.#\w]*)?$/";
+        if( preg_match($str,$value)) return true;
+
+        $urlarr = parse_url($value);
+        if(filter_var($urlarr['host'], FILTER_VALIDATE_IP)) return true;
+        return false;
     }
 
 }
