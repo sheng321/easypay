@@ -24,20 +24,9 @@ class Notify {
         }
 
         $isJobDone = $this->doHelloJob($data,$Order);
-        if ($isJobDone === true) {
-            // 如果任务执行成功，记得删除任务
-            $job->delete();
-            return;
-        }else{
-            if($job->attempts() > 1) {
-                //通过这个方法可以检查这个任务已经重试了几次了
-                $job->delete();
-                return;
-            }
-            // 重发，延迟 60 秒执行
-           // $job->release(60);
-            return;
-        }
+        $job->delete();//执行一次
+        return;
+
     }
 
     /**
