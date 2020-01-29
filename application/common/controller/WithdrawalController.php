@@ -1,6 +1,7 @@
 <?php
 
 namespace app\common\controller;
+use app\common\model\Df;
 use app\common\model\Order;
 use think\helper\Str;
 use think\Queue;
@@ -23,6 +24,20 @@ class WithdrawalController extends BaseController
         date_default_timezone_set("PRC");
         set_time_limit(60);
     }
+
+    protected  function set_config($class){
+        $code =  end($class);
+        $config = Df::get_config($code);
+        if(empty($config)) __jerror('支付服务不存在6');
+
+        return $config;
+    }
+
+
+
+
+
+
 
     /**
      * 下单失败

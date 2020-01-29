@@ -238,7 +238,7 @@ class Channel extends ModelService {
      * @param $id
      */
     public static function get_config($code){
-        $config = self::where(['code'=>$code])->cache('channel_config_'.$code,2)->find();
+        $config = self::where(['code'=>$code,'pid'=>0])->cache('channel_config_'.$code,2)->find();
         return  $config;
     }
 

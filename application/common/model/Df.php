@@ -131,4 +131,17 @@ class Df extends ModelService {
         $time = date('Y-m-d');
         return  self::where([['mch_id','=',$mch_id],['status','<',4],['create_at','BETWEEN',["{$time} 00:00:00", "{$time} 23:59:59"]]])->sum('amount');
     }
+
+
+
+    /**
+     * 获取通道配置信息
+     * @param $id
+     */
+    public static function get_config($code){
+        $config = self::where(['code'=>$code])->cache('df_config_'.$code,2)->find();
+        return  $config;
+    }
+
+
 }
