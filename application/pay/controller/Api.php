@@ -110,7 +110,6 @@ class Api extends PayController
             }
 
 
-
             //3.验证支付通道金额
             $amount['amount'] = $param['pay_amount'];
             $amount['min_amount'] = $Channel['min_amount'];

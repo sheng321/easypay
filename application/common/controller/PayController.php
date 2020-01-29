@@ -131,7 +131,7 @@ class PayController extends BaseController
      //已支付
      if($order['pay_status'] == 2){
          $returnBack = empty($this->config['returnBack'])?'':$this->config['returnBack'];
-         throw new \think\exception\HttpResponseException(exit($returnBack));
+         throw new \think\exception\HttpResponseException(exit($returnBack));//停止运行，关闭。
      }
 
      //订单接受回调 时间限制
