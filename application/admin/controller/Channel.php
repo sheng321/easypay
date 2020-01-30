@@ -315,8 +315,6 @@ class Channel  extends AdminController
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Channel.edit');
-            dump($post);
-            halt($validate);
             if (true !== $validate) return __error($validate);
 
 
