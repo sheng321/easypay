@@ -132,8 +132,8 @@ class Channel extends Validate {
      */
     public function sceneDf() {
         return $this->only(['remark','code','c_rate','min_pay','max_pay','limit_times','limit_money','gateway','queryway','balanceway','fee','min_pay' ,'max_pay','limit_times','title'])
-            ->remove('code','checkCode')
-            ->append('title','token');
+            ->remove('code','checkCode');
+           // ->append('title','token');
     }
 
 
