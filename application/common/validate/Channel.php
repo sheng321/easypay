@@ -39,7 +39,7 @@ class Channel extends Validate {
 
         'charge'   => 'in:0,1',//话费
 
-        'fee'   => 'number',
+        'fee'   => 'float',
         'min_pay'   => 'number',
         'max_pay'   => 'number',
         'limit_times'   => 'number',
@@ -131,7 +131,7 @@ class Channel extends Validate {
      * @return $this
      */
     public function sceneDf() {
-        return $this->only(['remark','code','c_rate','min_pay','max_pay','limit_times','limit_money','gateway','queryway','balanceway','min_pay' ,'max_pay','limit_times','title'])
+        return $this->only(['remark','code','c_rate','min_pay','max_pay','limit_times','limit_money','gateway','queryway','balanceway','fee','min_pay' ,'max_pay','limit_times','title'])
             ->remove('code','checkCode')
             ->append('title','token');
     }
