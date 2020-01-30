@@ -449,6 +449,8 @@ class Df extends AdminController {
                 $channel_money = Umoney::quickGet(['uid'=>0,'channel_id'=>$post['channel_id']]);
                 if(empty($channel_money)) __error('绑定支付通道的金额账户不存在');
                 $money['id'] = $channel_money['id'];
+            }else{
+                $post['channel_id'] = 0;
             }
 
 
@@ -458,7 +460,11 @@ class Df extends AdminController {
             $channel = $this->model->create($post);//创建通道
             //创建代付通道金额账户
             $money['df_id'] = $channel['id'];
-            $Umoney = model('app\common\model\Umoney')->save($money);
+            if(empty($money['id'])){
+                $Umoney = model('app\common\model\Umoney')->save($money);
+            }else{
+                $Umoney = model('app\common\model\Umoney')->save($money,['id'=>$money['id']]);
+            }
 
             if (!$channel || !$Umoney ) {
                 $this->model->rollback();
@@ -532,26 +538,12 @@ class Df extends AdminController {
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Channel.df');
+
             if (true !== $validate) return __error($validate);
             unset($post['__token__']);
 
             //保存数据,返回结果
-            //使用事物保存数据
-            $this->model->startTrans();
-
-            $channel = $this->model->save($post);//更新通道
-            //创建代付通道金额账户
-            if(empty($post['channel_id'])) $post['channel_id'] = 0;
-            $Umoney = model('app\common\model\Umoney')->save(['uid'=>0,'channel_id'=>$post['channel_id'],'df_id'=>$channel['id']]);
-
-            if (!$channel || !$Umoney ) {
-                $this->model->rollback();
-                empty($msg) && $msg = '数据有误，请稍后再试！!';
-                return __error($msg);
-            }
-            $this->model->commit();
-            empty($msg) && $msg = '添加成功!';
-            return __success($msg);
+           return $this->model->__edit($post);
         }
     }
 
