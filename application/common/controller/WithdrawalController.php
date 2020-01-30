@@ -15,8 +15,7 @@ use think\Queue;
  */
 class WithdrawalController extends BaseController
 {
-    public $__error = ['code' => 0, 'msg' => '', 'data' => []];
-    public $__success = ['code' => 1, 'msg' => '', 'data' => []];
+
 
     //通道配置信息
     protected $config;

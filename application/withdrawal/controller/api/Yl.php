@@ -103,8 +103,8 @@ class Yl extends WithdrawalController
         )
         )
          */
-
-        if(empty($res) || $res['status'] === 0) return __err($res['message']);
+        if(empty($res)) __err('代付通道异常');
+        if($res['status'] === 0) return __err($res['message']);
         if($res['status'] === 1) return __suc($res['message'],[
             'actual_amount'=>$res['data']['money'],//实际到账
             ]);
@@ -117,11 +117,7 @@ class Yl extends WithdrawalController
         $data['pay_memberid'] = $this->config['mch_id'];
         $data['tkid'] = $Order['system_no'];
 
-        $res = Curl::post($this->config['queryway'], $data);
-        $resp = json_decode($res,true);
-
-        halt($res);
-
+        $res = json_decode(Curl::post($this->config['queryway'], $data),true);
 
         /*
          * array(3) {
@@ -134,23 +130,32 @@ class Yl extends WithdrawalController
             }
          */
 
-        switch($res['data']){
-            //打款成功
-            case '2':
-                return $this->checkQuery(1);
-            //打款失败
-            case '3':
-                return $this->checkQuery(2);
-            //处理中或订单错误
-            default:
-                return $this->checkQuery(0);
+        if(empty($res)) __err('代付通道异常');
+
+        if($res['status'] === 0) return __err($res['message']);
+        //添加到代付订单查询日志
+        logs(json_encode($res).'|'.$Order['system_no'],$type = 'withdrawal/query/'.$this->config['code']);
+        if($res['status'] === 1){
+            switch($res['data']){
+                //打款成功
+                case '2':
+                    return __suc($res['message'],[
+                        'status'=>3,//已完成
+                    ]);
+                //打款失败
+                case '3':
+                    return __suc($res['message'],[
+                        'status'=>4,//失败退款
+                    ]);
+                //处理中或订单错误
+                default:
+                    return __suc($res['message'],[
+                        'status'=>2,//处理中
+                    ]);
+            }
         }
+        return __err('未知');
 
-
-
-          //添加到订单查询日志
-         logs($res,$type = 'order/query/'.$this->config['code']);
-         return ['code' => 1, 'msg' => '查询成功！', 'data' => $res];
     }
     //查询余额
     public function balance(){
