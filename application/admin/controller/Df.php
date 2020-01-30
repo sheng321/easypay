@@ -549,6 +549,18 @@ class Df extends AdminController {
     }
 
 
+    //查询通道余额
+    public function search_df(){
+        echo 1;
+
+        sleep(2);
+
+        echo 3;
+
+
+        return   '查询完成';
+    }
+
     /**
      * 更改代付状态
      * @return \think\response\Json
