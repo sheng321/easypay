@@ -441,10 +441,6 @@ class Df extends AdminController {
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Channel.df');
-
-            dump($post);
-            halt($validate);
-
             if (true !== $validate) return __error($validate);
             unset($post['__token__']);
 
@@ -536,6 +532,10 @@ class Df extends AdminController {
 
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Channel.df');
+
+            dump($post);
+            halt($validate);
+
             if (true !== $validate) return __error($validate);
             unset($post['__token__']);
 
