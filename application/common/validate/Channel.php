@@ -23,15 +23,15 @@ class Channel extends Validate {
 
         'code'  => 'require|max:20|alphaNum|checkCode',
         'c_rate'=> 'float',//运营费率
-        'min_amount'=> 'number',//最低限额
-        'max_amount'=> 'number',//最高限额
-        'f_amount'=> 'number',//固定值
-        'ex_amount'=> 'number',//排除固定值
-        'f_multiple'=> 'number',//固定倍数
-        'f_num'=> 'number',//固定尾数
+        'min_amount'=> 'float',//最低限额
+        'max_amount'=> 'float',//最高限额
+        'f_amount'=> 'float',//固定值
+        'ex_amount'=> 'float',//排除固定值
+        'f_multiple'=> 'float',//固定倍数
+        'f_num'=> 'float',//固定尾数
         'sort'=> 'in:0,2',//固定尾数
 
-        'limit_money'=> 'number',//限额
+        'limit_money'=> 'float',//限额
         'limit_time'=> 'number',//单笔限时
 
         'p_id'   => 'require',
@@ -40,8 +40,8 @@ class Channel extends Validate {
         'charge'   => 'in:0,1',//话费
 
         'fee'   => 'float',
-        'min_pay'   => 'number',
-        'max_pay'   => 'number',
+        'min_pay'   => 'float',
+        'max_pay'   => 'float',
         'limit_times'   => 'number',
 
         'gateway'   => 'checkUrl',
