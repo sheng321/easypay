@@ -195,12 +195,12 @@ class Withdrawal extends UserController {
             if(empty($bank[$bank_card_id])) return __error('选择银行卡不存在！');
 
             $data['mch_id'] = $uid;
+            $data['out_trade_no'] = '后台申请';
             $data['system_no'] = getOrder('d');//代付订单号
             $data['amount'] = $amount;
             $data['bank_card_id'] = $bank_card_id;
             $data['bank'] = json_encode($bank[$bank_card_id]);
             $data['fee'] = $withdrawal['fee'];
-
 
             $change['change'] = $data['amount'];//变动金额
             $change['relate'] = $data['system_no'];//关联订单号
