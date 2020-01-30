@@ -10,6 +10,13 @@
 
     <!--顶部操作栏--开始-->
     <blockquote id="searchBlock" class=" quoteBox">
+        {if auth("$thisClass/search_df")}
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-normal  layui-btn-sm    layui-btn-primary " data-open='{:url("$thisClass/search_df")}' data-width="80%"    data-title="查询通道余额">查询通道余额</a>
+        </div>
+        {/if}
+
+
 
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label-99admin">代付通道名称</label>
