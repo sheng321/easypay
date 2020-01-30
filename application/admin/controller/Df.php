@@ -558,7 +558,7 @@ class Df extends AdminController {
         echo 3;
 
 
-        return   '查询完成';
+
     }
 
     /**
