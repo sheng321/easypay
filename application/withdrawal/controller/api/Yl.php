@@ -17,15 +17,52 @@ class Yl extends WithdrawalController
         $this->config = $this->set_config($classArr);
     }
 
+/*
+ * array(25) {
+  ["id"] => int(22)
+  ["system_no"] => string(20) "d2001301342478926444"
+  ["mch_id"] => string(8) "20100005"
+  ["lock_id"] => int(1)
+  ["record"] => string(64) "admin选择下发代付通道:盈联|admin更新状态:处理中"
+  ["remark"] => string(0) ""
+  ["status"] => int(1)
+  ["create_at"] => string(19) "2020-01-30 13:42:47"
+  ["update_at"] => string(19) "2020-01-30 14:12:37"
+  ["amount"] => string(6) "99.000"
+  ["fee"] => string(5) "5.000"
+  ["actual_amount"] => string(5) "0.000"
+  ["create_by"] => int(52)
+  ["update_by"] => int(1)
+  ["bank"] => array(8) {
+    ["id"] => int(12)
+    ["card_number"] => string(19) "6236682080001705723"
+    ["bank_name"] => string(18) "中国建设银行"
+    ["account_name"] => string(9) "陈成阳"
+    ["branch_name"] => string(54) "中国建设银行股份有限公司鄱阳鄱北支行"
+    ["province"] => string(0) ""
+    ["city"] => string(0) ""
+    ["bank_id"] => int(105)
+  }
+  ["channel_id"] => int(62)
+  ["channel_fee"] => string(5) "5.000"
+  ["verson"] => int(2)
+  ["transaction_no"] => string(0) ""
+  ["remark1"] => string(0) ""
+  ["out_trade_no"] => string(12) "后台申请"
+  ["ip"] => string(9) "127.0.0.1"
+  ["extends"] => NULL
+  ["card_number"] => string(0) ""
+  ["channel_amount"] => string(6) "99.000"
+}
+*/
     //发起代付订单
     public function pay($create){
-
         $pay_memberid = $create['mch_id'];                               //商户ID
-        $pay_amount = $create['amount'];                                                 //交易金额
-        $bankfullname = $create['bank']['accountname'];                                         //开户名称
-        $pay_bankname = $create['bank']['bankname'];                                       //银行名称
-        $bankzhiname = $create['bank']['subbranch'];            //支行名称
-        $pay_card_no =  $create['bank']['cardnumber'];                            //银行卡号
+        $pay_amount = $create['channel_amount'];                                                 //交易金额
+        $bankfullname = $create['bank']['account_name'];                                         //开户名称
+        $pay_bankname = $create['bank']['bank_name'];                                       //银行名称
+        $bankzhiname = $create['bank']['branch_name'];            //支行名称
+        $pay_card_no =  $create['bank']['card_number'];                            //银行卡号
 
         $requestarray = array(
             "pay_memberid" => $pay_memberid,
@@ -43,7 +80,6 @@ class Yl extends WithdrawalController
             $md5str = $md5str.$key."=>".$val."&";
         }
         $requestarray["pay_md5sign"] = strtoupper(md5($md5str."key=".$this->config['signkey']));
-
         $res = json_decode(Curl::post($this->config['gateway'], $requestarray),true);
 
         /**
@@ -65,11 +101,15 @@ class Yl extends WithdrawalController
         [sxfmoney] => 2.00
         [money] => 10.00
         )
-
         )
          */
 
-        halt($res);
+        if(empty($res) || $res['status'] === 0) return __err($res['message']);
+        if($res['status'] === 1) return __suc($res['message'],[
+            'actual_amount'=>$res['data']['money'],//实际到账
+            ]);
+
+        return __err('未知');
     }
 
     //查询订单状态

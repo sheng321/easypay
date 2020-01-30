@@ -89,7 +89,7 @@ class Df extends ModelService {
             $data[$k]['status_title'] = $status[$v['status']];
 
             !empty($v['lock_id']) && $data[$k]['lock_name'] = getNamebyId($v['lock_id']);
-             $data[$k]['channel_title'] =!empty($v['channel_id'])?$channel[$v['channel_id']]['title']: '';
+             $data[$k]['channel_title'] =!empty($v['channel_id']) && !empty($channel[$v['channel_id']]) ?$channel[$v['channel_id']]['title']: '';
 
             $bank =  json_decode($v['bank'],true);
             $data[$k]['card_number'] = $bank['card_number'];

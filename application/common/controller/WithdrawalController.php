@@ -15,6 +15,8 @@ use think\Queue;
  */
 class WithdrawalController extends BaseController
 {
+    public $__error = ['code' => 0, 'msg' => '', 'data' => []];
+    public $__success = ['code' => 1, 'msg' => '', 'data' => []];
 
     //通道配置信息
     protected $config;
@@ -24,13 +26,13 @@ class WithdrawalController extends BaseController
         parent::__construct();
         date_default_timezone_set("PRC");
         set_time_limit(60);
+
     }
 
     protected  function set_config($class){
         $code =  end($class);
         $config = ChannelDf::get_config($code);
         if(empty($config)) __jerror('支付服务不存在6');
-
         return $config;
     }
 

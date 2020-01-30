@@ -61,7 +61,7 @@
         {type: "checkbox",fixed: "left", width: 30,},
         {field: 'id', title: 'ID', minWidth: 20, align: 'center',sort:true},
         {field: 'title', title: '代付通道', minWidth: 20, align: 'center'},
-        {field: 'fee',title: '充值费率',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;',sort:true},
+        {field: 'c_rate',title: '充值费率',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;',sort:true},
         {field: 'fee',title: '手续费',edit: 'text',minWidth: 20,align: "center", style: 'background-color: #009688; color: #fff;',sort:true},
         {field: 'visit', title: '付款方式', width: 100, unresize: true, align: "center", templet: function (d) {
             if(d.visit == '0'){
@@ -75,8 +75,10 @@
         {field: 'inner', title: '下发方式', width: 100, templet: '#checkInner', unresize: true, align: "center"},
         {field: 'min_pay', title: '最低', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;',sort:true},
         {field: 'max_pay', title: '最高', edit: 'text', minWidth: 20, align: "center", templet: '#limit', style: 'background-color: #009688; color: #fff;',sort:true},
-        {field: 'balance', title: '余额', minWidth: 20, align: 'center', style: ' color: red;',sort:true},
+        {field: 'balance1', title: '余额', minWidth: 20, align: 'center', style: ' color: red;',sort:true},
         {field: 'frozen_amount', title: '冻结', minWidth: 20, align: 'center',sort:true},
+        {field: 'total_balance', title: '查询总额', minWidth: 20, align: 'center', style: ' color: red;',sort:true},
+        {field: 'balance', title: '查询余额', minWidth: 20, align: 'center',sort:true},
         {field: 'time', title: '运营时间', minWidth: 20, align: 'center'},
 
     ]], false,function (res,curr,count){

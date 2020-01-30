@@ -87,7 +87,7 @@ class ChannelDf extends ModelService {
 
         $where = search($search,$searchField,$where);
 
-        $field = ['id','title','fee','min_pay','max_pay','inner'];
+        $field = ['id','title','fee','min_pay','max_pay','inner','c_rate','total_balance','balance'];
 
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['update_at'=>'desc'])->select();
@@ -96,7 +96,7 @@ class ChannelDf extends ModelService {
         $Umoney =    model('app\common\model\Umoney')->get_amount(0,0,'all');
 
         foreach ($data as $k => $val){
-            $data[$k]['balance'] = $Umoney[$val['id']]["balance"];
+            $data[$k]['balance1'] = $Umoney[$val['id']]["balance"];
             $data[$k]['frozen_amount'] = $Umoney[$val['id']]["frozen_amount"];
 
             $data[$k]['LAY_CHECKED'] = false;
@@ -142,6 +142,8 @@ class ChannelDf extends ModelService {
      */
     public static function get_config($code){
         $config = self::where(['code'=>$code])->cache('df_config_'.$code,2)->find();
+        //自定义秘钥
+        if(!empty($config['secretkey']))  $config['secretkey'] = json_decode($config['secretkey'],true);
         return  $config;
     }
 

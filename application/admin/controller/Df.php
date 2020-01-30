@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\ChannelDf;
 use app\common\model\Umoney;
 use app\withdrawal\service\Payment;
 use think\Db;
@@ -177,8 +178,6 @@ class Df extends AdminController {
             $order = $this->model->quickGet($post['id']);
             if ($order['status'] >= $post['status']) return __error('选择状态重复或者错误！');
 
-
-
             //解除订单锁定
             if ($post['status'] == 9){
                 unset($post['status']);
@@ -187,34 +186,67 @@ class Df extends AdminController {
                 return $this->model->__edit($post);
             }
 
+
             $post['lock_id'] = $this->user['id'];
             $post['record'] = empty($order['record']) ? $this->user['username'] . "更新状态:" . $status[$post['status']] : $order['record'] . "|" . $this->user['username'] . "更新状态:" . $status[$post['status']];
 
-            //如果选择了出款通道
-            if ($order['channel_id'] > 0) {
-                $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $order['channel_id']]); //通道金额
-                if(empty($channel_money)) __error('数据异常!');
-            }
+
+            if(empty($order['channel_id'])) return __error('请先选择出款通道！');
+
+             $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $order['channel_id']]); //通道金额
+            if(empty($channel_money)) __error('代付通道金额数据异常!');
 
             //处理中
             if ($post['status'] == 2) {
+                $channel = ChannelDf::quickGet($order['channel_id']);
+                if(empty($channel) || $channel['status'] != 1) __error('代付通道异常或者未开启!');
+                $Payment =  Payment::factory($channel['code']);
+                //先更新系统数据，再提交数据到上游
 
                 //冻结通道金额
-                if ($order['channel_id'] > 0) {
-                    $change['change'] = $order['amount'] - $order['fee'] + $order['channel_fee'] ;//变动金额
-                    if(empty($change['change'])) __error('数据异常2!');
+                $change['change'] = $order['amount'] - $order['fee'] + $order['channel_fee'] ;//变动金额
+                if(empty($change['change'])) __error('数据异常2!');
 
-                    $change['relate'] = $order['system_no'];//关联订单号
-                    $change['type'] = 5;//代付冻结金额类型
+                $change['relate'] = $order['system_no'];//关联订单号
+                $change['type'] = 5;//代付冻结金额类型
 
-                    $res = Umoney::dispose($channel_money, $change); //处理 通道金额
-                    if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') return __error('代付通道:' . $res['msg']);
+                $res = Umoney::dispose($channel_money, $change); //处理 通道金额
+                if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') return __error('代付通道:' . $res['msg']);
 
-                    $Umoney_data = $res['data'];
-                    $UmoneyLog_data = $res['change'];
+                $Umoney_data = $res['data'];
+                $UmoneyLog_data = $res['change'];
+
+                //使用事物保存数据
+                $this->model->startTrans();
+                $save1 = $this->model->save($post, ['id' => $post['id']]);
+
+                $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
+                $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
+
+                if (!$save1 || !$save || !$add) {
+                    $this->model->rollback();
+                    return __error('数据有误，请稍后再试!');
                 }
+                //这里提交代付申请
+                $order['bank'] = json_decode($order['bank'],true);
+                $result = $Payment->pay($order);
+                if(empty($result)|| !is_array($result)){
+                    $this->model->rollback();
+                    return __error('代付通道异常，请稍后再试!');
+                }
+                //成功
+                if($result['code'] == 1){
+                    //更新 实际到账金额
+                    if(!empty($result['data']['actual_amount'])) $this->model->save(['actual_amount'=>$result['data']['actual_amount'],['id'=>$post['id']]],['id'=>$post['id']]);
 
+                    $this->model->commit();
+                    return __success('操作成功！');
+                }else{
+                    $this->model->rollback();
+                    return __error('申请代付失败，请检查上游订单状，上游返回：'.$result['msg']);
+                }
             }
+
 
             //处理完成
             if ($post['status'] == 3){
@@ -229,17 +261,14 @@ class Df extends AdminController {
                 $Umoney_data = $res1['data'];
                 $UmoneyLog_data = $res1['change'];
 
-                if ($order['channel_id'] > 0) {
-                    $res2 = Umoney::dispose($channel_money, $change); //通道处理
-                    if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
 
-                    $Umoney_data = array_merge($Umoney_data,$res2['data']);
-                    $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
-                }
+                $res2 = Umoney::dispose($channel_money, $change); //通道处理
+                if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
 
+                $Umoney_data = array_merge($Umoney_data,$res2['data']);
+                $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
 
             }
-
 
             //失败退款
             if ($post['status'] == 4){
@@ -254,33 +283,30 @@ class Df extends AdminController {
                 $Umoney_data = $res1['data'];
                 $UmoneyLog_data = $res1['change'];
 
-                if ($order['channel_id'] > 0) {
-                    $res2 = Umoney::dispose($channel_money, $change); //通道处理
-                    if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
 
-                    $Umoney_data = array_merge($Umoney_data,$res2['data']);
-                    $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
-                }
+                $res2 = Umoney::dispose($channel_money, $change); //通道处理
+                if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
+
+                $Umoney_data = array_merge($Umoney_data,$res2['data']);
+                $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
+
             }
 
+            if ($post['status'] == 4||$post['status'] == 3){
+                //使用事物保存数据
+                $this->model->startTrans();
+                $save1 = $this->model->save($post, ['id' => $post['id']]);
 
-            //使用事物保存数据
-            $this->model->startTrans();
-            $save1 = $this->model->save($post, ['id' => $post['id']]);
-
-            if ($order['channel_id'] > 0) {
                 $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
                 $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
-            } else {
-                $save = true;
-                $add = true;
+
+                if (!$save1 || !$save || !$add) {
+                    $this->model->rollback();
+                    return __error('数据有误，请稍后再试!');
+                }
+                $this->model->commit();
+                return __success('操作成功！');
             }
-            if (!$save1 || !$save || !$add) {
-                $this->model->rollback();
-                return __error('数据有误，请稍后再试!');
-            }
-            $this->model->commit();
-            return __success('操作成功！');
         }
     }
 
@@ -303,7 +329,7 @@ class Df extends AdminController {
 
         $channel_amount = 0;//通道金额
         //内扣
-        if($Channel['inner'] == 0) $channel_amount = $order['amount'] - $order['fee'] + $Channel['channel_fee'];
+        if($Channel['inner'] == 0) $channel_amount = $order['amount'] - $order['fee'] + $Channel['fee'];
         //外扣
         if($Channel['inner'] == 1) $channel_amount = $order['amount'] - $order['fee'];
 
