@@ -218,19 +218,21 @@ class Wlf extends WithdrawalController
             case ($RET_CODE2 === "0003")://不通过受理
                 return __err('代付通道申请失败: '.$res["BODY"]["RET_DETAILS"]["RET_DETAIL"]['ERR_MSG']);
                 break;
-            case ($RET_CODE1 === "1000")://报文域内容检查错
-            case ($RET_CODE1 === "1001")://报文解析错
-            case ($RET_CODE1 === "1002")://未查询到该订单号对应的交易
+            //2 开头中间处理状态
             case ($RET_CODE2 === "2001")://等待商户审核
             case ($RET_CODE2 === "2002")://等待受理
             case ($RET_CODE2 === "2003")://等待复核
             case ($RET_CODE2 === "2004")://提交银行处理
+                return __suc($res["BODY"]["RET_DETAILS"]["RET_DETAIL"]['ERR_MSG']);
+                break;
+            //1 开头系统错误
+            case ($RET_CODE1 === "1000")://报文域内容检查错
+            case ($RET_CODE1 === "1001")://报文解析错
+            case ($RET_CODE1 === "1002")://未查询到该订单号对应的交易
             default:
                 return __err('代付通道异常2');
                 break;
         }
-
-
 
     }
 
