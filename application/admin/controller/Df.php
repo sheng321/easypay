@@ -541,6 +541,7 @@ class Df extends AdminController {
 
             if (true !== $validate) return __error($validate);
             unset($post['__token__']);
+            unset($post['channel_id']);//只有创建时才能绑定支付通道金额账户
 
             //保存数据,返回结果
            return $this->model->__edit($post);
