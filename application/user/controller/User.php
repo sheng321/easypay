@@ -337,11 +337,13 @@ class User extends UserController {
             $basic_data = [
                 'title' => '添加/编辑银行卡',
                 'info' => $find,
+                'bank' => config('bank.'),
             ];
             return $this->fetch('', $basic_data);
         } else {
-            $post = $this->request->only(['id','card_number','bank_name','branch_name','province','city','account_name','__token__'], 'post');
+            $post = $this->request->only(['id','card_number','bank_id','branch_name','province','city','account_name','__token__'], 'post');
             $post['uid'] = $uid;
+            $post['bank_name'] = config('bank.'.$post['bank_id']);
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Bank.edit');
             if (true !== $validate) return __error($validate);

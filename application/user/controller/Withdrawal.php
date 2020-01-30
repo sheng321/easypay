@@ -187,8 +187,8 @@ class Withdrawal extends UserController {
 
             $amount =  $this->request->post('amount/d',0);
 
-            if($withdrawal['min_amount'] > $amount) return __error('不能小于最小提现金额！');
-            if($withdrawal['max_amount'] < $amount) return __error('不能大于最高提现金额！');
+            if($withdrawal['min_pay'] > $amount) return __error('不能小于最小提现金额！');
+            if($withdrawal['max_pay'] < $amount) return __error('不能大于最高提现金额！');
             if(($Umoney['df'] - $amount < 0) || ($amount - $withdrawal['fee'] <= 0)) return __error('金额不正确！');
 
             $bank_card_id =  $this->request->post('bank_card_id/d',0);
