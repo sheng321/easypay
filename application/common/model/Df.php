@@ -133,15 +133,4 @@ class Df extends ModelService {
     }
 
 
-
-    /**
-     * 获取通道配置信息
-     * @param $id
-     */
-    public static function get_config($code){
-        $config = self::where(['code'=>$code])->cache('df_config_'.$code,2)->find();
-        return  $config;
-    }
-
-
 }

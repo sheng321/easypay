@@ -1,6 +1,7 @@
 <?php
 
 namespace app\common\controller;
+use app\common\model\ChannelDf;
 use app\common\model\Df;
 use app\common\model\Order;
 use think\helper\Str;
@@ -27,7 +28,7 @@ class WithdrawalController extends BaseController
 
     protected  function set_config($class){
         $code =  end($class);
-        $config = Df::get_config($code);
+        $config = ChannelDf::get_config($code);
         if(empty($config)) __jerror('支付服务不存在6');
 
         return $config;

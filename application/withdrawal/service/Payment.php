@@ -6,7 +6,7 @@ use think\Exception;
 Class Payment {
     public static function factory($class_name){
         if(!empty($class_name)){
-            $className  =  '\\app\\pay\\controller\\api\\'.$class_name;
+            $className  =  '\\app\\withdrawal\\controller\\api\\'.$class_name;
             try{
                 //是否可以实例化
                 $reflectionClass = new \ReflectionClass($className);
@@ -22,12 +22,12 @@ Class Payment {
                 if(!method_exists($class,'query')){
                     throw new Exception('支付服务不存在3');
                 }
-                if(!method_exists($class,'notify')){
+                if(!method_exists($class,'balance')){
                     throw new Exception('支付服务不存在4');
                 }
 
             }catch (\Exception $exception){
-                logs($exception->getMessage().'|'.$exception->getFile(),'api');
+                logs($exception->getMessage().'|'.$exception->getFile(),'withdrawal');
                 __jerror($exception->getMessage());
             }
 

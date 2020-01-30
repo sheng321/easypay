@@ -116,14 +116,24 @@ class Yl extends WithdrawalController
     public function balance(){
         $data = array();
         $data['pay_memberid'] = $this->config['mch_id'];
-
         $res = Curl::post($this->config['balanceway'], $data);
+        $resp = json_decode($res, true);
 
-        halt($res);
-
-        $res = json_decode($res, true);
-
-        return $res;
+        $data = [];
+        if(!empty($resp)){
+            foreach($resp as $k=>$v){
+                if(!empty($v['factory_name']) && $v['factory_name'] === '汇总'){
+                    continue;
+                }
+                if($v['zh_payname'] === '自定义接口'){
+                    continue;
+                }
+                $data['balance'] = $v['money'];
+                $data['total_balance'] = $v['money'] + $v['freezemoney'];
+               // $data['title'] = $v['zh_payname'];
+            }
+        }
+        return $data;
     }
 
 }

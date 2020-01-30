@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 use app\common\model\Umoney;
+use app\withdrawal\service\Payment;
 use think\Db;
 
 /**
@@ -551,14 +552,30 @@ class Df extends AdminController {
 
     //查询通道余额
     public function search_df(){
-        echo 1;
+        set_time_limit(90);
 
-        sleep(2);
+        $this->model =  model('app\common\model\ChannelDf');
+        //查询所有开启的代付通道
+       $code = $this->model->where(['status'=>1])->column('id,code,title','code');
 
-        echo 3;
-
-
-
+        $str = '';
+        $update = array();
+       foreach ($code as $k => $v){
+           $Payment = Payment::factory($k);
+           $data  = $Payment->balance();
+         if(empty($data)){
+             $str .= $v['title'] . " DO代付更新失败\r\n\r\n<br/>";
+         }else{
+             $str .= $v['title'] . " DO代付更新成功\r\n\r\n<br/>";
+             if(!empty($data['title']) && $v['title'] != $v['title'].'-'.$data['title'] ) $update[$k]['title'] = $v['title'].'-'.$data['title'];
+             $update[$k]['id'] = $v['id'];
+             $update[$k]['balance'] = $data['balance'];
+             $update[$k]['total_balance'] = $data['total_balance'];
+         }
+       }
+       if(!empty($update))   $this->model->saveAll($update);
+        $str .=  " 更新完成！！！\r\n\r\n";
+       return $str;
     }
 
     /**
