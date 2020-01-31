@@ -233,11 +233,10 @@ class Wlf extends WithdrawalController
                 return __err('代付通道异常2');
                 break;
         }
-
     }
 
     //查询订单状态
-    public function query($Order,$result =['code' => 0, 'msg' => '查询失败', 'data' => []]){
+    public function query($Order){
         $data['pay_memberid'] = $this->config['mch_id'];
         $data['tkid'] = $Order['system_no'];
 

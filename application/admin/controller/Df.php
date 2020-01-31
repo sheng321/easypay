@@ -236,8 +236,20 @@ class Df extends AdminController {
                 }
                 //成功
                 if($result['code'] == 1){
-                    //更新 实际到账金额
-                    if(!empty($result['data']['actual_amount'])) $this->model->save(['actual_amount'=>$result['data']['actual_amount'],['id'=>$post['id']]],['id'=>$post['id']]);
+                    //更新数据
+                    if(!empty($result['data']) && is_array($result['data'])){
+                        $arr = [];
+                        foreach ($result['data'] as $k => $v){
+                             if($k == 'actual_amount') $arr[$k] = $v;
+                             if($k == 'transaction_no') $arr[$k] = $v;
+                             if($k == 'remark') $arr[$k] = $v;
+                        }
+                      if(!empty($arr)){
+                          $arr['id'] = $post['id'];
+                          $this->model->save($arr,['id'=>$post['id']]);
+                      }
+                    }
+
 
                     $this->model->commit();
                     return __success('操作成功！');

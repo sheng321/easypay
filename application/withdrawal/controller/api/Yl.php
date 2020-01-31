@@ -107,6 +107,7 @@ class Yl extends WithdrawalController
         if($res['status'] === 0) return __err($res['message']);
         if($res['status'] === 1) return __suc($res['message'],[
             'actual_amount'=>$res['data']['money'],//实际到账
+            'transaction_no'=>$res['data']['tkid'],//上游ID
             ]);
 
         return __err('未知');
