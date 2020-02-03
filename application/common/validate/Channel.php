@@ -25,11 +25,8 @@ class Channel extends Validate {
         'c_rate'=> 'float',//运营费率
         'min_amount'=> 'float',//最低限额
         'max_amount'=> 'float',//最高限额
-        'f_amount'=> 'float',//固定值
-        'ex_amount'=> 'float',//排除固定值
-        'f_multiple'=> 'float',//固定倍数
-        'f_num'=> 'float',//固定尾数
-        'sort'=> 'in:0,2',//固定尾数
+
+        'sort'=> 'in:0,2',//排序
 
         'limit_money'=> 'float',//限额
         'limit_time'=> 'number',//单笔限时
@@ -71,10 +68,7 @@ class Channel extends Validate {
         'c_rate.float'     => '费率必须为小数',
         'min_amount.number'     => '最低限额必须为整数',
         'max_amount.number'     => '最高限额必须为整数',
-        'f_amount.number'     => '固定值必须为整数',
-        'ex_amount.number'     => '排除固定金额必须为整数',
-        'f_multiple.number'     => '固定倍数必须为整数',
-        'f_num.number'     => '固定尾数必须为整数',
+
         'sort.in'     => '置顶必须在0,2之间',
 
         'gateway.checkUrl'     => '下单网关或者IP不正确',
