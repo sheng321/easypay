@@ -197,9 +197,6 @@ class Bx extends PayController
         if(empty($res) || empty($resp)  ) return __err('通道异常！');
 
 
-
-
-
     }
 
     public function callback(){
