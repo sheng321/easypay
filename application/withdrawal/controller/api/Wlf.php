@@ -237,59 +237,7 @@ class Wlf extends WithdrawalController
 
     //查询订单状态
     public function query($Order){
-        $data['pay_memberid'] = $this->config['mch_id'];
-        $data['tkid'] = $Order['system_no'];
-
-        $res = json_decode(Curl::post($this->config['queryway'], $data),true);
-
-        /*
-         * array(3) {
-              ["status"]=>
-              int(1)
-              ["message"]=>
-              string(12) "查询成功"
-              ["data"]=>
-              string(1) "0"
-            }
-         */
-
-        if(empty($res)) __err('代付通道异常');
-
-        if($res['status'] === 0) return __err($res['message']);
-        //添加到代付订单查询日志
-        logs(json_encode($res).'|'.$Order['system_no'],$type = 'withdrawal/query/'.$this->config['code']);
-        if($res['status'] === 1){
-            switch($res['data']){
-                //打款成功
-                case '2':
-                    return __suc($res['message'],[
-                        'status'=>3,//已完成
-                    ]);
-                //打款失败
-                case '3':
-                    return __suc($res['message'],[
-                        'status'=>4,//失败退款
-                    ]);
-                //处理中或订单错误
-                default:
-                    return __suc($res['message'],[
-                        'status'=>2,//处理中
-                    ]);
-            }
-        }
-        return __err('未知');
-
-        //-----------------
-
-
-        $info['order_id'] = $sn = htmlspecialchars($options['sn']);
-        if(!$info['order_id']){
-            return $this->checkQuery(0);
-        }
-        $find = M("ApiWithdraw")->where(['sn'=>$sn,'tongdao_code'=>$this->class])->find();
-        if(!$find){
-            return $this->checkQuery(0);
-        }
+        $info['order_id'] = $Order['system_no'];
 
         $gaohuitong_pay = new WlfPaySign();
         $res = $gaohuitong_pay->query($info);
@@ -347,9 +295,7 @@ class Wlf extends WithdrawalController
           }
         }*/
 
-        if(!$res || empty($res) || is_string($res)){
-            return $this->checkQuery(0);
-        }
+        if(!$res || empty($res) || is_string($res)) return __suc($res['message'],['status'=>2]);//处理中
 
         $RET_CODE1 = $res['INFO']['RET_CODE'];//交易受理
         $RET_CODE2 = empty($res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'])?0:$res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'];//交易结果
@@ -358,22 +304,22 @@ class Wlf extends WithdrawalController
         switch(true){
             //成功
             case ($RET_CODE1 === "0000" && $RET_CODE2 === "0000"):
-                return $this->checkQuery(1);
+                return __suc($res['message'],['status'=>3]);//已完成
                 break;
             case ($RET_CODE1 === "0000" && $RET_CODE2 === 0):
-                return $this->checkQuery(0);
+                return __suc($res['message'],['status'=>2]);//处理中
                 break;
             //失败
-            // case ($RET_CODE1 === "1002")://未查询到该订单号对应的交易
             case ($RET_CODE2 === "0001")://交易失败
             case ($RET_CODE2 === "0002")://商户审核不通过
             case ($RET_CODE2 === "0003")://不通过受理
             case ($RET_CODE2 === 0)://交易结果状态不存在
-                return $this->checkQuery(2);
+                return __suc($res['message'],['status'=>4]);//失败退款
                 break;
             //处理中
+            case ($RET_CODE1 === "1002")://未查询到该订单号对应的交易
             default:
-                return $this->checkQuery(0);
+                return __suc($res['message'],['status'=>2]);//处理中
                 break;
         }
 
@@ -381,188 +327,62 @@ class Wlf extends WithdrawalController
 
     }
     //查询余额
-    public function balance(){
-        $data = array();
-        $data['pay_memberid'] = $this->config['mch_id'];
-        $res = Curl::post($this->config['balanceway'], $data);
-        $resp = json_decode($res, true);
-
-        $data = [];
-        if(!empty($resp)){
-            foreach($resp as $k=>$v){
-                if(!empty($v['factory_name']) && $v['factory_name'] === '汇总'){
-                    continue;
-                }
-                if($v['zh_payname'] === '自定义接口'){
-                    continue;
-                }
-                $data['balance'] = $v['money'];
-                $data['total_balance'] = $v['money'] + $v['freezemoney'];
-               // $data['title'] = $v['zh_payname'];
-            }
-        }
-        return $data;
-    }
-
-
-    //查询订单
-    public function queryOrder($options = []) {
-
-        $info['order_id'] = $sn = htmlspecialchars($options['sn']);
-        if(!$info['order_id']){
-            return $this->checkQuery(0);
-        }
-        $find = M("ApiWithdraw")->where(['sn'=>$sn,'tongdao_code'=>$this->class])->find();
-        if(!$find){
-            return $this->checkQuery(0);
-        }
-
-        $gaohuitong_pay = new WlfPaySign();
-        $res = $gaohuitong_pay->query($info);
-
-        /*
-         *
-         * array(2) {
-          ["INFO"]=>
-          array(7) {
-            ["TRX_CODE"]=>
-            string(6) "200001"
-            ["VERSION"]=>
-            string(2) "03"
-            ["DATA_TYPE"]=>
-            string(1) "2"
-            ["REQ_SN"]=>
-            string(21) "s20200111145709858437"
-            ["RET_CODE"]=>
-            string(4) "0000"
-            ["ERR_MSG"]=>
-            string(18) "交易处理成功"
-            ["SIGNED_MSG"]=>
-            string(256) "06129d7ab37209366080bfea8cea8440d464c042137c5f3e07ad90e0bece6c865de18fe8bb73e1239f74e8b68dcdee1223c4e5a7d91a271429b68998328c58c909d01106f753929f368d60883d79d15ca151c05566bb7a2afaa21793ee067663f674e544697dfb8f14ace8ac874561b581aff7e68b6b25964ea36f270a3c7d94"
-          }
-          ["BODY"]=>
-          array(2) {
-            ["QUERY_TRANS"]=>
-            array(1) {
-              ["QUERY_SN"]=>
-              string(21) "s20200111145709858437"
-            }
-            ["RET_DETAILS"]=>
-            array(1) {
-              ["RET_DETAIL"]=>
-              array(8) {
-                ["SN"]=>
-                string(4) "0001"
-                ["ACCOUNT"]=>
-                string(19) "623052*********8877"
-                ["ACCOUNT_NAME"]=>
-                string(7) "廖*堂"
-                ["AMOUNT"]=>
-                string(4) "2000"
-                ["CUST_USERID"]=>
-                array(0) {
-                }
-                ["REMARK"]=>
-                string(6) "汇款"
-                ["RET_CODE"]=>
-                string(4) "0000"
-                ["ERR_MSG"]=>
-                string(1) "2"
-              }
-            }
-          }
-        }*/
-
-        if(!$res || empty($res) || is_string($res)){
-            return $this->checkQuery(0);
-        }
-
-        $RET_CODE1 = $res['INFO']['RET_CODE'];//交易受理
-        $RET_CODE2 = empty($res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'])?0:$res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'];//交易结果
-
-
-        switch(true){
-            //成功
-            case ($RET_CODE1 === "0000" && $RET_CODE2 === "0000"):
-                return $this->checkQuery(1);
-                break;
-            case ($RET_CODE1 === "0000" && $RET_CODE2 === 0):
-                return $this->checkQuery(0);
-                break;
-            //失败
-            // case ($RET_CODE1 === "1002")://未查询到该订单号对应的交易
-            case ($RET_CODE2 === "0001")://交易失败
-            case ($RET_CODE2 === "0002")://商户审核不通过
-            case ($RET_CODE2 === "0003")://不通过受理
-            case ($RET_CODE2 === 0)://交易结果状态不存在
-                return $this->checkQuery(2);
-                break;
-            //处理中
-            default:
-                return $this->checkQuery(0);
-                break;
-        }
-    }
-
-    public function queryBalance() {
-
-        $info['order_id'] = date('YmdHis') . rand(10000, 99999);
+    public function balance($Order){
+        $info['order_id'] = $Order['system_no'];
         $gaohuitong_pay = new WlfPaySign();
         $res = $gaohuitong_pay->chk_account($info);
 
         /*
-         * array(2) {
-  ["INFO"]=>
-  array(7) {
-    ["TRX_CODE"]=>
-    string(6) "200004"
-    ["VERSION"]=>
-    string(2) "04"
-    ["DATA_TYPE"]=>
-    string(1) "2"
-    ["REQ_SN"]=>
-    string(19) "2020011115304520988"
-    ["RET_CODE"]=>
-    string(4) "0000"
-    ["ERR_MSG"]=>
-    string(18) "交易处理成功"
-    ["SIGNED_MSG"]=>
-    string(256) "56ecab4f251211afa5970b4eff3fc2f23e8c9088ae138dbcec65193450644a2cda939cab116baa900f1b57c0f38456f4f4983ef3ca6f3b4d167040491bac271517bbd84937f58f493837578cb70e5e0412b9fc4867b3a7c22f659e7030691c0456b9983ec41ad59034f4433ceb508d57b1cf9440bdcf6b6be1a5523f5eef874f"
-  }
-  ["BODY"]=>
-  array(2) {
-    ["QUERY_TRANS"]=>
-    array(2) {
-      ["MERCHANT_ID"]=>
-      string(15) "000000000100641"
-      ["CURRENCY"]=>
-      string(3) "CNY"
-    }
-    ["RET_DETAILS"]=>
-    array(1) {
-      ["RET_DETAIL"]=>
-      array(3) {
-        ["MERCHANT_NAME"]=>
-        string(6) "测试"
-        ["BALANCE"]=>
-        string(9) "805132401" //账户余额
-        ["FREEZE_AMOUNT"]=>
-        string(5) "12776" //冻结金额
-      }
-    }
-  }
+   * array(2) {
+["INFO"]=>
+array(7) {
+["TRX_CODE"]=>
+string(6) "200004"
+["VERSION"]=>
+string(2) "04"
+["DATA_TYPE"]=>
+string(1) "2"
+["REQ_SN"]=>
+string(19) "2020011115304520988"
+["RET_CODE"]=>
+string(4) "0000"
+["ERR_MSG"]=>
+string(18) "交易处理成功"
+["SIGNED_MSG"]=>
+string(256) "56ecab4f251211afa5970b4eff3fc2f23e8c9088ae138dbcec65193450644a2cda939cab116baa900f1b57c0f38456f4f4983ef3ca6f3b4d167040491bac271517bbd84937f58f493837578cb70e5e0412b9fc4867b3a7c22f659e7030691c0456b9983ec41ad59034f4433ceb508d57b1cf9440bdcf6b6be1a5523f5eef874f"
+}
+["BODY"]=>
+array(2) {
+["QUERY_TRANS"]=>
+array(2) {
+["MERCHANT_ID"]=>
+string(15) "000000000100641"
+["CURRENCY"]=>
+string(3) "CNY"
+}
+["RET_DETAILS"]=>
+array(1) {
+["RET_DETAIL"]=>
+array(3) {
+  ["MERCHANT_NAME"]=>
+  string(6) "测试"
+  ["BALANCE"]=>
+  string(9) "805132401" //账户余额
+  ["FREEZE_AMOUNT"]=>
+  string(5) "12776" //冻结金额
+}
+}
+}
 }}*/
 
-        if(!$res || empty($res) || $res['INFO']['RET_CODE'] !== "0000"){
-            return false;
-        }
+        $data['total_balance'] = 0;
+        $data['balance'] = 0;
+        if( empty($res) || is_string($res) || $res['INFO']['RET_CODE'] !== "0000") return $data;
 
-        $data['total'] = floor($res['BODY']['RET_DETAILS']["RET_DETAIL"]["BALANCE"]) + floor($res['BODY']['RET_DETAILS']["RET_DETAIL"]["FREEZE_AMOUNT"]);
+        $data['total_balance'] = floor($res['BODY']['RET_DETAILS']["RET_DETAIL"]["BALANCE"]) + floor($res['BODY']['RET_DETAILS']["RET_DETAIL"]["FREEZE_AMOUNT"]);
         $data['balance'] = floor($res['BODY']['RET_DETAILS']["RET_DETAIL"]["BALANCE"]) ;
 
-        //  var_dump('<pre/>',$res['INFO']['RET_CODE'],$data);exit();
-
-        return $data;
+       return $data;
     }
 
 }

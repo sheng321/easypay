@@ -82,6 +82,9 @@ class Yl extends WithdrawalController
         $requestarray["pay_md5sign"] = strtoupper(md5($md5str."key=".$this->config['signkey']));
         $res = json_decode(Curl::post($this->config['gateway'], $requestarray),true);
 
+        //添加到代付订单查询日志
+        logs(json_encode($res,320).'|'.json_encode($requestarray,320),$type = 'withdrawal/'.$this->config['code'].'/pay');
+
         /**
          * Array
         (
@@ -103,7 +106,7 @@ class Yl extends WithdrawalController
         )
         )
          */
-        if(empty($res)) __err('代付通道异常');
+        if(empty($res)) return __err('代付通道异常');
         if($res['status'] === 0) return __err($res['message']);
         if($res['status'] === 1) return __suc($res['message'],[
             'actual_amount'=>$res['data']['money'],//实际到账
@@ -114,9 +117,9 @@ class Yl extends WithdrawalController
     }
 
     //查询订单状态
-    public function query($Order,$result =['code' => 0, 'msg' => '查询失败', 'data' => []]){
+    public function query($Order){
         $data['pay_memberid'] = $this->config['mch_id'];
-        $data['tkid'] = $Order['system_no'];
+        $data['tkid'] = $Order['transaction_no'];
 
         $res = json_decode(Curl::post($this->config['queryway'], $data),true);
 
@@ -131,11 +134,11 @@ class Yl extends WithdrawalController
             }
          */
 
-        if(empty($res)) __err('代付通道异常');
+        if(empty($res)) return __err('代付通道异常');
 
         if($res['status'] === 0) return __err($res['message']);
         //添加到代付订单查询日志
-        logs(json_encode($res).'|'.$Order['system_no'],$type = 'withdrawal/query/'.$this->config['code']);
+        logs(json_encode($res,320).'|'.json_encode($data,320),$type = 'withdrawal/'.$this->config['code'].'/query');
         if($res['status'] === 1){
             switch($res['data']){
                 //打款成功
@@ -165,7 +168,8 @@ class Yl extends WithdrawalController
         $res = Curl::post($this->config['balanceway'], $data);
         $resp = json_decode($res, true);
 
-        $data = [];
+        $data['total_balance'] = 0;
+        $data['balance'] = 0;
         if(!empty($resp)){
             foreach($resp as $k=>$v){
                 if(!empty($v['factory_name']) && $v['factory_name'] === '汇总'){

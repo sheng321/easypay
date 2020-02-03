@@ -240,9 +240,9 @@ class Df extends AdminController {
                     if(!empty($result['data']) && is_array($result['data'])){
                         $arr = [];
                         foreach ($result['data'] as $k => $v){
-                             if($k == 'actual_amount') $arr[$k] = $v;
-                             if($k == 'transaction_no') $arr[$k] = $v;
-                             if($k == 'remark') $arr[$k] = $v;
+                             if($k == 'actual_amount') $arr[$k] = $v;//实际到账
+                             if($k == 'transaction_no') $arr[$k] = $v;//上游单号
+                             if($k == 'remark') $arr[$k] = $v;//备注
                         }
                       if(!empty($arr)){
                           $arr['id'] = $post['id'];
