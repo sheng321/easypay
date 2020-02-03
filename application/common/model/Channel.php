@@ -232,7 +232,6 @@ class Channel extends ModelService {
         return $id;
     }
 
-
     /**
      * 获取通道配置信息
      * @param $id
