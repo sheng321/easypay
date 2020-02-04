@@ -217,6 +217,7 @@ class Bx extends PayController
         $data[200] = 0;
         $data[300] = 0;
         $data[500] = 0;
+        dump($data);
         if(empty($res) || empty($resp) || $resp['state'] != 0 || $resp['data']['code'] != '0000'  ) return $data;
 
         $data[10] = $data['data']['totoal_10'];
@@ -226,7 +227,7 @@ class Bx extends PayController
         $data[200] = $data['data']['totoal_200'];
         $data[300] = $data['data']['totoal_300'];
         $data[500] = $data['data']['totoal_500'];
-
+        dump($data);
         return $data;
     }
 
