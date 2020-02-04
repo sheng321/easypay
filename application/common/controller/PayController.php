@@ -70,14 +70,13 @@ class PayController extends BaseController
          }
 
          $code = $Channel_father['code'];
-         $id = $Channel['id'];
+         $id = $Channel_father['id'];
         switch ($code){
             case 'Bx':
                $num = \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id) {
                    try{
                         $Payment = Payment::factory($code);
                         $num = $Payment->repertory();
-                        halt($num);
                    }catch (\Exception $exception){
                        logs($exception->getMessage().'|'.$exception->getFile().'|查询话费库存失败','api');
                        $num = [];
@@ -90,6 +89,8 @@ class PayController extends BaseController
                 $num = [];
                 break;
         }
+        dump(2);
+         halt($num);
        return $num;
     }
 
