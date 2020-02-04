@@ -100,19 +100,11 @@
         {{# } }}
     </script>
 
-
-    <script type="text/html" id="checkMobile">
-
+    <script type="text/html" id="checkVisit"   >
         {{# if (d.pid != '0') { }}
-
-        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.visit}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyMobile" {{ d.visit == 1 ? '' : 'checked' }}>
-
-        {{# } }}
-    </script>
-    <script type="text/html" id="checkPC">
-        {{# if (d.pid != '0') { }}
-        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.visit}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyPC" {{ d.visit == 2 ? '' : 'checked' }}>
-
+        <input type="radio" name="{{d.id}}" value="0" title="都可以" verson = "{{d.verson + 1}}"   {{ d.visit== 0 ? 'checked' : '' }}   lay-filter="modifyVisit" >
+        <input type="radio" name="{{d.id}}" value="1" title="手机" verson = "{{d.verson + 1}}"   {{ d.visit== 1 ? 'checked' : '' }}    lay-filter="modifyVisit"  >
+        <input type="radio" name="{{d.id}}" value="2" title="PC" verson = "{{d.verson + 1}}"  {{ d.visit== 2 ? 'checked' : '' }}    lay-filter="modifyVisit" >
         {{# } }}
     </script>
 
@@ -182,19 +174,17 @@
             {field: 'limit_money', title: '当日限额',  minWidth: 100, align: "center", },
             {field: 'remark', title: '备注信息', edit: 'text', maxWidth: 100, align: "center", style: 'background-color: #009688; color: #fff;'},
 
-            {field: 'status', title: '移动端', width: 80, templet: '#checkMobile', unresize: true, align: "center"},
-            {field: 'status', title: 'PC端', width: 80, templet: '#checkPC', unresize: true, align: "center"},
+            {field: 'visit', title: '访问方式', width: 150, templet: '#checkVisit', align: "center"},
+
             {field: 'status', title: '启用状态', width: 80, templet: '#checkStatus', unresize: true, align: "center"},
 
             /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
-            {title: '操作', maxWidth: 110, templet: '#currentTableBar',  align: "center"},
+            {title: '操作', width: 150, templet: '#currentTableBar',  align: "center"},
             /**{/if}**/
             {field: 'update_at', title: '最新更新时间', align: 'center' },
 
 
-        ]], 'title','pid',true,function (res,curr,count){
-            merge(res,['top','code'],[1,2]);
-        });
+        ]], 'title','pid',true);
 
         /**
          * 日期范围
@@ -212,7 +202,7 @@
         $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
 
         $.form.switch('modifyTop', '{:url("$thisClass/top")}');
-        $.form.switch('modifyMobile', '{:url("$thisClass/mobile")}');
-        $.form.switch('modifyPC', '{:url("$thisClass/pc")}');
+        $.form.radio('modifyVisit', '{:url("$thisClass/visit")}');
+
 
 {/block}

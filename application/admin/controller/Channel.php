@@ -121,56 +121,6 @@ class Channel  extends AdminController
 
 
 
-    public function mobile() {
-        $get = $this->request->get();
-
-        //验证数据
-        $validate = $this->validate($get, 'app\common\validate\Channel.visit');
-        if (true !== $validate) return __error($validate);
-
-        //判断菜单状态
-        $status = $this->model->where('id', $get['id'])->value('visit');
-
-        if($status == 0 ||$status == 2 ){
-            //这个时候关闭手机
-            list($msg, $status) = ['禁用成功', $status = 1];
-        }else{
-            list($msg, $status) = ['启用成功', $status = 0];
-        }
-
-
-        //执行更新操作操作
-        $update =  $this->model->__edit(['visit' => $status,'id' => $get['id']],$msg);
-
-        return $update;
-    }
-
-    public function pc() {
-        $get = $this->request->get();
-
-        //验证数据
-        $validate = $this->validate($get, 'app\common\validate\Channel.visit');
-        if (true !== $validate) return __error($validate);
-
-        //判断菜单状态
-        $status = $this->model->where('id', $get['id'])->value('visit');
-
-        if($status == 0 ||$status == 1 ){
-            //这个时候关闭pc
-            list($msg, $status) = ['禁用成功', $status = 2];
-        }else{
-            list($msg, $status) = ['启用成功', $status = 0];
-        }
-
-        //执行更新操作操作
-        $update =  $this->model->__edit(['visit' => $status,'id' => $get['id']],$msg);
-
-        return $update;
-    }
-
-
-
-
 
     public function top() {
         $get = $this->request->get();
@@ -600,6 +550,19 @@ class Channel  extends AdminController
 
         //执行更新操作操作
         $update =  $this->model->__edit(['inner' => $status,'id' => $get['id']],$msg);
+        return $update;
+    }
+
+    //通道访问产品方式
+    public function visit() {
+        $get = $this->request->get();
+
+        $data = ['visit'=>(int)$get['value'],'id' => (int)$get['id']];
+        if(!empty($get['verson'])) $data['verson'] = (int)$get['verson'];//锁
+
+        //执行更新操作操作
+        $update =  $this->model->__edit($data);
+
         return $update;
     }
 
