@@ -190,7 +190,6 @@ class Bx extends PayController
     public function repertory(){
         $data['USER_ID'] =  $this->config['mch_id'];
 
-        dump(1111111);
         $res = Curl::post('http://bx.70104.cn/sk-pay/pay/hfczAmount', http_build_query($data));
         $resp = json_decode($res,true);
         /*
@@ -219,7 +218,7 @@ class Bx extends PayController
         $data[200] = 0;
         $data[300] = 0;
         $data[500] = 0;
-        dump($data);
+        halt($data);
         if(empty($res) || empty($resp) || $resp['state'] != 0 || $resp['data']['code'] != '0000'  ) return $data;
 
         $data[10] = $data['data']['totoal_10'];
