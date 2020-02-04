@@ -153,9 +153,8 @@
     <!--表单操作栏--结束-->
 </form>
 {/block}
-
-{block name="script"}
-<!--<script>-->
+<script>
+//{block name="script"}
 
         /**
          * 生成表单
@@ -203,6 +202,5 @@
 
         $.form.switch('modifyTop', '{:url("$thisClass/top")}');
         $.form.radio('modifyVisit', '{:url("$thisClass/visit")}');
-
-
-{/block}
+//{/block}
+</script>
