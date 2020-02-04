@@ -77,18 +77,7 @@ class PayController extends BaseController
                 $num = $Payment->repertory();
                 halt($num);
 
-                $num =  \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id) {
-                   try{
-                        $Payment = Payment::factory($code);
-                        $num = $Payment->repertory();
-                        halt($num);
-                   }catch (\Exception $exception){
-                       logs($exception->getMessage().'|'.$exception->getFile().'|查询话费库存失败','api');
-                       $num = [];
-                   }
-                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,3);
-                    return \think\facade\Cache::get('charge_num_'.$id);
-                });
+
                 break;
             default:
                 $num = [];
