@@ -172,13 +172,10 @@ class ChannelGroup extends ModelService {
             ['status','=',1],
         ];
 
-        dump($where);
         $field = ['id','update_at','remark','title','status','sort','verson','p_id','is_true'];
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
-
-        halt($data);
 
         if(!empty($search['channel'])){
             $channel = $search['channel'];
