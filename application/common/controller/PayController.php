@@ -65,6 +65,7 @@ class PayController extends BaseController
          //通道
          $Channel_father = Channel::quickGet($Channel['pid']);
 
+         dump($Channel_father);
          if(empty($Channel_father) || empty($Channel_father['code'])){
              return [];
          }
