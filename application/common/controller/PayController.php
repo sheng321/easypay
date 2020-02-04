@@ -68,6 +68,8 @@ class PayController extends BaseController
          if(empty($Channel_father) || empty($Channel_father['code'])){
              return [];
          }
+
+         dump($Channel_father);
          $code = $Channel_father['code'];
          $id = $Channel['id'];
         switch ($code){
