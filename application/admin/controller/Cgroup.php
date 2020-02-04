@@ -330,9 +330,9 @@ class Cgroup  extends AdminController
      */
     public function confirm() {
         $get = $this->request->get();
-        dump($get);
+
         if(empty($get['pid'])) return __error('请选择通道！');
-        $p_id = $this->model->where([])->value('p_id');
+        $p_id = $this->model->where(['id'=>$get['pid']])->value('p_id');
         if(empty($p_id)) return __error('该通道未选着支付产品！');
 
         halt($p_id);
