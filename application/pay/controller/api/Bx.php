@@ -221,13 +221,13 @@ class Bx extends PayController
 
         if(empty($res) || empty($resp) || $resp['state'] != 0 || $resp['data']['code'] != '0000'  ) return $data;
 
-        $data[10] = $data['data']['totoal_10'];
-        $data[30] = $data['data']['totoal_30'];
-        $data[50] = $data['data']['totoal_50'];
-        $data[100] = $data['data']['totoal_100'];
-        $data[200] = $data['data']['totoal_200'];
-        $data[300] = $data['data']['totoal_300'];
-        $data[500] = $data['data']['totoal_500'];
+        $data[10] = $resp['data']['totoal_10'];
+        $data[30] = $resp['data']['totoal_30'];
+        $data[50] = $resp['data']['totoal_50'];
+        $data[100] = $resp['data']['totoal_100'];
+        $data[200] = $resp['data']['totoal_200'];
+        $data[300] = $resp['data']['totoal_300'];
+        $data[500] = $resp['data']['totoal_500'];
 
         return $data;
     }
