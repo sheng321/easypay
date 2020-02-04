@@ -62,6 +62,10 @@ class ChannelGroup extends ModelService {
             $data[$k]['ex_amount'] = '';
 
             $data[$k]['mode'] =  $ChannelProduct->where(['p_id'=>$v['p_id'],'group_id'=>$v['id']])->count();
+            dump($v['p_id']);
+            dump($v['id']);
+            dump($data[$k]['mode']);
+
             if($data[$k]['mode'] > 0){
                 $select = $ChannelProduct->alias('a')->join('channel w','w.id = a.channel_id','LEFT')->where([
                     ['a.p_id','=',$v['p_id']],
