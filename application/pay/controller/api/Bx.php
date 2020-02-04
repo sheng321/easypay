@@ -114,9 +114,7 @@ class Bx extends PayController
 
         $native['SIGN'] = substr($sign_2,8,16);
 
-        halt($native);
-
-        msg_post($this->config['gateway'],$native);
+       return msg_post($this->config['gateway'],$native);
 
     }
 
