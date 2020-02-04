@@ -72,7 +72,7 @@ class PayController extends BaseController
          $code = $Channel_father['code'];
          $id = $Channel['id'];
         switch ($code){
-            case 'xyf':
+            case 'Bx':
                $num = \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id) {
                    try{
                         $Payment = Payment::factory($code);
