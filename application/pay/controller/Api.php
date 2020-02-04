@@ -55,7 +55,7 @@ class Api extends PayController
 
         //验证用户分组
         $Ulevel = Ulevel::quickGet($Uprofile['group_id']);
-        if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户的用户分组不正确');
+            if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户的用户分组不正确');
 
         //通道分组ID
         $channel_group_idArr = json_decode($Ulevel['channel_id'],true);
@@ -166,11 +166,7 @@ class Api extends PayController
 
 
 
-        if(empty($ChannelProduct) || empty($train)){
-            //记录
-            logs(json_encode($param).'-----'.json_encode($channel_group_idArr[$PayProduct['id']]).'通道分组ID-未匹配支付通道3',$type = 'api');
-            __jerror('未匹配支付通道3');
-        }
+        if(empty($ChannelProduct) || empty($train)) __jerror('未匹配支付通道3');
 
         //轮训通道 (权重)
         $random_keys = array_rand($train['channel_id'],1);//随机抽取一个
