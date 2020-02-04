@@ -81,7 +81,7 @@ class PayController extends BaseController
                        logs($exception->getMessage().'|'.$exception->getFile().'|查询话费库存失败','api');
                        $num = [];
                    }
-                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,1);
+                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,3);
                     return \think\facade\Cache::get('charge_num_'.$id);
                 });
                 $num = \think\facade\Cache::get('charge_num_'.$id);
