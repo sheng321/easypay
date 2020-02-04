@@ -450,7 +450,6 @@ class Level extends AdminController {
                 $channel =  $this->model->where('id', $id)->value('channel_id');
                 $search['channel'] = json_decode($channel,true);
 
-                halt($search);
                 return json(model('app\common\model\ChannelGroup')->uList($page, $limit, $search));
             }
 
