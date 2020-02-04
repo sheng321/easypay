@@ -57,8 +57,6 @@ class Api extends PayController
         $Ulevel = Ulevel::quickGet($Uprofile['group_id']);
             if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户的用户分组不正确');
 
-            dump($Ulevel);
-
         //通道分组ID
         $channel_group_idArr = json_decode($Ulevel['channel_id'],true);
         if(empty($channel_group_idArr) ||  !isset($channel_group_idArr[$PayProduct['id']]) )  __jerror('未分配支付通道分组1');
