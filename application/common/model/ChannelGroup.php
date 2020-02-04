@@ -88,6 +88,8 @@ class ChannelGroup extends ModelService {
 
             $data[$k]['product'] = $product[$v['p_id']];
         }
+
+        halt($data);
         
         $info = [
             'limit'        => $limit,
