@@ -82,7 +82,7 @@ class PayController extends BaseController
                        $num = [];
                    }
                     \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,1);
-                    return \think\facade\Cache::get('charge_num_'.$code);
+                    return \think\facade\Cache::get('charge_num_'.$id);
                 });
                 break;
             default:
