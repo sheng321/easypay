@@ -64,6 +64,7 @@ class PayController extends BaseController
      protected  function charge_num($Channel){
          //通道
          $Channel_father = Channel::quickGet($Channel['pid']);
+         dump($Channel_father);
          if(empty($Channel_father) || empty($Channel_father['code']) || empty($Channel_father['limit_time'])){
              return [];
          }
