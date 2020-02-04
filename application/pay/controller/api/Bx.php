@@ -188,8 +188,8 @@ class Bx extends PayController
 
     //话费 通道查询库存
     public function repertory(){
-        $data['USER_ID'] =  $this->config['mch_id'];
-        $res = Curl::post('http://bx.70104.cn/sk-pay/pay/hfczAmount', http_build_query($data));
+        $data1['USER_ID'] =  $this->config['mch_id'];
+        $res = Curl::post('http://bx.70104.cn/sk-pay/pay/hfczAmount', http_build_query($data1));
         $resp = json_decode($res,true);
         /*
          * array(3) {
