@@ -64,10 +64,8 @@ class PayController extends BaseController
      protected  function charge_num($Channel){
          //通道
          $Channel_father = Channel::quickGet($Channel['pid']);
-         dump($Channel_father);
 
-
-         if(empty($Channel_father) || empty($Channel_father['code']) || empty($Channel_father['limit_time'])){
+         if(empty($Channel_father) || empty($Channel_father['code'])){
              return [];
          }
          $code = $Channel_father['code'];
@@ -82,7 +80,7 @@ class PayController extends BaseController
                        logs($exception->getMessage().'|'.$exception->getFile().'|查询话费库存失败','api');
                        $num = [];
                    }
-                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,5);
+                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,1);
                     return \think\facade\Cache::get('charge_num_'.$code);
                 });
                 break;
