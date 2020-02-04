@@ -191,15 +191,43 @@ class Bx extends PayController
         $data['USER_ID'] =  $this->config['mch_id'];
         $res = Curl::post('http://bx.70104.cn/sk-pay/pay/hfczAmount', http_build_query($data));
         $resp = json_decode($res,true);
-        dump($data);
-        dump($res);
-        halt($resp);
+        /*
+         * array(3) {
+  ["msg"] => string(12) "获取成功"
+  ["data"] => array(11) {
+    ["msg"] => string(12) "获取成功"
+    ["totoal_100"] => int(0)
+    ["totoal_30"] => int(0)
+    ["code"] => string(4) "0000"
+    ["totoal_50"] => int(0)
+    ["total_numbers"] => int(1)
+    ["totoal_500"] => int(0)
+    ["totoal_20"] => int(0)
+    ["totoal_300"] => int(0)
+    ["totoal_10"] => int(0)
+    ["totoal_200"] => int(1)
+  }
+  ["state"] => int(0)
+}*/
 
-       // {"data":{"total_numbers":0,"totoal_200":0,"totoal_20":0,"totoal_100":0,"totoal_30":0,"totoal_500":0,"totoal_10":0,"totoal_50":0,"code":"0000","totoal_300":0,"msg":"获取成功"},"state":0,"msg":"获取成功"}
+        $data[10] = 0;
+        $data[30] = 0;
+        $data[50] = 0;
+        $data[100] = 0;
+        $data[200] = 0;
+        $data[300] = 0;
+        $data[500] = 0;
+        if(empty($res) || empty($resp) || $resp['state'] != 0 || $resp['data']['code'] != '0000'  ) return $data;
 
-        if(empty($res) || empty($resp)  ) return __err('通道异常！');
+        $data[10] = $data['data']['totoal_10'];
+        $data[30] = $data['data']['totoal_30'];
+        $data[50] = $data['data']['totoal_50'];
+        $data[100] = $data['data']['totoal_100'];
+        $data[200] = $data['data']['totoal_200'];
+        $data[300] = $data['data']['totoal_300'];
+        $data[500] = $data['data']['totoal_500'];
 
-
+        return $data;
     }
 
     public function callback(){
