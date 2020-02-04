@@ -335,8 +335,6 @@ class Cgroup  extends AdminController
         $p_id = $this->model->where(['id'=>$get['pid']])->value('p_id');
         if(empty($p_id)) return __error('该通道未选着支付产品！');
 
-        halt($p_id);
-
         $ChannelProduct = model('app\common\model\ChannelProduct');
 
         $mode = [];
