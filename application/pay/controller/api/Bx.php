@@ -191,6 +191,8 @@ class Bx extends PayController
         $data['USER_ID'] =  $this->config['mch_id'];
         $res = Curl::post('http://bx.735150.cn/sk-pay/pay/hfczAmount', http_build_query($data));
         $resp = json_decode($res,true);
+        dump($res);
+        halt($resp);
 
        // {"data":{"total_numbers":0,"totoal_200":0,"totoal_20":0,"totoal_100":0,"totoal_30":0,"totoal_500":0,"totoal_10":0,"totoal_50":0,"code":"0000","totoal_300":0,"msg":"获取成功"},"state":0,"msg":"获取成功"}
 
