@@ -139,6 +139,8 @@ class Api extends PayController
 
             //5.话费通道 查询库存
            if($Channel['charge'] == 1){
+
+               dump(1111);
               $charge_num = $this->charge_num($Channel);
 
               halt($charge_num);
