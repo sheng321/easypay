@@ -152,8 +152,6 @@ class Api extends PayController
             };
             unset($amount);
 
-
-
             //4.商户费率 小于或者等于通道成本的情况
             $Rate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$Channel['id']);//商户费率
             if(empty($Rate) || ($Rate <= $Channel['c_rate'])){
@@ -244,8 +242,6 @@ class Api extends PayController
            ['create_at','>',$date],
        ])->value('id');
         if(!empty($id)) __jerror('订单号重复！');
-
-
 
         //已选中的通道产品
         $Channel = Channel::quickGet($channel_id);
