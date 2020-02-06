@@ -509,6 +509,10 @@ class Channel  extends AdminController
 
         $data[] =(int) $get['id'];
         if($pid == 0 ){
+            $Umoney =  Umoney::quickGet(['channel_id'=>$get['id'],'uid'=>0]);
+
+            if(!empty($Umoney) && ($Umoney['total_money'] > 0 || $Umoney['balance'] > 0 )) return __error('该通道有余额未清，不可删除。');
+
             //是通道
             $channel_id = $this->model->where(['pid'=>$get['id']])->column('id');
             $data = array_merge($data,$channel_id);
@@ -527,13 +531,13 @@ class Channel  extends AdminController
                 $query->where([['channel_id','in',$channel_id]]);
             });
         }
-        if (!$save || !$del) {
+        $del1 = true;
+       if(!empty($Umoney['id'])) $del1 =  model('app\common\model\Umoney')->destroy($Umoney['id']);//删除账户金额
+        if (!$save || !$del || !$del1) {
             $this->model->rollback();
-            $msg = '数据有误，请稍后再试！';
-            return __error($msg);
+            return __error('数据有误，请稍后再试！');
         }
         $this->model->commit();
-
         return __success('删除成功');
 
     }
