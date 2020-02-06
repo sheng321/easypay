@@ -3,6 +3,7 @@
 namespace app\common\controller;
 use app\common\model\Channel;
 use app\common\model\Order;
+use app\common\model\Umoney;
 use app\pay\service\Payment;
 use think\facade\Url;
 use think\helper\Str;
@@ -59,7 +60,7 @@ class PayController extends BaseController
 
     /**
      * 获取话费通道库存
-     * @param $code 通道数据
+     * @param $Channel 通道数据
      */
      protected  function charge_num($Channel){
          //通道
@@ -104,6 +105,24 @@ class PayController extends BaseController
         }
 
        return $num;
+    }
+
+
+
+    /**
+     * 获取通道限额
+     * @param $Channel 通道数据
+     */
+    protected  function check_money($Channel){
+        //通道
+        $Channel_father = Channel::quickGet($Channel['pid']);
+        if(empty($Channel_father)) return false;
+        $Umoney = Umoney::quickGet(['channel_id'=>$Channel['pid'],'uid'=>0]);
+        dump($Channel_father);
+        halt($Umoney);
+
+
+        return false;
     }
 
 
