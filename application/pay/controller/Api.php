@@ -179,8 +179,13 @@ class Api extends PayController
                unset($charge_num);
            }
 
+
+
             //6.通道限额
             $check_money = $this->check_money($Channel);
+
+           halt($check_money);
+
            if(!$check_money){
                unset($ChannelProduct[$k]);
                continue;
