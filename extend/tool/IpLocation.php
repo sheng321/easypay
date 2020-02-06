@@ -206,10 +206,10 @@ class IpLocation {
                 $location['area'] = $this->getarea();
                 break;
         }
-        if ($location['country'] == " CZ88.NET") {  // CZ88.NET表示没有有效信息
+        if ($location['country'] == "CZ88.NET") {  // CZ88.NET表示没有有效信息
             $location['country'] = "未知";
         }
-        if ($location['area'] == " CZ88.NET") {
+        if ($location['area'] == "CZ88.NET") {
             $location['area'] = "";
         }
         return $location;
