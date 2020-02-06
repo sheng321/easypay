@@ -99,9 +99,9 @@ class PayController extends BaseController
                     !empty($res[300]) &&  $num[300] = $res[300];
                     !empty($res[500]) &&  $num[500] = $res[500];
 
-                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,3);
+                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,60);
                     return \think\facade\Cache::get('charge_num_'.$id);
-                },3);
+                },60);
                 break;
             default:
                 break;
