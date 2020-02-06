@@ -65,33 +65,36 @@ class PayController extends BaseController
          //通道
          $Channel_father = Channel::quickGet($Channel['pid']);
 
-         if(empty($Channel_father) || empty($Channel_father['code'])){
-             return [];
-         }
+         $num[10] = 0;
+         $num[30] = 0;
+         $num[50] = 0;
+         $num[100] = 0;
+         $num[200] = 0;
+         $num[300] = 0;
+         $num[500] = 0;
+
+
+         if(empty($Channel_father) || empty($Channel_father['code']))   return $num;
 
          $code = $Channel_father['code'];
          $id = $Channel_father['id'];
         switch ($code){
             case 'Bx':
-                $num =  \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id) {
+                $num =  \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id,$num) {
                    try{
                         $Payment = Payment::factory($code);
                         $num = $Payment->repertory();
-                        halt($num);
                    }catch (\Exception $exception){
                        logs($exception->getMessage().'|'.$exception->getFile().'|查询话费库存失败','api');
-                       $num = [];
                    }
-                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,3);
+                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,15);
                     return \think\facade\Cache::get('charge_num_'.$id);
                 });
                 break;
             default:
-                $num = [];
                 break;
         }
-        dump(2);
-         halt($num);
+
        return $num;
     }
 
