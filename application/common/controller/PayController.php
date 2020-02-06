@@ -74,11 +74,10 @@ class PayController extends BaseController
          $num[300] = 0;
          $num[500] = 0;
 
-
          if(empty($Channel_father) || empty($Channel_father['code']))   return $num;
 
          $code = $Channel_father['code'];
-         $id = $Channel_father['id'];
+         $id = $Channel['id'];
         switch ($code){
             case 'Bx':
                 $num =  \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id,$num) {
