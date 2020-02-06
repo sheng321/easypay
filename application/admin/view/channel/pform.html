@@ -116,8 +116,8 @@
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">禁国外IP</label>
         <div class="layui-input-block">
-            <input type="radio" name="forbid" value="0" title="禁止" {eq name='$data.forbid|default=0' value='0' }checked="checked" {/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁止</div></div>
-            <input type="radio" name="forbid" value="1" title="不禁止"  {eq name='$data.forbid|default=0' value='1' }checked="checked" {/eq}    ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>不禁止</div></div>
+            <input type="radio" name="forbid" value="0" title="禁止" {eq name='$data.forbid|default=1' value='0' }checked="checked" {/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁止</div></div>
+            <input type="radio" name="forbid" value="1" title="不禁止"  {eq name='$data.forbid|default=1' value='1' }checked="checked" {/eq}    ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>不禁止</div></div>
         </div>
     </div>
 
