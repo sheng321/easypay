@@ -220,8 +220,6 @@ class Bx extends PayController
         $data[200] = $resp['data']['totoal_200'];
         $data[300] = $resp['data']['totoal_300'];
         $data[500] = $resp['data']['totoal_500'];
-
-        $data[50] = 100;
         return $data;
     }
 

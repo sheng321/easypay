@@ -104,6 +104,8 @@ class PayController extends BaseController
                 break;
         }
 
+        halt($num);
+
        return $num;
     }
 
