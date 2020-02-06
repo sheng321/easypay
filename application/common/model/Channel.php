@@ -193,10 +193,9 @@ class Channel extends ModelService {
      */
     public static function idRate(){
         \think\facade\Cache::remember('ChannelIdRate', function () {
-            $data = self::column('id,c_rate,s_rate,title,pid,fee','id');
-            \think\facade\Cache::tag('Channel')->set('ChannelIdRate',$data,60);
-            return \think\facade\Cache::get('ChannelIdRate');
-        });
+            return  self::column('id,c_rate,s_rate,title,pid,fee','id');
+        },60);
+        \think\facade\Cache::tag('Channel',['ChannelIdRate']);
         return \think\facade\Cache::get('ChannelIdRate');
     }
 

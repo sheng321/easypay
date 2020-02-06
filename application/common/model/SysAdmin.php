@@ -161,10 +161,10 @@ class SysAdmin extends AdminService {
      */
     public static function nickArr() {
 
-        \think\facade\Cache::tag('SysAdmin')->remember('nickArr', function () {
-            $data = self::column('nickname,id');
-            return $data;
+        \think\facade\Cache::remember('nickArr', function () {
+            return  self::column('nickname,id');
         },3600);
+        \think\facade\Cache::tag('SysAdmin',['nickArr']);
         return \think\facade\Cache::get('nickArr');
     }
 
@@ -174,10 +174,10 @@ class SysAdmin extends AdminService {
      */
     public static function idArr() {
 
-        \think\facade\Cache::tag('SysAdmin')->remember('idArr', function () {
-            $data = self::column('id,nickname');
-            return $data;
+        \think\facade\Cache::remember('idArr', function () {
+            return self::column('id,nickname');
         },3600);
+        \think\facade\Cache::tag('SysAdmin',['idArr']);
         return \think\facade\Cache::get('idArr',[]);
     }
 
@@ -187,7 +187,7 @@ class SysAdmin extends AdminService {
      */
     public static function titleArr() {
 
-        \think\facade\Cache::tag('SysAdmin')->remember('titleArr', function () {
+        \think\facade\Cache::remember('titleArr', function () {
             $users = self::field('id,auth_id')->all();
             $data = array();
             foreach ($users as $k => $val){
@@ -195,6 +195,7 @@ class SysAdmin extends AdminService {
             }
             return $data;
         },3600);
+        \think\facade\Cache::tag('SysAdmin',['titleArr']);
         return \think\facade\Cache::get('titleArr',[]);
     }
 
@@ -204,7 +205,7 @@ class SysAdmin extends AdminService {
      */
     public static function title2id() {
 
-        \think\facade\Cache::tag('SysAdmin')->remember('title2id1', function () {
+        \think\facade\Cache::remember('title2id1', function () {
             $users = self::field('id,auth_id')->all();
             $data = array();
             foreach ($users as $k => $val){
@@ -216,6 +217,7 @@ class SysAdmin extends AdminService {
             }
             return $data;
         },3600);
+        \think\facade\Cache::tag('SysAdmin',['title2id1']);
         return \think\facade\Cache::get('title2id1',[]);
     }
 

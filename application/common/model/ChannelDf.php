@@ -127,9 +127,10 @@ class ChannelDf extends ModelService {
      * @param array $modules
      */
     public static function info(){
-     \think\facade\Cache::tag('ChannelDf')->remember('ChannelDfInfo', function () {
+     \think\facade\Cache::remember('ChannelDfInfo', function () {
          return  self::column('id,title,inner','id');
         },60);
+        \think\facade\Cache::tag('ChannelDf',['ChannelDfInfo']);
         return \think\facade\Cache::get('ChannelDfInfo');
     }
 
