@@ -414,7 +414,7 @@ if (!function_exists('get_location')) {
     function get_location($ip = null) {
         empty($ip) && $ip = get_client_ip();
 
-        \think\facade\Cache::tag('ip')->remember('location_'.$ip, function () use($ip) {
+        \think\facade\Cache::tag('Ip')->remember('location_'.$ip, function () use($ip) {
             $Ip = new \tool\IpLocation(); // 实例化类 参数表示IP地址库文件
             $location =  $Ip->getlocation($ip);// 获取某个IP地址所在的位置
             return $location;
