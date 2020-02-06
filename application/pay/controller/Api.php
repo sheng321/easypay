@@ -139,16 +139,18 @@ class Api extends PayController
 
             //5.话费通道 查询库存
            if($Channel['charge'] == 1){
-
-               dump(1111);
               $charge_num = $this->charge_num($Channel);
+              $pay_amount =  ceil($param['pay_amount']);
 
-              halt($charge_num);
+               dump($charge_num);
+              dump($pay_amount);
+              halt($charge_num[$pay_amount]);
               //当前金额库存量
-              if(empty($charge_num[$param['pay_amount']]) || $charge_num[$param['pay_amount']] < 2){
+              if(empty($charge_num[$pay_amount]) || $charge_num[$pay_amount] < 1){
                   unset($ChannelProduct[$k]);
                   continue;
               }
+               unset($pay_amount);
                unset($charge_num);
            }
 
