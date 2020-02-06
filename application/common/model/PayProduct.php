@@ -116,11 +116,10 @@ class PayProduct extends ModelService {
      */
     public static function idArr() {
 
-        \think\facade\Cache::remember('productIdArr', function () {
+        \think\facade\Cache::tag('PayProduct')->remember('productIdArr', function () {
             $data = self::column('id,title');
-            \think\facade\Cache::tag('PayProduct')->set('productIdArr',$data,3600);
-            return \think\facade\Cache::get('productIdArr');
-        });
+            return $data;
+        },3600);
 
         return \think\facade\Cache::get('productIdArr');
     }
@@ -131,19 +130,17 @@ class PayProduct extends ModelService {
      * @param array $modules
      */
     public static function idCode() {
-        \think\facade\Cache::remember('idCode', function () {
+        \think\facade\Cache::tag('PayProduct')->remember('idCode', function () {
             $data = self::column('id,code');
-            \think\facade\Cache::tag('PayProduct')->set('idCode',$data,3600);
-            return \think\facade\Cache::get('idCode');
-        });
+            return $data;
+        },3600);
         return \think\facade\Cache::get('idCode');
     }
     public static function idCode1() {
-        \think\facade\Cache::remember('idCode1', function () {
+        \think\facade\Cache::tag('PayProduct')->remember('idCode1', function () {
             $data = self::column('id,code,status','code');
-            \think\facade\Cache::tag('PayProduct')->set('idCode1',$data,3600);
-            return \think\facade\Cache::get('idCode1');
-        });
+            return $data;
+        },3600);
         return \think\facade\Cache::get('idCode1');
     }
 
@@ -154,11 +151,10 @@ class PayProduct extends ModelService {
      * @param array $modules
      */
     public static function idRate() {
-        \think\facade\Cache::remember('idRate', function () {
+        \think\facade\Cache::tag('PayProduct')->remember('idRate', function () {
             $data = self::column('id,status,p_rate','id');
-            \think\facade\Cache::tag('PayProduct')->set('idRate',$data,3600);
-            return \think\facade\Cache::get('idRate');
-        });
+            return $data;
+        },3600);
         return \think\facade\Cache::get('idRate');
     }
 
@@ -168,11 +164,10 @@ class PayProduct extends ModelService {
      * @param array $modules
      */
     public static function codeTitle(){
-        \think\facade\Cache::remember('codeTitle', function () {
+        \think\facade\Cache::tag('PayProduct')->remember('codeTitle', function () {
             $data = self::where(['cli'=>0])->column('id,code,title,status','code');
-            \think\facade\Cache::tag('PayProduct')->set('codeTitle',$data,3600);
-            return \think\facade\Cache::get('codeTitle');
-        });
+            return $data;
+        },3600);
         return \think\facade\Cache::get('codeTitle');
     }
 

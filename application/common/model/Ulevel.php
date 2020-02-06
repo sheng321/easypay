@@ -85,7 +85,7 @@ class Ulevel extends ModelService {
      */
     public static function getMaxRate($id,$p_id) {
 
-        \think\facade\Cache::remember('getMaxRate', function (){
+        \think\facade\Cache::tag('Ulevel')->remember('getMaxRate', function (){
             $channel_id = self::column('channel_id,id','id');
             foreach ($channel_id as $k => $v){
                 $data[$k] = json_decode($v,true);
@@ -93,9 +93,8 @@ class Ulevel extends ModelService {
                     $data[$k][$k1] = \app\common\model\ChannelGroup::where(['id','in',$v1])->max('c_rate');
                 }
             }
-            \think\facade\Cache::tag('Ulevel')->set('getMaxRate',$data,3600);
-            return \think\facade\Cache::get('getMaxRate');
-        });
+            return $data;
+        },3600);
         $getMaxRate = \think\facade\Cache::get('getMaxRate');
         $max = isset($getMaxRate[$id][$p_id])?$getMaxRate[$id][$p_id]:0;
         return $max;
@@ -110,11 +109,10 @@ class Ulevel extends ModelService {
      */
     public static function idArr() {
 
-        \think\facade\Cache::remember('UlevelIdArr', function () {
+        \think\facade\Cache::tag('Ulevel')->remember('UlevelIdArr', function () {
             $data = self::column('id,title');
-            \think\facade\Cache::tag('Ulevel')->set('UlevelIdArr',$data,60);
-            return \think\facade\Cache::get('UlevelIdArr');
-        });
+            return $data;
+        },60);
         return \think\facade\Cache::get('UlevelIdArr');
     }
 

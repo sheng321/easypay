@@ -161,11 +161,10 @@ class SysAdmin extends AdminService {
      */
     public static function nickArr() {
 
-        \think\facade\Cache::remember('nickArr', function () {
+        \think\facade\Cache::tag('SysAdmin')->remember('nickArr', function () {
             $data = self::column('nickname,id');
-            \think\facade\Cache::tag('SysAdmin')->set('nickArr',$data,3600);
-            return \think\facade\Cache::get('nickArr');
-        });
+            return $data;
+        },3600);
         return \think\facade\Cache::get('nickArr');
     }
 
@@ -175,12 +174,10 @@ class SysAdmin extends AdminService {
      */
     public static function idArr() {
 
-        \think\facade\Cache::remember('idArr', function () {
+        \think\facade\Cache::tag('SysAdmin')->remember('idArr', function () {
             $data = self::column('id,nickname');
-
-            \think\facade\Cache::tag('SysAdmin')->set('idArr',$data,3600);
-            return \think\facade\Cache::get('idArr');
-        });
+            return $data;
+        },3600);
         return \think\facade\Cache::get('idArr',[]);
     }
 
@@ -190,15 +187,14 @@ class SysAdmin extends AdminService {
      */
     public static function titleArr() {
 
-        \think\facade\Cache::remember('titleArr', function () {
+        \think\facade\Cache::tag('SysAdmin')->remember('titleArr', function () {
             $users = self::field('id,auth_id')->all();
             $data = array();
             foreach ($users as $k => $val){
                 $data[$val['id']] = $val['auth'];
             }
-            \think\facade\Cache::tag('SysAdmin')->set('titleArr',$data,3600);
-            return \think\facade\Cache::get('titleArr');
-        });
+            return $data;
+        },3600);
         return \think\facade\Cache::get('titleArr',[]);
     }
 
@@ -208,7 +204,7 @@ class SysAdmin extends AdminService {
      */
     public static function title2id() {
 
-        \think\facade\Cache::remember('title2id1', function () {
+        \think\facade\Cache::tag('SysAdmin')->remember('title2id1', function () {
             $users = self::field('id,auth_id')->all();
             $data = array();
             foreach ($users as $k => $val){
@@ -218,9 +214,8 @@ class SysAdmin extends AdminService {
                     $data[$v1][] = $val['id'];
                 }
             }
-            \think\facade\Cache::tag('SysAdmin')->set('title2id1',$data,3600);
-            return \think\facade\Cache::get('title2id1');
-        });
+            return $data;
+        },3600);
         return \think\facade\Cache::get('title2id1',[]);
     }
 

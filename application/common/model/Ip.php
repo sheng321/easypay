@@ -71,15 +71,15 @@ class Ip extends ModelService {
 
     public static function bList($uid,$type = null){
 
-        $list =  \think\facade\Cache::remember('IP_'.$uid, function ()use($uid) {
+        \think\facade\Cache::tag('Ip')->remember('IP_'.$uid, function ()use($uid) {
             $data = self::where("uid",$uid)->column("id,ip,type",'id');
             $data1 = array();
             foreach ($data as $k=>$v){
                 $data1[$v['type']][] = $v['ip'];
             }
-            \think\facade\Cache::tag('Ip')->set('IP_'.$uid,$data1,30);
-            return \think\facade\Cache::get('IP_'.$uid);
-        });
+            return $data1;
+        },30);
+        $list = \think\facade\Cache::get('IP_'.$uid);
 
         if(empty($list)){
             $ip = get_client_ip();

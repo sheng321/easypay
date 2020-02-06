@@ -17,11 +17,12 @@ class Menu extends UserController
     public function getMenu()
     {
         $name = session('user_info.id') . '_UserMenu';
-        \think\facade\Cache::remember($name, function ()use ($name) {
+
+        \think\facade\Cache::tag('menu')->remember($name, function ()use ($name) {
             $menu_list = \app\common\model\SysMenu::getUserMenuApi();
-            \think\facade\Cache::tag('menu')->set($name,$menu_list,86400);
-            return \think\facade\Cache::get($name);
-        });
+            return $menu_list;
+        },86400);
+
         return json(Cache::get($name));
     }
 

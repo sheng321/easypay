@@ -221,11 +221,10 @@ class ChannelGroup extends ModelService {
      */
     public static function idArr() {
 
-        \think\facade\Cache::remember('ChannelGroupIdArr', function () {
+        \think\facade\Cache::tag('ChannelGroup')->remember('ChannelGroupIdArr', function () {
             $data = self::column('id,title');
-            \think\facade\Cache::tag('ChannelGroup')->set('ChannelGroupIdArr',$data,3600);
-            return \think\facade\Cache::get('ChannelGroupIdArr');
-        });
+            return $data;
+        },3600);
 
         return \think\facade\Cache::get('ChannelGroupIdArr');
     }
@@ -236,11 +235,10 @@ class ChannelGroup extends ModelService {
      * @param array $modules
      */
     public static function idRate(){
-        \think\facade\Cache::remember('ChannelGroupidRate', function () {
+        \think\facade\Cache::tag('ChannelGroup')->remember('ChannelGroupidRate', function () {
             $data = self::column('id,c_rate,status','id');
-            \think\facade\Cache::tag('ChannelGroup')->set('ChannelGroupidRate',$data,60);
-            return \think\facade\Cache::get('ChannelGroupidRate');
-        });
+            return $data;
+        },60);
         return \think\facade\Cache::get('ChannelGroupidRate');
     }
 
