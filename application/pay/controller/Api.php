@@ -35,6 +35,8 @@ class Api extends PayController
        $PayProduct = PayProduct::quickGet(['code'=>$param['pay_bankcode']]);
        if(empty($PayProduct) || $PayProduct['status'] != 1) __jerror('通道不存在，或者已维护');
 
+
+       halt(is_china());
        //判断是否国内IP
         if($PayProduct['forbid'] == 0 && !is_china()) __jerror('禁止国外IP访问');
 
