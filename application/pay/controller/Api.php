@@ -22,12 +22,6 @@ class Api extends PayController
     public function index(){
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign"],'post');
 
-
-        $location =  get_location();
-
-        halt($location);
-
-
         //商户属性
        $Uprofile =  Uprofile::quickGet(['uid'=>$param['pay_memberid']]);
        if(empty($Uprofile) || $Uprofile['who'] != 0 )  __jerror('商户号不存在');
@@ -40,6 +34,11 @@ class Api extends PayController
        //支付产品属性
        $PayProduct = PayProduct::quickGet(['code'=>$param['pay_bankcode']]);
        if(empty($PayProduct) || $PayProduct['status'] != 1) __jerror('通道不存在，或者已维护');
+
+       //判断是否国内IP
+        if($PayProduct['forbid'] == 0 && !is_china()) __jerror('禁止国外IP访问');
+
+
 
        //验证支付产品金额
         $amount['amount'] = $param['pay_amount'];
