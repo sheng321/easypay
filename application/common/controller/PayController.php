@@ -84,7 +84,7 @@ class PayController extends BaseController
                 $res = $Payment->repertory();
                 dump($res);
 
-                $num =  \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id,$num) {
+                $num =  \think\facade\Cache::tag('charge')->remember('charge_num_'.$id, function () use($code,$id,$num) {
                    try{
                         $Payment = Payment::factory($code);
                         $res = $Payment->repertory();
@@ -99,9 +99,9 @@ class PayController extends BaseController
                     !empty($res[300]) &&  $num[300] = $res[300];
                     !empty($res[500]) &&  $num[500] = $res[500];
 
-                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,60);
+                    \think\facade\Cache::tag('charge')->set('charge_num_'.$id,$num,3);
                     return \think\facade\Cache::get('charge_num_'.$id);
-                },60);
+                },3);
                 break;
             default:
                 break;
