@@ -425,7 +425,7 @@ if (!function_exists('get_location')) {
     }
 }
 
-if (!function_exists('get_location')) {
+if (!function_exists('is_china')) {
     /**
      * 获取IP地址
      * @param $ip
