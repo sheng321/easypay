@@ -113,7 +113,7 @@ class Api extends PayController
             };
 
             //访问方式
-           // if($Channel['visit'] == 2 && !isMobile()) __jerror('只能移动端访问！');
+            if($Channel['visit'] == 2 && !isMobile()) __jerror('只能移动端访问！');
             if($Channel['visit'] == 1 && isMobile()) __jerror('只能PC端访问！');
 
 
