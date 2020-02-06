@@ -337,8 +337,6 @@ class ModelService extends Model {
 
         //查询数据库
         $res = $data::where($search)->order(['id'=>'desc'])->find();
-
-        halt($res);
         if(empty($res))  return false;
         $res = $res->toArray();
         self::saveRedis($obj,$res);
