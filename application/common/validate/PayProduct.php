@@ -35,10 +35,10 @@ class PayProduct extends Validate {
         'p_rate'=> 'float',//运营费率
         'min_amount'=> 'number',//最低限额
         'max_amount'=> 'number',//最高限额
-        'f_amount'=> 'number',//固定值
-        'ex_amount'=> 'number',//排除固定值
+
+
         'f_multiple'=> 'number',//固定倍数
-        'f_num'=> 'number',//固定尾数
+
     ];
 
     /**
@@ -60,10 +60,9 @@ class PayProduct extends Validate {
         'p_rate.float'     => '费率必须为小数',
         'min_amount.number'     => '最低限额必须为整数',
         'max_amount.number'     => '最高限额必须为整数',
-        'f_amount.number'     => '固定值必须为整数',
-        'ex_amount.number'     => '排除固定金额必须为整数',
+
         'f_multiple.number'     => '固定倍数必须为整数',
-        'f_num.number'     => '固定尾数必须为整数',
+
     ];
 
     /**
