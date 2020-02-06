@@ -23,6 +23,11 @@ class Api extends PayController
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign"],'post');
 
 
+        $location =  get_location();
+
+        halt($location);
+
+
         //商户属性
        $Uprofile =  Uprofile::quickGet(['uid'=>$param['pay_memberid']]);
        if(empty($Uprofile) || $Uprofile['who'] != 0 )  __jerror('商户号不存在');
