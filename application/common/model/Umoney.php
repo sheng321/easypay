@@ -34,7 +34,7 @@ class Umoney extends ModelService {
      */
     protected $redis = [
         'is_open'=> true,
-        'ttl'=> 2,
+        'ttl'=> 1,
         'key'=> "String:table:Umoney:df_id:{df_id}:channel_id:{channel_id}:uid:{uid}:id:{id}",
         'keyArr'=> ['id','uid','channel_id','df_id'],
     ];
