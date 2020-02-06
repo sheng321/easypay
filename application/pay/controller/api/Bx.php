@@ -210,14 +210,7 @@ class Bx extends PayController
   ["state"] => int(0)
 }*/
 
-        $data[10] = 0;
-        $data[30] = 0;
-        $data[50] = 0;
-        $data[100] = 0;
-        $data[200] = 0;
-        $data[300] = 0;
-        $data[500] = 0;
-
+        $data = [];
         if(empty($res) || empty($resp) || $resp['state'] != 0 || $resp['data']['code'] != '0000'  ) return $data;
 
         $data[10] = $resp['data']['totoal_10'];
