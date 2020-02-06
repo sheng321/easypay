@@ -97,7 +97,6 @@ class Api extends PayController
                 continue;
             }
 
-
             //判断是否国内IP
             if($Channel['forbid'] == 0 && !is_china()){
                 unset($ChannelProduct[$k]);
