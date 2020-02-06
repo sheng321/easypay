@@ -168,7 +168,7 @@ class Api extends PayController
               $charge_num = $this->charge_num($Channel);
               $pay_amount =  ceil($param['pay_amount']);
 
-              //当前金额库存量
+              //当前金额库话费存量
               if(empty($charge_num[$pay_amount]) || $charge_num[$pay_amount] < 1){
                   unset($ChannelProduct[$k]);
                   continue;
