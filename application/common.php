@@ -839,6 +839,8 @@ function obj2arr($obj) {
 
 //判断是否是手机端还是电脑端
 function isMobile(){
+
+    halt($_SERVER);
     $_SERVER['ALL_HTTP'] = isset($_SERVER['ALL_HTTP']) ? $_SERVER['ALL_HTTP'] : '';
 
     halt( $_SERVER['ALL_HTTP']);
