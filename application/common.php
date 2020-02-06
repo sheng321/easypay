@@ -420,7 +420,7 @@ if (!function_exists('get_location')) {
             \think\facade\Cache::tag('ip')->set('location_'.$ip,$location,60);
             return \think\facade\Cache::get('location_'.$ip);
         });
-        halt($location);
+
         return $location;
     }
 }
