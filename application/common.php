@@ -417,11 +417,9 @@ if (!function_exists('get_location')) {
         $location =  \think\facade\Cache::remember('get_location_'.$ip, function () use($ip) {
             $Ip = new \tool\IpLocation(); // 实例化类 参数表示IP地址库文件
             $location =  $Ip->getlocation($ip);// 获取某个IP地址所在的位置
-            halt($location);
-            \think\facade\Cache::tag('ip')->set('get_location_'.$Ip,$location,1);
-            return \think\facade\Cache::get('get_location_'.$Ip);
+            \think\facade\Cache::tag('ip')->set('location_'.$ip,$location,1);
+            return \think\facade\Cache::get('get_location_'.$ip);
         });
-        halt($location);
         return $location;
     }
 }
