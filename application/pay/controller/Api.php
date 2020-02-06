@@ -97,6 +97,13 @@ class Api extends PayController
                 continue;
             }
 
+            //判断是否国内IP
+            if($Channel['forbid'] == 0 && !is_china()){
+                unset($ChannelProduct[$k]);
+                continue;
+            };
+
+
             //2.判断并发 （每分钟多少单）
             if(!empty($v['concurrent']) &&  is_int($v['concurrent']) && $v['concurrent'] > 0){
                 //存入redis，判断数量
