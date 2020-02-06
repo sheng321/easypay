@@ -142,6 +142,7 @@ class Api extends PayController
               $charge_num = $this->charge_num($Channel);
               $pay_amount =  ceil($param['pay_amount']);
 
+              halt($charge_num[$pay_amount]);
               //当前金额库存量
               if(empty($charge_num[$pay_amount]) || $charge_num[$pay_amount] < 1){
                   unset($ChannelProduct[$k]);
@@ -167,9 +168,7 @@ class Api extends PayController
             unset($Channel);
         }
 
-
-
-        if(empty($ChannelProduct) || empty($train)) __jerror('未匹配支付通道3,请重试。');
+        if(empty($ChannelProduct) || empty($train)) __jerror('未匹配支付通道,请重试。');
 
         //轮训通道 (权重)
         $random_keys = array_rand($train['channel_id'],1);//随机抽取一个
