@@ -37,10 +37,7 @@ class Api extends PayController
 
 
        //判断是否国内IP
-        if($PayProduct['forbid'] == 0 && !is_china()){
-             $is_china = is_china();
-            if(!$is_china) __jerror('禁止国外IP访问');
-        }
+        if($PayProduct['forbid'] == 0 && !is_china()) __jerror('禁止国外IP访问');
 
 
 
