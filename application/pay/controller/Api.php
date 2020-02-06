@@ -169,7 +169,7 @@ class Api extends PayController
 
 
 
-        if(empty($ChannelProduct) || empty($train)) __jerror('未匹配支付通道3');
+        if(empty($ChannelProduct) || empty($train)) __jerror('未匹配支付通道3,请重试。');
 
         //轮训通道 (权重)
         $random_keys = array_rand($train['channel_id'],1);//随机抽取一个
