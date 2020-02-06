@@ -840,6 +840,8 @@ function obj2arr($obj) {
 //判断是否是手机端还是电脑端
 function isMobile(){
     $_SERVER['ALL_HTTP'] = isset($_SERVER['ALL_HTTP']) ? $_SERVER['ALL_HTTP'] : '';
+
+    halt( $_SERVER['ALL_HTTP']);
     $mobile_browser = '0';
     if(preg_match('/(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|iphone|ipad|ipod|android|xoom)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))
         $mobile_browser++;
