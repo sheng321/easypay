@@ -114,7 +114,7 @@ class Api extends PayController
 
             //访问方式
             if($Channel['visit'] == 2 && !isMobile()) __jerror('只能移动端访问！');
-            if($Channel['visit'] == 1 && isMobile()) __jerror('只能PC端访问！');
+            if($Channel['visit'] == 1 && isMobile()) __jerror('只能电脑端访问！');
 
 
             //2.判断并发 （每分钟多少单）
