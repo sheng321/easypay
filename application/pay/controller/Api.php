@@ -106,6 +106,29 @@ class Api extends PayController
                 continue;
             }
 
+
+
+            //6.通道限额
+            $charge_num = $this->check_money($Channel);
+
+            halt($charge_num);
+
+
+            if($Channel['charge'] == 1){
+                $charge_num = $this->charge_num($Channel);
+                $pay_amount =  ceil($param['pay_amount']);
+
+                //当前金额库存量
+                if(empty($charge_num[$pay_amount]) || $charge_num[$pay_amount] < 1){
+                    unset($ChannelProduct[$k]);
+                    continue;
+                }
+                unset($pay_amount);
+                unset($charge_num);
+            }
+
+
+
             //判断是否国内IP
             if($Channel['forbid'] == 0 && !is_china()){
                 unset($ChannelProduct[$k]);
@@ -162,24 +185,6 @@ class Api extends PayController
             unset($Rate);
 
 
-            //6.通道限额
-            $charge_num = $this->check_money($Channel);
-
-            halt($charge_num);
-
-
-            if($Channel['charge'] == 1){
-                $charge_num = $this->charge_num($Channel);
-                $pay_amount =  ceil($param['pay_amount']);
-
-                //当前金额库存量
-                if(empty($charge_num[$pay_amount]) || $charge_num[$pay_amount] < 1){
-                    unset($ChannelProduct[$k]);
-                    continue;
-                }
-                unset($pay_amount);
-                unset($charge_num);
-            }
 
 
             //5.话费通道 查询库存
