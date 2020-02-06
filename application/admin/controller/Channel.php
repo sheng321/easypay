@@ -510,7 +510,6 @@ class Channel  extends AdminController
         $data[] =(int) $get['id'];
         if($pid == 0 ){
             $Umoney =  Umoney::quickGet(['channel_id'=>$get['id'],'uid'=>0]);
-
             if(!empty($Umoney) && ($Umoney['total_money'] > 0 || $Umoney['balance'] > 0 )) return __error('该通道有余额未清，不可删除。');
 
             //是通道
