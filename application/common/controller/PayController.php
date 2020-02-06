@@ -83,7 +83,7 @@ class PayController extends BaseController
                 $Payment = Payment::factory($code);
                 $res = $Payment->repertory();
                 dump($res);
-                dump(\think\facade\Cache::clear('charge'));
+                dump(\think\facade\Cache::clear());
 
                 dump(\think\facade\Cache::get('charge_num_'.$id));
 
