@@ -39,9 +39,14 @@ class Api extends PayController
        //判断是否国内IP
         if($PayProduct['forbid'] == 0 && !is_china()) __jerror('禁止国外IP访问');
 
-       $isMobile =  isMobile();
+        //访问方式
+        if($PayProduct['visit'] == 2 && !isMobile()) __jerror('只能移动端访问！');
+        if($PayProduct['visit'] == 1 && isMobile()) __jerror('只能PC端访问！');
 
-       halt($isMobile);
+
+
+
+
 
 
 
@@ -106,6 +111,10 @@ class Api extends PayController
                 unset($ChannelProduct[$k]);
                 continue;
             };
+
+            //访问方式
+            if($Channel['visit'] == 2 && !isMobile()) __jerror('只能移动端访问！');
+            if($Channel['visit'] == 1 && isMobile()) __jerror('只能PC端访问！');
 
 
             //2.判断并发 （每分钟多少单）
