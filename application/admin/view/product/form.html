@@ -97,9 +97,9 @@
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">访问</label>
         <div class="layui-input-block">
-            <input type="radio" name="visit" value="0" title="都可以" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
-            <input type="radio" name="visit" value="1" title="只允许PC端" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许PC端</div></div>
-            <input type="radio" name="visit" value="2" title="只允许手机端" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许手机端</div></div>
+            <input type="radio" name="visit" value="0" title="都可以"  {eq name='$auth.visit|default=0' value='0' }checked="checked" {/eq}   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
+            <input type="radio" name="visit" value="1" title="只允许PC端"   {eq name='$auth.visit|default=1' value='1' }checked="checked" {/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许PC端</div></div>
+            <input type="radio" name="visit" value="2" title="只允许手机端"  {eq name='$auth.visit|default=2' value='2' }checked="checked" {/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许手机端</div></div>
         </div>
     </div>
 
