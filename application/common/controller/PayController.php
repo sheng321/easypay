@@ -117,12 +117,14 @@ class PayController extends BaseController
         //通道
         $Channel_father = Channel::quickGet($Channel['pid']);
         if(empty($Channel_father)) return false;
+        $limit_money = (int) $Channel_father['limit_money'];
+        if(empty($limit_money)) return true; //没有设置通道限额的情况
 
         $Umoney = Umoney::quickGet(['channel_id'=>$Channel_father['id'],'uid'=>0]);
-        //if(empty($Umoney)) return false;
+        if(empty($Umoney)) return false;
 
-        dump($Channel_father);
-        halt($Umoney);
+        //通道可用余额 小于通道限额
+        if($Umoney['balance'] < $Channel_father['limit_money']) return true;
 
         return false;
     }

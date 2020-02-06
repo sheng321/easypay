@@ -107,28 +107,6 @@ class Api extends PayController
             }
 
 
-
-            //6.通道限额
-            $charge_num = $this->check_money($Channel);
-
-            halt($charge_num);
-
-
-            if($Channel['charge'] == 1){
-                $charge_num = $this->charge_num($Channel);
-                $pay_amount =  ceil($param['pay_amount']);
-
-                //当前金额库存量
-                if(empty($charge_num[$pay_amount]) || $charge_num[$pay_amount] < 1){
-                    unset($ChannelProduct[$k]);
-                    continue;
-                }
-                unset($pay_amount);
-                unset($charge_num);
-            }
-
-
-
             //判断是否国内IP
             if($Channel['forbid'] == 0 && !is_china()){
                 unset($ChannelProduct[$k]);
@@ -201,8 +179,15 @@ class Api extends PayController
                unset($charge_num);
            }
 
+            //6.通道限额
+            $check_money = $this->check_money($Channel);
+           if(!$check_money){
+               unset($ChannelProduct[$k]);
+               continue;
+           }
 
-            //6.轮训-数据填充  （权重！！）
+
+            //7.轮训-数据填充  （权重！！）
             if(!empty($v['weight']) &&  is_int($v['weight']) && $v['weight'] > 0 ){
                $temp2 = array_fill(0, $v['weight'], $Channel['id']);//填充数组   支付通道ID
                 $temp3 = array_fill(0, $v['weight'], $v['group_id']);//填充数组  支付通道分组ID
