@@ -80,16 +80,7 @@ class PayController extends BaseController
          $id = $Channel['id'];
         switch ($code){
             case 'Bx':
-                $Payment = Payment::factory($code);
-                $res = $Payment->repertory();
-                dump($res);
-                dump(\think\facade\Cache::clear('charge'));
-
-                dump(\think\facade\Cache::get('charge_num_'.$id));
-
-                dump(3333);
-
-                \think\facade\Cache::tag('charge')->remember('charge_num_'.$id, function () use($code,$id,$num) {
+                \think\facade\Cache::remember('charge_num_'.$id, function () use($code,$id,$num) {
                    try{
                         $Payment = Payment::factory($code);
                         $res = $Payment->repertory();
@@ -105,15 +96,11 @@ class PayController extends BaseController
                     !empty($res[500]) &&  $num[500] = $res[500];
                     return $num;
                 },60);
-
-                \think\facade\Cache::tag('charge',['charge_num_'.$id]);
                 $num = \think\facade\Cache::get('charge_num_'.$id);
                 break;
             default:
                 break;
         }
-
-        halt($num);
        return $num;
     }
 
