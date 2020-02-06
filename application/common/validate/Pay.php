@@ -184,7 +184,7 @@ class Pay extends Validate {
         if(!empty($data['ex_amount'])){
             $ex_amount = array_filter(explode('|',$data['ex_amount']));
             if(!empty($ex_amount)){
-                if(in_array($value,$ex_amount)) return "金额必须是 {$data['f_amount']} 范围外";
+                if(in_array($value,$ex_amount)) return "金额必须是 {$data['ex_amount']} 范围外";
             }
         }
 
