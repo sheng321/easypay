@@ -107,26 +107,36 @@
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">金额类型</label>
         <div class="layui-input-block">
-            <input type="radio" name="mtype" value="0" title="都可以" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
-            <input type="radio" name="mtype" value="1" title="整数" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只接受整数</div></div>
-            <input type="radio" name="mtype" value="2" title="小数" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只接受小数</div></div>
+            <input type="radio" name="mtype" value="0" title="都可以"  {eq name='$data.mtype|default=0' value='0' }checked="checked" {/eq}    ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
+            <input type="radio" name="mtype" value="1" title="整数"  {eq name='$data.mtype|default=0' value='1' }checked="checked" {/eq}    ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只接受整数</div></div>
+            <input type="radio" name="mtype" value="2" title="小数"  {eq name='$data.mtype|default=0' value='2' }checked="checked" {/eq}   ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只接受小数</div></div>
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">禁国外IP</label>
+        <div class="layui-input-block">
+            <input type="radio" name="forbid" value="0" title="禁止" {eq name='$data.forbid|default=0' value='0' }checked="checked" {/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁止</div></div>
+            <input type="radio" name="forbid" value="1" title="不禁止"  {eq name='$data.forbid|default=0' value='1' }checked="checked" {/eq}    ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>不禁止</div></div>
         </div>
     </div>
 
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">访问</label>
         <div class="layui-input-block">
-            <input type="radio" name="visit" value="0" title="都可以" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
-            <input type="radio" name="visit" value="1" title="只允许PC端" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许PC端</div></div>
-            <input type="radio" name="visit" value="2" title="只允许手机端" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许手机端</div></div>
+            <input type="radio" name="visit" value="0" title="都可以"  {eq name='$data.visit|default=0' value='0' }checked="checked" {/eq} ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>都可以</div></div>
+            <input type="radio" name="visit" value="1" title="只允许PC端"   {eq name='$data.visit|default=0' value='2' }checked="checked" {/eq} ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许PC端</div></div>
+            <input type="radio" name="visit" value="2" title="只允许手机端"  {eq name='$data.visit|default=0' value='2' }checked="checked" {/eq} ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>只允许手机端</div></div>
         </div>
     </div>
 
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">话费</label>
         <div class="layui-input-block">
-            <input type="radio" name="charge" value="0" title="否" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>否</div></div>
-            <input type="radio" name="charge" value="1" title="是" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>是</div></div>
+            <input type="radio" name="charge" value="0" title="否"  {eq name='$data.charge|default=0' value='0' }checked="checked" {/eq}   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>否</div></div>
+            <input type="radio" name="charge" value="1" title="是"  {eq name='$data.charge|default=0' value='1' }checked="checked" {/eq} ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>是</div></div>
         </div>
     </div>
 
@@ -134,8 +144,8 @@
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">状态</label>
         <div class="layui-input-block">
-            <input type="radio" name="status" value="1" title="开启" checked="checked"   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>开启</div></div>
-            <input type="radio" name="status" value="0" title="禁用" ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁用</div></div>
+            <input type="radio" name="status" value="1" title="开启"  {eq name='$data.status|default=0' value='0' }checked="checked" {/eq}  ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>开启</div></div>
+            <input type="radio" name="status" value="0" title="禁用"  {eq name='$data.status|default=0' value='1' }checked="checked" {/eq}><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>禁用</div></div>
         </div>
     </div>
 
