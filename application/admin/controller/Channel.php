@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\Umoney;
 
 /**
  * 通道管理
@@ -183,26 +184,32 @@ class Channel  extends AdminController
             //保存数据,返回结果
             //使用事物保存数据
             $this->model->startTrans();
-            $channel = $this->model->save($post);
+            $channel = $this->model->create($post);
 
-            if (!$channel || !$this->model->id ) {
+            if(empty($channel) || !isset($channel['id'])){
                 $this->model->rollback();
-                empty($msg) && $msg = '数据有误，请稍后再试！!';
-                return __error($msg);
+                return __error('数据有误，请稍后再试！!');
             }
+
+            //创建金额账户
+            $Umoney =  Umoney::create(['channel_id'=>$channel['id'],'uid'=>0]);
 
             $data = [];
             foreach ($p_id as $k => $val){
                 $data[$k]['p_id'] = json_encode([$val]);
                 $data[$k]['pid'] = $this->model->id;
-                //添加支付产品
                 $data[$k]['title'] = $post['title'];
             }
+            //添加支付产品
+           if(!empty($data)) $res = $this->model->isUpdate(false)->saveAll($data);
 
-           if(!empty($data)) $this->model->isUpdate(false)->saveAll($data);
+            if(empty($res) || empty($Umoney)){
+                $this->model->rollback();
+                return __error('数据有误，请稍后再试！!');
+            }
+
             $this->model->commit();
-            empty($msg) && $msg = '添加成功!';
-            return __success($msg);
+            return __success('添加成功!');
 
         }
     }

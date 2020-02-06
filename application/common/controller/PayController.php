@@ -118,9 +118,7 @@ class PayController extends BaseController
         $Channel_father = Channel::quickGet($Channel['pid']);
         if(empty($Channel_father)) return false;
         $Umoney = Umoney::quickGet(['channel_id'=>$Channel['pid'],'uid'=>0]);
-        dump($Channel_father);
-        halt($Umoney);
-
+        if(empty($Umoney)) return false;
 
         return false;
     }
