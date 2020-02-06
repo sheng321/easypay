@@ -117,6 +117,9 @@ class PayController extends BaseController
         //通道
         $Channel_father = Channel::quickGet($Channel['pid']);
         if(empty($Channel_father)) return false;
+        $Umoney1 = Umoney::where(['channel_id'=>$Channel_father['id'],'uid'=>0])->find();
+
+        dump($Umoney1);
         $Umoney = Umoney::quickGet(['channel_id'=>$Channel_father['id'],'uid'=>0]);
         //if(empty($Umoney)) return false;
 
