@@ -87,7 +87,7 @@ class PayController extends BaseController
 
                 dump(\think\facade\Cache::get('charge_num_'.$id));
 
-                dump(2222);
+                dump(3333);
 
                 \think\facade\Cache::tag('charge')->remember('charge_num_'.$id, function () use($code,$id,$num) {
                    try{
