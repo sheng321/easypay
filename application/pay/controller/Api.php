@@ -36,9 +36,11 @@ class Api extends PayController
        if(empty($PayProduct) || $PayProduct['status'] != 1) __jerror('通道不存在，或者已维护');
 
 
-       halt(is_china());
        //判断是否国内IP
-        if($PayProduct['forbid'] == 0 && !is_china()) __jerror('禁止国外IP访问');
+        if($PayProduct['forbid'] == 0 && !is_china()){
+             $is_china = is_china();
+            if(!$is_china) __jerror('禁止国外IP访问');
+        }
 
 
 
