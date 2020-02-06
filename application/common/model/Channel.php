@@ -98,6 +98,7 @@ class Channel extends ModelService {
 
         $field = ['id','pid','p_id','visit','update_at','remark','title','status','sort','verson','code','c_rate','s_rate','min_amount','max_amount','f_amount','ex_amount','f_multiple','f_num','limit_money'];
 
+        dump($where);
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
