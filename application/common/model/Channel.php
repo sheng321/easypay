@@ -102,6 +102,8 @@ class Channel extends ModelService {
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
+        halt($data);
+
         //查找该通道分组 的通道
         $select = model('app\common\model\ChannelProduct')->where('group_id', $search['g_id'])->select()->toArray();
         $find = array_column($select, null, 'channel_id');
