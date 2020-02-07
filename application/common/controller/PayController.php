@@ -99,6 +99,14 @@ class PayController extends BaseController
                 $num = \think\facade\Cache::get('charge_num_'.$id);
                 break;
             default:
+                //不查询的情况
+                $num[10] = 10;
+                $num[30] = 10;
+                $num[50] = 10;
+                $num[100] = 10;
+                $num[200] = 10;
+                $num[300] = 10;
+                $num[500] = 10;
                 break;
         }
        return $num;

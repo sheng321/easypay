@@ -347,7 +347,7 @@ class Umoney extends ModelService {
                 $res['log'] = $temp.'代付冻结'.$change['change'];
 
                 $data['df'] = $data['df'] - $change['change'];
-                if($data['balance'] < 0)   $res['msg'] = '代付冻结大于代付金额';
+                if($data['balance'] < 0)   $res['msg'] = '代付需冻结金额大于代付金额';
                 $data['frozen_amount'] = $data['frozen_amount'] + $change['change'];
                 $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
                 $change['balance'] = $data['df'];//变动后的金额

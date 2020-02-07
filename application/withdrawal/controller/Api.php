@@ -77,10 +77,10 @@ class Api extends WithdrawalController
         if($card_money > $df['limit_money']) __jerror('已超过单卡单日限额，请联系客服处理');
 
         $times =  Df::times($param['cardnumber']);
-        if($times > $df['limit_times']) __jerror('已超过单卡单日限额，请联系客服处理');
+        if($times > $df['limit_times']) __jerror('已超过单卡单日次数，请联系客服处理');
 
 
-        //下一步选择创建订单，返回客户端信息
+        //下一步选择创建订单，冻结金额，返回客户端信息
 
         $data['mch_id'] = $param['mchid'];
         $data['out_trade_no'] =  $param['out_trade_no'];//代付订单号
@@ -99,6 +99,15 @@ class Api extends WithdrawalController
         $data['fee'] = $df['fee'];
         $data['extends'] = $param['extends'];
 
+        //冻结用户金额
+
+        $change['change'] = $data['amount'];//变动金额
+        $change['relate'] = $data['system_no'];//关联订单号
+        $change['type'] = 15;//代付冻结金额类型
+
+        $res = Umoney::dispose($Umoney,$change); //处理
+        if (true !== $res['msg']) __jerror($res['msg']);
+        
         //插入数据库
         //文件排它锁 阻塞模式
         $fp = fopen("lock/withdrawal.txt", "w+");
@@ -108,7 +117,10 @@ class Api extends WithdrawalController
             //使用事物保存数据
             $model->startTrans();
             $create = $model->create($data);
-            if (!$create) {
+            $save = model('app\common\model\Umoney')->saveAll($res['data']);
+            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+
+            if (!$create ||!$save ||!$add) {
                 $model->rollback();
             }else{
                 $model->commit();
