@@ -133,7 +133,7 @@
         var Index = $.msg.confirm('确定要查询订单吗？', function () {
             $.msg.close(Index);
             $.request.post(url,{}, function (res) {
-                alert(res['data']);
+                $.msg.success(res.msg);
             }, true);
 
         });
