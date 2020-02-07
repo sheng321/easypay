@@ -100,7 +100,7 @@
     </script>
 
     <script type="text/html" id="searchStatus">
-        <a class="layui-btn layui-btn-xs layui-btn-danger  "  data-width="100%"   data-open='{:url("$thisClass/channel")}?channel_id={{d.channel_id}}&id={{d.id}}&verson={{d.verson + 1}}' data-title="出款通道---商户号：{{d.mch_id}}---申请金额：{{d.amount}}">跟踪状态</a>
+        <a class="layui-btn layui-btn-green layui-btn-sm"  onclick="query_order('{:url("$thisClass/query_order")}?id={{d.pid}}')"   >跟踪状态</a>
     </script>
 
 
@@ -129,6 +129,17 @@
 
 {block name="script"}
 <script >
+    function query_order(url) {
+        var Index = $.msg.confirm('确定要查询订单吗？', function () {
+            $.request.post(url,{}, function (res) {
+                alert(res['data']);
+            }, true);
+            $.msg.close(Index);
+        });
+    }
+
+
+
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'id', title: 'ID', width: 30, align: "center"},
         {field: 'mch_id', title: '商户号',  width: 70,  align: "center"},
