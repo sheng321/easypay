@@ -25,6 +25,7 @@ class Api extends WithdrawalController
 
         $param['bank_id'] = (int) $param['bankname'];
         $param['bankname'] = config('bank.'.$param['bank_id']);
+        halt($param);
         if(empty($post['bankname'])) __jerror('银行代码错误或者不支持此银行！');
 
 
