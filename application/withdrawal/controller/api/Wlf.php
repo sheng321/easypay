@@ -303,22 +303,22 @@ class Wlf extends WithdrawalController
         switch(true){
             //成功
             case ($RET_CODE1 === "0000" && $RET_CODE2 === "0000"):
-                return __suc($res['message'],['status'=>3]);//已完成
+                return __suc($res['INFO']['ERR_MSG'],['status'=>3]);//已完成
                 break;
             case ($RET_CODE1 === "0000" && $RET_CODE2 === 0):
-                return __suc($res['message'],['status'=>2]);//处理中
+                return __suc($res['INFO']['ERR_MSG'],['status'=>2]);//处理中
                 break;
             //失败
             case ($RET_CODE2 === "0001")://交易失败
             case ($RET_CODE2 === "0002")://商户审核不通过
             case ($RET_CODE2 === "0003")://不通过受理
             case ($RET_CODE2 === 0)://交易结果状态不存在
-                return __suc($res['message'],['status'=>4]);//失败退款
+                return __suc($res['INFO']['ERR_MSG'],['status'=>4]);//失败退款
                 break;
             //处理中
             case ($RET_CODE1 === "1002")://未查询到该订单号对应的交易
             default:
-                return __suc($res['message'],['status'=>2]);//处理中
+                return __suc($res['INFO']['ERR_MSG'],['status'=>2]);//处理中
                 break;
         }
 
