@@ -724,7 +724,6 @@ class Df extends AdminController {
                    break;
            }
             $res['data'] = $msg;
-
             return json($res);
         }
 
