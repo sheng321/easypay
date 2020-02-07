@@ -61,7 +61,7 @@ class Df {
         if($res['code'] == 0) return false;
 
         $update['id'] = $Order['id'];
-        $update['verson'] = $Order['verson'] + 1;
+        $update['verson'] = $Order['verson'] + 1;//版本号
 
         //处理完成
         if (isset($res['data']['status']) &&  $res['data']['status'] == 3){
