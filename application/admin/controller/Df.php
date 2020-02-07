@@ -717,7 +717,7 @@ class Df extends AdminController {
                    $msg .= "失败";
                    break;
                case 3://成功
-                   $msg .= "成功";
+                   $msg .= "<span style='color: green' >成功</span>";
                    break;
                default;
                    $msg .= "处理中";
