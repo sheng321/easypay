@@ -45,8 +45,6 @@ class Test extends WithdrawalController
         $param = $_POST;
         $param["pay_md5sign"] = $sign;
 
-        halt(msg_post(config('set.df_api'), $param));
-
         return  msg_post(config('set.df_api'), $param);
     }
 
