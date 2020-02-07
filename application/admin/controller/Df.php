@@ -714,7 +714,7 @@ class Df extends AdminController {
 
            switch ($res['data']['status']){
                case 4://失败
-                   $msg .= "失败";
+                   $msg .= "<span style='color: red' >失败</span>";
                    break;
                case 3://成功
                    $msg .= "<span style='color: green' >成功</span>";
