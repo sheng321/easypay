@@ -70,7 +70,6 @@ class Ip extends ModelService {
     }
 
     public static function bList($uid,$type = null){
-        \think\facade\Cache::rm('IP_'.$uid);
         \think\facade\Cache::remember('IP_'.$uid, function ()use($uid) {
             $data = self::where("uid",$uid)->column("id,ip,type",'id');
             $data1 = array();
