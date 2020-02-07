@@ -60,11 +60,11 @@ class Df {
 
         if($res['code'] == 0) return false;
 
-        $post['id'] = $Order['id'];
+        $update['id'] = $Order['id'];
 
         //处理完成
         if (isset($res['data']['status']) &&  $res['data']['status'] == 3){
-            $post['status'] = 3;
+            $update['status'] = 3;
 
             $Umoney = Umoney::quickGet(['uid' =>  $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0]); //会员金额
             $change['change'] = $Order['amount'];//变动金额
@@ -88,7 +88,7 @@ class Df {
 
         //失败退款
         if (isset($res['data']['status']) && $res['data']['status'] == 4){
-            $post['status'] = 4;
+            $update['status'] = 4;
 
             $Umoney = Umoney::quickGet(['uid' =>  $Order['mch_id'], 'channel_id' =>0]); //会员金额
             $change['change'] = $Order['amount'];//变动金额
@@ -101,7 +101,6 @@ class Df {
             $Umoney_data = $res1['data'];
             $UmoneyLog_data = $res1['change'];
 
-
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
             if (true !== $res2['msg']) return false;
 
@@ -113,7 +112,7 @@ class Df {
         if (isset($res['data']['status']) && ($res['data']['status'] == 4||$res['data']['status'] == 3)){
             //使用事物保存数据
             $this->model->startTrans();
-            $save1 = $this->model->save($post, ['id' => $post['id']]);
+            $save1 = $this->model->save($update, ['id' => $update['id']]);
 
             $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
             $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
