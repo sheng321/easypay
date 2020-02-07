@@ -1,6 +1,5 @@
 <?php
 namespace app\common\job;
-use app\common\model\Order;
 use think\Db;
 use think\queue\Job;
 
@@ -13,13 +12,6 @@ class T1 {
     public function fire(Job $job,$data)
     {
 
-        // 有些消息在到达消费者时,可能已经不再需要执行了
-        $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
-        if($isJobStillNeedToBeDone === false ){
-            $job->delete();
-            return;
-        }
-
         $isJobDone = $this->doHelloJob($data);
         if($isJobDone !== true ) __log(json_encode($isJobDone,320),3);
 
@@ -28,14 +20,7 @@ class T1 {
 
     }
 
-    /**
-     * 有些消息在到达消费者时,可能已经不再需要执行了
-     * @param array|mixed    $data     发布任务时自定义的数据
-     * @return boolean                 任务执行的结果
-     */
-    private function checkDatabaseToSeeIfJobNeedToBeDone($data){
-        return true;
-    }
+
 
     /**
      * 根据消息中的数据进行实际的业务处理...
