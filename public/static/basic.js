@@ -63,7 +63,7 @@
                 callback = function () {
                 }
             }
-            var index = layer.msg(msg, {icon: 2, shade: this.shade, scrollbar: false, time: 3000, shadeClose: true}, callback);
+            var index = layer.msg(msg, {icon: 2, shade: this.shade, scrollbar: false, time: 6000, shadeClose: true}, callback);
             return this.dialogIndexs.push(index), index;
         };
         //状态消息提示
