@@ -100,8 +100,6 @@ class Api extends WithdrawalController
         $data['fee'] = $df['fee'];
         $data['extends'] = $param['extends'];
 
-        halt($data);
-
         //插入数据库
         //文件排它锁 阻塞模式
         $fp = fopen("lock/withdrawal.txt", "w+");
