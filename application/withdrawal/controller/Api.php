@@ -23,10 +23,6 @@ class Api extends WithdrawalController
     public function index(){
         $param =   $this->request->only(["accountname" ,"bankname","cardnumber","city","extends" ,"mchid","money","out_trade_no","province","subbranch","pay_md5sign"],'post');
 
-        $param['bank_id'] = (int) $param['bankname'];
-        $param['bankname'] = config('bank.'.$param['bank_id']);
-        if(empty($param['bankname'])) __jerror('银行代码错误或者不支持此银行！');
-
 
 
         //商户属性
@@ -40,6 +36,11 @@ class Api extends WithdrawalController
         if(!in_array(get_client_ip(),$ips)) return __error('异常IP');
 
         if(!check_sign($param,$Uprofile['df_secret']))  __jerror('签名错误');
+
+
+        $param['bank_id'] = (int) $param['bankname'];
+        $param['bankname'] = config('bank.'.$param['bank_id']);
+        if(empty($param['bankname'])) __jerror('银行代码错误或者不支持此银行！');
 
 
         //平台代付通道属性
