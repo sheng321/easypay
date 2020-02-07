@@ -193,10 +193,9 @@ class Umoney extends ModelService {
                 break;
         }
 
-
         //关联修改平台金额的情况
         if(in_array($change['type'],[3,4]) &&  $change['type1'] == 0){
-            $p = self::where(['id'=>1,'uid'=>0,'channel_id'=>0])->field('id,total_money,balance')->find()->toArray();//平台金额
+            $p = self::where(['id'=>1,'uid'=>0,'channel_id'=>0,'df_id'=>0])->field('id,total_money,balance')->find()->toArray();//平台金额
             $change1['change'] = $change['change'];
             $change1['before_balance'] = $p['balance'];//变动前金额
             $change1['relate'] = $temp;//关联
