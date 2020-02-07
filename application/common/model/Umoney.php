@@ -152,7 +152,7 @@ class Umoney extends ModelService {
         $change['change'] =  number_format($change['change'],2,'.','');
         $change['uid'] = $data['uid'];
         $change['channel_id'] = $data['channel_id'];
-        if(!empty($data['df_id'])) $change['df_id'] = $data['df_id'];
+        $change['df_id'] = !empty($data['df_id'])?$data['df_id']:0;
         $change['before_balance'] = $data['balance'];//变动前金额
 
         switch (true){
