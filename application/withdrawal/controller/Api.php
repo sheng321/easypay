@@ -1,17 +1,9 @@
 <?php
 namespace app\withdrawal\controller;
 use app\common\controller\WithdrawalController;
-use app\common\model\Bank;
-use app\common\model\Channel;
-use app\common\model\ChannelProduct;
 use app\common\model\Df;
 use app\common\model\Ip;
-use app\common\model\Order;
-use app\common\model\PayProduct;
-use app\common\model\Ulevel;
 use app\common\model\Uprofile;
-use app\common\service\RateService;
-use app\pay\service\Payment;
 
 /**
  * 代付下单接口
