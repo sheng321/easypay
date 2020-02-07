@@ -1,6 +1,7 @@
 <?php
 namespace app\withdrawal\controller;
 use app\common\controller\WithdrawalController;
+use app\common\model\Bank;
 use app\common\model\Channel;
 use app\common\model\ChannelProduct;
 use app\common\model\Df;
@@ -21,6 +22,12 @@ class Api extends WithdrawalController
 {
     public function index(){
         $param =   $this->request->only(["accountname" ,"bankname","cardnumber","city","extends" ,"mchid","money","out_trade_no","province","subbranch","pay_md5sign"],'post');
+
+        $param['bank_id'] = $param['bankname'];
+        $param['bankname'] = config('bank.'.$param['bankname']);
+        if(empty($post['bankname'])) __jerror('银行代码错误或者不支持此银行！');
+
+
 
         //商户属性
        $Uprofile =  Uprofile::quickGet(['uid'=>$param['mchid']]);
@@ -87,6 +94,7 @@ class Api extends WithdrawalController
             'city'=>$param['city'],
             'province'=>$param['province'],
             'branch_name'=>$param['subbranch'],
+            'bank_id'=>$param['bank_id'],
         ]);
         $data['fee'] = $df['fee'];
         $data['extends'] = $param['extends'];
