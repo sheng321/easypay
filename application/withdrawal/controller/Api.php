@@ -30,6 +30,8 @@ class Api extends WithdrawalController
 
         //白名单验证
         $ips = Ip::bList($param['mchid'],2);
+
+        halt($ips);
         if(!in_array(get_client_ip(),$ips)) return __error('异常IP');
 
         if(!check_sign($param,$Uprofile['df_secret']))  __jerror('签名错误');

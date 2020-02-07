@@ -79,6 +79,7 @@ class Ip extends ModelService {
             }
             return $data1;
         },30);
+        \think\facade\Cache::tag('Ip',['IP_'.$uid]);
         $list = \think\facade\Cache::get('IP_'.$uid);
 
         if(empty($list)){
