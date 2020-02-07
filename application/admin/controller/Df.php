@@ -687,5 +687,43 @@ class Df extends AdminController {
 
 
 
+    /**
+     * 跟踪订单状态
+     * @return void
+     */
+    public function query_order(){
+
+        if ($this->request->isPost()){
+            $id = $this->request->get('id/d',0);
+            $order =  $this->model->quickGet($id);
+            if(empty($order) || empty($order['channel_id'])) return __error("订单不存在或者未选择出款通道");
+
+            $ChannelDf = \app\common\model\ChannelDf::quickGet($order['channel_id']);
+            if(empty($ChannelDf) || empty($ChannelDf['code'])) __jerror('代付通道异常');
+
+            $Payment = Payment::factory($ChannelDf['code']);
+            $res  = $Payment->query($order);
+
+            halt($res);
+
+            if($res['code'] == 0) return json($res);
+
+            $msg = '查询订单号：'.$order['system_no'].'支付成功';
+            $msg .= "\n";
+            $msg .= '返回报文：';
+            $msg .= "\n";
+            $msg .= $res['data'];
+            $msg .= "\n";
+            $res['data'] = $msg;
+
+            return json($res);
+        }
+
+
+        return __error('系统异常');
+    }
+
+
+
 
 }

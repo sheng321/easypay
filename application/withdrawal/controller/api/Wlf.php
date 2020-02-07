@@ -295,11 +295,12 @@ class Wlf extends WithdrawalController
           }
         }*/
 
+        halt($res);
+
         if(!$res || empty($res) || is_string($res)) return __suc($res['message'],['status'=>2]);//处理中
 
         $RET_CODE1 = $res['INFO']['RET_CODE'];//交易受理
         $RET_CODE2 = empty($res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'])?0:$res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'];//交易结果
-
 
         switch(true){
             //成功

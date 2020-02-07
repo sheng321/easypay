@@ -100,7 +100,7 @@
     </script>
 
     <script type="text/html" id="searchStatus">
-        <a class="layui-btn layui-btn-green layui-btn-sm"  onclick="query_order('{:url("$thisClass/query_order")}?id={{d.pid}}')"   >跟踪状态</a>
+        <a class="layui-btn layui-btn-green layui-btn-sm"  onclick="query_order('{:url("$thisClass/query_order")}?id={{d.id}}')"   >跟踪状态</a>
     </script>
 
 
@@ -131,10 +131,11 @@
 <script >
     function query_order(url) {
         var Index = $.msg.confirm('确定要查询订单吗？', function () {
+            $.msg.close(Index);
             $.request.post(url,{}, function (res) {
                 alert(res['data']);
             }, true);
-            $.msg.close(Index);
+
         });
     }
 
