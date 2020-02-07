@@ -18,9 +18,8 @@ class Df {
     public function fire(Job $job,$data)
     {
         $Order = \app\common\model\Df::quickGet($data);
-        dump($Order);
         // 有些消息在到达消费者时,可能已经不再需要执行了
-        if(empty($data) || $data['status'] != 2 || empty($Order['channel_id'])){
+        if(empty($Order) || $Order['status'] != 2 || empty($Order['channel_id'])){
             $job->delete();
             return;
         }
