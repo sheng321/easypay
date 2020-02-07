@@ -723,7 +723,7 @@ class Df extends AdminController {
                    $msg .= "处理中";
                    break;
            }
-            $res['data'] = $msg;
+            $res['msg'] = $msg;
             return json($res);
         }
 
