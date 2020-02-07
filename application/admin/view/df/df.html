@@ -85,7 +85,7 @@
     <script type="text/html" id="money">
 
         {if auth("$thisClass/money")}
-        <span  data-open='{:url("$thisClass/money")}?id={{d.id}}' data-title="代付通道：{{d.title}}--  查询总金额：{{d.total_balance}}--查询可用余额：{{d.balance}}">
+        <span  data-open='{:url("$thisClass/money")}?id={{d.id}}' data-title="代付通道：{{d.title}}--  查询总金额：{{d.total_balance}} 元--查询可用余额：{{d.balance}} 元">
             总金额：{{d.money.total_money}}，可用余额：{{d.money.balance}}
             查询总金额：{{d.total_balance}}，查询可用余额：{{d.balance}}
              {{ d.money.frozen_amount != '0.000' ? ',冻结:'+d.money.frozen_amount : '' }}
