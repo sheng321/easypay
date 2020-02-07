@@ -67,7 +67,6 @@ class Withdrawal extends Validate {
         if (app('request')->module() == 'admin') {
             if (!empty($Withdrawal['lock_id']) && session('admin_info.id') != $Withdrawal['lock_id']) return '该订单已经锁定，无权操作！';
         }
-        if (!empty($data['verson']) && $data['verson'] !=  $Withdrawal['verson'] + 1 ) return '重复操作，请刷新重试';
         if ($Withdrawal['status'] == 3 || $Withdrawal['status'] == 4 ) return '该订单已处理，不可更改！';
 
         return true;
@@ -79,7 +78,6 @@ class Withdrawal extends Validate {
         if (app('request')->module() == 'admin') {
             if (!empty($Withdrawal['lock_id']) && session('admin_info.id') != $Withdrawal['lock_id']) return '该订单已经锁定，无权操作！';
         }
-        if (!empty($data['verson']) && $data['verson'] !=  $Withdrawal['verson'] + 1 ) return '重复操作，请刷新重试';
         if ($Withdrawal['status'] == 3 || $Withdrawal['status'] == 4 ) return '该订单已处理，不可更改！';
 
         return true;
