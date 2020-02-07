@@ -1,7 +1,7 @@
 <?php
 namespace app\common\job;
-use app\common\model\Order;
 use app\common\model\Umoney;
+use app\withdrawal\service\Payment;
 use think\queue\Job;
 
 /**
