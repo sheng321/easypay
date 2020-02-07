@@ -192,6 +192,7 @@ class Withdrawal extends AdminController {
                 $UmoneyLog_data = $res1['change'];
 
                 if ($order['channel_id'] > 0) {
+                    $change['change'] = $order['channel_amount'];//通道变动金额
                     $res2 = Umoney::dispose($channel_money, $change); //通道处理
                     if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
 
@@ -217,6 +218,7 @@ class Withdrawal extends AdminController {
                 $UmoneyLog_data = $res1['change'];
 
                 if ($order['channel_id'] > 0) {
+                    $change['change'] = $order['channel_amount'];//通道变动金额
                     $res2 = Umoney::dispose($channel_money, $change); //通道处理
                     if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
 
