@@ -3,6 +3,7 @@ namespace app\withdrawal\controller;
 use app\common\controller\WithdrawalController;
 use app\common\model\Df;
 use app\common\model\Ip;
+use app\common\model\Umoney;
 use app\common\model\Uprofile;
 
 /**
@@ -33,6 +34,12 @@ class Api extends WithdrawalController
         $param['bank_id'] = (int) $param['bankname'];
         $param['bankname'] = config('bank.'.$param['bank_id']);
         if(empty($param['bankname'])) __jerror('银行代码错误或者不支持此银行！');
+
+
+        //商户金额
+        $Umoney =  Umoney::quickGet(['uid'=>$param['mchid'],'channel_id'=>0,'df_id'=>0]);
+        if(empty($Umoney) || $Umoney['df'] < $param['money']) __jerror('代付金额不足！');
+
 
 
         //平台代付通道属性
