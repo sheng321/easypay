@@ -48,17 +48,17 @@ class WlfPaySign
     {
 
 
-        $this->user_name = '000000000102986';             //正式的用户名
+ /*       $this->user_name = '000000000102986';             //正式的用户名
         $this->merchant_id = '000000000102986';          //正式的商户号
         $this->url = 'https://dsf.sicpay.com/d/merchant/';   //正式的接口地址
         $this->pfx_path = "Files/Wlf/000000000102986.pfx";  //正式的私钥文件路径
-        $this->pem_path = "Files/Wlf/GHT_Root.pem";  //正式的公钥文件路径
+        $this->pem_path = "Files/Wlf/GHT_Root.pem";  //正式的公钥文件路径*/
 
-        /*        $this->user_name = '000000000100641';             //测试的用户名
+                $this->user_name = '000000000100641';             //测试的用户名
                 $this->merchant_id = '000000000100641';          //测试的商户号
                 $this->pfx_path = "Files/Wlf/testKey/TESTUSER.pfx";               //测试的私钥文件路径
                 $this->pem_path = "Files/Wlf/testKey/TESTUSER.pem";              //测试的公钥文件路径
-                $this->url = 'https://120.31.132.118:8181/d/merchant/';   //测试的接口地址*/
+                $this->url = 'https://120.31.132.118:8181/d/merchant/';   //测试的接口地址
 
         $this->private_key_pw = '123456';            //私钥密码
         $this->public_key = file_get_contents($this->pem_path);
