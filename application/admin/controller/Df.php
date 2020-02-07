@@ -251,6 +251,10 @@ class Df extends AdminController {
                     }
 
                     $this->model->commit();
+
+                    //添加异步查询订单状态
+                     \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
+
                     return __success('操作成功！');
                 }else{
                     $this->model->rollback();
@@ -683,8 +687,6 @@ class Df extends AdminController {
         $get['status'] = 3;
         return  model('app\common\model\ChannelDf')->__edit($get,'删除代付通道成功');
     }
-
-
 
 
     /**
