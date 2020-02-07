@@ -37,7 +37,7 @@ class Df {
 
         $isJobDone = $this->doHelloJob($Order,$ChannelDf,$channel_money);
         if($isJobDone === true){
-            $job->delete();//执行一次
+            $job->delete();
             return;
         }else{
             if ($job->attempts() > 1) {
