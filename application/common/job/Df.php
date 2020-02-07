@@ -82,7 +82,7 @@ class Df {
             $Umoney_data = $res1['data'];
             $UmoneyLog_data = $res1['change'];
 
-
+            $change['change'] = $Order['channel_amount'];//通道变动金额
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
             if (true !== $res2['msg'])  return false;
 
