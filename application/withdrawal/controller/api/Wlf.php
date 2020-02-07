@@ -327,8 +327,8 @@ class Wlf extends WithdrawalController
 
     }
     //查询余额
-    public function balance($Order){
-        $info['order_id'] = $Order['system_no'];
+    public function balance(){
+        $info['order_id'] = date('YmdHis') . rand(10000, 99999);
         $gaohuitong_pay = new WlfPaySign();
         $res = $gaohuitong_pay->chk_account($info);
 
