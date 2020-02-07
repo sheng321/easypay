@@ -301,6 +301,7 @@ class Wlf extends WithdrawalController
         $RET_CODE2 = empty($res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'])?0:$res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'];//交易结果
 
         switch(true){
+
             //成功
             case ($RET_CODE1 === "0000" && $RET_CODE2 === "0000"):
                 return __suc($res['INFO']['ERR_MSG'],['status'=>3]);//已完成
