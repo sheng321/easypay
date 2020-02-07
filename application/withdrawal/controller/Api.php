@@ -23,7 +23,7 @@ class Api extends WithdrawalController
     public function index(){
         $param =   $this->request->only(["accountname" ,"bankname","cardnumber","city","extends" ,"mchid","money","out_trade_no","province","subbranch","pay_md5sign"],'post');
 
-        $param['bank_id'] = $param['bankname'];
+        $param['bank_id'] = (int) $param['bankname'];
         $param['bankname'] = config('bank.'.$param['bank_id']);
         if(empty($post['bankname'])) __jerror('银行代码错误或者不支持此银行！');
 
