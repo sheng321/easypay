@@ -704,16 +704,25 @@ class Df extends AdminController {
             $Payment = Payment::factory($ChannelDf['code']);
             $res  = $Payment->query($order);
 
-            halt($res);
-
             if($res['code'] == 0) return json($res);
 
-            $msg = '查询订单号：'.$order['system_no'].'支付成功';
+            $msg = '跟踪订单号：'.$order['system_no'];
             $msg .= "\n";
-            $msg .= '返回报文：';
-            $msg .= "\n";
-            $msg .= $res['data'];
-            $msg .= "\n";
+            $msg .= "状态：";
+
+            if(empty($res['data']['status'])) $res['data']['status'] = 2;
+
+           switch ($res['data']['status']){
+               case 4://失败
+                   $msg .= "失败";
+                   break;
+               case 3://成功
+                   $msg .= "成功";
+                   break;
+               default;
+                   $msg .= "处理中";
+                   break;
+           }
             $res['data'] = $msg;
 
             return json($res);

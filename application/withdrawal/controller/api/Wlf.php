@@ -237,10 +237,10 @@ class Wlf extends WithdrawalController
 
     //查询订单状态
     public function query($Order){
-        $info['order_id'] = $Order['system_no'];
+        $data['order_id'] = $Order['system_no'];
 
         $gaohuitong_pay = new WlfPaySign();
-        $res = $gaohuitong_pay->query($info);
+        $res = $gaohuitong_pay->query($data);
 
         /*
          *
@@ -295,11 +295,12 @@ class Wlf extends WithdrawalController
           }
         }*/
 
-        if(!$res || empty($res) || is_string($res)) return __suc($res['message'],['status'=>2]);//处理中
+        if(!$res || empty($res) || is_string($res)) return __err('代付通道异常');//处理中
 
         $RET_CODE1 = $res['INFO']['RET_CODE'];//交易受理
         $RET_CODE2 = empty($res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'])?0:$res['BODY']['RET_DETAILS']['RET_DETAIL']['RET_CODE'];//交易结果
-
+        //添加到代付订单查询日志
+        logs(json_encode($res,320).'|'.json_encode($data,320),$type = 'withdrawal/'.$this->config['code'].'/query');
         switch(true){
 
             //成功

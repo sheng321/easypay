@@ -143,22 +143,15 @@ class Yl extends WithdrawalController
             switch($res['data']){
                 //打款成功
                 case '2':
-                    return __suc($res['message'],[
-                        'status'=>3,//已完成
-                    ]);
+                    return __suc($res['message'],['status'=>3]);
                 //打款失败
                 case '3':
-                    return __suc($res['message'],[
-                        'status'=>4,//失败退款
-                    ]);
+                    return __suc($res['message'],['status'=>4]);
                 //处理中或订单错误
                 default:
-                    return __suc($res['message'],[
-                        'status'=>2,//处理中
-                    ]);
+                    return __suc($res['message'],['status'=>2]);
             }
         }
-        return __err('未知');
 
     }
     //查询余额
