@@ -99,6 +99,14 @@
         {{# } }}
     </script>
 
+    <script type="text/html" id="searchStatus">
+        <a class="layui-btn layui-btn-xs layui-btn-danger  "  data-width="100%"   data-open='{:url("$thisClass/channel")}?channel_id={{d.channel_id}}&id={{d.id}}&verson={{d.verson + 1}}' data-title="出款通道---商户号：{{d.mch_id}}---申请金额：{{d.amount}}">跟踪状态</a>
+    </script>
+
+
+
+
+
     <!--表单操作栏--开始-->
 
     <script type="text/html" id="channel">
@@ -132,6 +140,7 @@
         {field: 'bank_name', title: '银行名称', width: 100, align: "center"},
         {field: 'branch_name', title: '支行', width: 100,  align: "center"},
         {field: 'status', title: '状态',templet: '#checkStatus', align: 'center', width: 100},
+        {field: 'status', title: '跟踪状态',templet: '#searchStatus', align: 'center', width: 100},
 
         {field: 'channel_id', title: '出款通道', width: 80, align: "center", templet: '#channel'},
         {field: 'lock_name', title: '锁定人',  align: "center", width: 80, templet: function (d) {
