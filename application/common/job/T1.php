@@ -11,12 +11,13 @@ class T1 {
      */
     public function fire(Job $job,$data)
     {
+        if ($job->attempts() > 1) {
+            $job->delete();//执行一次
+            return;
+        }
 
         $isJobDone = $this->doHelloJob($data);
         if($isJobDone !== true ) __log(json_encode($isJobDone,320),3);
-
-        $job->delete();//执行一次
-        return;
 
     }
 
