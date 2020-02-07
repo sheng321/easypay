@@ -458,7 +458,7 @@ if (!function_exists('__log')) {
     /**
      * 写入系统日志
      * @param $data 数据
-     * @param $type 日志类型 1 后台 2 会员
+     * @param $type 日志类型 1 后台 2 会员 3 异常日志
      */
     function __log($data,$type = 1){
         if(is_array($data)) $data = json_encode($data, JSON_UNESCAPED_UNICODE);
