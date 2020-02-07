@@ -20,7 +20,7 @@ return [
     'query'=>'http://120.24.166.163:66/pay.php/query',//网关
 
 
-    'DfMd5key'=> '8cd55dfb5a322cf4bd5a0f7629275d195e6c7fee',//代付测试秘钥
+    'DfMd5key'=> '4e10c1434813ac1ad65f82b608dbfe1f73204948',//代付测试秘钥
     'df_api'=>'http://120.24.166.163:66/withdrawal.php/api',
     'df_qurey'=>'http://120.24.166.163:66/withdrawal.php/api',
     'df_balance'=>'http://120.24.166.163:66/withdrawal.php/api',
