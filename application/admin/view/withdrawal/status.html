@@ -43,7 +43,7 @@
 
     var  channel_id = "{$Think.get.channel_id|default='0'}";
     if(channel_id == '0'){
-       var index = $.msg.confirm('没有选择出款通道，确认该订单不选择通道出款吗？！', function () {
+       var index = $.msg.confirm('没有选择出款通道，确认该订单默认平台出款吗？！', function () {
            $.msg.close(index);
         },function () {
             $.tool.reload('open');
