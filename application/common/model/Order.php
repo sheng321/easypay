@@ -88,7 +88,7 @@ class Order extends ModelService {
         }
 
         if(empty($search['field'])){
-            $field = "id,mch_id,out_trade_no,system_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip";
+            $field = "id,mch_id,out_trade_no,system_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip,repair";
         }else{
             //下载
             $field =  $search['field'];
@@ -194,7 +194,7 @@ class Order extends ModelService {
         }
 
 
-        $field = "a.mch_id,a.out_trade_no,a.system_no,a.transaction_no,a.amount,a.actual_amount,a.total_fee,a.upstream_settle,a.Platform,a.channel_id,a.channel_group_id,a.payment_id,a.pay_status,a.notice,a.pay_time,a.create_time,a.cost_rate,a.run_rate,a.mch_id1,a.mch_id2,a.agent_rate2,a.agent_rate,a.agent_amount,a.agent_amount2,a.over_time,a.ip,w.*,w.remark as remark1,a.remark as remark2";
+        $field = "a.mch_id,a.out_trade_no,a.system_no,a.transaction_no,a.amount,a.actual_amount,a.total_fee,a.upstream_settle,a.Platform,a.channel_id,a.channel_group_id,a.payment_id,a.pay_status,a.notice,a.pay_time,a.create_time,a.cost_rate,a.run_rate,a.mch_id1,a.mch_id2,a.agent_rate2,a.agent_rate,a.agent_amount,a.agent_amount2,a.over_time,a.ip,w.*,w.remark as remark1,a.remark as remark2,a.repair as repair";
 
         $count = self::alias('a')
             ->where($where)

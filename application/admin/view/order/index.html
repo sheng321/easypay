@@ -206,6 +206,15 @@
         {field:'channel_name', title:'通道', minwith:1, align: 'center'},
         {field:'pay_status', title:'支付状态',toolbar: '#pay_status1', minwith:1, align: 'center'},
         {field:'notice', title:'通知状态', toolbar: '#notice1',minwith:1, align: 'center'},
+        {field:'repair', title:'是否补单',  align: 'center', width: 50, templet: function (d) {
+            if (d.repair == 0) {
+                return '<span >否</span>';
+            } else if(d.repair == 1) {
+                return '<span class="text-navy">补单</span>';
+            } else {
+                return '<span class="text-danger">退单</span>';
+            }
+        }},
         {field:'actual_amount', title:'实际支付', minwith:1, align: 'center'},
         {field:'transaction_no', title:'上游单号', minwith:1, align: 'center'},
         {field:'create_time', title:'提交时间', minwith:1, align: 'center'},
