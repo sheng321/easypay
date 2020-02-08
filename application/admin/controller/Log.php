@@ -76,6 +76,31 @@ class Log  extends AdminController
 
 
 
+    /**异常日志
+     * @return mixed
+     */
+    public function unusual()
+    {
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 10);
+            $search = (array)$this->request->get('search', []);
+            $search['type'] = 2;
+            return json($this->model->userList($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '异常日志',
+            'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+
+
     /**
      * 删除后半个月的日志
      */
