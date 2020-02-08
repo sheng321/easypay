@@ -231,6 +231,17 @@ class MoneyService {
         }
 
 
+        $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
+        if(empty($channel_money))  $channel_money = $Umoney->create(['uid'=>0,'channel_id'=>$Channel['id'],'type1'=>1,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+
+        $change['change'] = $Order['upstream_settle'];//变动金额
+        $change['relate'] = $Order['system_no'];//关联订单号
+        $change['type'] = 12;//手动退单
+        $res4 =  Umoney::dispose($channel_money,$change);
+
+        $update = array_merge($update,$res4['data']);
+        $log = array_merge($log,$res4['change']);
+
         $Order_update = [
             'id'=>$Order['id'],
             'pay_status'=>0,
