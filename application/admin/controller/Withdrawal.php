@@ -94,10 +94,7 @@ class Withdrawal extends AdminController {
             //保存数据,返回结果
             return model('app\common\model\Channel')->editField($post);
         }
-
-
     }
-
 
     /**
      * 结算设置

@@ -100,14 +100,21 @@
         {{#  if(d.channel_id == '0'){ }}
 
         {{#  if(d.status == '1'){ }}
-             <!--未处理的状态才可以选择出款通道-->
-            <a class="layui-btn layui-btn-xs layui-btn-danger  "  data-width="100%"   data-open='{:url("$thisClass/channel")}?channel_id={{d.channel_id}}&id={{d.id}}&verson={{d.verson + 1}}' data-title="出款通道---商户号：{{d.mch_id}}---申请金额：{{d.amount}}">没有通道</a>
+        <!--未处理的状态才可以选择出款通道-->
+        <a class="layui-btn layui-btn-xs layui-btn-danger  "  data-width="100%"   data-open='{:url("$thisClass/channel")}?channel_id={{d.channel_id}}&id={{d.id}}&verson={{d.verson + 1}}' data-title="出款通道---商户号：{{d.mch_id}}---申请金额：{{d.amount}}">没有通道</a>
         {{#  } else { }}
-            <span class="text-warning" > {{d.channel_title}}</span>
+        <span class="text-warning" > {{d.channel_title}}</span>
         {{#  } }}
 
         {{#  } else { }}
-            <span class="text-primary" > {{d.channel_title}}</span>
+
+        {{#  if(d.status == '1'){ }}
+        <!--未处理的状态才可以选择出款通道-->
+        <a class="layui-btn layui-btn-xs layui-btn-warm  "  data-width="100%"   data-open='{:url("$thisClass/channel")}?channel_id={{d.channel_id}}&id={{d.id}}&verson={{d.verson + 1}}' data-title="出款通道---商户号：{{d.mch_id}}---申请金额：{{d.amount}}">{{d.channel_title}}</a>
+        {{#  } else { }}
+        <span class="text-primary" > {{d.channel_title}}</span>
+        {{#  } }}
+
         {{#  } }}
     </script>
     <!--表单操作栏--结束-->
