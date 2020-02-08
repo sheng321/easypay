@@ -59,7 +59,11 @@ class Money extends UserController {
         if ($this->request->get('type') == 'ajax') {
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 15);
-            $search = (array)$this->request->get('search', []);
+            $search1 = (array)$this->request->get('search', []);
+
+            !empty($search['relate']) && $search['relate'] = $search1['relate'];
+            !empty($search['create_at']) && $search['create_at'] = $search1['create_at'];
+
             $search['type1'] = 0;
             $search['uid'] = $this->user['uid'];
             return json($this->model->aList($page, $limit, $search));
