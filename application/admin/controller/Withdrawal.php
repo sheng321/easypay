@@ -172,7 +172,7 @@ class Withdrawal extends AdminController {
                     $change['type'] = 5;//提现冻结金额类型
 
                     $res = Umoney::dispose($channel_money, $change); //处理
-                    if (true !== $res['msg'] && $res['msg'] != '提现冻结大于可用金额') return __error('通道:' . $res['msg']);
+                    if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') return __error('通道:' . $res['msg']);
 
                     $Umoney_data = $res['data'];
                     $UmoneyLog_data = $res['change'];
