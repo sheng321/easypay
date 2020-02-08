@@ -17,7 +17,7 @@ class T1 {
         }
 
         $isJobDone = $this->doHelloJob($data);
-        if($isJobDone !== true ) __log(json_encode($isJobDone,320),3);
+        if($isJobDone !== true ) __log(json_encode($isJobDone,320),3);//记录到异常日志列表
 
     }
 
