@@ -401,11 +401,6 @@ class Umoney extends ModelService {
                 $data['df'] =  Db::raw('df+'.$change['change']);
                 $data['frozen_amount'] = Db::raw('frozen_amount-'.$change['change']);
                 break;
-
-            default:
-                $total_money = false;
-                $res['msg'] = '资金异常!';
-                break;
             case 17: //支付通道T1解冻入款
                 $change['before_balance'] = $data['frozen_amount_t1'];//变动前金额
                 $res['log'] = $temp.'T1解冻入账'.$change['change'];
