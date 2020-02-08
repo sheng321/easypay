@@ -161,7 +161,6 @@ class Withdrawal extends AdminController {
             if(empty($channel_money)) __error('通道金额数据异常!');
 
 
-
             //处理中
             if ($post['status'] == 2) {
 
@@ -202,8 +201,6 @@ class Withdrawal extends AdminController {
                     $Umoney_data = array_merge($Umoney_data,$res2['data']);
                     $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
                 }
-
-
             }
 
 
