@@ -152,6 +152,8 @@ class Api extends PayController
             };
             unset($amount);
 
+            dump(1);
+
             //4.商户费率 小于或者等于通道成本的情况
             $Rate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$Channel['id']);//商户费率
             if(empty($Rate) || ($Rate <= $Channel['c_rate'])){
@@ -159,7 +161,7 @@ class Api extends PayController
                 continue;
             }
             unset($Rate);
-
+            dump(2);
 
             //5.话费通道 查询库存
            if($Channel['charge'] == 1){
@@ -174,7 +176,7 @@ class Api extends PayController
                unset($pay_amount);
                unset($charge_num);
            }
-
+            dump(3);
 
             //6.通道限额
             $check_money = $this->check_money($Channel);
@@ -183,7 +185,7 @@ class Api extends PayController
                continue;
            }
 
-
+            dump(4);
             //7.轮训-数据填充  （权重！！）
             if(!empty($v['weight']) &&  is_int($v['weight']) && $v['weight'] > 0 ){
                $temp2 = array_fill(0, $v['weight'], $Channel['id']);//填充数组   支付通道ID
