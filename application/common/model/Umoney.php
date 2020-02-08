@@ -208,7 +208,7 @@ class Umoney extends ModelService {
         switch ($change['type']){
             case 1: //成功-解冻扣除  (把解冻金额去掉)
                 $res['log'] = $temp.'成功-解冻扣除'.$change['change'];
-                $change1['before_balance'] = $data['frozen_amount'];//变动前金额
+                $change['before_balance'] = $data['frozen_amount'];//变动前金额
 
                 $data['frozen_amount'] = $data['frozen_amount'] - $change['change'];
                 $data['total_money'] = $data['total_money'] - $change['change'];
