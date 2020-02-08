@@ -57,8 +57,8 @@ class Money extends UserController {
         $this->model = model('app\common\model\UmoneyLog');
         //ajax访问
         if ($this->request->get('type') == 'ajax') {
-            $page = $this->request->get('page', 1);
-            $limit = $this->request->get('limit', 15);
+            $page =(int) $this->request->get('page', 1);
+            $limit =(int) $this->request->get('limit', 15);
             $search1 = (array)$this->request->get('search', []);
 
             !empty($search['relate']) && $search['relate'] = $search1['relate'];
