@@ -403,9 +403,9 @@
 
                 //进行图片删除操作
                 var dialogIndex = $.msg.confirm('确定要移除这张图片吗？', function () {
+                    $.msg.close(dialogIndex);
                     $inputParent.attr('value', all_upload_url_new);
                     $parent.remove();
-                    $.msg.close(dialogIndex);
                 });
             });
         }
@@ -548,7 +548,8 @@
             for (let i in data) {
                 id.push(data[i].id);
             }
-            $.msg.confirm($(this).attr('data-title'), function () {
+            var Index = $.msg.confirm($(this).attr('data-title'), function () {
+                $.msg.close(Index);
                 $.request.get(url, {id: id}, function (res) {
                     $.msg.success(res.msg, function () {
                         $.tool.reload();
@@ -567,7 +568,8 @@
      */
     $body.on('click', '[data-del]', function () {
         var url = $(this).attr('data-del');
-        $.msg.confirm($(this).attr('data-title'), function () {
+        var Index = $.msg.confirm($(this).attr('data-title'), function () {
+            $.msg.close(Index);
             $.request.get(url, {}, function (res) {
                 $.msg.success(res.msg, function () {
                     $.tool.reload();
@@ -584,7 +586,8 @@
 
         var url = $(this).attr('data-prompt');
         var text = $(this).attr('data-text');
-        $.msg.confirm($(this).attr('data-title'), function () {
+        var Index = $.msg.confirm($(this).attr('data-title'), function () {
+            $.msg.close(Index);
             layer.prompt({title: text, formType: 2}, function(text, index){
                 layer.close(index);
                 url += '&text='+text;
@@ -604,7 +607,8 @@
     $body.on('click', '[data-check]', function () {
         var url = $(this).attr('data-check');
 
-        $.msg.confirm($(this).attr('data-title'), function () {
+        var Index =  $.msg.confirm($(this).attr('data-title'), function () {
+            $.msg.close(Index);
             $.request.get(url, {}, function (res) {
                 $.msg.success(res.msg, function () {
                     $.tool.reload();

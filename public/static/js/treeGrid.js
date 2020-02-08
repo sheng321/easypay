@@ -154,7 +154,8 @@ layui.extend({
                 id.push(data[i].id);
             }
 
-            $.msg.confirm($(this).attr('data-title'), function () {
+            var Index =  $.msg.confirm($(this).attr('data-title'), function () {
+                $.msg.close(Index);
                 $.request.get(url, {id: id}, function (res) {
                     $.msg.success(res.msg, function () {
                         $.tool.reload();
