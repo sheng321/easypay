@@ -165,6 +165,8 @@ class Withdrawal extends AdminController {
             if ($post['status'] == 2) {
 
                 //冻结通道金额
+                  if($order['channel_id'] == 0 ) $order['channel_amount'] = $order['amount'];
+
                     $change['change'] = $order['channel_amount'];//变动金额
                     $change['relate'] = $order['system_no'];//关联订单号
                     $change['type'] = 5;//提现冻结金额类型
