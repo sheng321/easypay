@@ -67,7 +67,6 @@ class UmoneyLog extends ModelService {
                 $item['nickname'] = getNamebyId($item['create_by']);
                 $item['auth_title'] =  getTitlebyId($item['create_by']);
             }
-
             $item['title'] = $money[$item['type']];
         });
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
