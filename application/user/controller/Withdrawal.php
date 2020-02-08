@@ -103,7 +103,7 @@ class Withdrawal extends UserController {
             $data['bank_card_id'] = $bank_card_id;
             $data['bank'] = json_encode($bank[$bank_card_id]);
             $data['fee'] = $withdrawal['fee'];
-
+            $data['lock_id'] = 0;
 
             $change['change'] = $data['amount'];//变动金额
             $change['relate'] = $data['system_no'];//关联订单号
