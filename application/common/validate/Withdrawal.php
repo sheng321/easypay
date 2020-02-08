@@ -81,6 +81,7 @@ class Withdrawal extends Validate {
             if (!empty($Withdrawal['lock_id']) && session('admin_info.id') != $Withdrawal['lock_id']){
                 if(empty($data['status']) || $data['status'] != 9 )   return '该订单已经锁定，无权操作！';
             }
+
         }
         if ($Withdrawal['status'] == 3 || $Withdrawal['status'] == 4 ) return '该订单已处理，不可更改！';
 
