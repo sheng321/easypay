@@ -71,9 +71,9 @@ class Withdrawal extends ModelService {
 
         $status =   config('custom.status');
 
+        if(app('request')->module() === 'admin'){
         $card_number = [];
         $account_name = [];
-        if(app('request')->module() === 'admin'){
             $bad =  Bank::bList(0);//异常卡
             foreach ($bad as $k => $v){
                 $card_number[] = $v['card_number'];
@@ -86,8 +86,6 @@ class Withdrawal extends ModelService {
 
             $data[$k]['status_title'] = $status[$v['status']];
 
-            $data[$k]['lock_name'] = getNamebyId($v['lock_id']);
-            $data[$k]['channel_title'] = $channel[$v['channel_id']]['title'];
 
             $bank =  json_decode($v['bank'],true);
             $data[$k]['card_number'] = $bank['card_number'];
@@ -97,9 +95,14 @@ class Withdrawal extends ModelService {
             !empty($bank['province']) && $data[$k]['location'] =  $bank['province'].$bank['city'];
 
 
-            //异常卡
-            if(in_array($data[$k]['card_number'],$card_number))  $data[$k]['card_number'] = "<span  class='text-danger'  >".$data[$k]['card_number']."-异常</span>";
-            if(in_array($data[$k]['account_name'],$account_name))  $data[$k]['account_name'] = "<span  class='text-danger'  >".$data[$k]['account_name']."-异常</span>";
+             //只在后台显示
+            if(app('request')->module() === 'admin'){
+                $data[$k]['lock_name'] = getNamebyId($v['lock_id']);
+                $data[$k]['channel_title'] = $channel[$v['channel_id']]['title'];
+                //异常卡
+                if(in_array($data[$k]['card_number'],$card_number))  $data[$k]['card_number'] = "<span  class='text-danger'  >".$data[$k]['card_number']."-异常</span>";
+                if(in_array($data[$k]['account_name'],$account_name))  $data[$k]['account_name'] = "<span  class='text-danger'  >".$data[$k]['account_name']."-异常</span>";
+            }
 
         }
 
