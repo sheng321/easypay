@@ -175,6 +175,8 @@ class MoneyService {
     public static function back($system_no){
         $Order = Order::quickGet(['system_no'=>$system_no]);
 
+        halt(11111);
+
         if(empty($Order) || $Order['pay_status'] !== 2) __jerror('该订单不存在，或者未支付');
 
         //通道
