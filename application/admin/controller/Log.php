@@ -92,7 +92,7 @@ class Log  extends AdminController
 
         //基础数据
         $basic_data = [
-            'title' => '异常日志',
+            'title' => '异常日志列表',
             'data'  => '',
         ];
 
