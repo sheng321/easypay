@@ -263,6 +263,8 @@ class Df extends AdminController {
 
             //处理完成
             if ($post['status'] == 3){
+                if ($order['status'] != 2) return __error('请先选择处理中状态！');
+
                 $Umoney = Umoney::quickGet(['uid' =>  $order['mch_id'], 'channel_id' =>0, 'df_id' =>0]); //会员金额
                 $change['change'] = $order['amount'];//会员变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
