@@ -1,5 +1,6 @@
 <?php
 namespace app\common\job;
+use app\common\model\Umoney;
 use think\Db;
 use think\queue\Job;
 
