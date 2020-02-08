@@ -344,7 +344,7 @@ class Umoney extends ModelService {
                 $data['df'] = Db::raw('df-'.$change['change']);
                 break;
 
-            case 15: //代付冻结
+            case 15: //会员代付冻结
                 $change['before_balance'] = $data['df'];//变动前金额
                 $res['log'] = $temp.'代付冻结'.$change['change'];
 
@@ -358,7 +358,7 @@ class Umoney extends ModelService {
                 $data['frozen_amount'] = Db::raw('frozen_amount+'.$change['change']);
 
                 break;
-            case 16: //代付解冻退款
+            case 16: //会员代付解冻退款
                 $change['before_balance'] = $data['df'];//变动前金额
                 $res['log'] = $temp.'代付解冻退款'.$change['change'];
 

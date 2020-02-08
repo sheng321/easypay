@@ -212,7 +212,7 @@ class Withdrawal extends AdminController {
                 $Umoney = Umoney::quickGet(['uid' =>  $order['mch_id'], 'channel_id' =>0]); //会员金额
                 $change['change'] = $order['amount'];//变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
-                $change['type'] = 6;//失败解冻退款
+                $change['type'] = 6;//会员失败解冻退款
 
                 $res1 = Umoney::dispose($Umoney, $change); //会员处理
                 if (true !== $res1['msg'] ) return __error('会员:' . $res1['msg']);
@@ -446,8 +446,6 @@ class Withdrawal extends AdminController {
         if($Channel['inner'] == 1) $channel_amount = $order['amount'] - $order['fee'];
 
         if( $channel_amount < $Channel['min_pay']  || $channel_amount > $Channel['max_pay'])  return __error('申请通道金额不在通道出款范围内！');
-
-
 
        $res =  $this->model->save([
              'id'=>$pid,
