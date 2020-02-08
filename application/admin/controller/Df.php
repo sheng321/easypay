@@ -204,7 +204,7 @@ class Df extends AdminController {
                 //先更新系统数据，再提交数据到上游
 
                 //冻结通道金额
-                $change['change'] = $order['amount'] - $order['fee'] + $order['channel_fee'] ;//变动金额
+                $change['change'] = $order['channel_amount'] ;//变动金额
                 if(empty($change['change'])) __error('数据异常2!');
 
                 $change['relate'] = $order['system_no'];//关联订单号
@@ -342,11 +342,12 @@ class Df extends AdminController {
         if(empty($order)) return __error('订单不存在!');
         if($order['status'] != 1) return __error('只有订单未处理状态，才可以选择出款通道!');
 
-        $channel_amount = 0;//通道金额
         //内扣
         if($Channel['inner'] == 0) $channel_amount = $order['amount'] - $order['fee'] + $Channel['fee'];
         //外扣
         if($Channel['inner'] == 1) $channel_amount = $order['amount'] - $order['fee'];
+
+        if( $channel_amount < $Channel['min_pay']  || $channel_amount > $Channel['max_pay'])  return __error('申请通道金额不在通道出款范围内！');
 
         $res =  $this->model->save([
             'id'=>$pid,

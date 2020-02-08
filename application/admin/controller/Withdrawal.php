@@ -440,10 +440,20 @@ class Withdrawal extends AdminController {
         if(empty($order)) return __error('订单不存在!');
         if($order['status'] != 1) return __error('只有订单未处理状态，才可以选择出款通道!');
 
+        //内扣
+        if($Channel['inner'] == 0) $channel_amount = $order['amount'] - $order['fee'] + $Channel['fee'];
+        //外扣
+        if($Channel['inner'] == 1) $channel_amount = $order['amount'] - $order['fee'];
+
+        if( $channel_amount < $Channel['min_pay']  || $channel_amount > $Channel['max_pay'])  return __error('申请通道金额不在通道出款范围内！');
+
+
+
        $res =  $this->model->save([
              'id'=>$pid,
             'channel_id'=>$Channel['id'],
             'channel_fee'=>$Channel['fee'],
+           'channel_amount'=> $channel_amount,
            'lock_id'=>$this->user['id'],
             'record'=>empty($order['record'])?$this->user['username']."选择下发通道:".$Channel['title']:$order['record']."|".$this->user['username']."选择下发通道:".$Channel['title'],
            'verson'=>$verson, //防止多人操作
