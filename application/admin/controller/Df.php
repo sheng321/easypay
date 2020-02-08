@@ -208,7 +208,7 @@ class Df extends AdminController {
                 if(empty($change['change'])) __error('数据异常2!');
 
                 $change['relate'] = $order['system_no'];//关联订单号
-                $change['type'] = 5;//代付冻结金额类型
+                $change['type'] = 15;//代付冻结金额类型
 
                 $res = Umoney::dispose($channel_money, $change); //处理 通道金额
                 if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') return __error('代付通道:' . $res['msg']);
@@ -268,7 +268,7 @@ class Df extends AdminController {
                 $Umoney = Umoney::quickGet(['uid' =>  $order['mch_id'], 'channel_id' =>0, 'df_id' =>0]); //会员金额
                 $change['change'] = $order['amount'];//变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
-                $change['type'] = 1;//成功解冻入账
+                $change['type'] = 1;//成功解冻扣除
 
                 $res1 = Umoney::dispose($Umoney, $change); //会员处理
                 if(true !== $res1['msg'] ) return __error('会员:' . $res1['msg']);
@@ -290,7 +290,7 @@ class Df extends AdminController {
                 $Umoney = Umoney::quickGet(['uid' =>  $order['mch_id'], 'channel_id' =>0]); //会员金额
                 $change['change'] = $order['amount'];//变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
-                $change['type'] = 6;//失败解冻退款
+                $change['type'] = 16;//失败解冻退款
 
                 $res1 = Umoney::dispose($Umoney, $change); //会员处理
                 if (true !== $res1['msg'] ) return __error('会员:' . $res1['msg']);
