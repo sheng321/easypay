@@ -89,6 +89,8 @@ class Df {
             $Umoney_data = array_merge($Umoney_data,$res2['data']);
             $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
 
+            $update['actual_amount'] = $Order['amount'] - $Order['fee'];//实际到账
+
         }
 
         //失败退款
@@ -98,7 +100,7 @@ class Df {
             $Umoney = Umoney::quickGet(['uid' =>  $Order['mch_id'], 'channel_id' =>0]); //会员金额
             $change['change'] = $Order['amount'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
-            $change['type'] = 6;//失败解冻退款
+            $change['type'] = 16;//会员代付失败解冻退款
 
             $res1 = Umoney::dispose($Umoney, $change); //会员处理
             if (true !== $res1['msg'] ) return false;
@@ -107,6 +109,7 @@ class Df {
             $UmoneyLog_data = $res1['change'];
 
             $change['change'] = $Order['channel_amount'];//通道变动金额
+            $change['type'] = 6;//通道失败解冻退款
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
             if (true !== $res2['msg']) return false;
 
