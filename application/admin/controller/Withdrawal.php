@@ -201,6 +201,8 @@ class Withdrawal extends AdminController {
                     $Umoney_data = array_merge($Umoney_data,$res2['data']);
                     $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
                 }
+
+                $post['actual_amount'] = $order['amount'] - $order['fee'];//实际到账
             }
 
 
