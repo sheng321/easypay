@@ -48,10 +48,20 @@ class T1 {
             return $res;
         }
 
+        $change['change'] = $data['money'];//变动金额
+        $change['relate'] = $data['system_no'];//关联订单号
+        $change['type'] = 17;//T1解冻
+        $res4 =  Umoney::dispose($channel_money,$change);
+
+        $update[] = $res4['data'];
+        $log[] = $res4['change'];
+
+
+
         $update[] = [
             'id'=>$channel_money['id'],
             'total_money'=>Db::raw('balance+'.$data['money']),
-            'balance'=>Db::raw('frozen_amount_t1-'.$data['money']),
+            'frozen_amount_t1'=>Db::raw('frozen_amount_t1-'.$data['money']),
         ];
         $log[] = [
             'uid'=>0,

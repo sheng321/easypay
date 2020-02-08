@@ -290,19 +290,20 @@ class Umoney extends ModelService {
                 $data['balance'] =  Db::raw('balance+'.$change['change']);
                 $data['frozen_amount'] = Db::raw('frozen_amount-'.$change['change']);
                 break;
-            case 10:
-                $res['log'] = $temp.'人工解冻金额'.$change['change'];
 
-                $data['artificial'] = $data['artificial'] - $change['change'];
-                if($data['artificial'] < 0)   $res['msg'] = '变动金额大于人工冻结金额';
+            case 7: //支付入账
+                $res['log'] = $temp.'支付入账'.$change['change'];
+
+                $data['total_money'] = $data['total_money'] + $change['change'];
                 $data['balance'] = $data['balance'] + $change['change'];
+
                 $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance+'.$change['change']);
-                $data['artificial'] = Db::raw('artificial-'.$change['change']);
-
+                $data['total_money'] = Db::raw('total_money+'.$change['change']);
                 break;
+
             case 9:
                 $res['log'] = $temp.'人工冻结金额'.$change['change'];
 
@@ -317,6 +318,34 @@ class Umoney extends ModelService {
 
                 break;
 
+            case 10:
+                $res['log'] = $temp.'人工解冻金额'.$change['change'];
+
+                $data['artificial'] = $data['artificial'] - $change['change'];
+                if($data['artificial'] < 0)   $res['msg'] = '变动金额大于人工冻结金额';
+                $data['balance'] = $data['balance'] + $change['change'];
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $change['balance'] = $data['balance'];//变动后的金额
+
+                $data['balance'] =  Db::raw('balance+'.$change['change']);
+                $data['artificial'] = Db::raw('artificial-'.$change['change']);
+
+                break;
+
+            case 11: //T1冻结入款
+                $res['log'] = $temp.'T1冻结入款'.$change['change'];
+
+                $change['before_balance'] = $data['frozen_amount_t1'];//变动前金额
+
+                $data['total_money'] = $data['total_money'] + $change['change'];
+                $data['frozen_amount_t1'] = $data['frozen_amount_t1'] + $change['change'];
+
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $change['balance'] = $data['frozen_amount_t1'];//变动后的金额
+
+                $data['frozen_amount_t1'] =  Db::raw('frozen_amount_t1+'.$change['change']);
+                $data['total_money'] = Db::raw('total_money+'.$change['change']);
+                break;
             case 13: //余额转代付金额
                 $res['log'] = $temp.'余额转代付金额'.$change['change'];
 
@@ -377,6 +406,27 @@ class Umoney extends ModelService {
                 $total_money = false;
                 $res['msg'] = '资金异常!';
                 break;
+            case 17: //支付通道T1解冻入款
+                $change['before_balance'] = $data['frozen_amount_t1'];//变动前金额
+                $res['log'] = $temp.'T1解冻入账'.$change['change'];
+
+                $data['frozen_amount_t1'] = $data['frozen_amount_t1'] - $change['change'];
+                $data['balance'] = $data['balance'] + $change['change'];
+                if($data['frozen_amount_t1'] < 0)   $res['msg'] = 'T1解冻入账金额大于冻结金额';
+
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $change['balance'] = $data['frozen_amount_t1'];//变动后的金额
+
+                $data['balance'] =  Db::raw('balance+'.$change['change']);
+                $data['frozen_amount_t1'] = Db::raw('frozen_amount_t1-'.$change['change']);
+
+                break;
+            default:
+                $total_money = false;
+                $res['msg'] = '资金异常!';
+                break;
+
+
         }
 
         if($total_money != 0)  $res['msg'] = '资金异常!';
