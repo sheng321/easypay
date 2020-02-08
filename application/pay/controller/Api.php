@@ -23,20 +23,20 @@ class Api extends PayController
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign"],'post');
 
         //商户属性
-       $Uprofile =  Uprofile::quickGet(['uid'=>$param['pay_memberid']]);
-       if(empty($Uprofile) || $Uprofile['who'] != 0 )  __jerror('商户号不存在');
+        $Uprofile =  Uprofile::quickGet(['uid'=>$param['pay_memberid']]);
+        if(empty($Uprofile) || $Uprofile['who'] != 0 )  __jerror('商户号不存在');
         if(empty($Uprofile['group_id']))  __jerror('未分配用户分组');
 
 
         if(!check_sign($param,$Uprofile['secret']))  __jerror('签名错误');
 
 
-       //支付产品属性
-       $PayProduct = PayProduct::quickGet(['code'=>$param['pay_bankcode']]);
-       if(empty($PayProduct) || $PayProduct['status'] != 1) __jerror('通道不存在，或者已维护');
+        //支付产品属性
+        $PayProduct = PayProduct::quickGet(['code'=>$param['pay_bankcode']]);
+        if(empty($PayProduct) || $PayProduct['status'] != 1) __jerror('通道不存在，或者已维护');
 
 
-       //判断是否国内IP
+        //判断是否国内IP
         if($PayProduct['forbid'] == 0 && !is_china()) __jerror('禁止国外IP访问');
 
         //访问方式
@@ -50,7 +50,7 @@ class Api extends PayController
 
 
 
-       //验证支付产品金额
+        //验证支付产品金额
         $amount['amount'] = $param['pay_amount'];
         $amount['min_amount'] = $PayProduct['min_amount'];
         $amount['max_amount'] = $PayProduct['max_amount'];
@@ -69,7 +69,7 @@ class Api extends PayController
 
         //验证用户分组
         $Ulevel = Ulevel::quickGet($Uprofile['group_id']);
-            if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户的用户分组不正确');
+        if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户的用户分组不正确');
 
         //通道分组ID
         $channel_group_idArr = json_decode($Ulevel['channel_id'],true);
@@ -114,8 +114,14 @@ class Api extends PayController
             };
 
             //访问方式
-            if($Channel['visit'] == 2 && !isMobile()) __jerror('只能移动端访问！');
-            if($Channel['visit'] == 1 && isMobile()) __jerror('只能电脑端访问！');
+            if($Channel['visit'] == 2 && !isMobile()){//只能移动端访问
+                unset($ChannelProduct[$k]);
+                continue;
+            }
+            if($Channel['visit'] == 1 && isMobile()){//只能电脑端访问！
+                unset($ChannelProduct[$k]);
+                continue;
+            }
 
 
             //2.判断并发 （每分钟多少单）
@@ -152,8 +158,6 @@ class Api extends PayController
             };
             unset($amount);
 
-            dump(1);
-
             //4.商户费率 小于或者等于通道成本的情况
             $Rate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$Channel['id']);//商户费率
             if(empty($Rate) || ($Rate <= $Channel['c_rate'])){
@@ -161,36 +165,36 @@ class Api extends PayController
                 continue;
             }
             unset($Rate);
-            dump(2);
+
 
             //5.话费通道 查询库存
-           if($Channel['charge'] == 1){
-              $charge_num = $this->charge_num($Channel);
-              $pay_amount =  ceil($param['pay_amount']);
+            if($Channel['charge'] == 1){
+                $charge_num = $this->charge_num($Channel);
+                $pay_amount =  ceil($param['pay_amount']);
 
-              //当前金额库话费存量
-              if(empty($charge_num[$pay_amount]) || $charge_num[$pay_amount] < 1){
-                  unset($ChannelProduct[$k]);
-                  continue;
-              }
-               unset($pay_amount);
-               unset($charge_num);
-           }
-            dump(3);
+                //当前金额库话费存量
+                if(empty($charge_num[$pay_amount]) || $charge_num[$pay_amount] < 1){
+                    unset($ChannelProduct[$k]);
+                    continue;
+                }
+                unset($pay_amount);
+                unset($charge_num);
+            }
+
 
             //6.通道限额
             $check_money = $this->check_money($Channel);
-           if(!$check_money){
-               unset($ChannelProduct[$k]);
-               continue;
-           }
+            if(!$check_money){
+                unset($ChannelProduct[$k]);
+                continue;
+            }
 
-            dump(4);
+
             //7.轮训-数据填充  （权重！！）
             if(!empty($v['weight']) &&  is_int($v['weight']) && $v['weight'] > 0 ){
-               $temp2 = array_fill(0, $v['weight'], $Channel['id']);//填充数组   支付通道ID
+                $temp2 = array_fill(0, $v['weight'], $Channel['id']);//填充数组   支付通道ID
                 $temp3 = array_fill(0, $v['weight'], $v['group_id']);//填充数组  支付通道分组ID
-               $train['channel_id'] =  array_merge($temp2,$train['channel_id']);
+                $train['channel_id'] =  array_merge($temp2,$train['channel_id']);
                 $train['channel_group_id'] =  array_merge($temp3,$train['channel_group_id']);
                 unset($temp2);
                 unset($temp3);
@@ -223,10 +227,10 @@ class Api extends PayController
         if($Uprofile['pid'] > 0){
             $uid1 = $Uprofile['pid'];
             $AgentRate1 =  RateService::getAgentRate($Uprofile['pid'],$ChannelProduct[$channel_id]['group_id']);
-             //如果商户费率小于或者等于代理费率  不给代理分配费率
+            //如果商户费率小于或者等于代理费率  不给代理分配费率
             if(empty($AgentRate1) || ($MemRate <= $AgentRate1)) $AgentRate1 = 0;
 
-           $Uprofile1 = Uprofile::quickGet(['uid'=>$Uprofile['pid']]);//一级代理
+            $Uprofile1 = Uprofile::quickGet(['uid'=>$Uprofile['pid']]);//一级代理
             if(!empty($Uprofile1) || $Uprofile1['pid'] > 0){
                 $uid2 = $Uprofile1['pid'];
                 $AgentRate2 =  RateService::getAgentRate($Uprofile1['pid'],$ChannelProduct[$channel_id]['group_id']);
@@ -239,10 +243,10 @@ class Api extends PayController
 
         //检测订单好是否重复
         $date = timeToDate(0,0,0,-3); //默认只搜索3天
-       $id =  Order::where([
-           ['out_trade_no','=',$param['pay_orderid']],
-           ['create_at','>',$date],
-       ])->value('id');
+        $id =  Order::where([
+            ['out_trade_no','=',$param['pay_orderid']],
+            ['create_at','>',$date],
+        ])->value('id');
         if(!empty($id)) __jerror('订单号重复！');
 
         //已选中的通道产品
