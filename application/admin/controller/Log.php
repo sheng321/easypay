@@ -86,7 +86,7 @@ class Log  extends AdminController
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 10);
             $search = (array)$this->request->get('search', []);
-            $search['type'] = 2;
+            $search['type'] = 3;
             return json($this->model->userList($page, $limit, $search));
         }
 
