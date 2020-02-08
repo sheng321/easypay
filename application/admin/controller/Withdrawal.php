@@ -207,19 +207,19 @@ class Withdrawal extends AdminController {
 
             //失败退款
             if ($post['status'] == 4){
-                if ($order['status'] != 2) return __error('请先选择-处理中状态！');
 
-                $Umoney = Umoney::quickGet(['uid' =>  $order['mch_id'], 'channel_id' =>0]); //会员金额
-                $change['change'] = $order['amount'];//变动金额
-                $change['relate'] = $order['system_no'];//关联订单号
-                $change['type'] = 6;//会员失败解冻退款
+                    $Umoney = Umoney::quickGet(['uid' =>  $order['mch_id'], 'channel_id' =>0]); //会员金额
+                    $change['change'] = $order['amount'];//变动金额
+                    $change['relate'] = $order['system_no'];//关联订单号
+                    $change['type'] = 6;//会员失败解冻退款
 
-                $res1 = Umoney::dispose($Umoney, $change); //会员处理
-                if (true !== $res1['msg'] ) return __error('会员:' . $res1['msg']);
+                    $res1 = Umoney::dispose($Umoney, $change); //会员处理
+                    if (true !== $res1['msg'] ) return __error('会员:' . $res1['msg']);
 
-                $Umoney_data = $res1['data'];
-                $UmoneyLog_data = $res1['change'];
+                    $Umoney_data = $res1['data'];
+                    $UmoneyLog_data = $res1['change'];
 
+                 if($order['status'] == 2) { //处理中 的订单
 
                     $change['change'] = $order['channel_amount'];//通道变动金额
                     $res2 = Umoney::dispose($channel_money, $change); //通道处理
@@ -227,6 +227,11 @@ class Withdrawal extends AdminController {
 
                     $Umoney_data = array_merge($Umoney_data,$res2['data']);
                     $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
+
+                }
+
+
+
             }
 
 
