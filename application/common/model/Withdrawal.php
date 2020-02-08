@@ -97,8 +97,8 @@ class Withdrawal extends ModelService {
 
              //只在后台显示
             if(app('request')->module() === 'admin'){
-                $data[$k]['lock_name'] = getNamebyId($v['lock_id']);
-                $data[$k]['channel_title'] = $channel[$v['channel_id']]['title'];
+                !empty($v['lock_id']) &&  $data[$k]['lock_name'] = getNamebyId($v['lock_id']);
+                !empty($channel[$v['channel_id']]['title']) &&  $data[$k]['channel_title'] = $channel[$v['channel_id']]['title'];
                 //异常卡
                 if(in_array($data[$k]['card_number'],$card_number))  $data[$k]['card_number'] = "<span  class='text-danger'  >".$data[$k]['card_number']."-异常</span>";
                 if(in_array($data[$k]['account_name'],$account_name))  $data[$k]['account_name'] = "<span  class='text-danger'  >".$data[$k]['account_name']."-异常</span>";
