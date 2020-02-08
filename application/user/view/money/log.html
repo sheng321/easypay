@@ -9,28 +9,7 @@
 <form class="layui-form">
 
     <!--顶部操作栏--开始-->
-    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">操作人</label>
-            <div class="layui-input-inline">
-                <input type="text" id="nickname" class="layui-input" placeholder="请输入用操作人"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">权限组</label>
-            <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入用权限组名称"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">商户号</label>
-            <div class="layui-input-inline">
-                <input type="text" id="uid" class="layui-input" placeholder="请输入用商户号"/>
-            </div>
-        </div>
+    <blockquote id="searchBlock" class=" quoteBox">
 
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label-99admin">关联</label>
@@ -84,14 +63,11 @@
      * 生成表单
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
-        {field: 'id', title: 'ID', minWidth: 40, align: "center"},
         {field: 'uid', title: '商户号', minWidth: 40, align: "center"},
-        {field: 'nickename', title: '操作人', minWidth: 100, align: "center",templet: '#Name'},
         {field: 'title', title: '操作类型', minWidth: 20, align: "center"},
         {field: 'before_balance', title: '变动前金额', align: 'center', minWidth: 20},
         {field: 'change', title: '变动金额', align: 'center', minWidth: 20},
         {field: 'balance', title: '变动后金额', align: 'center', minWidth: 20},
-        {field: 'remark', title: '备注', align: 'center', minWidth: 20},
         {field: 'relate', title: '关联', align: 'center', minWidth: 20},
         {field: 'create_at', title: '创建时间', align: 'center', minWidth: 20},
     ]]);
