@@ -299,13 +299,16 @@ class Df extends AdminController {
                 $Umoney_data = $res1['data'];
                 $UmoneyLog_data = $res1['change'];
 
-                $change['change'] = $order['channel_amount'];//通道变动金额
-                $change['type'] = 6;//通道失败解冻退款
-                $res2 = Umoney::dispose($channel_money, $change); //通道处理
-                if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
 
-                $Umoney_data = array_merge($Umoney_data,$res2['data']);
-                $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
+                if($order['status'] == 2){
+                    $change['change'] = $order['channel_amount'];//通道变动金额
+                    $change['type'] = 6;//通道失败解冻退款
+                    $res2 = Umoney::dispose($channel_money, $change); //通道处理
+                    if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
+
+                    $Umoney_data = array_merge($Umoney_data,$res2['data']);
+                    $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
+                }
 
             }
 
