@@ -6,51 +6,66 @@
 {/block}
 
 {block name="cotent"}
-<form class="layui-form">
 
-    <!--顶部操作栏--开始-->
-    <blockquote id="searchBlock" class=" quoteBox">
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+        <div class="layui-tab-content">
+            <form class="layui-form">
 
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">关联</label>
-            <div class="layui-input-inline">
-                <input type="text" id="relate" class="layui-input" placeholder="请输入关联"/>
-            </div>
+                <!--顶部操作栏--开始-->
+                <blockquote id="searchBlock" class=" quoteBox">
+
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label-99admin">关联</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="relate" class="layui-input" placeholder="请输入关联"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label-99admin">创建时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间"    >
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-inline">
+                        <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
+                    </div>
+
+                </blockquote>
+                <!--顶部操作栏--结束-->
+
+                <!--主表单渲染--开始-->
+                <table id="currentTable" lay-filter="currentTable"></table>
+                <!--主表单渲染--结束-->
+
+                <!--表单IP--开始-->
+                <script type="text/html" id="IPcopy">
+                    {{d.location}}
+                    {{d.ip}}
+                </script>
+                <!--表单IP--结束-->
+
+                <!--表单Name--开始-->
+                <script type="text/html" id="Name">
+                    {{d.auth_title}}-{{d.nickname}}
+                </script>
+                <!--表单IP--结束-->
+
+
+            </form>
+
         </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">创建时间</label>
-            <div class="layui-input-inline">
-                <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间"    >
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
-        </div>
-
-    </blockquote>
-    <!--顶部操作栏--结束-->
-
-    <!--主表单渲染--开始-->
-    <table id="currentTable" lay-filter="currentTable"></table>
-    <!--主表单渲染--结束-->
-
-    <!--表单IP--开始-->
-    <script type="text/html" id="IPcopy">
-        {{d.location}}
-        {{d.ip}}
-    </script>
-    <!--表单IP--结束-->
-
-    <!--表单Name--开始-->
-    <script type="text/html" id="Name">
-        {{d.auth_title}}-{{d.nickname}}
-    </script>
-    <!--表单IP--结束-->
+    </div>
+</div>
 
 
-</form>
+
+
 {/block}
 
 {block name="script"}
