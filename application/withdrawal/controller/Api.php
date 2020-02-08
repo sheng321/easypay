@@ -98,6 +98,7 @@ class Api extends WithdrawalController
         ]);
         $data['fee'] = $df['fee'];
         $data['extends'] = $param['extends'];
+        $data['lock_id'] = 0;
 
         //冻结用户金额
 
