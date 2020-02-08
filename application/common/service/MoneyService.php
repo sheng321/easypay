@@ -234,6 +234,7 @@ class MoneyService {
         $Order_update = [
             'id'=>$Order['id'],
             'pay_status'=>0,
+            'repair'=>2,//退单
         ];
 
         //添加到处理订单列表
