@@ -129,8 +129,8 @@ class MoneyService {
             $log[] = [
                 'uid'=>0,
                 'channel_id'=>$channel_money['channel_id'],
-                'before_balance'=>$channel_money['total_money'],
-                'balance'=>$channel_money['total_money'] + $Order['upstream_settle'],
+                'before_balance'=>$channel_money['frozen_amount_t1'],
+                'balance'=>$channel_money['frozen_amount_t1'] + $Order['upstream_settle'],
                 'change'=>$Order['upstream_settle'],
                 'relate'=>$Order['system_no'],
                 'type'=>11,//T1入账
