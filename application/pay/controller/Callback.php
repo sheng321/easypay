@@ -20,9 +20,5 @@ class Callback extends PayController
     public function index(){
 
 
-
-
-
-
     }
 }

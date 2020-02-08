@@ -200,7 +200,8 @@ class MoneyService {
 
         //添加到异步T1处理 --支付通道
         //T1 结算
-        if($Channel['account'] == 1) \think\Queue::later(3600*24,'app\\common\\job\\T1', $t1, 't1');//24小时
+       // if($Channel['account'] == 1) \think\Queue::later(3600*24,'app\\common\\job\\T1', $t1, 't1');//24小时
+        if($Channel['account'] == 1) \think\Queue::push('app\\common\\job\\T1', $t1, 't1');
         return true;
     }
 
