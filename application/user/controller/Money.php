@@ -22,7 +22,7 @@ class Money extends UserController {
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\Umoney');
+
     }
     /**
      *  订单列表
@@ -54,6 +54,7 @@ class Money extends UserController {
      * @return void
      */
     public function log(){
+        $this->model = model('app\common\model\UmoneyLog');
         //ajax访问
         if ($this->request->get('type') == 'ajax') {
             $page = $this->request->get('page', 1);
