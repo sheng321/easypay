@@ -346,6 +346,20 @@ class Umoney extends ModelService {
                 $data['frozen_amount_t1'] =  Db::raw('frozen_amount_t1+'.$change['change']);
                 $data['total_money'] = Db::raw('total_money+'.$change['change']);
                 break;
+            case 12: //手动退单
+                $res['log'] = $temp.'手动退单'.$change['change'];
+
+                $change['before_balance'] = $data['balance'];//变动前金额
+
+                $data['total_money'] = $data['total_money'] - $change['change'];
+                $data['balance'] = $data['balance'] - $change['change'];
+
+                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $change['balance'] = $data['balance'];//变动后的金额
+
+                $data['balance'] =  Db::raw('balance-'.$change['change']);
+                $data['total_money'] = Db::raw('total_money-'.$change['change']);
+                break;
             case 13: //余额转代付金额
                 $res['log'] = $temp.'余额转代付金额'.$change['change'];
 
