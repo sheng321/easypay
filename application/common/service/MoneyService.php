@@ -58,8 +58,8 @@ class MoneyService {
         $change['type'] = 7;//支付入账
         $res1 =  Umoney::dispose($user,$change);
 
-        $update[] = $res1['data'];
-        $log[] = $res1['change'];
+        $update = array_merge($update,$res1['data']);
+        $log = array_merge($log,$res1['change']);
 
 
         //上级代理
@@ -73,8 +73,8 @@ class MoneyService {
             $change['type'] = 7;//支付入账
             $res2 =  Umoney::dispose($agent1,$change);
 
-            $update[] = $res2['data'];
-            $log[] = $res2['change'];
+            $update = array_merge($update,$res2['data']);
+            $log = array_merge($log,$res2['change']);
 
         }
         //上上上级代理
@@ -87,8 +87,8 @@ class MoneyService {
             $change['type'] = 7;//支付入账
             $res3 =  Umoney::dispose($agent2,$change);
 
-            $update[] = $res3['data'];
-            $log[] = $res3['change'];
+            $update = array_merge($update,$res3['data']);
+            $log = array_merge($log,$res3['change']);
 
         }
 
@@ -102,8 +102,8 @@ class MoneyService {
             $change['type'] = 11;//T1入账
             $res4 =  Umoney::dispose($channel_money,$change);
 
-            $update[] = $res4['data'];
-            $log[] = $res4['change'];
+            $update = array_merge($update,$res4['data']);
+            $log = array_merge($log,$res4['change']);
 
             $t1['money'] = $Order['upstream_settle'];//变动金额
             $t1['id'] = $channel_money['id'];//金额账户ID
@@ -116,8 +116,8 @@ class MoneyService {
             $change['type'] = 7;//支付入账
             $res4 =  Umoney::dispose($channel_money,$change);
 
-            $update[] = $res4['data'];
-            $log[] = $res4['change'];
+            $update = array_merge($update,$res4['data']);
+            $log = array_merge($log,$res4['change']);
         }
 
         $Order_update = [
