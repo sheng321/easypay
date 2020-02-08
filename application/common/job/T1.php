@@ -53,26 +53,9 @@ class T1 {
         $change['type'] = 17;//T1解冻
         $res4 =  Umoney::dispose($channel_money,$change);
 
-        $update[] = $res4['data'];
-        $log[] = $res4['change'];
+        $update = $res4['data'];
+        $log = $res4['change'];
 
-
-
-        $update[] = [
-            'id'=>$channel_money['id'],
-            'total_money'=>Db::raw('balance+'.$data['money']),
-            'frozen_amount_t1'=>Db::raw('frozen_amount_t1-'.$data['money']),
-        ];
-        $log[] = [
-            'uid'=>0,
-            'channel_id'=>$channel_money['channel_id'],
-            'before_balance'=>$channel_money['balance'],
-            'balance'=>$channel_money['balance'] + $data['money'],
-            'change'=>$data['money'],
-            'relate'=>$data['system_no'],
-            'type'=>17,//T1解冻
-            'type1'=>1,//通道
-        ];
         $Umoney->startTrans();
         $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
         $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录

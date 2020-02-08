@@ -133,7 +133,6 @@ class MoneyService {
             $OrderDispose =  model('app\common\model\OrderDispose');
             $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
         }
-        halt($update);
 
         $Umoney->startTrans();
         $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
