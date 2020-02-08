@@ -157,6 +157,7 @@ class Withdrawal extends AdminController {
             }else{
                 //没有选择通道，默认就用平台金额
                 $channel_money = Umoney::quickGet(['uid' => 0, 'channel_id' => 0, 'df_id' => 0,'id'=>1]);
+                 $order['channel_amount'] = $order['amount'];
             }
             if(empty($channel_money)) __error('通道金额数据异常!');
 
@@ -165,8 +166,6 @@ class Withdrawal extends AdminController {
             if ($post['status'] == 2) {
 
                 //冻结通道金额
-                  if($order['channel_id'] == 0 ) $order['channel_amount'] = $order['amount'];
-
                     $change['change'] = $order['channel_amount'];//变动金额
                     $change['relate'] = $order['system_no'];//关联订单号
                     $change['type'] = 5;//提现冻结金额类型
