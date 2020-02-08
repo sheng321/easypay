@@ -149,7 +149,7 @@ class Umoney extends ModelService {
      */
     public static function dispose($data,$change){
 
-        if(empty($data['df_id']))$data['df_id'] = 0;
+        if(empty($data['df_id'])) $data['df_id'] = 0;
 
         $res['msg'] = true;
         $change['change'] =  number_format($change['change'],2,'.','');
