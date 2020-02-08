@@ -53,7 +53,7 @@ class UmoneyLog extends ModelService {
 
         $money  =  config('money.');
 
-        $field = ['id','uid','create_at','create_by','balance','before_balance','change','type','remark','relate','type1,channel_id','df_id','type2'];
+        $field = ['id','uid','create_at','create_by','balance','before_balance','change','type','remark','relate','type1','channel_id','df_id','type2'];
 
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['create_at'=>'desc'])->select()->each(function ($item, $key)use ($money) {
