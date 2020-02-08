@@ -175,8 +175,6 @@ class MoneyService {
     public static function back($system_no){
         $Order = Order::quickGet(['system_no'=>$system_no]);
 
-        halt(11111);
-
         if(empty($Order) || $Order['pay_status'] !== 2) __jerror('该订单不存在，或者未支付');
 
         //通道
@@ -237,6 +235,8 @@ class MoneyService {
             'id'=>$Order['id'],
             'pay_status'=>0,
         ];
+
+        halt($update);
 
         //添加到处理订单列表
         $OrderDispose =  model('app\common\model\OrderDispose');
