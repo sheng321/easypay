@@ -1,9 +1,5 @@
 <?php
-
 namespace app\common\service;
-use app\common\model\Channel;
-use app\common\model\Order;
-use app\common\model\Umoney;
 use think\Db;
 use think\facade\Cache;
 
@@ -14,9 +10,9 @@ use think\facade\Cache;
  */
 class CountService {
 
-    /**
-     * 通道成功率 3-10分钟的成功率 3分钟统计一次
-     * @return bool
+
+    /**通道成功率 3-10分钟的成功率 3分钟统计一次  支付通道产品，通道分组，支付类型
+     * @return mixed
      */
     public static function success_rate(){
 
