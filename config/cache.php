@@ -20,7 +20,6 @@ return [
         'type'	=>	'redis',
         'host' => \think\facade\Env::get('redis.host'),//IP
         'port' => \think\facade\Env::get('redis.port'),         //端口
-        'database' => 5,
         'password' => \think\facade\Env::get('redis.password'),  //密码
         // 全局缓存有效期（0为永久有效）
         'expire'=>  36000,
