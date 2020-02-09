@@ -31,6 +31,9 @@ class CountService {
         $data['channel'] =  Db::query($sql, [$ten,$three]);
         foreach ($data['channel'] as $k => $v){
 
+            $data['channel'][$k]['rate'] +=  round($data['channel'][$k]['total_fee_paid']/$data['channel'][$k]['total_orders'],3)*100;
+
+
             //支付类型
             empty( $data['payment'][$v['payment_id']]['total_orders']) &&   $data['payment'][$v['payment_id']]['total_orders']= 0;
             empty($data['payment'][$v['payment_id']]['total_fee_all']) &&  $data['payment'][$v['payment_id']]['total_fee_all']= 0;
@@ -46,6 +49,8 @@ class CountService {
             $data['payment'][$v['payment_id']]['channel_id'] += $v['channel_id'];
             $data['payment'][$v['payment_id']]['payment_id'] += $v['payment_id'];
             $data['payment'][$v['payment_id']]['channel_group_id'] += $v['channel_group_id'];
+
+            $data['payment'][$v['payment_id']]['rate'] +=  round($data['payment'][$v['payment_id']]['total_fee_paid']/$data['payment'][$v['payment_id']]['total_orders'],3)*100;
 
 
             //通道分组
@@ -63,8 +68,11 @@ class CountService {
             $data['channel_group'][$v['channel_group_id']]['payment_id'] += $v['payment_id'];
             $data['channel_group'][$v['channel_group_id']]['channel_group_id'] += $v['channel_group_id'];
 
-        }
+            $data['channel_group'][$v['channel_group_id']]['rate'] +=  round($data['channel_group'][$v['channel_group_id']]['total_fee_paid']/$data['channel_group'][$v['channel_group_id']]['total_orders'],3)*100;
 
+
+        }
+        $data['time'] = timeToDate();
 
         halt($data);
 
