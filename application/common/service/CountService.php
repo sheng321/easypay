@@ -31,6 +31,8 @@ class CountService {
             $Channel =  Channel::idRate();//通道
             $PayProduct =  PayProduct::idArr();//支付产品
 
+            $data['payment'] = [];
+            $data['channel_group'] = [];
             foreach ($data['channel'] as $k => $v){
                 $data['channel'][$k]['product_name'] = empty($PayProduct[$v['payment_id']])?'未知':$PayProduct[$v['payment_id']];
                 $data['channel'][$k]['channelgroup_name'] = empty($ChannelGroup[$v['channel_group_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
@@ -42,18 +44,17 @@ class CountService {
                 empty($data['payment'][$v['payment_id']]['total_fee_all']) &&  $data['payment'][$v['payment_id']]['total_fee_all']= 0;
                 empty($data['payment'][$v['payment_id']]['total_fee_paid']) &&  $data['payment'][$v['payment_id']]['total_fee_paid']= 0;
                 empty($data['payment'][$v['payment_id']]['total_paid']) &&  $data['payment'][$v['payment_id']]['total_paid']= 0;
-                empty($data['payment'][$v['payment_id']]['channel_id']) &&  $data['payment'][$v['payment_id']]['channel_id']= 0;
-                empty($data['payment'][$v['payment_id']]['payment_id']) &&  $data['payment'][$v['payment_id']]['payment_id']= 0;
-                empty($data['payment'][$v['payment_id']]['channel_group_id']) &&  $data['payment'][$v['payment_id']]['channel_group_id']= 0;
+      
 
 
                 $data['payment'][$v['payment_id']]['total_orders'] += $v['total_orders'];
                 $data['payment'][$v['payment_id']]['total_fee_all'] += $v['total_fee_all'];
                 $data['payment'][$v['payment_id']]['total_fee_paid'] += $v['total_fee_paid'];
                 $data['payment'][$v['payment_id']]['total_paid'] += $v['total_paid'];
-                $data['payment'][$v['payment_id']]['channel_id'] += $v['channel_id'];
-                $data['payment'][$v['payment_id']]['payment_id'] += $v['payment_id'];
-                $data['payment'][$v['payment_id']]['channel_group_id'] += $v['channel_group_id'];
+                
+                $data['payment'][$v['payment_id']]['channel_id'] = $v['channel_id'];
+                $data['payment'][$v['payment_id']]['payment_id'] = $v['payment_id'];
+                $data['payment'][$v['payment_id']]['channel_group_id'] = $v['channel_group_id'];
 
                 $data['payment'][$v['payment_id']]['title'] = $data['channel'][$k]['product_name'];
                 $data['payment'][$v['payment_id']]['rate'] =  round($data['payment'][$v['payment_id']]['total_paid']/$data['payment'][$v['payment_id']]['total_orders'],3)*100;
@@ -64,17 +65,18 @@ class CountService {
                 empty($data['channel_group'][$v['channel_group_id']]['total_fee_all']) &&  $data['channel_group'][$v['channel_group_id']]['total_fee_all']= 0;
                 empty($data['channel_group'][$v['channel_group_id']]['total_fee_paid']) &&  $data['channel_group'][$v['channel_group_id']]['total_fee_paid']= 0;
                 empty($data['channel_group'][$v['channel_group_id']]['total_paid']) &&  $data['channel_group'][$v['channel_group_id']]['total_paid']= 0;
-                empty($data['channel_group'][$v['channel_group_id']]['channel_id']) &&  $data['channel_group'][$v['channel_group_id']]['channel_id']= 0;
-                empty($data['channel_group'][$v['channel_group_id']]['payment_id']) &&  $data['channel_group'][$v['channel_group_id']]['payment_id']= 0;
-                empty($data['channel_group'][$v['channel_group_id']]['channel_group_id']) &&  $data['channel_group'][$v['channel_group_id']]['channel_group_id']= 0;
+
+
+
 
                 $data['channel_group'][$v['channel_group_id']]['total_orders'] += $v['total_orders'];
                 $data['channel_group'][$v['channel_group_id']]['total_fee_all'] += $v['total_fee_all'];
                 $data['channel_group'][$v['channel_group_id']]['total_fee_paid'] += $v['total_fee_paid'];
                 $data['channel_group'][$v['channel_group_id']]['total_paid'] += $v['total_paid'];
-                $data['channel_group'][$v['channel_group_id']]['channel_id'] += $v['channel_id'];
-                $data['channel_group'][$v['channel_group_id']]['payment_id'] += $v['payment_id'];
-                $data['channel_group'][$v['channel_group_id']]['channel_group_id'] += $v['channel_group_id'];
+                
+                $data['channel_group'][$v['channel_group_id']]['channel_id'] = $v['channel_id'];
+                $data['channel_group'][$v['channel_group_id']]['payment_id'] = $v['payment_id'];
+                $data['channel_group'][$v['channel_group_id']]['channel_group_id'] = $v['channel_group_id'];
 
                 $data['channel_group'][$v['channel_group_id']]['title'] =  $data['channel'][$k]['channelgroup_name'];
                 $data['channel_group'][$v['channel_group_id']]['rate'] =  round($data['channel_group'][$v['channel_group_id']]['total_paid']/$data['channel_group'][$v['channel_group_id']]['total_orders'],3)*100;
@@ -92,12 +94,35 @@ class CountService {
     //商户对账
     public static function mem_account(){
         $data = [];
-        $one = timeToDate(0,0,0,-1);//昨天
-        $two = timeToDate(59,59,59,-1);//昨天
 
+        //商户每天的 通道支付订单统计
+        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,mch_id,payment_id from cm_order  GROUP BY day,mch_id,payment_id ORDER BY id DESC ";//每个通道的成功率
+        $select =  Db::query($sql);
 
-        dump($one);
-        dump($two);
+        $PayProduct =  PayProduct::idArr();//支付产品
+        foreach ($select as $k => $v) {
+            $v['product_name'] = empty($PayProduct[$v['payment_id']]) ? '未知' : $PayProduct[$v['payment_id']];
+            $v['rate'] = round($v['total_paid'] / $v['total_orders'], 3) * 100;
+
+            //商户单日 通道分析
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['mch_id'] = $v['mch_id'];
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['payment_id'] = $v['payment_id'];
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['product_name'] = $v['product_name'];
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['day'] = $v['day'];
+
+            empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_orders']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_orders']= 0;
+            empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee_all']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee_all']= 0;
+            empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee_paid']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee_paid']= 0;
+            empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_paid']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_paid']= 0;
+            empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['rate']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['rate']= 0;
+
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_orders'] += $v['total_orders'];
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee_all'] += $v['total_fee_all'];
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee_paid'] += $v['total_fee_paid'];
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_paid'] += $v['total_paid'];
+           $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['rate'] += $v['rate'];
+        }
+
 
         halt($data);
     }
