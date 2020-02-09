@@ -54,7 +54,7 @@ class CountService {
             empty($data['channel_group'][$v['channel_group_id']]['total_fee_paid']) &&  $data['channel_group'][$v['channel_group_id']]['total_fee_paid']= 0;
             empty($data['channel_group'][$v['channel_group_id']]['channel_id']) &&  $data['channel_group'][$v['channel_group_id']]['channel_id']= 0;
             empty($data['channel_group'][$v['channel_group_id']]['payment_id']) &&  $data['channel_group'][$v['channel_group_id']]['payment_id']= 0;
-            empty($data['channel_group'][$v['channel_group_id']]['channel_group_id']) &&  $data['payment'][$v['channel_group_id']]['channel_group_id']= 0;
+            empty($data['channel_group'][$v['channel_group_id']]['channel_group_id']) &&  $data['channel_group'][$v['channel_group_id']]['channel_group_id']= 0;
 
             $data['channel_group'][$v['channel_group_id']]['total_orders'] += $v['total_orders'];
             $data['channel_group'][$v['channel_group_id']]['total_fee_all'] += $v['total_fee_all'];
@@ -66,7 +66,7 @@ class CountService {
         }
 
 
-        halt($select);
+        halt($data);
 
         return $data;
     }
