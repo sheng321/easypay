@@ -30,6 +30,16 @@ class CountService {
         $sql = "select count(1) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,channel_id,payment_id,channel_group_id from cm_order where  create_at BETWEEN ? AND ? GROUP BY channel_id";//每个通道的成功率
         $data['channel'] =  Db::query($sql, [$ten,$three]);
         foreach ($data['channel'] as $k => $v){
+
+            //支付类型
+            empty( $data['payment'][$v['payment_id']]['total_orders']) &&   $data['payment'][$v['payment_id']]['total_orders']= 0;
+            empty($data['payment'][$v['payment_id']]['total_fee_all']) &&  $data['payment'][$v['payment_id']]['total_fee_all']= 0;
+            empty($data['payment'][$v['payment_id']]['total_fee_paid']) &&  $data['payment'][$v['payment_id']]['total_fee_paid']= 0;
+            empty($data['payment'][$v['payment_id']]['channel_id']) &&  $data['payment'][$v['payment_id']]['channel_id']= 0;
+            empty($data['payment'][$v['payment_id']]['payment_id']) &&  $data['payment'][$v['payment_id']]['payment_id']= 0;
+            empty($data['payment'][$v['payment_id']]['channel_group_id']) &&  $data['payment'][$v['payment_id']]['channel_group_id']= 0;
+
+
             $data['payment'][$v['payment_id']]['total_orders'] += $v['total_orders'];
             $data['payment'][$v['payment_id']]['total_fee_all'] += $v['total_fee_all'];
             $data['payment'][$v['payment_id']]['total_fee_paid'] += $v['total_fee_paid'];
@@ -37,12 +47,21 @@ class CountService {
             $data['payment'][$v['payment_id']]['payment_id'] += $v['payment_id'];
             $data['payment'][$v['payment_id']]['channel_group_id'] += $v['channel_group_id'];
 
-            $data['payment'][$v['channel_group_id']]['total_orders'] += $v['total_orders'];
-            $data['payment'][$v['channel_group_id']]['total_fee_all'] += $v['total_fee_all'];
-            $data['payment'][$v['channel_group_id']]['total_fee_paid'] += $v['total_fee_paid'];
-            $data['payment'][$v['channel_group_id']]['channel_id'] += $v['channel_id'];
-            $data['payment'][$v['channel_group_id']]['payment_id'] += $v['payment_id'];
-            $data['payment'][$v['channel_group_id']]['channel_group_id'] += $v['channel_group_id'];
+
+            //通道分组
+            empty( $data['channel_group'][$v['channel_group_id']]['total_orders']) &&   $data['channel_group'][$v['channel_group_id']]['total_orders']= 0;
+            empty($data['channel_group'][$v['channel_group_id']]['total_fee_all']) &&  $data['channel_group'][$v['channel_group_id']]['total_fee_all']= 0;
+            empty($data['channel_group'][$v['channel_group_id']]['total_fee_paid']) &&  $data['channel_group'][$v['channel_group_id']]['total_fee_paid']= 0;
+            empty($data['channel_group'][$v['channel_group_id']]['channel_id']) &&  $data['channel_group'][$v['channel_group_id']]['channel_id']= 0;
+            empty($data['channel_group'][$v['channel_group_id']]['payment_id']) &&  $data['channel_group'][$v['channel_group_id']]['payment_id']= 0;
+            empty($data['channel_group'][$v['channel_group_id']]['channel_group_id']) &&  $data['payment'][$v['channel_group_id']]['channel_group_id']= 0;
+
+            $data['channel_group'][$v['channel_group_id']]['total_orders'] += $v['total_orders'];
+            $data['channel_group'][$v['channel_group_id']]['total_fee_all'] += $v['total_fee_all'];
+            $data['channel_group'][$v['channel_group_id']]['total_fee_paid'] += $v['total_fee_paid'];
+            $data['channel_group'][$v['channel_group_id']]['channel_id'] += $v['channel_id'];
+            $data['channel_group'][$v['channel_group_id']]['payment_id'] += $v['payment_id'];
+            $data['channel_group'][$v['channel_group_id']]['channel_group_id'] += $v['channel_group_id'];
 
         }
 
