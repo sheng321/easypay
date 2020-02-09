@@ -14,12 +14,27 @@
 // +----------------------------------------------------------------------
 
 return [
-    // 驱动方式
-    'type'   => 'File',
-    // 缓存保存目录
-    'path'   => '',
-    // 缓存前缀
-    'prefix' => '',
-    // 缓存有效期 0表示永久缓存
-    'expire' => 36000,
+    // 缓存配置为复合类型
+    'type'  =>  'complex',
+    'default'	=>	[
+        'type'	=>	'redis',
+        'host' => \think\facade\Env::get('redis.host'),//IP
+        'port' => \think\facade\Env::get('redis.port'),         //端口
+        'database' => 5,
+        'password' => \think\facade\Env::get('redis.password'),  //密码
+        // 全局缓存有效期（0为永久有效）
+        'expire'=>  36000,
+        // 缓存前缀
+        'prefix'=>  'think',
+    ],
+    'file'	=>	[
+        'type'	=>	'File',
+        // 全局缓存有效期（0为永久有效）
+        'expire'=>  36000,
+        // 缓存前缀
+        'prefix'=>  'think',
+        // 缓存目录
+        'path'  =>  '../runtime/cache/',
+    ],
+
 ];
