@@ -23,6 +23,9 @@ class CountService {
         //$ten =  timeToDate(0,10);//十分钟
         $ten = timeToDate(0,0,0,-14);
 
+        dump($three);
+        dump($ten);
+
         $sql = "select * from cm_order where  create_at  BETWEEN ? AND  ?";
         $select =  Db::query($sql, [$three, $ten]);
 
