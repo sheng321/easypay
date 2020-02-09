@@ -26,7 +26,7 @@ class CountService {
         dump($three);
         dump($ten);
 
-        $sql = "select * from cm_order where  create_at  BETWEEN ? AND  ?";
+        $sql = "select * from cm_order where  create_at BETWEEN ? AND ?";
         $select =  Db::query($sql, [$three, $ten]);
 
         halt($select);
