@@ -1,5 +1,8 @@
 <?php
 namespace app\common\service;
+use app\common\model\Channel;
+use app\common\model\ChannelGroup;
+use app\common\model\PayProduct;
 use think\Db;
 use think\facade\Cache;
 
@@ -9,7 +12,6 @@ use think\facade\Cache;
  * @package service
  */
 class CountService {
-
 
     /**通道成功率 3-10分钟的成功率 3分钟统计一次  支付通道产品，通道分组，支付类型
      * @return mixed
@@ -23,14 +25,14 @@ class CountService {
             $ten = timeToDate(0,0,0,-14);
 
             //总订单数 total_orders //总订单金额 total_fee_all //已支付金额 total_fee_paid //已支付订单数 total_paid //通道ID //支付类型 // 通道分组
-            $sql = "select count(1) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,channel_id,payment_id,channel_group_id from cm_order where  create_at BETWEEN ? AND ? GROUP BY channel_id";//每个通道的成功率
+            $sql = "select count(1) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,channel_id,payment_id,channel_group_id from cm_order where  create_at BETWEEN ? AND ? GROUP BY channel_id  ORDER BY id DESC ";//每个通道的成功率
             $data['channel'] =  Db::query($sql, [$ten,$three]);
+
 
 
             $ChannelGroup =  ChannelGroup::idArr();//通道分组
             $Channel =  Channel::idRate();//通道
             $PayProduct =  PayProduct::idArr();//支付产品
-
 
             foreach ($data['channel'] as $k => $v){
                 $data['channel'][$k]['product_name'] = empty($PayProduct[$v['payment_id']])?'未知':$PayProduct[$v['payment_id']];
@@ -89,6 +91,15 @@ class CountService {
         return \think\facade\Cache::get('success_rate');
 
     }
+
+    //商户对账
+    public static function balance_account(){
+
+
+
+
+    }
+
 
 
 
