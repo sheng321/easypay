@@ -41,7 +41,7 @@ class Ip extends ModelService {
         $count = $this->where($where)->count();
 
         $order = ['create_at'=>'desc'];
-        if(empty($search['uid']))  $order = ['uid'=>'desc','create_by'=>'desc','type'=>'desc','create_at'=>'desc'];
+        if(empty($search['uid']))  $order = ['uid'=>'desc','type'=>'desc','create_by'=>'desc','create_at'=>'desc'];
 
         $data = $this->where($where)->field($field)->page($page, $limit)->order($order)->select()->each(function ($item, $key) {
 
