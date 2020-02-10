@@ -71,9 +71,7 @@ class intBehavior extends Controller
                     $v = str_replace(" - ","",$v);
                     $v = str_replace(" ","",$v);
                 }
-                if($k == 'day'){
-                    $v = str_replace(" ","",$v);
-                }
+
                 //url
                 if($k == 'href' ){
                     $v = str_replace("#","",$v);

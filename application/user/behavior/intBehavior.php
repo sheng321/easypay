@@ -36,6 +36,9 @@ class intBehavior extends Controller
                 if($k == 'create_at' || $k == 'update_at'){
                     $v = str_replace(" - ","",$v);
                 }
+                if($k == 'day'){
+                    $v = str_replace(" ","",$v);
+                }
 
                 //极验
                 if($k == 'geetest_seccode'){

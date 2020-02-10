@@ -91,8 +91,7 @@ class Money extends UserController {
             $limit =(int) $this->request->get('limit', 15);
             $search1 = (array)$this->request->get('search', []);
 
-            !empty($search['create_at']) && $search['create_at'] = $search1['create_at'];
-
+            !empty($search['day']) && $search['day'] = $search1['day'];
             $search['uid'] = $this->user['uid'];
             return json($this->model->aList($page, $limit, $search));
         }
@@ -101,6 +100,25 @@ class Money extends UserController {
         $basic_data = [
             'title' => '商户对账列表',
             'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+
+
+    /**
+     *  通道分析
+     * @return void
+     */
+    public function analyse(){
+        $data = [];
+        $info = json_encode(model('app\common\model\Accounts')->where(['uid'=>$this->user['uid']])->order(['day desc'])->value('info'),true);
+        if(!empty($info)) $data = $info;
+        //基础数据
+        $basic_data = [
+            'title' => '通道分析',
+            'info'  => $data,
         ];
 
         return $this->fetch('', $basic_data);

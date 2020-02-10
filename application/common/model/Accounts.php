@@ -35,8 +35,8 @@ class Accounts extends ModelService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 3,
-        'key'=> "String:table:Accounts:df_id:{df_id}:channel_id:{channel_id}:uid:{uid}:id:{id}",
-        'keyArr'=> ['id','uid','channel_id','df_id'],
+        'key'=> "String:table:Accounts:day:{day}:df_id:{df_id}:channel_id:{channel_id}:uid:{uid}:id:{id}",
+        'keyArr'=> ['id','uid','channel_id','df_id','day'],
     ];
 
     /**
