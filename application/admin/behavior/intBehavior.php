@@ -69,6 +69,10 @@ class intBehavior extends Controller
 
                 if($k == 'create_at' || $k == 'update_at'){
                     $v = str_replace(" - ","",$v);
+                    $v = str_replace(" ","",$v);
+                }
+                if($k == 'day'){
+                    $v = str_replace(" ","",$v);
                 }
                 //url
                 if($k == 'href' ){

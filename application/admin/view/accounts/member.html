@@ -9,21 +9,7 @@
 <form class="layui-form">
 
     <!--顶部操作栏--开始-->
-    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">操作人</label>
-            <div class="layui-input-inline">
-                <input type="text" id="nickname" class="layui-input" placeholder="请输入用操作人"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">权限组</label>
-            <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入用权限组名称"/>
-            </div>
-        </div>
+    <blockquote id="searchBlock" class=" quoteBox">
 
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label-99admin">商户号</label>
@@ -33,17 +19,9 @@
         </div>
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">关联</label>
+            <label class="layui-form-label-99admin">日期</label>
             <div class="layui-input-inline">
-                <input type="text" id="relate" class="layui-input" placeholder="请输入关联"/>
-            </div>
-        </div>
-
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">创建时间</label>
-            <div class="layui-input-inline">
-                <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间"    >
+                <input type="text" id="day" class="layui-input " placeholder="请选择日期"    >
             </div>
         </div>
 
@@ -70,6 +48,9 @@
         {{d.auth_title}}-{{d.nickname}}
     </script>
     <!--表单IP--结束-->
+    <script type="text/html" id="info">
+        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="商户号：{{d.uid}}--日期：{{d.day}}--支付通道分析">支付通道分析</a>
+    </script>
 
 
 </form>
@@ -79,27 +60,26 @@
 
 <script       >
 
-
     /**
      * 生成表单
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'id', title: 'ID', minWidth: 40, align: "center"},
         {field: 'uid', title: '商户号', minWidth: 40, align: "center"},
-        {field: 'nickename', title: '操作人', minWidth: 100, align: "center",templet: '#Name'},
-        {field: 'title', title: '操作类型', minWidth: 20, align: "center"},
-        {field: 'before_balance', title: '变动前金额', align: 'center', minWidth: 20},
-        {field: 'change', title: '变动金额', align: 'center', minWidth: 20},
-        {field: 'balance', title: '变动后金额', align: 'center', minWidth: 20},
-        {field: 'remark', title: '备注', align: 'center', minWidth: 20},
-        {field: 'relate', title: '关联', align: 'center', minWidth: 20},
-        {field: 'create_at', title: '创建时间', align: 'center', minWidth: 20},
+        {field: 'day', title: '日期', minWidth: 20, align: "center"},
+        {field: 'total_orders', title: '总订单数', align: 'center', minWidth: 20},
+        {field: 'total_paid', title: '支付订单数', align: 'center', minWidth: 20},
+        {field: 'total_fee_all', title: '总金额（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee_paid', title: '总支付金额（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee', title: '手续费（元）', align: 'center', minWidth: 20},
+        {field: 'rate', title: '成功率（%）', align: 'center', width: 80,style: ' color: red; '},
+        {field: 'info', title: '详情', align: 'center', minWidth: 20, templet: '#info'},
     ]]);
 
     /**
      * 日期范围
      */
-    $.laydate.range('create_at',1);
+    $.laydate.datetime('day');
 
 </script>
 {/block}
