@@ -32,7 +32,7 @@
                         <table id="agentpayTable" class="layui-table">
                             <colgroup>
                                 <col width="120">
-                                <col width="120">
+                                <col width="160">
                                 <col width="200">
                                 <col width="350">
                                 <col width="120">
@@ -41,7 +41,7 @@
                             <thead>
                             <tr>
                                 <th>账户名</th>
-                                <th>银行名称</th>
+                                <th>银行代码（请在代付通道查看）</th>
                                 <th>卡号</th>
                                 <th>支行名称</th>
                                 <th>下发金额</th>
@@ -51,7 +51,7 @@
                             <tbody>
                             <tr>
                                 <td><input type="text" name="account_name[]" lay-verify="required" placeholder="请输入账户名" autocomplete="off" class="layui-input"></td>
-                                <td><input type="text" name="bank_name[]" lay-verify="required" placeholder="请输入银行名称" autocomplete="off" class="layui-input"></td>
+                                <td><input type="text" name="bank_name[]" lay-verify="required|number" placeholder="请输入银行代码" autocomplete="off" class="layui-input"></td>
                                 <td><input type="text" name="card_number[]" lay-verify="required" placeholder="请输入卡号" autocomplete="off" class="layui-input"></td>
                                 <td><input type="text" name="branch_name[]"  placeholder="请输入支行名称" autocomplete="off" class="layui-input"></td>
                                 <td><input type="text" name="amount[]" lay-verify="required|number" placeholder="请输入金额" autocomplete="off" class="layui-input"></td>
@@ -147,7 +147,7 @@
         delNum++;
         var agentpayRowHtml = '<tr>' +
             '<td><input type="text" name="account_name[]" value="'+account_name+'"   lay-verify="required" placeholder="请输入账户名" autocomplete="off" class="layui-input"></td>' +
-            '<td><input type="text" name="bank_name[]"   value="'+bank_name+'"   lay-verify="required" placeholder="请输入银行名称" autocomplete="off" class="layui-input"></td>' +
+            '<td><input type="text" name="bank_name[]"   value="'+bank_name+'"   lay-verify="required|number" placeholder="请输入银行代码" autocomplete="off" class="layui-input"></td>' +
             '<td><input type="text" name="card_number[]" value="'+card_number+'"   lay-verify="required" placeholder="请输入卡号" autocomplete="off" class="layui-input"></td>' +
             '<td><input type="text" name="branch_name[]"  value="'+branch_name+'"    placeholder="请输入支行名称" autocomplete="off" class="layui-input"></td>' +
             '<td><input type="text" name="amount[]"   value="'+amount+'"     lay-verify="required|number" placeholder="请输入金额" autocomplete="off" class="layui-input"></td>' +
