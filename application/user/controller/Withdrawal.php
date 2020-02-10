@@ -325,7 +325,7 @@ class Withdrawal extends UserController {
                $bank_id[$k] = $v;
                 $msg = true;
             }
-            if($msg !== true) return __error($msg.'：银行代码错误或者不支持此银行！');
+            if($msg !== true) return __error('银行代码'.$msg.'：错误或者不支持此银行！');
 
 
             $post = [];
