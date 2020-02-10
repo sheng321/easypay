@@ -79,6 +79,35 @@ class Money extends UserController {
     }
 
 
+    /**
+     *  商户对账
+     * @return void
+     */
+    public function reconciliation(){
+        $this->model = model('app\common\model\Accounts');
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page =(int) $this->request->get('page', 1);
+            $limit =(int) $this->request->get('limit', 15);
+            $search1 = (array)$this->request->get('search', []);
+
+            !empty($search['create_at']) && $search['create_at'] = $search1['create_at'];
+
+            $search['uid'] = $this->user['uid'];
+            return json($this->model->aList($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '商户对账列表',
+            'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+
+
 
 
 }
