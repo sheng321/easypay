@@ -6,39 +6,63 @@
 {/block}
 
 {block name="cotent"}
-<div class="layui-row layui-col-space10">
-    {foreach $info as $vo}
-    <div class="layui-col-xs6 layui-col-sm7 layui-col-md3">
-        <!-- 填充内容 -->
-        <div class="layui-card">
-            <div class="layui-card-header"> <h5>{$vo.product_name} </h5></div>
-            <div class="layui-card-body">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-content">
-                        <p>统计时间：{$vo.day}</p>
-                        <p>交易金额：{$vo.total_fee_all}元</p>
-                        <p>手续费  &nbsp;&nbsp;&nbsp;：0元</p>
-                        <p>入金总额：{$vo.total_fee_paid}元</p>
-                    </div>
-                    <div class="ibox-content">
-                        <p>
-                            <span style="font-size: 16px;color:#0087ffbf;">交易笔数：<strong>{$vo.total_orders}</strong></span>
-                            <span style="margin-left: 80px;color:#008000b0;font-size: 16px;">成功率：<strong>{$vo.rate}%</strong></span>
-                        </p>
-                        <p>
-                        <p>
-                            <span style="font-size: 16px;color:#008000b0;">成功笔数：<strong>{$vo.total_paid}</strong></span>
-                            <span style="margin-left: 80px;font-size: 16px;color: #ff0000b3;">失败笔数：<strong>{$vo.total_orders - $vo.total_paid}</strong></span>
-                        </p>
+
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+        <div class="layui-tab-content">
+            {if empty($info)}
+
+            <div class="layui-form-item">
+                <blockquote class="layui-elem-quote" id="amountTip">
+                    <span class="text-danger"  >无数据</span>
+                </blockquote>
+            </div>
+            {/if}
+
+            <div class="layui-row layui-col-space10">
+                {foreach $info as $vo}
+                <div class="layui-col-xs6 layui-col-sm7 layui-col-md3"  style="background-color: #00b7ee"  >
+                    <!-- 填充内容 -->
+                    <div class="layui-card">
+                        <div class="layui-card-header"> <h5>{$vo.product_name} </h5></div>
+                        <div class="layui-card-body">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-content">
+                                    <p>统计时间：{$vo.day}</p>
+                                    <p>交易金额：{$vo.total_fee_all}元</p>
+                                    <p>手续费  &nbsp;&nbsp;&nbsp;：0元</p>
+                                    <p>入金总额：{$vo.total_fee_paid}元</p>
+                                </div>
+                                <div class="ibox-content">
+                                    <p>
+                                        <span style="font-size: 16px;color:#0087ffbf;">交易笔数：<strong>{$vo.total_orders}</strong></span>
+                                        <span style="margin-left: 80px;color:#008000b0;font-size: 16px;">成功率：<strong>{$vo.rate}%</strong></span>
+                                    </p>
+                                    <p>
+                                    <p>
+                                        <span style="font-size: 16px;color:#008000b0;">成功笔数：<strong>{$vo.total_paid}</strong></span>
+                                        <span style="margin-left: 80px;font-size: 16px;color: #ff0000b3;">失败笔数：<strong>{$vo.total_orders - $vo.total_paid}</strong></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                {/foreach}
+
+
             </div>
+
         </div>
     </div>
-    {/foreach}
-
-
 </div>
+
+
+
+
 
 {/block}
 

@@ -61,8 +61,8 @@ class Money extends UserController {
             $limit =(int) $this->request->get('limit', 15);
             $search1 = (array)$this->request->get('search', []);
 
-            !empty($search['relate']) && $search['relate'] = $search1['relate'];
-            !empty($search['create_at']) && $search['create_at'] = $search1['create_at'];
+            !empty($search1['relate']) && $search['relate'] = $search1['relate'];
+            !empty($search1['create_at']) && $search['create_at'] = $search1['create_at'];
 
             $search['type1'] = 0;
             $search['uid'] = $this->user['uid'];
@@ -106,15 +106,16 @@ class Money extends UserController {
     }
 
 
-
     /**
      *  通道分析
      * @return void
      */
     public function analyse(){
         $data = [];
-        $info = json_encode(model('app\common\model\Accounts')->where(['uid'=>$this->user['uid']])->order(['day desc'])->value('info'),true);
+        $info = json_decode(model('app\common\model\Accounts')->where(['uid'=>$this->user['uid']])->order(['day desc'])->value('info'),true);
         if(!empty($info)) $data = $info;
+
+
         //基础数据
         $basic_data = [
             'title' => '通道分析',
