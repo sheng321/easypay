@@ -310,7 +310,23 @@ class Withdrawal extends UserController {
             $card_number = $this->request->post('card_number/a', []);
             $branch_name = $this->request->post('branch_name/a', []);
             $amount = $this->request->post('amount/a', []);
-            if(empty($account_name)) __error('无数据');
+            if(empty($account_name)) return __error('无数据');
+
+
+            $bank = config('bank.');
+            $bank_id = [];
+            //银行卡数据
+            foreach ($bank_name as $k => $v){
+               if(empty($bank[$v])){
+                   $msg = $v;
+                   break;
+               }
+               $bank_name[$k] = $bank[$v];
+               $bank_id[$k] = $v;
+                $msg = true;
+            }
+            if($msg !== true) return __error($msg.'：银行代码错误或者不支持此银行！');
+
 
             $post = [];
             $change['change'] = 0;//变动金额
@@ -320,6 +336,7 @@ class Withdrawal extends UserController {
                 $Bank['bank_name'] =  $bank_name[$k];
                 $Bank['card_number'] =  $card_number[$k];
                 $Bank['branch_name'] =  $branch_name[$k];
+                $Bank['bank_id'] =  $bank_id[$k];
 
                 //验证数据
                 $validate3 = $this->validate($Bank, 'app\common\validate\Bank.add_more');
@@ -338,8 +355,8 @@ class Withdrawal extends UserController {
                     return __error('不能大于最高提现金额！');
                     break;
                 }
-                $change['change'] =  $change['change'] + $post[$k]['amount'];
-                $sum = $sum +  $withdrawal['fee'];
+                $change['change'] +=  $post[$k]['amount'];
+                $sum += $withdrawal['fee'];
 
                 $post[$k]['mch_id'] =  $this->user['uid'];
                 $post[$k]['bank_card_id'] = 0;
