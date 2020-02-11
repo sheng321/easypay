@@ -13,6 +13,9 @@ class Message extends AdminController
     public function index()
     {
 
+
+        halt(111);
+
         $basic_data = [
              'title'=> '消息中心',
 
