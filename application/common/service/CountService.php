@@ -200,6 +200,35 @@ class CountService {
 
     //支付通道每日对账 深夜1-2 点统计
     public static function channel_account(){
+        $data = [];
+        $insert = [];
+        //update_at
+        $Accounts = model('app\common\model\Accounts');
+
+        $day = $Accounts->order(['day desc'])->value('day');
+        if(empty($day)){
+            $one = 0;
+            $day = '2019-01-01 00:00:00';
+        }else{
+            $one  = strtotime("+1 day",strtotime($day));
+            $day = date('Y-m-d ',$one).' 00:00:00';//需要统计的起始时间
+        }
+        $two  = strtotime("-1 day",time());
+        $yestoday = date('Y-m-d ',$two).'23:59:59';//昨天 需要统计的结束时间
+
+        //时间不对  不需要统计
+        if($one > $two) return false;
+
+        //商户每天的 通道支付订单统计
+        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,mch_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,mch_id,payment_id ORDER BY id DESC ";//每个通道的成功率
+        $select =  Db::query($sql,[$day,$yestoday]);
+
+
+        halt($select);
+
+
+
+
 
     }
 

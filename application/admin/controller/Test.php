@@ -13,7 +13,7 @@ class Test  extends Controller
 {
     public function index()
     {
-        $data =  \app\common\service\CountService::mem_today_account();
+        $data =  \app\common\service\CountService::channel_account();
         halt($data);
 
     }
