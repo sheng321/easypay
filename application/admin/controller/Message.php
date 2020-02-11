@@ -8,7 +8,7 @@ use app\common\controller\AdminController;
  * Class Message
  * @package app\admin\controller
  */
-class Message  extends AdminController
+class Message extends AdminController
 {
     public function index()
     {
@@ -17,7 +17,7 @@ class Message  extends AdminController
              'title'=> '消息中心',
 
         ];
-       // return $this->fetch('', $basic_data);
+        return $this->fetch('', $basic_data);
     }
 
 

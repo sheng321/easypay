@@ -1,0 +1,58 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+</form>
+{/block}
+
+{block name="script"}
+<script       >
+
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax&id={$Think.get.id}', [[
+        {field: 'id', title: 'ID', maxWidth: 10, align: 'center', sort: true},
+        {field: 'title', title: '支付产品名称', maxWidth: 100, align: 'center', sort: true},
+        {field: 'code', title: '编码', maxWidth: 50, align: 'center'},
+        {field: 'p_rate', title: '费率', maxWidth: 50, align: 'center',edit: 'text', style: 'background-color: #009688; color: #fff;'},
+        {field: 'status', title: '启用状态', width: 100, templet: '#checkStatus', unresize: true, align: "center"},
+    ]],false,function (res,curr,count){
+        //行
+        var id= -1;
+        $('tr').each(function(index, element){
+            if( typeof($(element).attr('data-index')) !== 'undefined'){
+                id++;
+                $(element).find('td').each(function(index1, element1){
+                    if(($(element1).attr('data-field') == 'p_rate') && (res.data[id].status1 != 1)  ){
+                        $(element1).removeAttr("data-edit");
+                        $(element1).removeAttr("style");
+                    }
+                });
+            }
+        });
+
+    });
+
+    /**
+     * 监听字段值编辑
+     */
+    $.form.editField('currentTable', '{:url("$thisRequest")}?id={$Think.get.id}');
+
+    /**
+     * 修改状态
+     */
+    $.form.switch('modifyStatus', '{:url("$thisClass/status")}?group_id={$Think.get.id}');
+
+</script>
+{/block}
