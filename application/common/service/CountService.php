@@ -264,12 +264,10 @@ class CountService {
 
         }
 
+        //插入每日对账表
+        if(!empty($insert)) return  $Accounts->saveAll($insert);
 
-        halt($data);
-
-
-
-
+        return true;
     }
 
 
