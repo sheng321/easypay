@@ -116,7 +116,7 @@ class UserController extends BaseController
     {
         if(!isset($user['status']) || $user['status'] != 1){
             $data = ['status' => 'error', 'code' => 0, 'msg' => '账号已被冻结，强制退出！', 'url' => url('@user/login/logout')];
-            __log( session('user_info.nickname').' 账号已被冻结，强制退出！');
+            __log( session('user_info.nickname').' 账号已被冻结，强制退出！',2);
             session('user_info', null);
             exceptions($data);
         }
@@ -142,7 +142,7 @@ class UserController extends BaseController
         $session_id  = getSessionid();
         if($user['single_key'] !== session('user_info.single_key')  ||  $user['single_key'] !== $session_id){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '账号在其它设备登入，强制退出！', 'url' => url('@user/login/logout')];
-            __log( session('user_info.nickname').' 账号在其它设备登入，强制退出！');
+            __log( session('user_info.nickname').' 账号在其它设备登入，强制退出！',2);
             session('user_info', null);
             exceptions($data);
         }
