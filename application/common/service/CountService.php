@@ -293,7 +293,7 @@ class CountService {
         //商户每天的 通道支付订单统计
         $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,mch_id2,mch_id1,channel_group_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,mch_id2,mch_id1,channel_group_id,payment_id ORDER BY id DESC ";//每个通道的成功率
         $select =  Db::query($sql,[$day,$yestoday]);
-        //agent_amount2  //agent_amount  //upstream_settle 上游结算  //settle  //Platform 平台收益
+        //agent_amount2  //agent_amount  //upstream_settle 上游结算  //settle  //Platform 平台收益  0 为普通商户 其他代理商户
 
         $Channel =  Channel::idRate();//通道
         $PayProduct =  PayProduct::idArr();//支付产品
