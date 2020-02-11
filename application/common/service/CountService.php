@@ -223,7 +223,7 @@ class CountService {
         $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,mch_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,mch_id,payment_id ORDER BY id DESC ";//每个通道的成功率
         $select =  Db::query($sql,[$day,$yestoday]);
 
-
+        dump(11);
         halt($select);
 
 
