@@ -262,7 +262,6 @@ class CountService {
 
             $insert[$v['pid'].$v['day']] = $data['channel_father'][$v['day']]; //数据库没有记录的数据
 
-
         }
 
 
