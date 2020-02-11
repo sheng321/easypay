@@ -381,4 +381,31 @@ class User extends UserController {
         return $del;
 
     }
+
+    /**行为日志
+     * @return mixed|\think\response\Json
+     */
+    public function log(){
+
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page/d', 1);
+            $limit = $this->request->get('limit/d', 10);
+            $search = (array)$this->request->get('search', []);
+            $search['type'] = 2;
+            $search['uid'] = $this->user['uid'];
+            return json(model('app\common\model\ActonRecord')->userList($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '行为日志',
+            'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+
+
 }

@@ -1,0 +1,94 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+
+
+    <form class="layui-form">
+
+        <!--顶部操作栏--开始-->
+        <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label-99admin">商户账号</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="username" class="layui-input" placeholder="请输入用商户账号"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label-99admin">IP</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="ip" class="layui-input" placeholder="请输入IP"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label-99admin">创建时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间"    >
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-inline">
+                <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
+            </div>
+
+        </blockquote>
+        <!--顶部操作栏--结束-->
+
+        <!--主表单渲染--开始-->
+        <table id="currentTable" lay-filter="currentTable"></table>
+        <!--主表单渲染--结束-->
+
+        <!--表单IP--开始-->
+        <script type="text/html" id="IPcopy">
+            {{d.location}}
+            {{d.ip}}
+        </script>
+        <!--表单IP--结束-->
+
+        <!--表单Name--开始-->
+        <script type="text/html" id="Name">
+            {{d.uid}}-{{d.auth_title}}-{{d.username}}
+        </script>
+        <!--表单IP--结束-->
+
+
+    </form>
+    </div>
+</div>
+
+{/block}
+
+{block name="script"}
+
+<script  >
+
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {field: 'id', title: 'ID', width: 50, align: "center"},
+        {field: 'username', title: '用户名', minWidth: 20, align: "center",templet: '#Name'},
+        {field: 'remark', title: '操作信息', align: 'center', minWidth: 20, unresize: true},
+        {field: 'location', title: '地址', minWidth: 20, align: "center", unresize: true,templet: '#IPcopy'},
+        {field: 'create_at', title: '创建时间', align: 'center', width: 170},
+    ]]);
+
+    /**
+     * 日期范围
+     */
+    $.laydate.range('create_at',7);
+
+</script>
+{/block}
