@@ -258,7 +258,8 @@ class CountService {
             $data['channel_father'][$v['day']]['rate'] += $v['rate'];
             $data['channel_father'][$v['day']]['total_fee'] += $v['total_fee'];
 
-            $data['channel_father'][$v['day']]['info'] = json_encode(!isset($data['channel_father'][$v['day']])?'':$data['channel_father'][$v['day']]);
+            $data['channel_father'][$v['day']]['info'] = json_encode(!isset($data['channel'][$v['day']])?'':$data['channel'][$v['day']]);
+
             $insert[$v['pid'].$v['day']] = $data['channel_father'][$v['day']]; //数据库没有记录的数据
 
 
