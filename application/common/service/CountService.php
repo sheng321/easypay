@@ -97,7 +97,7 @@ class CountService {
         //update_at
         $Accounts = model('app\common\model\Accounts');
 
-        $day = $Accounts->where([['uid','>',0]])->order(['day desc'])->value('day');
+        $day = $Accounts->where([['uid','>',0]])->order(['day desc'])->cache('account_uid',60)->value('day');
         if(empty($day)){
             $one = 0;
             $day = '2019-01-01 00:00:00';
@@ -220,10 +220,10 @@ class CountService {
         if($one > $two) return false;
 
         //商户每天的 通道支付订单统计
-        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,mch_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,mch_id,payment_id ORDER BY id DESC ";//每个通道的成功率
+        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,channel_id,channel_group_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,channel_id,channel_group_id ORDER BY id DESC ";//每个通道的成功率
         $select =  Db::query($sql,[$day,$yestoday]);
 
-        dump(11);
+        dump(22);
         halt($select);
 
 
