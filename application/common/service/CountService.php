@@ -28,7 +28,7 @@ class CountService {
             $sql = "select count(1) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,channel_id,payment_id,channel_group_id from cm_order where  create_at BETWEEN ? AND ? GROUP BY channel_id  ORDER BY id DESC ";//每个通道的成功率
             $data['channel'] =  Db::query($sql, [$ten,$three]);
 
-            $ChannelGroup =  ChannelGroup::idArr();//通道分组
+            $ChannelGropu =  ChannelGroup::idArr();//通道分组
             $Channel =  Channel::idRate();//通道
             $PayProduct =  PayProduct::idArr();//支付产品
 
@@ -220,18 +220,63 @@ class CountService {
         if($one > $two) return false;
 
         //商户每天的 通道支付订单统计
-        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,channel_id,channel_group_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,channel_id,channel_group_id ORDER BY id DESC ";//每个通道的成功率
+        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,channel_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,channel_id,payment_id ORDER BY id DESC ";//每个通道的成功率
         $select =  Db::query($sql,[$day,$yestoday]);
 
-        dump(22);
-        halt($select);
 
+        $Channel =  Channel::idRate();//通道
+        $PayProduct =  PayProduct::idArr();//支付产品
+        foreach ($select as $k => $v) {
+            $time =  strtotime($v['day']);
+            if($one > $time) continue; //不用记录的数据
+
+            $v['channel_name'] = empty($Channel[$v['channel_id']])?'未知':$Channel[$v['channel_id']]['title'];
+            $v['pid'] = empty($Channel[$v['channel_id']])?'0':$Channel[$v['channel_id']]['pid'];
+
+            $v['product_name'] = empty($PayProduct[$v['payment_id']]) ? '未知' : $PayProduct[$v['payment_id']];
+            $v['rate'] = round($v['total_paid'] / $v['total_orders'], 3) * 100;
+
+            //单日 通道产品分析
+            $data['channel'][$v['day']]['channel_id'] = $v;
+
+           //单日 支付通道分析
+
+            $data['channel_father'][$v['day']]['channel_id'] = $v['pid'];
+            $data['channel_father'][$v['day']]['day'] = $v['day'];
+
+            empty( $data['channel_father'][$v['day']]['total_orders']) &&  $data['channel_father'][$v['day']]['total_orders']= 0;
+            empty( $data['channel_father'][$v['day']]['total_fee_all']) &&  $data['channel_father'][$v['day']]['total_fee_all']= 0;
+            empty( $data['channel_father'][$v['day']]['total_fee_paid']) &&  $data['channel_father'][$v['day']]['total_fee_paid']= 0;
+            empty( $data['channel_father'][$v['day']]['total_paid']) &&  $data['channel_father'][$v['day']]['total_paid']= 0;
+            empty( $data['channel_father'][$v['day']]['rate']) &&  $data['channel_father'][$v['day']]['rate']= 0;
+            empty( $data['channel_father'][$v['day']]['total_fee']) &&  $data['channel_father'][$v['day']]['total_fee']= 0;
+
+            $data['channel_father'][$v['day']]['total_orders'] += $v['total_orders'];
+            $data['channel_father'][$v['day']]['total_fee_all'] += $v['total_fee_all'];
+            $data['channel_father'][$v['day']]['total_fee_paid'] += $v['total_fee_paid'];
+            $data['channel_father'][$v['day']]['total_paid'] += $v['total_paid'];
+            $data['channel_father'][$v['day']]['rate'] += $v['rate'];
+            $data['channel_father'][$v['day']]['total_fee'] += $v['total_fee'];
+
+            $data['channel_father'][$v['day']]['info'] = json_encode(!isset($data['payment'][$v['mch_id']][$v['day']])?'':$data['payment'][$v['mch_id']][$v['day']]);
+            $insert[$v['channel_father'].$v['day']] = $data['channel_father'][$v['day']]; //数据库没有记录的数据
+
+
+        }
+
+
+        halt($data);
 
 
 
 
     }
 
+
+    // 代理 通道分组每日分析 深夜1-2 点统计
+    public static function agent_account(){
+
+    }
 
 
     //代付通道每日对账 深夜1-2 点统计
