@@ -259,7 +259,7 @@ class CountService {
             $data['channel_father'][$v['day']]['total_fee'] += $v['total_fee'];
 
             $data['channel_father'][$v['day']]['info'] = json_encode(!isset($data['channel_father'][$v['day']])?'':$data['channel_father'][$v['day']]);
-            $insert[$v['channel_father'].$v['day']] = $data['channel_father'][$v['day']]; //数据库没有记录的数据
+            $insert[$v['pid'].$v['day']] = $data['channel_father'][$v['day']]; //数据库没有记录的数据
 
 
         }
