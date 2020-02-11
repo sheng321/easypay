@@ -532,7 +532,7 @@ if (!function_exists('exceptions')) {
             }
 
             $result['url'] = $url;
-            $result['wait'] = 4;
+            $result['wait'] = 7;
 
             $response = \think\facade\Response::create($result, 'jump')->options(['jump_template' => config('app.dispatch_error_tmpl') ]);
             throw new \think\exception\HttpResponseException( $response);
