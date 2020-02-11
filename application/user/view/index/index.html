@@ -80,8 +80,23 @@
 </div>
 <!-- 底部结束 -->
 <script  src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script  src="__STATIC__/plugs/jquery/jquery.cookie.js"></script>
 <script   src="__LAYUI__/layui.all.js"></script>
 <script type="text/javascript"   >
+
+    var message =  $.cookie('message');
+    //$.cookie('message',null);
+    if(message != 1){
+        $.getJSON('/user.php/api.Menu/message', function(res) {
+            if(res.code == 1){
+                layer.alert(res.msg, {
+                    title: '温馨提示',
+                    skin: 'layer-ext-moon'
+                });
+                $.cookie('message', '1', { expires: 0.5 });
+            }
+        });
+    }
 
 
     /**
@@ -114,8 +129,6 @@
             WeAdminShow(text,url);
             return false;
         });
-
-
     });
 
 </script>

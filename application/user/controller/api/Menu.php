@@ -25,6 +25,20 @@ class Menu extends UserController
         return json(Cache::get($name));
     }
 
+    /**弹窗信息
+     * @return \think\response\Json
+     */
+    public function message()
+    {
+        $data =  model('app\common\model\Message')->where([
+            ['title','=','首页弹窗显示'],
+            ['type','=',0]
+        ])->value('data');
+
+        if(empty($data)) return __error($data);
+        return __success(htmlspecialchars_decode($data));
+    }
+
 }
 
 

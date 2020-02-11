@@ -66,6 +66,11 @@ class intBehavior extends Controller
             if(is_array($v)){
                 $this->check_param1($v);
             }elseif(is_string($v)){
+                //富文本编辑
+                if($k == 'data1'||  $k == 'data2' ){
+                    continue;
+                }
+
 
                 if($k == 'create_at' || $k == 'update_at'){
                     $v = str_replace(" - ","",$v);

@@ -6,53 +6,82 @@
 {/block}
 
 {block name="cotent"}
-<form class="layui-form">
 
-    <!--主表单渲染--开始-->
-    <table id="currentTable" lay-filter="currentTable"></table>
-    <!--主表单渲染--结束-->
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">平台公告</li>
+            <li>代理公告</li>
+            <li>商户公告</li>
+        </ul>
+        <div class="layui-tab-content">
 
-</form>
+            <div class="layui-tab-item layui-show">
+                <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
+                    <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del")}' data-table-id="LAY-app-message-allTableId">删除</a>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" data-open='{:url("$thisClass/add")}?type=0' data-title="添加平台公告">添加平台公告</button>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" data-open='{:url("$thisClass/add")}?type=4' data-title="首页弹窗显示">首页弹窗显示</button>
+
+                </div>
+                <table id="LAY-app-message-allTable" lay-filter="LAY-app-message-allTable"></table>
+
+                <script>
+                    $.form.table('LAY-app-message-all', '{:url("$thisRequest")}?type=ajax&type1=0', [[
+                        {type: "checkbox", fixed: "left", width: 30,},
+                        {field:'id', title:'ID', with:30, align: 'center'},
+                        {field:'title', title:'标题', with:30, align: 'center'},
+                        {field:'data', title:'内容', minWith:30, align: 'center'},
+                        {field:'create_at', title:'时间', minWith:30, align: 'center'},
+                    ]]);
+                </script>
+
+            </div>
+            <div class="layui-tab-item">
+
+                <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
+                    <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del")}' data-table-id="LAY-app-message-noticeTableId">删除</a>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" data-open='{:url("$thisClass/add")}?type=2' data-title="添加代理公告">添加代理公告</button>
+
+                </div>
+
+                <table id="LAY-app-message-noticeTable" lay-filter="LAY-app-message-noticeTable"></table>
+                <script>
+                    $.form.table('LAY-app-message-notice', '{:url("$thisRequest")}?type=ajax&type1=2', [[
+                        {type: "checkbox", fixed: "left", width: 30,},
+                        {field:'id', title:'ID', with:30, align: 'center'},
+                        {field:'title', title:'标题', with:30, align: 'center'},
+                        {field:'data', title:'内容', minWith:30, align: 'center'},
+                        {field:'create_at', title:'时间', minWith:30, align: 'center'},
+                    ]]);
+                </script>
+            </div>
+            <div class="layui-tab-item">
+                <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
+                    <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del")}' data-table-id="LAY-app-message-directTableId">删除</a>
+
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" data-open='{:url("$thisClass/add")}?type=1' data-title="添加商户公告">添加商户公告</button>
+                </div>
+                <table id="LAY-app-message-directTable" lay-filter="LAY-app-message-directTable"></table>
+                <script>
+                    $.form.table('LAY-app-message-direct', '{:url("$thisRequest")}?type=ajax&type1=1', [[
+                        {type: "checkbox", fixed: "left", width: 30,},
+                        {field:'id', title:'ID', with:30, align: 'center'},
+                        {field:'title', title:'标题', with:30, align: 'center'},
+                        {field:'data', title:'内容', minWith:30, align: 'center'},
+                        {field:'create_at', title:'时间', minWith:30, align: 'center'},
+                    ]]);
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
 {/block}
 
 {block name="script"}
-<script       >
+<script>
 
-    /**
-     * 生成表单
-     */
-    $.form.table('current', '{:url("$thisRequest")}?type=ajax&id={$Think.get.id}', [[
-        {field: 'id', title: 'ID', maxWidth: 10, align: 'center', sort: true},
-        {field: 'title', title: '支付产品名称', maxWidth: 100, align: 'center', sort: true},
-        {field: 'code', title: '编码', maxWidth: 50, align: 'center'},
-        {field: 'p_rate', title: '费率', maxWidth: 50, align: 'center',edit: 'text', style: 'background-color: #009688; color: #fff;'},
-        {field: 'status', title: '启用状态', width: 100, templet: '#checkStatus', unresize: true, align: "center"},
-    ]],false,function (res,curr,count){
-        //行
-        var id= -1;
-        $('tr').each(function(index, element){
-            if( typeof($(element).attr('data-index')) !== 'undefined'){
-                id++;
-                $(element).find('td').each(function(index1, element1){
-                    if(($(element1).attr('data-field') == 'p_rate') && (res.data[id].status1 != 1)  ){
-                        $(element1).removeAttr("data-edit");
-                        $(element1).removeAttr("style");
-                    }
-                });
-            }
-        });
-
-    });
-
-    /**
-     * 监听字段值编辑
-     */
-    $.form.editField('currentTable', '{:url("$thisRequest")}?id={$Think.get.id}');
-
-    /**
-     * 修改状态
-     */
-    $.form.switch('modifyStatus', '{:url("$thisClass/status")}?group_id={$Think.get.id}');
 
 </script>
+
+
 {/block}

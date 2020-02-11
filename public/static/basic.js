@@ -1,15 +1,28 @@
-;layui.use(['laydate', 'form', 'layer', 'table', 'laytpl', 'jquery'], function () {
+;layui.use(['laydate', 'form', 'layer', 'table', 'laytpl', 'layedit','jquery'], function () {
     var form = layui.form,
         layer = parent.layer === undefined ? layui.layer : top.layer,
         laytpl = layui.laytpl,
         table = layui.table,
         laydate = layui.laydate,
+        layedit = layui.layedit,
         $ = layui.jquery;
 
     // 当前页面Bogy对象
     var $body = $('body');
 
+    /**
+     * 富文本编辑器
+     */
+    $.layedit = new function () {
+        this.build = function (elem) {
+            return layedit.build(elem); //建立编辑器
+        };
 
+        this.getContent = function (elem) {
+            return layedit.getContent(elem);
+        };
+
+    };
     /**
      * 消息组件实例
      */
@@ -830,7 +843,7 @@
 
                                     if (isReload == true) {
                                         $.msg.error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！', function () {
-                                            //   $.tool.reload();
+                                               $.tool.reload();
                                         });
                                     } else {
                                         $.msg.error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！');
@@ -874,7 +887,7 @@
 
                     if (isReload == true) {
                         $.msg.error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！', function () {
-                            //   $.tool.reload();
+                               $.tool.reload();
                         });
                     } else {
                         $.msg.error('Status:' + xhr.status + '，' + xhr.statusText + '，请稍后再试！');

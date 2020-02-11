@@ -176,6 +176,27 @@ class CountService {
     }
 
 
+    //商户单日统计 每十分钟统计一次
+    public static function mem_today_account(){
+
+        Cache::remember('mem_today_account', function () {
+            $today = date('Y-m-d ',time()).' 00:00:00';//今天
+            //$today = '2019-01-01 00:00:00';
+            $now = date('Y-m-d H:i:s',time());//现在
+            $data['time'] = $now;
+
+            $sql = "select count(1) as total_orders, COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,mch_id,create_at from cm_order where create_at BETWEEN ? AND ? GROUP BY mch_id ORDER BY id DESC ";//每个商户的的成功率
+
+            $data['data'] =  Db::query($sql,[$today,$now]);
+           if(!empty($data['data'])) $data['data'] = array_column($data['data'], null, 'mch_id');
+           return  $data;
+
+       },600);
+
+       return \think\facade\Cache::get('mem_today_account');
+    }
+
+
 
     //支付通道每日对账 深夜1-2 点统计
     public static function channel_account(){
