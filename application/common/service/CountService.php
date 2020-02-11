@@ -97,7 +97,7 @@ class CountService {
         //update_at
         $Accounts = model('app\common\model\Accounts');
 
-        $day = $Accounts->order(['day desc'])->value('day');
+        $day = $Accounts->where([['uid','>',0]])->order(['day desc'])->value('day');
         if(empty($day)){
             $one = 0;
             $day = '2019-01-01 00:00:00';
@@ -205,7 +205,7 @@ class CountService {
         //update_at
         $Accounts = model('app\common\model\Accounts');
 
-        $day = $Accounts->order(['day desc'])->value('day');
+        $day = $Accounts->where([['channel_id','>',0]])->order(['day desc'])->cache('account_channel_id',1)->value('day');
         if(empty($day)){
             $one = 0;
             $day = '2019-01-01 00:00:00';
