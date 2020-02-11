@@ -237,7 +237,7 @@ class CountService {
             $v['rate'] = round($v['total_paid'] / $v['total_orders'], 3) * 100;
 
             //单日 通道产品分析
-            $data['channel'][$v['day']] = $v;
+            $data['channel'][$v['day']][$v['channel_id']] = $v;
 
            //单日 支付通道分析
 
