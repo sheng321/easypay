@@ -56,8 +56,6 @@ class Accounts extends ModelService {
         $where = search($search,$searchField,$where);
         $field = '*';
 
-        halt($where);
-
         $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['day'=>'desc','id'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
