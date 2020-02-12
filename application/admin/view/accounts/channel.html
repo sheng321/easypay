@@ -9,41 +9,24 @@
 <form class="layui-form">
 
     <!--顶部操作栏--开始-->
-    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+    <blockquote id="searchBlock" class=" quoteBox">
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">操作人</label>
+            <label class="layui-form-label-99admin">通道名称</label>
             <div class="layui-input-inline">
-                <input type="text" id="nickname" class="layui-input" placeholder="请输入用操作人"/>
+                <select id="channel_id"   lay-filter="channel_id"  lay-search=""  >
+                    <option value="">请输入通道通道名称</option>
+                    {foreach $channel as $k => $vo}
+                    <option value="{$k|default='0'}">{$vo|default=''}</option>
+                    {/foreach}
+                </select>
             </div>
         </div>
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">权限组</label>
+            <label class="layui-form-label-99admin">日期</label>
             <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入用权限组名称"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">通道ID</label>
-            <div class="layui-input-inline">
-                <input type="text" id="channel_id" class="layui-input" placeholder="请输入用通道ID"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">关联订单号</label>
-            <div class="layui-input-inline">
-                <input type="text" id="relate" class="layui-input" placeholder="请输入关联订单号"/>
-            </div>
-        </div>
-
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">创建时间</label>
-            <div class="layui-input-inline">
-                <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间"    >
+                <input type="text" id="day" class="layui-input " placeholder="请选择日期"    >
             </div>
         </div>
 
@@ -58,48 +41,42 @@
     <table id="currentTable" lay-filter="currentTable"></table>
     <!--主表单渲染--结束-->
 
-    <!--表单IP--开始-->
-    <script type="text/html" id="IPcopy">
-        {{d.location}}
-        {{d.ip}}
+    <script type="text/html" id="info">
+        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="通道名称：{{d.title}}--日期：{{d.day}}--该通道下产品分析">该通道下产品分析</a>
     </script>
-    <!--表单IP--结束-->
-
-    <!--表单Name--开始-->
-    <script type="text/html" id="Name">
-        {{d.auth_title}}-{{d.nickname}}
-    </script>
-    <!--表单IP--结束-->
 
 
 </form>
 {/block}
 
+
 {block name="script"}
 
-<script       >
-
+<script >
 
     /**
      * 生成表单
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'id', title: 'ID', minWidth: 40, align: "center"},
+        {field: 'day', title: '日期', minWidth: 20, align: "center"},
         {field: 'channel_id', title: '通道ID', minWidth: 40, align: "center"},
-        {field: 'nickename', title: '操作人', minWidth: 100, align: "center",templet: '#Name'},
-        {field: 'title', title: '操作类型', minWidth: 20, align: "center"},
-        {field: 'before_balance', title: '变动前金额', align: 'center', minWidth: 20},
-        {field: 'change', title: '变动金额', align: 'center', minWidth: 20},
-        {field: 'balance', title: '变动后金额', align: 'center', minWidth: 20},
-        {field: 'remark', title: '备注', align: 'center', minWidth: 20},
-        {field: 'relate', title: '关联', align: 'center', minWidth: 20},
-        {field: 'create_at', title: '创建时间', align: 'center', minWidth: 20},
+        {field: 'title', title: '名称', minWidth: 40, align: "center"},
+        {field: 'total_orders', title: '总订单数', align: 'center', minWidth: 20},
+        {field: 'total_paid', title: '已支付订单数', align: 'center', minWidth: 20},
+        {field: 'total_fee_all', title: '总金额（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee_paid', title: '总实支付金额（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee', title: '手续费（元）', align: 'center', minWidth: 20},
+        {field: 'rate', title: '成功率（%）', align: 'center', width: 80,style: ' color: red; '},
+
+        {field: 'platform', title: '平台收益（元）', align: 'center', width: 100,style: ' color: red; '},
+        {field: 'info', title: '详情', align: 'center', minWidth: 20, templet: '#info'},
     ]]);
 
     /**
      * 日期范围
      */
-    $.laydate.range('create_at',1);
+    $.laydate.datetime('day');
 
 </script>
 {/block}

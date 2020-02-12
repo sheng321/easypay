@@ -78,18 +78,26 @@ class Accounts  extends AdminController
     public function channel()
     {
         //ajax访问
-        if ($this->request->get('type') == 'ajax') {
+        if ($this->request->get('type') == 'ajax'){
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 15);
             $search = (array)$this->request->get('search', []);
-            $search['type1'] = 1;
+            $search['df_id'] = 0;
+            $search['uid'] = 0;
             return json($this->model->aList($page, $limit, $search));
+        }
+
+        $Channel =   \app\common\model\Channel::idRate();//通道
+        $Channel_data = [];
+        foreach ($Channel as $k =>$v){
+            if($v['pid'] == 0) $Channel_data[$k] = $v['title'];
         }
 
         //基础数据
         $basic_data = [
-            'title' => '通道对账列表',
+            'title' => '支付通道对账列表',
             'data'  => '',
+            'channel'  => $Channel_data,
         ];
 
         return $this->fetch('', $basic_data);
@@ -134,10 +142,14 @@ class Accounts  extends AdminController
             return json($this->model->aList($page, $limit, $search));
         }
 
+
+
+
         //基础数据
         $basic_data = [
             'title' => '平台对账列表',
             'data'  => '',
+
         ];
 
         return $this->fetch('', $basic_data);

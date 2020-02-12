@@ -71,9 +71,13 @@ class intBehavior extends Controller
                     continue;
                 }
 
-
                 if($k == 'create_at' || $k == 'update_at'){
                     $v = str_replace(" - ","",$v);
+                    $v = str_replace(" ","",$v);
+                }
+
+                //日期
+                if($k == 'day'){
                     $v = str_replace(" ","",$v);
                 }
 

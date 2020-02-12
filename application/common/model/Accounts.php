@@ -52,10 +52,11 @@ class Accounts extends ModelService {
 
 
         //搜索条件
-        $searchField['eq'] = ['uid','channel_id','df_id','day'];
+        $searchField['eq'] = ['uid','channel_id','df_id','day','type'];
         $where = search($search,$searchField,$where);
         $field = '*';
 
+        halt($where);
 
         $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['day'=>'desc','id'=>'desc'])->select();
