@@ -79,10 +79,13 @@
             <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
         </div>
 
-
-
     </blockquote>
     <!--顶部操作栏--结束-->
+
+
+    <div class="layui-btn-group test-table-operate-btn" style="margin-bottom: 10px;">
+        <span class="layui-btn" onclick="btu()">统计当前页数据</span>
+    </div>
 
     <!--主表单渲染--开始-->
     <table id="currentTable" lay-filter="currentTable"></table>
@@ -128,6 +131,7 @@
 
 {block name="script"}
 <script >
+    var btu ;
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'id', title: 'ID', width: 30, align: "center"},
         {field: 'mch_id', title: '商户号',  width: 70,  align: "center"},
@@ -160,7 +164,66 @@
         {field: 'create_at', title: '申请时间', width: 100,  align: "center"},
         {field: 'update_at', title: '更新时间', width: 100,  align: "center"},
         {field: 'record', title: '操作记录', width: 100,  align: "center"},
-    ]]);
+    ]],true,function (res,curr,count){
+        btu = function () {
+            var total_orders = res.data.length;
+            var total_1 = 0;
+            var total_2 = 0;
+            var total_3 = 0;
+            var total_4 = 0;
+            var total_money = 0;
+            var money_1 = 0;
+            var money_2 = 0;
+            var money_3 = 0;
+            var money_4 = 0;
+            var money_5 = 0;
+
+            console.log(res.data);
+
+            $(res.data).each(function(a,b){
+                total_money+= Number(b.amount);
+
+                if(b.status == 1){
+                    total_1++;
+                    money_1+= Number(b.amount);
+                }
+                if(b.status == 2){
+                    total_2++;
+                    money_2+= Number(b.amount);
+                }
+                if(b.status == 3){
+                    total_3++;
+                    money_3+= Number(b.amount);
+                    money_5+= Number(b.fee) - Number(b.channel_fee);
+                }
+                if(b.status == 4){
+                    total_4++;
+                    money_4+= Number(b.amount);
+                }
+
+            });
+
+
+            layer.open({
+                title: '当前页统计',
+                type: 1,
+                area: '60%',
+                content: '    <blockquote class="layui-elem-quote"    >' +
+                '交易总金额：<span class="label-info">'+total_money+'元</span>' +
+                '未处理金额：<span class="label-info">'+money_1+'元</span>' +
+                '处理中金额：<span class="label-info">'+money_2+'元</span>' +
+                '已完成金额：<span class="label-info" style="color:yellow;">'+money_3+'元</span>' +
+                '失败金额：<span class="label-info">'+money_4+'元</span>' +
+                '平台手续费盈利：<span class="label-info">'+money_5+'元</span><br>' +
+                '总订单数：<span class="label-info" id="total_orders" >'+total_orders+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '未处理单数：<span class="label-info">'+total_1+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '处理中单数：<span class="label-info">'+total_2+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '成功单数：<span class="label-info">'+total_3+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '失败单数：<span class="label-info">'+total_4+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '</blockquote>'
+            });
+        }
+    });
 
     /**
      * 日期范围

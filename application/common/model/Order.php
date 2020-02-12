@@ -94,7 +94,7 @@ class Order extends ModelService {
             $field =  $search['field'];
         }
 
-        $count = $this->where($where)->count();
+        $count = $this->where($where)->count(1);
 
         $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_admin',2)->order(['create_at'=>'desc'])->select()->toArray();
         empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
@@ -126,6 +126,7 @@ class Order extends ModelService {
             'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
             'data'  => $list,
         ];
+        if(!empty($search['field'])) $list['code'] = 1 && $list['msg'] = $msg.'本页数据不显示。'; //下载
         return $list;
     }
 
@@ -235,7 +236,7 @@ class Order extends ModelService {
 
 
     /**
-     * Undocumented 商户分页获取
+     *  商户分页获取
      * @param integer $page
      * @param integer $limit
      * @param array $search

@@ -111,6 +111,10 @@
     </blockquote>
     <!--顶部操作栏--结束-->
 
+    <div class="layui-btn-group test-table-operate-btn" style="margin-bottom: 10px;">
+        <span class="layui-btn" onclick="btu()">统计当前页数据</span>
+    </div>
+
     <!--主表单渲染--开始-->
     <table id="currentTable" lay-filter="currentTable"></table>
     <!--主表单渲染--结束-->
@@ -170,6 +174,7 @@
 
 {block name="script"}
 <script  >
+    var btu ;
 
     function query_order(url) {
         var Index = $.msg.confirm('确定要查询订单吗？', function () {
@@ -226,7 +231,80 @@
         /**{if auth("$thisClass/details") || auth("$thisClass/replacement") }**/
         {title: '操作', minWidth: 130, templet: '#barDemo', fixed: "right", align: "center"},
         /**{/if}**/
-    ]], true , '',100);
+    ]], true , function (res,curr,count){
+        btu = function () {
+            var total_orders = res.data.length;
+            var total_1 = 0;
+            var total_2 = 0;
+            var total_3 = 0;
+            var total_4 = 0;
+            var total_5 = 0;
+            var total_money = 0;
+            var money_1 = 0;
+            var money_2 = 0;
+            var money_3 = 0;
+            var money_4 = 0;
+            var money_5 = 0;
+            var money_6 = 0;
+
+            console.log(res.data);
+
+            $(res.data).each(function(a,b){
+                total_money+= Number(b.amount);
+                //下单失败
+                if(b.pay_status == 1)  total_1++;
+
+                //已支付
+                if(b.pay_status == 2){
+                    total_2++;
+                    money_2+= Number(b.amount);
+                    money_3+= Number(b.total_fee);
+                    money_4+= Number(b.Platform);
+                    money_5+= Number(b.upstream_settle);
+                    money_6+= Number(b.agent_amount) + Number(b.agent_amount2);
+                    if(b.notice == 2){
+                        total_4++;
+                    }else{
+                        total_5++;
+                    }
+                }
+
+            });
+
+            //未支付
+            total_3 = total_orders - total_2 - total_1;
+            money_1 = total_money - money_2;
+            //成功率
+            var rate = (total_2/total_orders*100).toFixed(1) ;
+            money_3 = money_3.toFixed(2) ;
+            money_4 = money_4.toFixed(2) ;
+            money_5 = money_5.toFixed(2) ;
+            money_6 = money_6.toFixed(2) ;
+
+            layer.open({
+                title: '当前页统计',
+                type: 1,
+                area: '60%',
+                content: '    <blockquote class="layui-elem-quote"    >' +
+                '交易总金额：<span class="label-info">'+total_money+'元</span>' +
+                '未支付金额：<span class="label-info">'+money_1+'元</span>' +
+                '已支付金额：<span class="label-info">'+money_2+'元</span>' +
+                '手续费：<span class="label-info" >'+money_3+'元</span>' +
+                '平台盈利：<span class="label-info">'+money_4+'元</span>' +
+                '上游盈利：<span class="label-info">'+money_5+'元</span>' +
+                '代理盈利：<span class="label-info">'+money_6+'元</span>' +
+                '<br>' +
+                '总订单数：<span class="label-info" id="total_orders" >'+total_orders+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '下单失败数：<span class="label-info">'+total_1+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '未支付单数：<span class="label-info">'+total_3+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '已支付单数：<span class="label-info">'+total_2+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '通知成功单数：<span class="label-info">'+total_4+'<label style="color:red; padding:0 6px;">笔</label></span>' +
+                '通知失败单数：<span class="label-info">'+total_5+'<label style="color:red; padding:0 6px;">笔</label></span><br>' +
+                '成功率：<span class="label-info" style="color: yellow"  >'+rate+'%</span><br>' +
+                '</blockquote>'
+            });
+        }
+    },100);
 
     /**
      * 日期范围
