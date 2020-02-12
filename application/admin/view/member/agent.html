@@ -53,7 +53,7 @@
 
         {if auth("$thisClass/add")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/add")}' data-title="添加代理或者代理">添加</a>
+            <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/add")}' data-title="添加代理或者商户">添加</a>
         </div>
         {/if}
 
@@ -140,7 +140,7 @@
 
         {if auth("$thisClass/add_staff")}
             {{# if (d.who == 0 || d.who == 2 ) { }}
-            <a class="layui-btn layui-btn-xs" style="background-color: #2C9DD5"    value="{{d.id}}" data-open='{:url("$thisClass/add_staff")}?pid={{d.id}}&type=3' data-title="添加代理员工">添加员工</a>
+           <!-- <a class="layui-btn layui-btn-xs" style="background-color: #2C9DD5"    value="{{d.id}}" data-open='{:url("$thisClass/add_staff")}?pid={{d.id}}&type=3' data-title="添加代理员工">添加员工</a>-->
             {{# } }}
         {/if}
 
@@ -150,7 +150,7 @@
 
         {if auth("$thisClass/edit")}
             {{# if (d.who == 1 || d.who == 3 ) { }}
-                <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm  " data-open='{:url("$thisClass/edit_staff")}?id={{d.id}}' data-title="修改代理员工信息">编辑员工信息</a>
+               <!-- <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm  " data-open='{:url("$thisClass/edit_staff")}?id={{d.id}}' data-title="修改代理员工信息">编辑员工信息</a>-->
             {{# } else { }}
                 <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改代理信息">编辑</a>
             {{# } }}
