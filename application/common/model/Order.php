@@ -264,7 +264,7 @@ class Order extends ModelService {
             $field =  $search['field'];
         }
 
-        //SELECT a.view_num,a.id,a.preview,a.name,a.uid,a.like_num,a.username FROM table a RIGHT JOIN (SELECT id FROM table WHERE id>1 AND is_del = 0 AND wantshow = 1 AND is_encrypt = 0 AND bigcate = 606 AND is_recommend = 1 GROUP by id ORDER BY id DESC LIMIT 1000,30) b ON b.id = a.id;
+
 
 
         $count = $this->where($where)->count();
