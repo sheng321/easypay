@@ -18,9 +18,9 @@
                         <p>交易金额：{$vo.total_fee_all}元</p>
                         <p>手续费  &nbsp;&nbsp;&nbsp;：<strong class="text-info">{$vo.total_fee}</strong> 元</p>
                         <p>入金总额：{$vo.total_fee_paid} 元</p>
-                        {if !empty($vo['channelgroup_name']) }
+                        {if !empty($vo['channel_name']) }
                              <p>通道产品收益：<strong class="text-warning">{$vo.platform}</strong> 元</p>
-                        {elseif !empty($vo['channel_name'])}
+                        {elseif !empty($vo['channelgroup_name'])}
                             <p>代理收益：<strong class="text-warning">{$vo.platform}</strong> 元</p>
                         {else /}
                             <p>平台收益：<strong class="text-warning">{$vo.platform}</strong> 元</p>
