@@ -28,7 +28,7 @@ class CountService {
             $sql = "select count(1) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,channel_id,payment_id,channel_group_id from cm_order where  create_at BETWEEN ? AND ? GROUP BY channel_id  ORDER BY id DESC ";//每个通道的成功率
             $data['channel'] =  Db::query($sql, [$ten,$three]);
 
-            $ChannelGropu =  ChannelGroup::idArr();//通道分组
+            $ChannelGroup =  ChannelGroup::idArr();//通道分组
             $Channel =  Channel::idRate();//通道
             $PayProduct =  PayProduct::idArr();//支付产品
 
@@ -97,7 +97,7 @@ class CountService {
         //update_at
         $Accounts = model('app\common\model\Accounts');
 
-        $day = $Accounts->where([['uid','>',0]])->order(['day desc'])->cache('account_uid',60)->value('day');
+        $day = $Accounts->where([['uid','>',0],['type','=',0]])->order(['day desc'])->cache('account_uid',60)->value('day');
         if(empty($day)){
             $one = 0;
             $day = '2019-01-01 00:00:00';
@@ -112,7 +112,7 @@ class CountService {
         if($one > $two) return false;
 
         //商户每天的 通道支付订单统计
-        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,mch_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,mch_id,payment_id ORDER BY id DESC ";//每个通道的成功率
+        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,COALESCE(sum(if(pay_status=2,platform,0)),0) as platform,mch_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,mch_id,payment_id ORDER BY id DESC ";//每个通道的成功率
         $select =  Db::query($sql,[$day,$yestoday]);
 
         $PayProduct =  PayProduct::idArr();//支付产品
@@ -137,6 +137,7 @@ class CountService {
             empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_paid']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_paid']= 0;
             empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['rate']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['rate']= 0;
             empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee']= 0;
+            empty($data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['platform']) && $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['platform']= 0;
 
            $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_orders'] += $v['total_orders'];
            $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee_all'] += $v['total_fee_all'];
@@ -144,6 +145,8 @@ class CountService {
            $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_paid'] += $v['total_paid'];
            $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['rate'] += $v['rate'];
             $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['total_fee'] += $v['total_fee'];
+            $data['payment'][$v['mch_id']][$v['day']][$v['payment_id']]['platform'] += $v['platform'];
+
 
            //商户每日对账
              $data['account'][$v['mch_id']][$v['day']]['uid'] = $v['mch_id'];
@@ -155,6 +158,7 @@ class CountService {
             empty( $data['account'][$v['mch_id']][$v['day']]['total_paid']) &&  $data['account'][$v['mch_id']][$v['day']]['total_paid']= 0;
             empty( $data['account'][$v['mch_id']][$v['day']]['rate']) &&  $data['account'][$v['mch_id']][$v['day']]['rate']= 0;
             empty( $data['account'][$v['mch_id']][$v['day']]['total_fee']) &&  $data['account'][$v['mch_id']][$v['day']]['total_fee']= 0;
+            empty( $data['account'][$v['mch_id']][$v['day']]['platform']) &&  $data['account'][$v['mch_id']][$v['day']]['platform']= 0;
 
              $data['account'][$v['mch_id']][$v['day']]['total_orders'] += $v['total_orders'];
              $data['account'][$v['mch_id']][$v['day']]['total_fee_all'] += $v['total_fee_all'];
@@ -162,6 +166,7 @@ class CountService {
              $data['account'][$v['mch_id']][$v['day']]['total_paid'] += $v['total_paid'];
              $data['account'][$v['mch_id']][$v['day']]['rate'] += $v['rate'];
             $data['account'][$v['mch_id']][$v['day']]['total_fee'] += $v['total_fee'];
+            $data['account'][$v['mch_id']][$v['day']]['platform'] += $v['platform'];
 
 
             $data['account'][$v['mch_id']][$v['day']]['info'] = json_encode(!isset($data['payment'][$v['mch_id']][$v['day']])?'':$data['payment'][$v['mch_id']][$v['day']]);
@@ -283,7 +288,7 @@ class CountService {
         //update_at
         $Accounts = model('app\common\model\Accounts');
 
-        $day = $Accounts->where([['uid','>',0]])->order(['day desc'])->cache('account_channel_id',1)->value('day');
+        $day = $Accounts->where([['uid', '>', 0],['type', '=', 1]])->order(['day desc'])->cache('agent_account_id',1)->value('day');
         if(empty($day)){
             $one = 0;
             $day = '2019-01-01 00:00:00';
@@ -298,50 +303,131 @@ class CountService {
         if($one > $two) return false;
 
         //商户每天的 通道支付订单统计
-        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,mch_id2,mch_id1,channel_group_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,mch_id2,mch_id1,channel_group_id,payment_id ORDER BY id DESC ";//每个通道的成功率
+        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,COALESCE(sum(if(pay_status=2,agent_amount,0)),0) as agent_amount,COALESCE(sum(if(pay_status=2,agent_amount2,0)),0) as agent_amount2,mch_id2,mch_id1,channel_group_id,payment_id from cm_order  where create_at BETWEEN ? AND ? AND mch_id2 > 0 or mch_id1 > 0  GROUP BY day,mch_id2,mch_id1,channel_group_id,payment_id ORDER BY id DESC ";//每个通道的成功率
         $select =  Db::query($sql,[$day,$yestoday]);
-        //agent_amount2  //agent_amount  //upstream_settle 上游结算  //settle  //Platform 平台收益  0 为普通商户 其他代理商户
 
-        $Channel =  Channel::idRate();//通道
+
+        $ChannelGroup =  ChannelGroup::idArr();//通道分组
         $PayProduct =  PayProduct::idArr();//支付产品
         foreach ($select as $k => $v) {
             $time =  strtotime($v['day']);
             if($one > $time) continue; //不用记录的数据
 
-            $v['channel_name'] = empty($Channel[$v['channel_id']])?'未知':$Channel[$v['channel_id']]['title'];
-            $v['pid'] = empty($Channel[$v['channel_id']])?'0':$Channel[$v['channel_id']]['pid'];
 
+            $v['channelgroup_name'] = empty($ChannelGroup[$v['channel_group_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
             $v['product_name'] = empty($PayProduct[$v['payment_id']]) ? '未知' : $PayProduct[$v['payment_id']];
             $v['rate'] = round($v['total_paid'] / $v['total_orders'], 3) * 100;
 
-            //单日 通道产品分析
-            $data['channel'][$v['day']][$v['channel_id']] = $v;
 
-            //单日 支付通道分析
+            //单日 通道分组分析
+            if(!empty($v['mch_id1'])){
+                $v['platform'] = $v['agent_amount'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['uid'] = $v['mch_id1'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['day'] = $v['day'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['channelgroup_name'] = $v['channelgroup_name'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['product_name'] = $v['product_name'];
 
-            $data['channel_father'][$v['day']]['channel_id'] = $v['pid'];
-            $data['channel_father'][$v['day']]['day'] = $v['day'];
 
-            empty( $data['channel_father'][$v['day']]['total_orders']) &&  $data['channel_father'][$v['day']]['total_orders']= 0;
-            empty( $data['channel_father'][$v['day']]['total_fee_all']) &&  $data['channel_father'][$v['day']]['total_fee_all']= 0;
-            empty( $data['channel_father'][$v['day']]['total_fee_paid']) &&  $data['channel_father'][$v['day']]['total_fee_paid']= 0;
-            empty( $data['channel_father'][$v['day']]['total_paid']) &&  $data['channel_father'][$v['day']]['total_paid']= 0;
-            empty( $data['channel_father'][$v['day']]['rate']) &&  $data['channel_father'][$v['day']]['rate']= 0;
-            empty( $data['channel_father'][$v['day']]['total_fee']) &&  $data['channel_father'][$v['day']]['total_fee']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_orders']) &&  $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_orders']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee_all']) &&  $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee_all']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee_paid']) &&  $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee_paid']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_paid']) &&  $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_paid']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['rate']) &&  $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['rate']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee']) &&  $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['platform']) &&  $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['platform']= 0;
 
-            $data['channel_father'][$v['day']]['total_orders'] += $v['total_orders'];
-            $data['channel_father'][$v['day']]['total_fee_all'] += $v['total_fee_all'];
-            $data['channel_father'][$v['day']]['total_fee_paid'] += $v['total_fee_paid'];
-            $data['channel_father'][$v['day']]['total_paid'] += $v['total_paid'];
-            $data['channel_father'][$v['day']]['rate'] += $v['rate'];
-            $data['channel_father'][$v['day']]['total_fee'] += $v['total_fee'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_orders'] += $v['total_orders'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee_all'] += $v['total_fee_all'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee_paid'] += $v['total_fee_paid'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_paid'] += $v['total_paid'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['rate'] += $v['rate'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee'] += $v['total_fee'];
+                $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['platform'] += $v['platform'];
 
-            $data['channel_father'][$v['day']]['info'] = json_encode(!isset($data['channel'][$v['day']])?'':$data['channel'][$v['day']]);
 
-            $insert[$v['pid'].$v['day']] = $data['channel_father'][$v['day']]; //数据库没有记录的数据
+                $data['agent'][$v['day']][$v['mch_id1']]['uid'] = $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['uid'];
+                $data['agent'][$v['day']][$v['mch_id1']]['day'] = $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['day'];
 
+
+                empty( $data['agent'][$v['day']][$v['mch_id1']]['total_orders']) &&  $data['agent'][$v['day']][$v['mch_id1']]['total_orders']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id1']]['total_fee_all']) &&  $data['agent'][$v['day']][$v['mch_id1']]['total_fee_all']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id1']]['total_fee_paid']) &&  $data['agent'][$v['day']][$v['mch_id1']]['total_fee_paid']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id1']]['total_paid']) &&  $data['agent'][$v['day']][$v['mch_id1']]['total_paid']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id1']]['rate']) &&  $data['agent'][$v['day']][$v['mch_id1']]['rate']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id1']]['total_fee']) &&  $data['agent'][$v['day']][$v['mch_id1']]['total_fee']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id1']]['platform']) &&  $data['agent'][$v['day']][$v['mch_id1']]['platform']= 0;
+
+                $data['agent'][$v['day']][$v['mch_id1']]['total_orders'] += $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_orders'];
+                $data['agent'][$v['day']][$v['mch_id1']]['total_fee_all'] += $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee_all'];
+                $data['agent'][$v['day']][$v['mch_id1']]['total_fee_paid'] += $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee_paid'];
+                $data['agent'][$v['day']][$v['mch_id1']]['total_paid'] += $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_paid'];
+                $data['agent'][$v['day']][$v['mch_id1']]['rate'] += $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['rate'];
+                $data['agent'][$v['day']][$v['mch_id1']]['total_fee'] += $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['total_fee'];
+                $data['agent'][$v['day']][$v['mch_id1']]['platform'] += $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['platform'];
+
+
+                $data['agent'][$v['day']][$v['mch_id1']]['info'] = json_encode($data['channelgroup'][$v['day']][$v['mch_id1']]);
+                $data['agent'][$v['day']][$v['mch_id1']]['type'] = 1;//代理
+
+                $insert[$v['mch_id1'].$v['day']] = $data['agent'][$v['day']][$v['mch_id1']]; //数据库没有记录的数据
+
+            }
+
+            if(!empty($v['mch_id2'])){
+                $v['platform'] = $v['agent_amount2'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['uid'] = $v['mch_id2'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['day'] = $v['day'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['channelgroup_name'] = $v['channelgroup_name'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['product_name'] = $v['product_name'];
+
+
+                empty( $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_orders']) &&  $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_orders']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee_all']) &&  $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee_all']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee_paid']) &&  $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee_paid']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_paid']) &&  $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_paid']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['rate']) &&  $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['rate']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee']) &&  $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee']= 0;
+                empty( $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['platform']) &&  $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['platform']= 0;
+
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_orders'] += $v['total_orders'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee_all'] += $v['total_fee_all'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee_paid'] += $v['total_fee_paid'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_paid'] += $v['total_paid'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['rate'] += $v['rate'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee'] += $v['total_fee'];
+                $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['platform'] += $v['platform'];
+
+
+                $data['agent'][$v['day']][$v['mch_id2']]['uid'] = $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['uid'];
+                $data['agent'][$v['day']][$v['mch_id2']]['day'] = $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['day'];
+
+
+                empty( $data['agent'][$v['day']][$v['mch_id2']]['total_orders']) &&  $data['agent'][$v['day']][$v['mch_id2']]['total_orders']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id2']]['total_fee_all']) &&  $data['agent'][$v['day']][$v['mch_id2']]['total_fee_all']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id2']]['total_fee_paid']) &&  $data['agent'][$v['day']][$v['mch_id2']]['total_fee_paid']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id2']]['total_paid']) &&  $data['agent'][$v['day']][$v['mch_id2']]['total_paid']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id2']]['rate']) &&  $data['agent'][$v['day']][$v['mch_id2']]['rate']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id2']]['total_fee']) &&  $data['agent'][$v['day']][$v['mch_id2']]['total_fee']= 0;
+                empty( $data['agent'][$v['day']][$v['mch_id2']]['platform']) &&  $data['agent'][$v['day']][$v['mch_id2']]['platform']= 0;
+
+                $data['agent'][$v['day']][$v['mch_id2']]['total_orders'] += $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_orders'];
+                $data['agent'][$v['day']][$v['mch_id2']]['total_fee_all'] += $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee_all'];
+                $data['agent'][$v['day']][$v['mch_id2']]['total_fee_paid'] += $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee_paid'];
+                $data['agent'][$v['day']][$v['mch_id2']]['total_paid'] += $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_paid'];
+                $data['agent'][$v['day']][$v['mch_id2']]['rate'] += $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['rate'];
+                $data['agent'][$v['day']][$v['mch_id2']]['total_fee'] += $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['total_fee'];
+                $data['agent'][$v['day']][$v['mch_id2']]['platform'] += $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['platform'];
+
+
+                $data['agent'][$v['day']][$v['mch_id2']]['info'] = json_encode($data['channelgroup'][$v['day']][$v['mch_id2']]);
+                $data['agent'][$v['day']][$v['mch_id2']]['type'] = 1;//代理
+
+                $insert[$v['mch_id2'].$v['day']] = $data['agent'][$v['day']][$v['mch_id2']]; //数据库没有记录的数据
+
+            }
         }
 
+        dump($insert);
         //插入每日对账表
         if(!empty($insert)) return  $Accounts->saveAll($insert);
 

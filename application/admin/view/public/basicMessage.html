@@ -1,0 +1,109 @@
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$title|default='后台管理'}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__ADMIN__/layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/plugs/font-awesome/css/font-awesome.min.css">
+    <script type="text/javascript"   src="__STATIC__/common.js"></script>
+
+    <style>
+        .layui-btn+.layui-btn {
+            margin-left: 0px;
+        }
+        .layui-form-item .layui-input-inline {
+            margin-right: 0px;
+        }
+        .layui-form-checkbox span{
+            height:auto;
+        }
+        .layui-table-cell {
+            padding: 0 0;
+            font-size:12px;
+        }
+
+
+        ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+            color: #7D9EC0;
+            font-weight: bolder;
+        }
+        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            color: #7D9EC0;
+            font-weight: bolder;
+        }
+        ::-moz-placeholder { /* Mozilla Firefox 19+ */
+            color: #7D9EC0;
+            font-weight: bolder;
+        }
+        :-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: #7D9EC0;
+            font-weight: bolder;
+        }
+
+        /* COLORS */
+
+        .text-navy {
+            color: #1ab394;
+        }
+
+        .text-primary {
+            color: inherit;
+        }
+
+        .text-success {
+            color: #1c84c6;
+        }
+
+        .text-info {
+            color: #23c6c8;
+        }
+
+        .text-warning {
+            color: #f8ac59;
+        }
+
+        .text-danger {
+            color: #ed5565;
+        }
+
+        .text-muted {
+            color: #888888;
+        }
+
+    </style>
+    {block name="style"}{/block}
+</head>
+<body   class="layui-layout-body {$body|default='childrenBody'} "  style="overflow:auto"   >
+
+<script type="text/javascript" src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="/static/layui/layui.all.js"></script>
+<script type="application/javascript"       >
+    //口令
+    window.word = JSON.parse('{$SysWord|raw|default = ""}');
+</script>
+
+<script src="__STATIC__/basic.js?v={:mt_rand(0,20)}"></script>
+
+{block name="cotent"}{/block}
+
+
+{block name="script"}{/block}
+
+</body>
+</html>
+
+
+
+
+
+
+
+
