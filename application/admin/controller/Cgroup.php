@@ -187,26 +187,7 @@ class Cgroup  extends AdminController
 
 
 
-    /**
-     * 更改通道默认状态
-     * @return \think\response\Json
-     */
-    public function istrue(){
-        $get = $this->request->get();
 
-        //验证数据
-        $validate = $this->validate($get, 'app\common\validate\ChannelGroup.istrue');
-        if (true !== $validate) return __error($validate);
-
-        //判断菜单状态
-        $status = $this->model->where('id', $get['id'])->value('is_true');
-        $status == 1 ? list($msg, $status) = ['禁用默认成功', $status = 0] : list($msg, $status) = ['通道默认启用成功', $status = 1];
-
-        //执行更新操作操作
-        $update =  $this->model->__edit(['is_true' => $status,'id' => $get['id']],$msg);
-
-        return $update;
-    }
 
 
 

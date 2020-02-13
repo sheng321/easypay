@@ -44,7 +44,7 @@ class ChannelGroup extends ModelService {
         $where = search($search,$searchField,$where);
 
 
-        $field = ['id','update_at','remark','title','status','sort','verson','p_id','is_true','c_rate','cli'];
+        $field = ['id','update_at','remark','title','status','sort','verson','p_id','c_rate','cli'];
 
         $count = $this->where($where)->count();
 
@@ -125,7 +125,7 @@ class ChannelGroup extends ModelService {
 
         $where = search($search,$searchField,$where);
 
-        $field = ['id','remark','title','status','verson','p_id','is_true','c_rate','cli'];
+        $field = ['id','remark','title','status','verson','p_id','c_rate','cli'];
 
         $count = $this->where($where)->count();
 
@@ -172,7 +172,7 @@ class ChannelGroup extends ModelService {
             ['status','=',1],
         ];
 
-        $field = ['id','update_at','remark','title','status','sort','verson','p_id','is_true'];
+        $field = ['id','update_at','remark','title','status','sort','verson','p_id'];
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';

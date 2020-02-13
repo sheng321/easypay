@@ -70,13 +70,7 @@
     </script>
 
 
-    <script type="text/html" id="checkTrue">
-        <input type="checkbox" name="{{d.id}}"   verson = "{{d.verson + 1}}"    value="{{d.is_true}}" lay-skin="switch" lay-text="默认|不默认" lay-filter="modifyTrue" {{ d.is_true== 1 ? 'checked' : '' }}>
-    </script>
 
-    <script type="text/html" id="checkCli">
-        <input type="checkbox"     name="{{d.id}}"   value="{{d.cli}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="modifyCli" {{ d.cli== 1 ? 'checked' : '' }}>
-    </script>
 
     <script type="text/html" id="limit">
 
@@ -127,7 +121,7 @@
         {field: 'limit_money', title: '分组单笔限额', minWidth: 20, align: "center", templet: '#limit',style:'background-color: #00cc99; color: #fff;'},
 
         {field: 'remark', title: '备注信息', edit: 'text', maxWidth: 100, align: "center", style: 'background-color: #009688; color: #fff;', sort: true},
-        {field: 'is_true', title: '默认', width: 100, templet: '#checkTrue', unresize: true, align: "center"},
+
         {field: 'cli', title: '客户端', width: 100, templet: '#checkCli', unresize: true, align: "center"},
         {field: 'status', title: '启用状态', width: 100, templet: '#checkStatus', unresize: true, align: "center"},
         /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
@@ -154,7 +148,6 @@
      * 修改状态
      */
     $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
-    $.form.switch('modifyTrue', '{:url("$thisClass/istrue")}');
     $.form.switch('modifyCli', '{:url("$thisClass/cli")}');
 
 
