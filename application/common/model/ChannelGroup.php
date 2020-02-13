@@ -60,6 +60,7 @@ class ChannelGroup extends ModelService {
             $data[$k]['max_amount'] = 0;
             $data[$k]['f_amount'] = '';
             $data[$k]['ex_amount'] = '';
+            $data[$k]['rate'] = '';
 
             $data[$k]['mode'] =  $ChannelProduct->where(['p_id'=>$v['p_id'],'group_id'=>$v['id']])->count();
             if($data[$k]['mode'] > 0){
