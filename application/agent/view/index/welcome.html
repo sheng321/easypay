@@ -1,0 +1,167 @@
+{extend name="user@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<style>
+    .layadmin-backlog-body {
+        display: block;
+        padding: 10px 15px;
+        background-color: #f8f8f8;
+        color: #999;
+        border-radius: 2px;
+        transition: all .3s;
+        -webkit-transition: all .3s;
+    }
+
+</style>
+{/block}
+
+{block name="cotent"}
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header"><h3>欢迎使用</h3></div>
+            <!--  <div class="layui-card-body" style="height: 200px;">
+              </div>-->
+        </div>
+    </div>
+
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">统计时间 {$info.time|default=''}</div>
+            <div class="layui-card-body" >
+                <div carousel-item="">
+                    <ul class="layui-row layui-col-space10 layui-this">
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>一级商户今日总订单数（单）</h3>
+                                <p><cite>{$info.data1.total_orders|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a l class="layadmin-backlog-body">
+                                <h3>一级商户今日已付订单数（单）</h3>
+                                <p><cite>{$info.data1.total_paid|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>一级商户今日未付订单（单）</h3>
+                                <p><cite>{$info.data1.wait|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>一级商户今日总入金（元）</h3>
+                                <p><cite>{$info.data1.total_fee_all|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>一级商户今日实付金额（元）</h3>
+                                <p><cite>{$info.data1.total_fee_paid|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>一级商户-盈利（元）</h3>
+                                <p><cite>{$info.data1.agent_amount|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>二级商户今日总订单数（单）</h3>
+                                <p><cite>{$info.data2.total_orders|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a l class="layadmin-backlog-body">
+                                <h3>二级商户今日已付订单数（单）</h3>
+                                <p><cite>{$info.data2.total_paid|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>二级商户今日未付订单（单）</h3>
+                                <p><cite>{$info.data2.wait|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>二级商户今日总入金（元）</h3>
+                                <p><cite>{$info.data2.total_fee_all|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>二级商户今日实付金额（元）</h3>
+                                <p><cite>{$info.data2.total_fee_paid|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>二级商户-盈利（元）</h3>
+                                <p><cite>{$info.data2.agent_amount2|default='0'}</cite></p>
+                            </a>
+                        </li>
+
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>账户余额 可提现（元）</h3>
+                                <p><cite>{$money.balance|default='0'}</cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-xs3">
+                            <a  class="layadmin-backlog-body">
+                                <h3>冻结资金 待解冻（元）</h3>
+                                <p><cite>{$money.frozen_amount|default='0'}</cite></p>
+                            </a>
+                        </li>
+
+
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header"><h3>站内公告</h3></div>
+            <div class="layui-card-body">
+                <div class="layui-collapse" lay-accordion="">
+                    {foreach $message as $k => $vo}
+                    <div class="layui-colla-item">
+                        <h2 class="layui-colla-title">{$vo.title|default=''}<i class="layui-icon layui-colla-icon"></i></h2>
+                        <div class="layui-colla-content  {if $k < 3 }layui-show {/if} ">
+                            {:htmlspecialchars_decode($vo.data)}
+                            <br/>
+                            <p style="text-align: right">{$vo.create_at|default=''}</p>
+                        </div>
+                    </div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{/block}
+
+{block name="script"}
+{/block}
+
+
+
+
+
+
+
+
+

@@ -32,13 +32,14 @@ class SysConfig extends AdminService {
      */
    static public function getSysConfig() {
 
-       \think\facade\Cache::tag('SysConfig')->remember('SysInfo', function () {
+       \think\facade\Cache::remember('SysInfo', function () {
            $config1 = self::where('group', 'basic')->column('name,value');
            $config2 = self::where('group', 'admin')->column('name,value');
            $config = array_merge($config1,$config2);
            return $config;
        },3600);
 
+       \think\facade\Cache::tag('SysConfig',['SysInfo']);
        return \think\facade\Cache::get('SysInfo');
     }
 
@@ -48,10 +49,11 @@ class SysConfig extends AdminService {
      */
     static public function getBicConfig() {
 
-        \think\facade\Cache::tag('SysConfig')->remember('BicInfo', function () {
+        \think\facade\Cache::remember('BicInfo', function () {
             $config = self::where('group', 'basic')->column('name,value');
             return $config;
         },3600);
+        \think\facade\Cache::tag('SysConfig',['BicInfo']);
         return \think\facade\Cache::get('BicInfo');
     }
 
@@ -64,24 +66,24 @@ class SysConfig extends AdminService {
      */
     static public function getUserConfig() {
 
-        \think\facade\Cache::tag('SysConfig')->remember('UserInfo', function () {
+        \think\facade\Cache::remember('UserInfo', function () {
             $config1 = self::where('group', 'basic')->column('name,value');
             $config2 = self::where('group', 'user')->column('name,value');
             $config = array_merge($config1,$config2);
             return $config;
         },3600);
-
+        \think\facade\Cache::tag('SysConfig',['UserInfo']);
         return \think\facade\Cache::get('UserInfo');
     }
 
     static public function getAgentConfig() {
-        \think\facade\Cache::tag('SysConfig')->remember('AgentInfo', function () {
+        \think\facade\Cache::remember('AgentInfo', function () {
             $config1 = self::where('group', 'basic')->column('name,value');
             $config2 = self::where('group', 'agent')->column('name,value');
             $config = array_merge($config1,$config2);
             return $config;
         },3600);
-
+        \think\facade\Cache::tag('SysConfig',['AgentInfo']);
         return \think\facade\Cache::get('AgentInfo');
     }
 

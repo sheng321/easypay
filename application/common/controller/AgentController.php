@@ -85,7 +85,16 @@ class AgentController extends BaseController
         }
 
         // 登录会员信息
-        $this->user = session('agent_info');
+        $this->user = $user;
+
+        //ip 白名单验证
+        $ip =  \app\common\model\Ip::bList($this->user['uid'],0);
+        if(!in_array(get_client_ip(),$ip)){
+            __log( session('agent_info.username').'登入IP白名单不包含此IP:'.get_client_ip(),2);
+            session('agent_info', null);
+            $data = ['type' => 'error', 'code' => 0, 'msg' =>'登入IP白名单不包含此IP:'.get_client_ip(), 'url' => url('@agent/login/index')];
+            exceptions($data);
+        }
 
     }
 
@@ -131,7 +140,7 @@ class AgentController extends BaseController
     public function __single($user)
     {
         $session_id  = getSessionid();
-        if($user['single_key'] !== session('user_info.single_key')  ||  $user['single_key'] !== $session_id){
+        if($user['single_key'] !== session('agent_info.single_key')  ||  $user['single_key'] !== $session_id){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '账号在其它设备登入，强制退出！', 'url' => url('@agent/login/logout')];
             __log( session('agent_info.nickname').' 账号在其它设备登入，强制退出！');
             session('agent_info', null);

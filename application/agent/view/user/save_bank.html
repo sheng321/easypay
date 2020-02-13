@@ -1,11 +1,11 @@
-{extend name="agent@public/basic" /}
+{extend name="user@public/basic" /}
 {block name="style"}
 <link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
 {/block}
 {block name="cotent"}
 <form class="layui-form form-width-99admin">
 </br>
-    <input type="hidden" name="bank_id" value="{$info.id|default=''}">
+    <input type="hidden" name="id" value="{$info.id|default=''}">
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">银行卡号</label>
         <div class="layui-input-block">
@@ -16,7 +16,12 @@
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">银行名称</label>
         <div class="layui-input-block">
-            <input type="text" name="bank_name"  class="layui-input" lay-verify="required" value="{$info.bank_name|default=''}" placeholder="例如：工商银行">
+            <select class="bank_id"  name="bank_id"  lay-verify="required"  lay-search=""   >
+                <option value=""    >请选择银行卡</option>
+                {foreach $bank as $k =>$vo}
+                <option value="{$k|default=''}"    {eq name='$info.bank_id|default=false' value='$k' }selected{/eq} >{$vo}</option>
+                {/foreach}
+            </select>
         </div>
     </div>
     <div class="layui-form-item layui-row layui-col-xs12">
@@ -25,13 +30,22 @@
             <input type="text" name="branch_name"  class="layui-input" lay-verify="required" value="{$info.branch_name|default=''}" placeholder="例如：龙岗支行">
         </div>
     </div>
-   
+
     <div class="layui-form-item layui-row layui-col-xs12">
-        <label class="layui-form-label">开卡地区</label>
-        <div class="layui-input-block">
-            <input type="text" name="location"  class="layui-input" lay-verify="required" value="{$info.location|default=''}" placeholder="例如：广东省 - 深圳市 - 龙岗区">
+        <div class="layui-inline">
+            <label class="layui-form-label">省份      </label>
+            <div class="layui-input-block">
+                <input type="text" name="province"   class="layui-input"  placeholder="例如：广东省">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">城市</label>
+            <div class="layui-input-block">
+                <input type="text" id="city"   class="layui-input"  placeholder="例如：深圳市" >
+            </div>
         </div>
     </div>
+
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">开户人</label>
         <div class="layui-input-block">
@@ -39,7 +53,6 @@
         </div>
     </div>
     {:token('__token__', 'sha1')}
-   
 
     <div class="layui-form-item layui-row layui-col-xs12">
         <div class="layui-input-block">
@@ -53,12 +66,11 @@
 {block name="script"}
 
 <script>
-    
-   
+
     /**
      * 添加、编辑
      */
-    $.form.on('submitBtn', "{:url('@user/withdrawal/saveBark')}", function (res) {
+    $.form.on('submitBtn','{:url("$thisRequest")}', function (res) {
         $.msg.success(res.msg, function () {
             $.tool.reload('open');
         });

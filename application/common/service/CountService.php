@@ -201,6 +201,29 @@ class CountService {
        return \think\facade\Cache::get('mem_today_account');
     }
 
+
+    //代理单日统计 每十分钟统计一次
+    public static function agent_today_account(){
+
+        Cache::remember('agent_today_account', function () {
+            $today = date('Y-m-d ',time()).' 00:00:00';//今天
+            //$today = '2019-01-01 00:00:00';
+            $now = date('Y-m-d H:i:s',time());//现在
+            $data['time'] = $now;
+
+            $sql = "select count(1) as total_orders, COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,agent_amount,0)),0) as agent_amount,COALESCE(sum(if(pay_status=2,agent_amount2,0)),0) as agent_amount2,mch_id1,mch_id2,create_at from cm_order where create_at BETWEEN ? AND ? AND mch_id2 > 0 or mch_id1 > 0   GROUP BY mch_id1,mch_id2 ORDER BY id DESC ";//每个代理的
+            $select =  Db::query($sql,[$today,$now]);
+
+            if(!empty($select)) $data['data1'] = array_column($select, null, 'mch_id1'); //一级
+            if(!empty($select)) $data['data2'] = array_column($select, null, 'mch_id2'); //二级
+            return  $data;
+
+        },600);
+
+        return \think\facade\Cache::get('agent_today_account');
+    }
+
+
     //支付通道每日对账 深夜1-2 点统计
     public static function channel_account(){
         $data = [];
@@ -289,6 +312,7 @@ class CountService {
         $Accounts = model('app\common\model\Accounts');
 
         $day = $Accounts->where([['uid', '>', 0],['type', '=', 1]])->order(['day desc'])->cache('agent_account_id',1)->value('day');
+
         if(empty($day)){
             $one = 0;
             $day = '2019-01-01 00:00:00';
@@ -312,7 +336,6 @@ class CountService {
         foreach ($select as $k => $v) {
             $time =  strtotime($v['day']);
             if($one > $time) continue; //不用记录的数据
-
 
             $v['channelgroup_name'] = empty($ChannelGroup[$v['channel_group_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
             $v['product_name'] = empty($PayProduct[$v['payment_id']]) ? '未知' : $PayProduct[$v['payment_id']];
@@ -425,9 +448,10 @@ class CountService {
                 $insert[$v['mch_id2'].$v['day']] = $data['agent'][$v['day']][$v['mch_id2']]; //数据库没有记录的数据
 
             }
+
+
         }
 
-        dump($insert);
         //插入每日对账表
         if(!empty($insert)) return  $Accounts->saveAll($insert);
 

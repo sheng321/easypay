@@ -1,4 +1,4 @@
-{extend name="user@public/basic" /}
+{extend name="agent@public/basic" /}
 
 {block name="style"}
 <link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
@@ -27,14 +27,13 @@
                 <div class="layui-col-xs6 layui-col-sm7 layui-col-md3"  style="background-color: #00b7ee"  >
                     <!-- 填充内容 -->
                     <div class="layui-card">
-                        <div class="layui-card-header"> <h5>{$vo.product_name} </h5></div>
+                        <div class="layui-card-header"> <h4>{$vo.channelgroup_name}  （{$vo.product_name}）</h4></div>
                         <div class="layui-card-body">
                             <div class="ibox float-e-margins">
                                 <div class="ibox-content">
-                                    <p>统计时间：{$vo.day}</p>
                                     <p>交易金额：{$vo.total_fee_all}元</p>
-                                    <p>手续费  &nbsp;&nbsp;&nbsp;：0元</p>
                                     <p>入金总额：{$vo.total_fee_paid}元</p>
+                                    <p>代理盈利：{$vo.platform}元</p>
                                 </div>
                                 <div class="ibox-content">
                                     <p>
@@ -47,6 +46,7 @@
                                         <span style="margin-left: 80px;font-size: 16px;color: #ff0000b3;">失败笔数：<strong>{$vo.total_orders - $vo.total_paid}</strong></span>
                                     </p>
                                 </div>
+                                <p style="text-align: right" >统计时间：{$vo.day}</p>
                             </div>
                         </div>
                     </div>

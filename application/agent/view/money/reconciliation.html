@@ -1,4 +1,4 @@
-{extend name="user@public/basic" /}
+{extend name="agent@public/basic" /}
 
 {block name="style"}
 <link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
@@ -19,15 +19,8 @@
                 <blockquote id="searchBlock" class=" quoteBox">
 
                     <div class="layui-form-item layui-inline">
-
                         <div class="layui-input-inline">
-                            <input type="text" id="relate" class="layui-input" placeholder="请输入关联单号"/>
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item layui-inline">
-                        <div class="layui-input-inline">
-                            <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间"    >
+                            <input type="text" id="day" class="layui-input " placeholder="日期"    >
                         </div>
                     </div>
 
@@ -41,13 +34,14 @@
                 <!--主表单渲染--开始-->
                 <table id="currentTable" lay-filter="currentTable"></table>
                 <!--主表单渲染--结束-->
+
+
+
             </form>
 
         </div>
     </div>
 </div>
-
-
 
 
 {/block}
@@ -61,19 +55,19 @@
      * 生成表单
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
-        {field: 'uid', title: '商户号', minWidth: 40, align: "center"},
-        {field: 'title', title: '操作类型', minWidth: 20, align: "center"},
-        {field: 'before_balance', title: '变动前金额', align: 'center', minWidth: 20},
-        {field: 'change', title: '变动金额', align: 'center', minWidth: 20},
-        {field: 'balance', title: '变动后金额', align: 'center', minWidth: 20},
-        {field: 'relate', title: '关联', align: 'center', minWidth: 20},
-        {field: 'create_at', title: '创建时间', align: 'center', minWidth: 20},
+        {field: 'day', title: '日期', minWidth: 20, align: "center"},
+        {field: 'total_orders', title: '总订单数', align: 'center', minWidth: 20},
+        {field: 'total_paid', title: '支付订单数', align: 'center', minWidth: 20},
+        {field: 'total_fee_all', title: '总金额（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee_paid', title: '总支付金额（元）', align: 'center', minWidth: 20},
+        {field: 'platform', title: '代理盈利（元）', align: 'center', minWidth: 20},
+        {field: 'rate', title: '成功率（%）', align: 'center', width: 120,style: ' color: red; '},
     ]]);
 
     /**
      * 日期范围
      */
-    $.laydate.range('create_at',1);
+    $.laydate.datetime('day');
 
 </script>
 {/block}

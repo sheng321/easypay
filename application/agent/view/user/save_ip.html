@@ -1,0 +1,55 @@
+{extend name="user@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{/block}
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+</br>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-block">
+            <select name="type"  class="type" lay-filter="type"    >
+                <option value="0" >登入IP</option>
+                <option value="1" >结算提现IP</option>
+                <option value="2" >代付提现IP</option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-inline">
+            <label class="layui-form-label">IP    </label>
+            <div class="layui-input-block">
+                <input type="text" name="ip"  lay-verify="required"  class="layui-input"  placeholder="例如：127.0.0.1">
+            </div>
+        </div>
+    </div>
+    {:token('__token__', 'sha1')}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+
+<script>
+
+    /**
+     * 添加、编辑
+     */
+    $.form.on('submitBtn','{:url("$thisRequest")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+
+</script>
+{/block}

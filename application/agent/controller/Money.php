@@ -1,15 +1,12 @@
 <?php
 
-namespace app\user\controller;
+namespace app\agent\controller;
 
-use app\common\controller\AdminController;
-use app\common\controller\UserController;
+use app\common\controller\AgentController;
 use app\common\model\PayProduct;
-use app\pay\service\Payment;
-use think\facade\Session;
 
 
-class Money extends UserController {
+class Money extends AgentController {
 
     /**
      * config模型对象
@@ -77,7 +74,7 @@ class Money extends UserController {
 
 
     /**
-     *  商户对账
+     *  代理对账
      * @return void
      */
     public function reconciliation(){
@@ -88,12 +85,13 @@ class Money extends UserController {
             $limit =(int) $this->request->get('limit', 15);
             $search = (array)$this->request->get('search', []);
             $search['uid'] = $this->user['uid'];
+
             return json($this->model->aList($page, $limit, $search));
         }
 
         //基础数据
         $basic_data = [
-            'title' => '商户对账列表',
+            'title' => '代理对账列表',
             'data'  => '',
         ];
 
@@ -102,18 +100,18 @@ class Money extends UserController {
 
 
     /**
-     *  通道分析
+     *  通道分组分析
      * @return void
      */
     public function analyse(){
         $data = [];
         $info = json_decode(model('app\common\model\Accounts')->where(['uid'=>$this->user['uid']])->order(['day desc'])->value('info'),true);
-        if(!empty($info)  || is_array($info)) $data = $info;
+        if(!empty($info) || is_array($info)) $data = $info;
 
 
         //基础数据
         $basic_data = [
-            'title' => '通道分析',
+            'title' => '通道分组分析',
             'info'  => $data,
         ];
 

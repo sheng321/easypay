@@ -22,13 +22,11 @@ class Index extends UserController
 
         $data =  \app\common\service\CountService::mem_today_account();
         if(!empty($data['data'][$this->user['uid']])) $data['data'] = $data['data'][$this->user['uid']];
-        if(empty($data['data']['total_orders'])){
-            $data['data']['wait'] = 0;
+        if(empty($data['data'][$this->user['uid']]['total_orders'])){
+            $data['data'][$this->user['uid']]['wait'] = 0;
         }else{
-            $data['data']['wait'] = $data['data']['total_orders'] - $data['data']['total_paid'];
+            $data['data'][$this->user['uid']]['wait'] = $data['data'][$this->user['uid']]['total_orders'] - $data['data'][$this->user['uid']]['total_paid'];
         }
-
-        $money = \app\common\model\Umoney::quickGet(['uid'=>$this->user['uid'],'channel_id'=>0]);
 
         //商户公告
         $Message =  model('app\common\model\Message')->where([
@@ -40,7 +38,7 @@ class Index extends UserController
             'title'=> '主页',
             'message'=> $Message,
             'info'=> $data,//今天跑量详情
-            'money'=> ['balance'=>$money['balance'],'frozen_amount'=>$money['frozen_amount']],
+            'money'=> ['balance'=>$this->user['money']['balance'],'frozen_amount'=>$this->user['money']['frozen_amount']],
         ];
 
         return $this->fetch('',$basic_data);
