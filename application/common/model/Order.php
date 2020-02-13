@@ -322,7 +322,7 @@ class Order extends ModelService {
         $where = search($search,$searchField,$where);
 
         if(empty($search['field'])){
-            $field = "id,mch_id,mch_id1,mch_id2,out_trade_no,system_no,amount,total_fee,payment_id,actual_amount,create_time,pay_time,productname,pay_status,notice,run_rate,settle,agent_amount2,agent_amount,channel_group_id";
+            $field = "id,mch_id,mch_id1,mch_id2,out_trade_no,system_no,amount,payment_id,actual_amount,create_time,pay_time,productname,pay_status,notice,run_rate,agent_amount2,agent_amount,channel_group_id";
         }else{
             //下载
             $field =  $search['field'];
@@ -344,6 +344,15 @@ class Order extends ModelService {
             $list[$k]['channelgroup_name'] = empty($ChannelGroup[$v['channel_group_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
             $list[$k]['pay_status_name'] = $order['pay_status'][$v['pay_status']];
             $list[$k]['notice_name'] = $order['notice'][$v['notice']];
+            if(empty($v['mch_id2'])){
+                $list[$k]['next'] = '无';//下级代理
+                $list[$k]['commission'] = $v['agent_amount'];//代理费
+            }else{
+                $list[$k]['next'] = $v['mch_id1'];//下级代理
+                $list[$k]['commission'] = $v['agent_amount2'];//代理费
+            }
+
+
         }
 
         $list = [

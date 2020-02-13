@@ -122,14 +122,15 @@
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field:'mch_id', title:'商户编号', minwith:1, align: 'center'},
+        {field:'next', title:'下级代理', minwith:1, align: 'center',style: ' color: red;'},
         {field:'out_trade_no', title:'订单号', minwith:1, align: 'center'},
         {field:'system_no', title:'系统单号', minwith:1, align: 'center'},
         {field:'amount', title:'交易金额', minwith:1, align: 'center'},
-        {field:'total_fee', title:'手续费', minwith:1, align: 'center',toolbar: '#total_fee',},
-        {field:'settle', title:'结算', minwith:1, align: 'center',style: ' color: red;'},
+        {field:'commission', title:'代理收益', minwith:1, align: 'center',style: ' color: red;'},
         {field:'create_time', title:'提交时间', minwith:1, align: 'center'},
         {field:'pay_time', title:'成功时间', minwith:1, align: 'center'},
         {field:'product_name', title:'支付银行',minwith:1, align: 'center'},
+        {field:'channelgroup_name', title:'通道分组',minwith:1, align: 'center'},
         {field:'productname', title:'订单描述',minwith:1, align: 'center'},
         {field:'pay_status', title:'支付状态',toolbar: '#pay_status1', minwith:1, align: 'center'},
         {field:'notice', title:'通知状态', toolbar: '#notice1',minwith:1, align: 'center'},
