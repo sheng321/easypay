@@ -21,14 +21,29 @@ class Order extends AgentController {
         $this->model = model('app\common\model\Order');
     }
 
+    /**
+     *  订单列表
+     * @return void
+     */
     public function index(){
-        if ($this->request->get('type') == 'ajax') {
+
+        if ($this->request->get('type') == 'ajax'){
+
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 10);
             $search = (array)$this->request->get('search', []);
-            return json($this->model->list($page, $limit, $search,$this->user['uid']));
+            return json($this->model->clist($page, $limit, $search));
         }
-        return view("index");
+
+        //基础数据
+        $basic_data = [
+            'title'  => '订单列表',
+            'data'   => '',
+            'order' => config('order.'),
+            'product' => PayProduct::codeTitle(),//支付产品
+        ];
+
+        return $this->fetch('', $basic_data);
     }
 
 
