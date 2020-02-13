@@ -22,7 +22,7 @@ class Menu extends AdminController
         \think\facade\Cache::remember($name, function ()use ($name) {
             return \app\common\model\SysMenu::getMenuApi();
         },86400);
-        \think\facade\Cache::tag('menu',$name);
+        \think\facade\Cache::tag('menu',[$name]);
         return json(Cache::get($name));
 
 
@@ -38,7 +38,7 @@ class Menu extends AdminController
         \think\facade\Cache::remember($name, function ()use ($name) {
             return \app\common\model\SysMenu::getMenuApi();
         },86400);
-        \think\facade\Cache::tag('menu',$name);
+        \think\facade\Cache::tag('menu',[$name]);
         return Cache::get($name);
     }
 
