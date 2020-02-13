@@ -187,10 +187,6 @@ class Cgroup  extends AdminController
 
 
 
-
-
-
-
     /**
      * 添加通道分组
      * @return mixed|\think\response\Json

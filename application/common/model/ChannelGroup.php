@@ -46,7 +46,7 @@ class ChannelGroup extends ModelService {
 
         $field = ['id','update_at','remark','title','status','sort','verson','p_id','c_rate','cli'];
 
-        $count = $this->where($where)->count();
+        $count = $this->where($where)->count(1);
 
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc'])->select()->toArray();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
@@ -65,13 +65,14 @@ class ChannelGroup extends ModelService {
             if($data[$k]['mode'] > 0){
                 $select = $ChannelProduct->alias('a')->join('channel w','w.id = a.channel_id','LEFT')->where([
                     ['a.p_id','=',$v['p_id']],
-                    ['a.group_id','=',$v['id']]])->field('a.*,w.min_amount,w.max_amount,w.f_amount,w.ex_amount')->select()->toArray();
+                    ['a.group_id','=',$v['id']]])->field('a.*,w.min_amount,w.max_amount,w.f_amount,w.ex_amount,w.c_rate as rate')->select()->toArray();
 
                 foreach ($select as $k1 => $v1){
                     $data[$k]['min_amount'] = $data[$k]['min_amount'] == 0?$v1['min_amount']:min($v1['min_amount'],$data[$k]['min_amount']);
                     $data[$k]['max_amount'] = max($v1['max_amount'],$data[$k]['max_amount']);
                     $data[$k]['f_amount'] =  $data[$k]['f_amount'].'|'.$v1['f_amount'];
                     $data[$k]['ex_amount'] =  $data[$k]['ex_amount'].'|'.$v1['ex_amount'];
+                    $data[$k]['rate'] =  $data[$k]['rate'].'|'.$v1['rate'];
                 }
 
                 if(!empty($data[$k]['f_amount'])){
