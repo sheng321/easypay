@@ -265,8 +265,6 @@ class Order extends ModelService {
         }
 
 
-
-
         $count = $this->where($where)->count();
 
         $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_'.$uid,3)->order(['create_at'=>'desc'])->select()->toArray();
@@ -277,6 +275,73 @@ class Order extends ModelService {
         $order = config('order.');
         foreach ($list as $k=>$v){
             $list[$k]['product_name'] = empty($PayProduct[$v['payment_id']])?'未知':$PayProduct[$v['payment_id']];
+            $list[$k]['pay_status_name'] = $order['pay_status'][$v['pay_status']];
+            $list[$k]['notice_name'] = $order['notice'][$v['notice']];
+        }
+
+        $list = [
+            'code'  => 0,
+            'msg'   => $msg,
+            'count' => $count,
+            'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
+            'data'  => $list,
+        ];
+
+        if(!empty($search['field'])) $list['code'] = 1 && $list['msg'] = $msg.'本页数据不显示。'; //下载
+
+        return $list;
+    }
+
+
+
+    /**
+     *  代理分页获取
+     * @param integer $page
+     * @param integer $limit
+     * @param array $search
+     * @return void
+     */
+    public function dlist($page = 1,$limit = 10,$search = [],$type = 0){
+
+        $uid = 0;
+        if(!empty(session('agent_info.uid'))){
+            $uid = session('agent_info.uid');
+            $where[] = ['mch_id1|mch_id2','=',session('agent_info.uid')] ;
+        }
+
+        $where = [];
+        if(empty($search['create_at'])){
+            $date = timeToDate(0,0,0,-3); //默认只搜索5天
+            $where[] = ['create_at','>',$date];
+        }
+
+        //搜索条件
+        $searchField['eq'] = ['mch_id','payment_id','pay_status','notice'];
+        $searchField['left_like'] = ['out_trade_no','system_no'];
+        $searchField['time'] = ['create_at'];
+        $where = search($search,$searchField,$where);
+
+        if(empty($search['field'])){
+            $field = "id,mch_id,mch_id1,mch_id2,out_trade_no,system_no,amount,total_fee,payment_id,actual_amount,create_time,pay_time,productname,pay_status,notice,run_rate,settle,agent_amount2,agent_amount,channel_group_id";
+        }else{
+            //下载
+            $field =  $search['field'];
+        }
+
+
+        $count = $this->where($where)->count();
+
+        $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_'.$uid,3)->order(['create_at'=>'desc'])->select()->toArray();
+        empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+
+        $ChannelGroup =  ChannelGroup::idArr();//通道分组
+        $PayProduct =  PayProduct::idArr();//支付产品
+
+        $order = config('order.');
+        foreach ($list as $k=>$v){
+            $list[$k]['product_name'] = empty($PayProduct[$v['payment_id']])?'未知':$PayProduct[$v['payment_id']];
+            $list[$k]['channelgroup_name'] = empty($ChannelGroup[$v['channel_group_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
             $list[$k]['pay_status_name'] = $order['pay_status'][$v['pay_status']];
             $list[$k]['notice_name'] = $order['notice'][$v['notice']];
         }
