@@ -580,6 +580,7 @@ class Member extends AdminController {
             $member['password'] = password($member['password']);
             $member['status'] = 1;
             $member['profile_pid'] = $pid; //上级代理UID
+            $member['pid'] = $pid;
 
             //保存数据,返回结果
             //使用事物保存数据
