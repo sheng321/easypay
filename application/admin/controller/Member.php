@@ -44,7 +44,7 @@ class Member extends AdminController {
 
             //验证数据
             $validate = $this->validate($money, 'app\common\validate\Money.edit');
-            //if (true !== $validate) return __error($validate);
+            if (true !== $validate) return __error($validate);
 
              //处理金额
              $res =  $Umoney->dispose($user,$money);
@@ -580,7 +580,6 @@ class Member extends AdminController {
             $member['password'] = password($member['password']);
             $member['status'] = 1;
             $member['profile_pid'] = $pid; //上级代理UID
-            $member['pid'] = $pid;
 
             //保存数据,返回结果
             //使用事物保存数据

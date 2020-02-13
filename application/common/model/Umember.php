@@ -101,12 +101,12 @@ class Umember extends UserService {
                 ];
 
                 $agent_level = 0;
-                if($data['who'] == 2){
-                    if(!empty($data['profile_pid'])){
-                        $profile['pid']  = $data['profile_pid'];
+                if(!empty($data['profile_pid'])){
+                    $profile['pid']  = $data['profile_pid'];
+                    if($data['who'] == 2){//代理
                         $agent_level  = $Uprofile->where('uid',$data['profile_pid'])->value('level');//代理等级
+                        $agent_level = $agent_level + 1;
                     }
-                    $agent_level = $agent_level + 1;
                 }
                 $profile['level'] = $agent_level;
                 $find = $Uprofile->create($profile);
