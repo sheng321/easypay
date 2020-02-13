@@ -591,6 +591,12 @@ class Member extends AdminController {
                 $this->model->rollback();
                 return __error('数据有误，请稍后再试!');
             }
+            $Uprofile =  model('app\common\model\Uprofile')->save(['pid'=>$pid,'id'=>$result['profile']['id']],['id'=>$result['profile']['id']]);
+            if (!$Uprofile ) {
+                $this->model->rollback();
+                return __error('数据有误，请稍后再试!');
+            }
+
             $this->model->commit();
             return __success('添加成功!');
 
