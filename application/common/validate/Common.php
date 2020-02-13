@@ -99,7 +99,7 @@ class Common extends Validate {
             if(!is_numeric($value) || $value  < 0) return '请输入正确金额格式';
         }
         if( in_array($data['field'],['c_rate','s_rate'])){
-            if(!is_float($value) || $value  < 0 || $value  > 0.8) return '请输入正确费率格式';
+            if(!is_numeric($value) || $value  < 0 || $value  > 0.8) return '请输入正确费率格式';
         }
 
 
