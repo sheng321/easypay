@@ -3,9 +3,7 @@
 
 namespace app\agent\controller;
 
-
 use app\common\controller\AgentController;
-use think\Db;
 class Order extends AgentController {
 /**
      * config模型对象
