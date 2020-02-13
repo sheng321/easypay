@@ -2,8 +2,8 @@
 
 
 namespace app\agent\controller;
-
 use app\common\controller\AgentController;
+
 class Order extends AgentController {
 /**
      * config模型对象
