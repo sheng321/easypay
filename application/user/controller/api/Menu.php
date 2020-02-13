@@ -20,7 +20,7 @@ class Menu extends UserController
         \think\facade\Cache::remember($name, function ()use ($name) {
             return  \app\common\model\SysMenu::getUserMenuApi();
         },86400);
-        \think\facade\Cache::tag('menu',[$name]);
+        \think\facade\Cache::tag('menu',$name);
 
         return json(Cache::get($name));
     }
