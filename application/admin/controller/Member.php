@@ -693,7 +693,7 @@ class Member extends AdminController {
             return $this->form();
         } else {
 
-            $post = $this->request->only('username,nickname,phone,qq,who,remark,auth_id,id');
+            $post = $this->request->only('username,nickname,phone,qq,remark,auth_id,id');
             $profile = $this->request->only('pid');
             $pid = $this->request->post('p_id','0');
 

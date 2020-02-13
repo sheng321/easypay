@@ -59,7 +59,6 @@
         </div>
     </div>
 
-    {if empty($user)}
     <div class="layui-form-item layui-row layui-col-xs12">
         <label class="layui-form-label">类别</label>
         <div class="layui-input-block">
@@ -67,7 +66,6 @@
             <input type="radio" name="who" value="2" title="代理"     {eq name='$user.who|default=false' value='2' }checked="checked" {/eq}    ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>代理</div></div>
         </div>
     </div>
-    {/if}
 
     <div class="layui-form-item layui-row">
         <label class="layui-form-label">用户权限</label>
