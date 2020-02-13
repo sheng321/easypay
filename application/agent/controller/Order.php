@@ -57,7 +57,6 @@ class Order extends AgentController {
             "out_trade_no",
             "system_no",
             "amount",
-            "total_fee",
             "payment_id",
             "actual_amount",
             "create_time",
@@ -65,8 +64,6 @@ class Order extends AgentController {
             "productname",
             "pay_status",
             "notice",
-            "run_rate",
-            "settle"
         ];
 
         $title = [
@@ -75,9 +72,8 @@ class Order extends AgentController {
             "out_trade_no"=>'商户单号',
             "system_no"=>'系统单号',
             "amount"=>'交易金额',
-            "total_fee"=>'手续费',
-            "run_rate"=>'运营费率',
-            'settle'=>'结算',
+            "next"=>'下级代理',
+            'commission'=>'代理收益',
             "productname"=>'订单描述',
             'product_name'=>'支付银行',
             'pay_status_name'=>'支付状态',
@@ -85,6 +81,7 @@ class Order extends AgentController {
             'create_time'=>'提交时间',
             'pay_time'=>'支付时间',
         ];
+
 
         if ($this->request->get('type') == 'ajax'){
             $page = $this->request->get('page', 1);
@@ -98,6 +95,9 @@ class Order extends AgentController {
             'pay_status_name',
             'notice_name',
             'product_name',
+            'next',
+            'commission',
+            'channelgroup_name',
         ];
 
         $field =  array_merge($field,$field1);
