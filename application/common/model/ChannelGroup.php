@@ -60,7 +60,7 @@ class ChannelGroup extends ModelService {
             $data[$k]['max_amount'] = 0;
             $data[$k]['f_amount'] = '';
             $data[$k]['ex_amount'] = '';
-            $data[$k]['rate'] = '';
+            $data[$k]['rate'] = 0;
 
             $data[$k]['mode'] =  $ChannelProduct->where(['p_id'=>$v['p_id'],'group_id'=>$v['id']])->count();
             if($data[$k]['mode'] > 0){
@@ -73,7 +73,7 @@ class ChannelGroup extends ModelService {
                     $data[$k]['max_amount'] = max($v1['max_amount'],$data[$k]['max_amount']);
                     $data[$k]['f_amount'] =  $data[$k]['f_amount'].'|'.$v1['f_amount'];
                     $data[$k]['ex_amount'] =  $data[$k]['ex_amount'].'|'.$v1['ex_amount'];
-                    $data[$k]['rate'] =  $data[$k]['rate'].'|'.$v1['rate'];
+                    $data[$k]['rate'] = max($data[$k]['rate'],$v1['rate']);
                 }
 
                 if(!empty($data[$k]['f_amount'])){

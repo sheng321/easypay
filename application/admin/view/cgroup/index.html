@@ -81,8 +81,6 @@
         {{#  if(d.f_amount !== ''){ }}
         <span > 固定金额：{{d.f_amount}}</span>
         {{#  } }}
-
-
     </script>
 
     <!--表单模板绑定--结束-->
@@ -116,10 +114,12 @@
         {field: 'title', title: '名称', minWidth: 50, align: 'center'},
         {field: 'product', title: '支付产品', minWidth: 50, align: 'center'},
         {field: 'c_rate', title: '默认费率', minWidth: 20, align: 'center', sort: true, edit: 'text', style: 'background-color: #FF7F00; color: #fff;'},
+        {field: 'rate', title: '分组最大费率', minWidth: 20, align: "center"},
+
         {field: 'mode', title: '接口模式', minWidth: 20, align: "center", templet: '#mode',},
 
         {field: 'limit_money', title: '分组单笔限额', minWidth: 20, align: "center", templet: '#limit',style:'background-color: #00cc99; color: #fff;'},
-        {field: 'rate', title: '分组通道费率', minWidth: 20, align: "center"},
+
 
         {field: 'remark', title: '备注信息', edit: 'text', maxWidth: 100, align: "center", style: 'background-color: #009688; color: #fff;', sort: true},
 
