@@ -265,9 +265,6 @@ class Agent extends AgentController {
             $max = $this->model->getMaxRate($group_id,$post['id']);
             if($max >$post['value']) return __error('费率小于用户分组默认费率：'.$max);
 
-
-            halt(111);
-
             $model = model('app\common\model\SysRate');
             $temp['p_id'] =  $post['id'];
             $temp['group_id'] = $group_id;
