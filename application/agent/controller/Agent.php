@@ -48,6 +48,9 @@ class Agent extends AgentController {
      * @return mixed
      */
     public  function  group(){
+
+        $this->model = model('app\common\model\Ulevel');
+
         if (!$this->request->isPost()) {
 
             //ajax访问获取数据
