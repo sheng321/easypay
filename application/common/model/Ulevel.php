@@ -46,10 +46,8 @@ class Ulevel extends ModelService {
 
         $where = search($search,$searchField,$where);
 
-
-        dump($where);
         $field = 'id, title, remark, channel_id,create_at,type1,type,uid';
-        $count = $this->where($where)->count();
+        $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['uid desc','create_at desc'])->select()->each(function ($item, $key) {
             $arr = json_decode($item["channel_id"],true);
             $num =  count($arr,COUNT_RECURSIVE); //通道分组个数
@@ -65,7 +63,6 @@ class Ulevel extends ModelService {
         });
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
-        halt($data);
         $info = [
             'limit'        => $limit,
             'page_current' => $page,

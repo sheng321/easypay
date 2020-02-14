@@ -1,0 +1,53 @@
+{extend name="agent@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form form-width-99admin">
+    <br>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">分组名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" class="layui-input" lay-verify="required" value="{$auth.title|default=''}" placeholder="请输入分组名称">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">类别</label>
+        <div class="layui-input-block">
+            <input type="radio" name="type1" value="0" title="商户分组"    {eq name='$auth.type1|default=false' value='0' }checked="checked" {/eq}      ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>商户分组</div></div>
+            <input type="radio" name="type1" value="1" title="代理分组"     {eq name='$auth.type1|default=false' value='1' }checked="checked" {/eq}    ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>代理分组</div></div>
+        </div>
+    </div>
+
+    {if !empty($auth)}
+    <input type="hidden" name="id" value="{$auth.id|default=''}">
+    {/if}
+
+    
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script  >
+
+    /**
+     * 添加、编辑
+     */
+
+    $.form.on('submitBtn', "{if empty($auth)}{:url('@admin/level/add_agent')}{else/}{:url('@admin/level/edit')}{/if}", function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },true);
+    
+
+</script>
+{/block}
