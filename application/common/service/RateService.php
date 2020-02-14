@@ -182,7 +182,7 @@ class RateService
     /**
      * 获取代理支付通道分组状态和费率
      * @param $uid
-     * @param $channel_group_id
+     * @param $channel_group_id 支通道付分组
      * @return mixed
      */
     public static function getAgentStatus($uid,$channel_group_id){
@@ -198,7 +198,7 @@ class RateService
         //是否 存在  为代理 设定了分组
         if(empty($profile) || $profile['who'] != 2 ||$profile['group_id'] == 0  ) return $res;
 
-
+        //平台支付通道分组
         $channelGroup = self::channelGroup();
         $status = $channelGroup[$channel_group_id]['status'];
 
@@ -208,7 +208,6 @@ class RateService
         $data['uid'] = empty($profile['pid'])?0:$profile['pid'];
         $data['group_id'] = $profile['group_id'];
         $data['channel_id'] = $channel_group_id;
-        $data['p_id'] = 0;
         $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
 
         if(!empty($SysRate['rate'])  && $SysRate['rate'] != '0.0000'  ){
@@ -237,7 +236,7 @@ class RateService
             $res['code'] = 1;
             $res['status'] = $status;
             $res['type'] = 3;//系统通道分组费率类型
-            $res['rate'] =  $channelGroup[$channel_group_id]['c_rate'];//没有记录，统一使用支付产品的默认费率
+            $res['rate'] =  $channelGroup[$channel_group_id]['c_rate'];//没有记录，统一使用通道分组的默认费率
         }
 
 
@@ -351,8 +350,8 @@ class RateService
             $status = $channelGroup[$aid]['status'];
 
             $data['channel_id'] = $aid;
-            $data['p_id'] = 0;
             $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
+
 
             if(!empty($SysRate['rate'])   && $SysRate['rate'] != '0.0000'  ){
                 $res['code'] = 1;
@@ -363,7 +362,6 @@ class RateService
 
             //2.上级的状态
             if($Ulevel['uid'] != 0){
-
                 $group_id1 = \app\common\model\Uprofile::where(['uid'=>$Ulevel['uid']])->value('group_id');
                 if(!empty($group_id1)){
                     $res1 = self::getGroupStatus($group_id1,$aid);
@@ -382,7 +380,7 @@ class RateService
             //3.获取平台支付通道分组费率
             if(empty($res['rate'])  || $res['rate'] == '0.0000' ){
                 $res['code'] = 1;
-                $res['status'] = $status;
+                $res['status'] = isset($res['status'])?$res['status']:$status;
                 $res['type'] = 3;//系统通道分组费率类型
                 $res['rate'] =  $channelGroup[$aid]['c_rate'];//没有记录，统一使用支付产品的默认费率
             }
@@ -394,10 +392,7 @@ class RateService
                 $res['status'] = $status;
 
             }
-
-
         }
-
 
       return $res;
     }

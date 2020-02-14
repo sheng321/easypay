@@ -40,6 +40,7 @@ class Api extends AgentController
                 }
             }
 
+
             //基础数据
             $basic_data = [
                 'title'  => '通道分组费率',
