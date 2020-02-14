@@ -46,6 +46,7 @@ class Ulevel extends ModelService {
 
         $where = search($search,$searchField,$where);
 
+
         dump($where);
         $field = 'id, title, remark, channel_id,create_at,type1,type,uid';
         $count = $this->where($where)->count();
