@@ -650,7 +650,6 @@ class Member extends AdminController {
         $Member = $this->model->where('id', $this->request->param('id/d',0))->find();
         if (empty($Member)) return exceptions('暂无数据，请重新刷新页面！');
 
-
         if (!$this->request->isPost()) {
             $agent = $this->model->where([
                 ['who','=','2'],
