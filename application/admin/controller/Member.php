@@ -89,7 +89,7 @@ class Member extends AdminController {
                 ['status','=','1']
             ])->field('uid,id,who')->select()->toArray();
 
-            $type = $user['who'] == 2 ?1:0; //区分获取什么分组
+            $type = ($user['who'] == 2)?1:0; //区分获取什么分组
             $group =   \app\common\model\Ulevel::where(['uid'=>$user['pid'],'type1'=>$type])->field('id,title')->select()->toArray();
 
             //基础数据
