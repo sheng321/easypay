@@ -355,7 +355,7 @@ class RateService
 
             if(!empty($SysRate['rate'])   && $SysRate['rate'] != '0.0000'  ){
                 $res['code'] = 1;
-                $res['status'] = $SysRate['status'];//对应费率表的状态
+                $status =  $res['status'] = $SysRate['status'];//对应费率表的状态
                 $res['rate'] = $SysRate['rate'];//费率
                 $res['type'] = 1;//用户分组费率类型
             }
@@ -380,7 +380,7 @@ class RateService
             //3.获取平台支付通道分组费率
             if(empty($res['rate'])  || $res['rate'] == '0.0000' ){
                 $res['code'] = 1;
-                $res['status'] = isset($res['status'])?$res['status']:$status;
+                $res['status'] = $status;
                 $res['type'] = 3;//系统通道分组费率类型
                 $res['rate'] =  $channelGroup[$aid]['c_rate'];//没有记录，统一使用支付产品的默认费率
             }
