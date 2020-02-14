@@ -13,8 +13,11 @@ class Test  extends Controller
 {
     public function index()
     {
-        $data =  \app\common\service\CountService::agent_account();
-        halt($data);
+        //$data =  \app\common\service\CountService::agent_account();
+       // halt($data);
+
+
+
 
     }
 

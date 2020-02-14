@@ -646,6 +646,10 @@ class Member extends AdminController {
      * @return mixed|string|\think\response\Json
      */
     public function edit() {
+        //查找所需修改用户
+        $Member = $this->model->where('id', $this->request->get('id'))->find();
+        if (empty($Member)) return exceptions('暂无数据，请重新刷新页面！');
+
         if (!$this->request->isPost()) {
 
             $agent = $this->model->where([
@@ -654,9 +658,6 @@ class Member extends AdminController {
             ])->field('uid,id,who')->select()->toArray();
 
             $group =   \app\common\model\Ulevel::field('id,title')->select()->toArray();
-            //查找所需修改用户
-            $Member = $this->model->where('id', $this->request->get('id'))->find();
-            if (empty($Member)) return msg_error('暂无数据，请重新刷新页面！');
 
             $auth = model('app\common\model\SysAuth')->getList(1)->toArray();
 
@@ -694,6 +695,8 @@ class Member extends AdminController {
         } else {
 
             $post = $this->request->only('username,nickname,phone,qq,remark,auth_id,id');
+            $post['who'] = $Member['who'];
+
             $profile = $this->request->only('pid');
             $pid = $this->request->post('p_id','0');
 
