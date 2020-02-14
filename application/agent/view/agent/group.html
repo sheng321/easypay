@@ -1,0 +1,150 @@
+{extend name="agent@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+        <div class="layui-tab-content">
+            <form class="layui-form">
+
+                <!--顶部操作栏--开始-->
+                <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label-99admin">用户分组名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="title" class="layui-input" placeholder="请输入权限用户分组名称"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-inline">
+                        <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
+                    </div>
+
+                    {if auth("$thisClass/add")}
+                    <div class="layui-form-item layui-inline">
+                        <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add")}' data-title="添加分组">添加</a>
+                    </div>
+                    {/if}
+
+                    {if auth("$thisClass/del")}
+                    <div class="layui-form-item layui-inline">
+                        <a class="layui-btn layui-btn-danger layui-btn-normal   layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del")}' data-table-id="currentTableId">删除</a>
+                    </div>
+                    {/if}
+
+                </blockquote>
+                <!--顶部操作栏--结束-->
+
+                <!--主表单渲染--开始-->
+                <table id="currentTable" lay-filter="currentTable"></table>
+                <!--主表单渲染--结束-->
+
+                <!--表单模板绑定--开始-->
+                <script type="text/html" id="checkStatus">
+                    <input type="checkbox" name="{{d.id}}" value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
+                </script>
+                <!--表单模板绑定--结束-->
+
+                <!--表单操作栏--开始-->
+
+
+                <script type="text/html" id="mode">
+
+                    {{#  if(d.mode == '0'){ }}
+                    <a class="layui-btn layui-btn-xs layui-btn-danger "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---用户分组：{{d.title}}">没有通道</a>
+
+                    {{#  } else { }}
+                    <a class="layui-btn layui-btn-xs layui-btn-green "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---用户分组：{{d.title}}">通道（{{d.mode}}）</a>
+                    {{#  } }}
+
+
+                </script>
+
+                <script type="text/html" id="type1">
+                    {{#  if(d.type1 == 0){ }}
+                    商户分组
+                    {{#  } else { }}
+
+                    <a class="layui-btn layui-btn-xs  layui-btn-warm"   >代理分组</a>
+                    {{#  } }}
+                </script>
+
+                <script type="text/html" id="rate">
+                    {{#  if(d.rate_count > 0){ }}
+                    {{#  if(d.type1 == 0){ }}
+                    <a class="layui-btn layui-btn-xs" style="background-color: #00b7ee"    data-open='{:url("$thisClass/rate")}?id={{d.id}}' data-title="{{d.title}}-费率设置">费率查看</a>
+                    {{#  } else { }}
+                    <a class="layui-btn layui-btn-xs" style="background-color: #00b7ee"    data-open='{:url("$thisClass/agent_rate")}?id={{d.id}}' data-title="{{d.title}}-费率设置">费率查看</a>
+                    {{#  } }}
+
+                    {{#  } else { }}
+                    {{#  if(d.type1 == 1){ }}
+                    <a class="layui-btn layui-btn-xs  layui-btn-warm"     data-open='{:url("$thisClass/agent_rate")}?id={{d.id}}' data-title="{{d.title}}-费率设置">未设置费率,默认通道分组费率</a>
+                    {{#  } else { }}
+                    <a class="layui-btn layui-btn-xs  layui-btn-danger"     data-open='{:url("$thisClass/rate")}?id={{d.id}}' data-title="{{d.title}}-费率设置">未设置费率,默认支付产品费率</a>
+                    {{#  } }}
+                    {{#  } }}
+                </script>
+
+                <script type="text/html" id="currentTableBar">
+
+                    {if auth("$thisClass/edit")}
+                    <a class="layui-btn layui-btn-xs" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改菜单信息">编辑</a>
+                    {/if}
+
+                    {if auth("$thisClass/del")}
+                    <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
+                    {/if}
+
+                </script>
+                <!--表单操作栏--结束-->
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+{/block}
+
+{block name="script"}
+<script       >
+
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {type: "checkbox", fixed: "left", width: 50,},
+        {field: 'id', title: 'ID', minWidth: 10, align: 'center',sort:true},
+        {field: 'title', title: '用户分组名称', minWidth: 20, align: 'center'},
+        {field: 'type1', title: '类别', minWidth: 20, align: 'center',templet: '#type1' },
+        {field: 'rate', title: '费率', minWidth: 20, align: 'center',templet: '#rate' },
+        {field: 'mode', title: '选择通道', minWidth: 20, align: "center", templet: '#mode'},
+        {field: 'remark', title: '备注信息', edit: 'text', minWidth: 20, align: "center", style: 'background-color: #009688; color: #fff;'},
+        /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
+        {title: '操作', minWidth: 110, templet: '#currentTableBar', fixed: "right", align: "center"},
+        /**{/if}**/
+    ]]);
+
+    /**
+     * 日期范围
+     */
+    $.laydate.range('create_at');
+
+    /**
+     * 监听字段值编辑
+     */
+    $.form.editField('currentTable', '{:url("$thisRequest")}');
+
+
+</script>
+{/block}

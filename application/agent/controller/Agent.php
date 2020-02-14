@@ -48,19 +48,35 @@ class Agent extends AgentController {
      * @return mixed
      */
     public  function  group(){
-        if ($this->request->get('type') == 'ajax') {
-            $page = $this->request->get('page/d', 1);
-            $limit = $this->request->get('limit/d', 10);
-            $search = (array)$this->request->get('search', []);
-            $search['uid'] = $this->user['uid'];
-            return $this->model->aList($page, $limit, $search);
-        }
+        if (!$this->request->isPost()) {
 
-        $basic_data = [
-            'title' => 'IP白名单列表',
-            'type' => [0=>'登入',1=>'结算',2=>'代付'],
-        ];
-        return $this->fetch('', $basic_data);
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                $search['type'] = 0;
+                return json($this->model->aList($page, $limit, $search));
+            }
+
+            //基础数据
+            $basic_data = [
+                'title'  => '系统分组列表',
+                'data'   => '',
+                'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->post();
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            if (true !== $validate) return __error($validate);
+
+            //保存数据,返回结果
+            return $this->model->editField($post);
+        }
     }
 
     /**商户列表
