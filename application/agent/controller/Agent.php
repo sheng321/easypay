@@ -56,12 +56,13 @@ class Agent extends AgentController {
                 $limit = $this->request->get('limit', 10);
                 $search = (array)$this->request->get('search', []);
                 $search['type'] = 0;
+                $search['uid'] = $this->user['uid'];
                 return json($this->model->aList($page, $limit, $search));
             }
 
             //基础数据
             $basic_data = [
-                'title'  => '系统分组列表',
+                'title'  => '代理分组列表',
                 'data'   => '',
                 'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
             ];
