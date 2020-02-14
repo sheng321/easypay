@@ -695,7 +695,7 @@ class Member extends AdminController {
         } else {
 
             $post = $this->request->only('username,nickname,phone,qq,remark,auth_id,id');
-            $post['who'] = $Member['who'];
+            $post['who'] = $Member['who'];//不给修改商户和代理身份
 
             $profile = $this->request->only('pid');
             $pid = $this->request->post('p_id','0');
