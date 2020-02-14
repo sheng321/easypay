@@ -182,7 +182,7 @@ class RateService
     /**
      * 获取代理支付通道分组状态和费率
      * @param $uid
-     * @param $channel_group_id 支通道付分组
+     * @param $channel_group_id
      * @return mixed
      */
     public static function getAgentStatus($uid,$channel_group_id){
@@ -208,7 +208,10 @@ class RateService
         $data['uid'] = empty($profile['pid'])?0:$profile['pid'];
         $data['group_id'] = $profile['group_id'];
         $data['channel_id'] = $channel_group_id;
+        $data['p_id'] = 0;
         $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
+
+
 
         if(!empty($SysRate['rate'])  && $SysRate['rate'] != '0.0000'  ){
             $res['code'] = 1;
@@ -236,7 +239,7 @@ class RateService
             $res['code'] = 1;
             $res['status'] = $status;
             $res['type'] = 3;//系统通道分组费率类型
-            $res['rate'] =  $channelGroup[$channel_group_id]['c_rate'];//没有记录，统一使用通道分组的默认费率
+            $res['rate'] =  $channelGroup[$channel_group_id]['c_rate'];//没有记录，统一使用支付产品的默认费率
         }
 
 
@@ -350,18 +353,19 @@ class RateService
             $status = $channelGroup[$aid]['status'];
 
             $data['channel_id'] = $aid;
+            $data['p_id'] = 0;
             $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
-
 
             if(!empty($SysRate['rate'])   && $SysRate['rate'] != '0.0000'  ){
                 $res['code'] = 1;
-                $status =  $res['status'] = $SysRate['status'];//对应费率表的状态
+                $res['status'] = $SysRate['status'];//对应费率表的状态
                 $res['rate'] = $SysRate['rate'];//费率
                 $res['type'] = 1;//用户分组费率类型
             }
 
             //2.上级的状态
             if($Ulevel['uid'] != 0){
+
                 $group_id1 = \app\common\model\Uprofile::where(['uid'=>$Ulevel['uid']])->value('group_id');
                 if(!empty($group_id1)){
                     $res1 = self::getGroupStatus($group_id1,$aid);
@@ -392,7 +396,10 @@ class RateService
                 $res['status'] = $status;
 
             }
+
+
         }
+
 
       return $res;
     }
