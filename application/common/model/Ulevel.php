@@ -41,7 +41,7 @@ class Ulevel extends ModelService {
     public function aList($page = 1, $limit = 10, $search = [], $where = []) {
         
         //搜索条件
-        $searchField['eq'] = ['type'];
+        $searchField['eq'] = ['type','uid'];
         $searchField['like'] = ['title'];
 
         $where = search($search,$searchField,$where);

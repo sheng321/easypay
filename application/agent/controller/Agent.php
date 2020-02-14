@@ -58,7 +58,6 @@ class Agent extends AgentController {
                 $page = $this->request->get('page', 1);
                 $limit = $this->request->get('limit', 10);
                 $search = (array)$this->request->get('search', []);
-                $search['type'] = 0;
                 $search['uid'] = $this->user['uid'];
                 return json($this->model->aList($page, $limit, $search));
             }
