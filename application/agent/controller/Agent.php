@@ -203,12 +203,130 @@ class Agent extends AgentController {
             $temp['rate'] =  $post['value'];
 
             if(!empty($temp['id'])){
+                    $res = $model->__edit($temp);
+            }else{
+                $res = $model->__add($temp);
+            }
+            return $res;
+        }
+    }
+
+
+    /**
+     * 商户分组费率设置
+     * @return mixed|\think\response\Json
+     */
+    public function rate() {
+        $group_id = $this->request->get('id/d',0);
+        $this->model = model('app\common\model\Ulevel');
+        if (!$this->request->isPost()) {
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 100);
+                $search = (array)$this->request->get('search', []);
+                $result = model('app\common\model\PayProduct')->aList($page, $limit, $search);
+
+                foreach ($result['data'] as $k => $v){
+                    $result['data'][$k]['status1'] = 1;
+
+                    $rate = \app\common\service\RateService::getGroupStatus($group_id,$v['id']);
+
+                    if(!empty($rate)){
+                        $result['data'][$k]['p_rate'] = $rate['rate'];
+                        $result['data'][$k]['status'] = $rate['status'];
+                        if( $rate['type'] > 1) $result['data'][$k]['status1'] = $rate['status'];
+                    }
+                }
+
+
+                return json($result);
+            }
+
+            //基础数据
+            $basic_data = [
+                'title'  => '商户分组费率列表',
+                'data'   => '',
+                'status' => [['id' => 1, 'title' => '启用'], ['id' => 0, 'title' => '禁用']],
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->only('id,field,value');
+            if($post['field'] != 'p_rate') return __error("数据错误1");//防止客户端传个其它字段
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_rate');
+            if (true !== $validate) return __error($validate);
+
+            $level = $this->model->quickGet(['id'=>$group_id,'uid'=>$this->user['uid']]);//防止客户端随便传个id过来
+            if(empty($level)) return __error("数据错误2");
+
+            $max = $this->model->getMaxRate($group_id,$post['id']);
+            if($max >$post['value']) return __error('费率小于用户分组默认费率：'.$max);
+
+
+            halt(111);
+
+            $model = model('app\common\model\SysRate');
+            $temp['p_id'] =  $post['id'];
+            $temp['group_id'] = $group_id;
+            $temp['type'] =  $level['type'];
+            $temp['uid'] =  $level['uid'];
+            $temp['channel_id'] = 0;
+            $id = $model->where($temp)->value('id');
+            if(!empty($id)) $temp['id'] = $id;
+            $temp['rate'] =  $post['value'];
+
+            if(!empty($temp['id'])){
                 $res = $model->__edit($temp);
             }else{
                 $res = $model->__add($temp);
             }
             return $res;
         }
+    }
+
+
+    /**
+     * 更改分组费率状态
+     * @return \think\response\Json
+     */
+    public function status(){
+        $get = $this->request->only('id,group_id');
+        if(empty($get['group_id'])) exceptions('数据错误，请重试');
+
+        $find =  model('app\common\model\Ulevel')->where(['id'=>$get['group_id'],'uid'=>$this->user['uid']])->field('type,type1,uid')->find();
+        //0 商户分组 1 代理分组
+        if($find['type1'] == 1){
+            $data['channel_id'] = $get['id'];
+        }elseif($find['type1'] == 0){
+            $data['p_id'] = $get['id'];
+        }else{
+            exceptions('数据错误，请重试');
+        }
+
+        if(!empty($find['uid']))  $data['uid'] = $find['uid'];
+        $data['group_id'] = $get['group_id'];
+        $data['type'] = $find['type'];
+
+        $model = model('app\common\model\SysRate');
+
+        $SysRate = $model->where($data)->find();
+
+        //验证数据
+        if (empty($SysRate)){
+            $data['status'] = 0;
+            $update =  $model->__add($data,'禁用成功');
+        }else{
+            //判断状态
+            $status = $SysRate['status'];
+            $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
+            //执行更新操作操作
+            $update =  $model->__edit(['status' => $status,'id' => $SysRate['id']],$msg);
+        }
+
+        return $update;
     }
 
 

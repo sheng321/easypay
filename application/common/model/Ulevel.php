@@ -86,16 +86,20 @@ class Ulevel extends ModelService {
      */
     public static function getMaxRate($id,$p_id) {
 
-        \think\facade\Cache::tag('Ulevel')->remember('getMaxRate', function (){
+        \think\facade\Cache::remember('getMaxRate', function (){
             $channel_id = self::column('channel_id,id','id');
+            $data = [];
             foreach ($channel_id as $k => $v){
                 $data[$k] = json_decode($v,true);
                 foreach ($data[$k] as $k1 => $v1){
-                    $data[$k][$k1] = \app\common\model\ChannelGroup::where(['id','in',$v1])->max('c_rate');
+                 if(!empty($v1) && is_array($v1)){
+                     $data[$k][$k1] = \app\common\model\ChannelGroup::where([['id','in',$v1]])->max('c_rate');
+                 }
                 }
             }
             return $data;
         },3600);
+        \think\facade\Cache::tag('Ulevel',['getMaxRate']);
         $getMaxRate = \think\facade\Cache::get('getMaxRate');
         $max = isset($getMaxRate[$id][$p_id])?$getMaxRate[$id][$p_id]:0;
         return $max;
