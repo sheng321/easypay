@@ -15,7 +15,7 @@
             <form class="layui-form">
 
                 <!--顶部操作栏--开始-->
-                <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+                <blockquote id="searchBlock" class=" quoteBox">
 
                     <div class="layui-form-item layui-inline">
                         <label class="layui-form-label-99admin">用户分组名称</label>
@@ -124,12 +124,10 @@
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 50,},
-        {field: 'id', title: 'ID', minWidth: 10, align: 'center',sort:true},
-        {field: 'title', title: '用户分组名称', minWidth: 20, align: 'center'},
+        {field: 'title', title: '分组名称', minWidth: 20, align: 'center'},
         {field: 'type1', title: '类别', minWidth: 20, align: 'center',templet: '#type1' },
         {field: 'rate', title: '费率', minWidth: 20, align: 'center',templet: '#rate' },
         {field: 'mode', title: '选择通道', minWidth: 20, align: "center", templet: '#mode'},
-        {field: 'remark', title: '备注信息', edit: 'text', minWidth: 20, align: "center", style: 'background-color: #009688; color: #fff;'},
         /**{if auth("$thisClass/authorize") || auth("$thisClass/edit") || auth("$thisClass/del")}**/
         {title: '操作', minWidth: 110, templet: '#currentTableBar', fixed: "right", align: "center"},
         /**{/if}**/
@@ -144,7 +142,6 @@
      * 监听字段值编辑
      */
     $.form.editField('currentTable', '{:url("$thisRequest")}');
-
 
 </script>
 {/block}
