@@ -647,7 +647,7 @@ class Member extends AdminController {
      */
     public function edit() {
         //查找所需修改用户
-        $Member = $this->model->where('id', $this->request->get('id'))->find();
+        $Member = $this->model->where('id', $this->request->param('id/d',0))->find();
         if (empty($Member)) return exceptions('暂无数据，请重新刷新页面！');
 
 
