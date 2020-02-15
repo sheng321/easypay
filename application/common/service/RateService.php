@@ -332,7 +332,6 @@ class RateService
                 $res['status'] = $status;
             }
 
-
         }else{
            //代理分组
 
@@ -373,7 +372,6 @@ class RateService
                 $res['rate'] = max($SysRate['rate'],$res['rate']);//代理分组费率
             }
 
-            return $res;
         }
 
 

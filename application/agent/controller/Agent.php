@@ -238,7 +238,6 @@ class Agent extends AgentController {
                     }
                 }
 
-
                 return json($result);
             }
 
