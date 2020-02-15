@@ -344,18 +344,18 @@ class Agent extends AgentController {
         $this->model->startTrans();
         $del = $this->model->destroy(function($query) use ($get){
             $query->where([
-                ['id','in',$get['pid']],
+                ['id','in',$get['id']],
                 ['uid','=',$this->user['uid']]
             ]);
         });
-        $del1 = model('app\common\model\SysRate')->destroy(function($query) use ($get){
+        model('app\common\model\SysRate')->destroy(function($query) use ($get){
             $query->where([
-                ['group_id','in',$get['pid']],
+                ['group_id','in',$get['id']],
                 ['uid','=',$this->user['uid']],
                 ['type','=',1]//代理
             ]);
         });
-        if (!($del >= 1)  || !($del1 >= 1)) {
+        if (!($del >= 1)) {
             $this->model->rollback();
             return __error('数据有误，请稍后再试！');
         }
