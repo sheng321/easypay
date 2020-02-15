@@ -42,8 +42,8 @@ class PayProduct extends ModelService {
         ];
 
         //搜索条件
+        $searchField['eq'] = ['status'];
         $searchField['like'] = ['remark','title'];
-
         $where = search($search,$searchField,$where);
 
         $field = ['id','update_at','remark','title','status','sort','verson','cli','code','p_rate'];

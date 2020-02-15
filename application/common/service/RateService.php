@@ -62,7 +62,7 @@ class RateService
         $profile = Uprofile::quickGet($data);
 
         //是否 存在  为商户 设定了分组
-        if(empty($profile) || $profile['who'] != 0 ||$profile['group_id'] == 0  ) return false;
+        if(empty($profile) || $profile['who'] != 0 ||$profile['group_id'] == 0  ) return $rate;
 
         //是否给用户单独设置了费率
         $data['type'] = 2;
@@ -111,8 +111,14 @@ class RateService
         //是否 存在  为商户 设定了分组
         if(empty($profile) || $profile['who'] != 0 ||$profile['group_id'] == 0  ) return $res;
 
+        //支付产品默认类型
         $product = self::product();
-        $status = $product[$p_id]['status'];
+        //支付产品是关闭的情况
+        if(empty($product[$p_id]) || $product[$p_id]['status'] == 0){
+            $res['code'] = 1;
+            $res['type'] = 3;
+            return $res;
+        }
 
         //是否给用户单独设置了费率
         $data['type'] = 2;
@@ -124,14 +130,7 @@ class RateService
             $res['status'] = $alone['status'];//对应费率表的状态
             $res['code'] = 1;
             $res['rate'] = $alone['rate'];//费率
-            $res['type'] = 1;//个人费率类型
-        }
-
-        //已存在商户费个人率 并且 支付产品关闭
-        if(isset($res['type']) && $res['type'] == 1  && $status == 0 ){
-            $res['type'] = 4;//支付产品费率类型
-            $res['code'] = 1;
-            $res['status'] = $status;
+            $res['type'] = 4;//个人费率类型
             return $res;
         }
 
@@ -142,36 +141,21 @@ class RateService
             $data['channel_id'] = 0;
             $SysRate = SysRate::quickGet($data); //查询是否有该分组下的支付产品费率
 
-           //已存在设置个人费率 并且 用户分组关闭
-           if(isset($res['type']) && $res['type'] == 1 && isset($SysRate['status']) && $SysRate['status'] == 0 ){
-               $res['type'] = 2;//用户分组费率类型
-               $res['code'] = 1;
-               $res['status'] = $SysRate['status'];
-               return $res;
-           }
-            if(!empty($SysRate['rate']) && $SysRate['rate'] != '0.0000'  ){
-                $res['code'] = 1;
-                $res['status'] = $SysRate['status'];//对应费率表的状态
-                $res['rate'] = $SysRate['rate'];//费率
+            //如果存在用户分组费率
+            if(!empty($SysRate)){
                 $res['type'] = 2;//用户分组费率类型
+                $res['code'] = 1;
+                $res['status'] = $SysRate['status'];
+                $res['rate'] = $SysRate['rate'];//费率
+               if($res['status'] == 0)  return $res;
             }
 
-
-
-       //3.获取支付产品费率
+       //3.最后默认统一使用支付产品的默认费率
         if(empty($res['rate']) || $res['rate'] == '0.0000'  ){
             $res['code'] = 1;
-            $res['status'] = $status;
+            $res['status'] = $product[$p_id]['status'];
             $res['type'] = 3;//系统费率类型
             $res['rate'] =  $product[$p_id]['p_rate'];//没有记录，统一使用支付产品的默认费率
-        }
-
-        //已存在用户分组费率 并且 支付产品关闭
-        if($status == 0 ){
-            $res['type'] = 3;//支付产品费率类型
-            $res['code'] = 1;
-            $res['status'] = $status;
-            return $res;
         }
 
         return $res;

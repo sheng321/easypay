@@ -20,27 +20,25 @@ class Api extends UserController
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 100);
             $search = (array)$this->request->get('search', []);
+            $search['status'] = 1;
             $result = model('app\common\model\PayProduct')->aList($page, $limit, $search);
 
             $data = [];
             foreach ($result['data'] as $k => $v){
                 $result['data'][$k]['status1'] = 1;
                 $rateStatus = \app\common\service\RateService::getMemStatus($this->user['uid'],$v['id']); //当前用户的费率状态
-                //当支付产品和通道分组关闭是不给修改
-                if($rateStatus['type'] > 1 && $rateStatus['status'] == 0){
-                    $result['data'][$k]['status1'] = 0;
-                }
-                if($rateStatus['id'] == $v['id']){
-                    $result['data'][$k]['status'] = $rateStatus['status'];
+
+                if(!empty($rateStatus)){
                     $result['data'][$k]['p_rate'] = $rateStatus['rate'];
+                    $result['data'][$k]['status'] =  $rateStatus['status'];
                 }
 
-                if( $result['data'][$k]['status'] = 1 && $result['data'][$k]['status1'] == 1){
-                    $data[$k]['status'] = $result['data'][$k]['status'];
-                    $data[$k]['p_rate'] = $result['data'][$k]['p_rate'] * 1000 .'‰';
-                    $data[$k]['code'] = $result['data'][$k]['code'];
-                    $data[$k]['title'] = $result['data'][$k]['title'];
-                }
+                $data[$k]['status'] = $result['data'][$k]['status'];
+                $data[$k]['p_rate'] = $result['data'][$k]['p_rate'] * 1000 .'‰';
+                $data[$k]['code'] = $result['data'][$k]['code'];
+                $data[$k]['title'] = $result['data'][$k]['title'];
+
+                if($result['data'][$k]['status'] == 0) $data[$k]['p_rate'] = '未设置';
 
             }
 

@@ -40,7 +40,7 @@
                                 <td>{$vo.code|default=''}</td>
                                 <td>{$vo.title|default=''}</td>
                                 <td>{$vo.p_rate|default=''}</td>
-                                <td>{$vo.status == 1?'开启':'关闭'}</td>
+                                <td>{$vo.status == 1?'<span style="color: green">开启</span>':'维护'}</td>
                             </tr>
                             {/foreach}
 
