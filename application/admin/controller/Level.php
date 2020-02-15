@@ -162,6 +162,7 @@ class Level extends AdminController {
                         if( $rate['type'] > 1) $result['data'][$k]['status1'] = $rate['status'];
                     }
                 }
+
                 return json($result);
             }
 
@@ -188,9 +189,11 @@ class Level extends AdminController {
                     $GroupStatus =  \app\common\service\RateService::getGroupStatus($group_id1,$post['id']); //上级代理分组费率
                     $max = isset($GroupStatus['rate'])?$GroupStatus['rate']:0;
                 }
-                if($max > $post['value']) return __error('费率小于上级用户分组默认费率：'.$max);
+            }else{
+                $GroupStatus =  \app\common\service\RateService::getGroupStatus(0,$post['id']); //平台代理分组费率
+                $max = isset($GroupStatus['rate'])?$GroupStatus['rate']:0;
             }
-
+            if($max > $post['value']) return __error('费率小于上级用户分组默认费率：'.$max);
 
             $temp['channel_id'] = $post['id'];
             $temp['p_id'] =  0;

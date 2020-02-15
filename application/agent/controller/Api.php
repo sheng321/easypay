@@ -22,23 +22,19 @@ class Api extends AgentController
                 $result['data'][$k]['status1'] = 1;
 
                 $rateStatus = \app\common\service\RateService::getAgentStatus($this->user['uid'],$v['id']); //当前用户的费率状态
-
-                //当平台通道分组关闭  上级支付通道分组  是不给修改
-                if($rateStatus['type'] > 1 && $rateStatus['status'] == 0){
-                    $result['data'][$k]['status1'] = 0;
-                }
-                if($rateStatus['id'] == $v['id']){
-                    $result['data'][$k]['status'] = $rateStatus['status'];
+                if(!empty($rateStatus) && $rateStatus['code'] ==1){
+                    $result['data'][$k]['status1'] = $rateStatus['status'];
                     $result['data'][$k]['c_rate'] = $rateStatus['rate'];
                 }
 
-                if( $result['data'][$k]['status'] = 1 && $result['data'][$k]['status1'] == 1){
-                    $data[$k]['status'] = $result['data'][$k]['status'];
+                if( $result['data'][$k]['status'] == 1 ){
+                    $data[$k]['status'] = $result['data'][$k]['status1'];
                     $data[$k]['c_rate'] = $result['data'][$k]['c_rate'] * 1000 .'‰';
                     $data[$k]['title'] = $result['data'][$k]['title'];
                     $data[$k]['product'] = $result['data'][$k]['product'];
                 }
             }
+
 
 
             //基础数据

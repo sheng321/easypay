@@ -50,8 +50,8 @@
                         <tr>
                             <td>{$vo.title|default=''}</td>
                             <td>{$vo.product|default=''}</td>
-                            <td>{$vo.c_rate|default=''}</td>
-                            <td>{$vo.status == 1?'开启':'关闭'}</td>
+                            <td>{$vo.status == 1?$vo.c_rate:'请联系上级设置'}</td>
+                            <td>{$vo.status == 1?'开启':'维护'}</td>
                         </tr>
                         {/foreach}
 
