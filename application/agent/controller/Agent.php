@@ -94,15 +94,6 @@ class Agent extends AgentController {
             ];
 
             return $this->fetch('', $basic_data);
-        } else {
-            $post = $this->request->post();
-
-            //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
-            if (true !== $validate) return __error($validate);
-
-            //保存数据,返回结果
-            return $this->model->editField($post);
         }
     }
 
@@ -119,14 +110,13 @@ class Agent extends AgentController {
 
             return $this->fetch('agent_form');
         } else {
-            $post = $this->request->only('title,remark,type1,uid');
-
+            $post = $this->request->only('title,remark,type1');
+            $post['uid'] = $this->user['uid'];
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Level.add_agent');
             if (true !== $validate) return __error($validate);
 
             $post['type'] = 1;
-            $search['uid'] = $this->user['uid'];
             $res = $this->model->__add($post);
             return $res;
         }
@@ -334,6 +324,45 @@ class Agent extends AgentController {
         }
 
         return $update;
+    }
+
+
+    /**
+     * 删除分组
+     * @return \think\response\Json
+     * @throws \Exception
+     */
+    public function del(){
+        $get = $this->request->only('id');
+        $this->model = model('app\common\model\Ulevel');
+
+        //验证数据
+        if (!is_array($get['id']))  $get['id'] = [$get['id']];
+        if(empty($get['id'])) return __error('数据异常');
+
+        //使用事物保存数据
+        $this->model->startTrans();
+        $del = $this->model->destroy(function($query) use ($get){
+            $query->where([
+                ['id','in',$get['pid']],
+                ['uid','=',$this->user['uid']]
+            ]);
+        });
+        $del1 = model('app\common\model\SysRate')->destroy(function($query) use ($get){
+            $query->where([
+                ['group_id','in',$get['pid']],
+                ['uid','=',$this->user['uid']],
+                ['type','=',1]//代理
+            ]);
+        });
+        if (!($del >= 1)  || !($del1 >= 1)) {
+            $this->model->rollback();
+            return __error('数据有误，请稍后再试！');
+        }
+        $this->model->commit();
+
+        return __success('删除成功');
+
     }
 
 

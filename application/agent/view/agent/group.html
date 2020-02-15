@@ -125,7 +125,7 @@
         {field: 'type1', title: '类别', minWidth: 20, align: 'center',templet: '#type1' },
         {field: 'rate', title: '费率', minWidth: 20, align: 'center',templet: '#rate' },
         {field: 'mode', title: '选择通道', minWidth: 20, align: "center", templet: '#mode'},
-        {field: 'remark', title: '备注信息', edit: 'text', minWidth: 20, align: "center", style: 'background-color: #009688; color: #fff;'},
+
         /**{if  auth("$thisClass/del")}**/
         {title: '操作', width: 80, templet: '#currentTableBar', fixed: "right", align: "center"},
         /**{/if}**/
@@ -135,11 +135,6 @@
      * 日期范围
      */
     $.laydate.range('create_at');
-
-    /**
-     * 监听字段值编辑
-     */
-    $.form.editField('currentTable', '{:url("$thisRequest")}');
 
 
 </script>

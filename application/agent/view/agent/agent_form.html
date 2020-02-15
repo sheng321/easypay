@@ -41,7 +41,7 @@
      * 添加、编辑
      */
 
-    $.form.on('submitBtn', "{if empty($auth)}{:url('@admin/level/add_agent')}{else/}{:url('@admin/level/edit')}{/if}", function (res) {
+    $.form.on('submitBtn', "{if empty($auth)}{:url('@agent/agent/add_agent')}{else/}{:url('@agent/agent/edit')}{/if}", function (res) {
         $.msg.success(res.msg, function () {
             $.tool.reload('open');
         });

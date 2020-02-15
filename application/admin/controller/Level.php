@@ -432,11 +432,9 @@ class Level extends AdminController {
             //删除通道分组费率
             model('app\common\model\SysRate')->where([
                 ['group_id','in',$get['id']],
-                ['type','=',0]
             ])->delete();
         }
         return $del;
-
     }
 
 
