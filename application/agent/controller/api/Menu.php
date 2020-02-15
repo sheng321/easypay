@@ -18,9 +18,11 @@ class Menu extends AgentController
     {
         $name = session('agent_info.id') . '_AgentMenu';
         \think\facade\Cache::remember($name, function ()use ($name) {
-            return \app\common\model\SysMenu::getAgentMenuApi();
+            $value = \app\common\model\SysMenu::getAgentMenuApi();
+            \think\facade\Cache::tag('menu')->set($name,$value,86400);
+            return $value;
         },86400);
-        \think\facade\Cache::tag('menu',[$name]);
+
         return json(Cache::get($name));
     }
 

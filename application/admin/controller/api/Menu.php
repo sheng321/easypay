@@ -20,9 +20,10 @@ class Menu extends AdminController
 
         $name = session('admin_info.id') . '_AdminMenu';
         \think\facade\Cache::remember($name, function ()use ($name) {
-            return \app\common\model\SysMenu::getMenuApi();
+            $value = \app\common\model\SysMenu::getMenuApi();
+            \think\facade\Cache::tag('menu')->set($name,$value,86400);
+            return $value;
         },86400);
-        \think\facade\Cache::tag('menu',[$name]);
         return json(Cache::get($name));
 
 
@@ -36,9 +37,10 @@ class Menu extends AdminController
     {
         $name = session('admin_info.id') . '_AdminMenu';
         \think\facade\Cache::remember($name, function ()use ($name) {
-            return \app\common\model\SysMenu::getMenuApi();
+            $value = \app\common\model\SysMenu::getMenuApi();
+            \think\facade\Cache::tag('menu')->set($name,$value,86400);
+            return $value;
         },86400);
-        \think\facade\Cache::tag('menu',[$name]);
         return Cache::get($name);
     }
 

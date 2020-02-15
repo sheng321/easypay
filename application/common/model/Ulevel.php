@@ -97,9 +97,10 @@ class Ulevel extends ModelService {
                  }
                 }
             }
+            \think\facade\Cache::tag('Ulevel')->set('getMaxRate',$data,3600);
             return $data;
         },3600);
-        \think\facade\Cache::tag('Ulevel',['getMaxRate']);
+
         $getMaxRate = \think\facade\Cache::get('getMaxRate');
         $max = isset($getMaxRate[$id][$p_id])?$getMaxRate[$id][$p_id]:0;
         return $max;
@@ -114,8 +115,9 @@ class Ulevel extends ModelService {
      */
     public static function idArr() {
 
-        \think\facade\Cache::tag('Ulevel')->remember('UlevelIdArr', function () {
+        \think\facade\Cache::remember('UlevelIdArr', function () {
             $data = self::column('id,title');
+            \think\facade\Cache::tag('Ulevel')->set('UlevelIdArr',$data,60);
             return $data;
         },60);
         return \think\facade\Cache::get('UlevelIdArr');

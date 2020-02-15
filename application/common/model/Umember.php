@@ -323,8 +323,9 @@ class Umember extends UserService {
      */
     public static function username2id() {
 
-        \think\facade\Cache::tag('Umember')->remember('username2id', function () {
+        \think\facade\Cache::remember('username2id', function () {
             $data = self::column('username,id');
+            \think\facade\Cache::tag('Umember')->set('username2id',$data,3600);
             return $data;
         },3600);
         return \think\facade\Cache::get('username2id');
@@ -335,8 +336,9 @@ class Umember extends UserService {
      * @param array $modules
      */
     public static function id2username() {
-        \think\facade\Cache::tag('Umember')->remember('id2username', function () {
+        \think\facade\Cache::remember('id2username', function () {
             $data = self::column('id,username');
+            \think\facade\Cache::tag('Umember')->set('id2username',$data,3600);
             return $data;
         },3600);
         return \think\facade\Cache::get('id2username',[]);
@@ -349,8 +351,9 @@ class Umember extends UserService {
      */
     public static function id2uid() {
 
-        \think\facade\Cache::tag('Umember')->remember('id2uid', function () {
+        \think\facade\Cache::remember('id2uid', function () {
             $data = self::column('id,uid');
+            \think\facade\Cache::tag('Umember')->set('id2uid',$data,3600);
             return $data;
         },3600);
         return \think\facade\Cache::get('id2uid');
@@ -364,12 +367,13 @@ class Umember extends UserService {
      */
     public static function uid2id() {
 
-        \think\facade\Cache::tag('Umember')->remember('uid2id', function () {
+        \think\facade\Cache::remember('uid2id', function () {
             $arr = self::column('uid,id','id');
             $data = [];
             foreach ($arr as $k => $v){
                 $data[$v][] = $k;
             }
+            \think\facade\Cache::tag('Umember')->set('uid2id',$data,3600);
             return $data;
         },3600);
         return \think\facade\Cache::get('uid2id',[]);
@@ -383,12 +387,13 @@ class Umember extends UserService {
      */
     public static function titleArr() {
 
-        \think\facade\Cache::tag('Umember')->remember('titleArr1', function () {
+        \think\facade\Cache::remember('titleArr1', function () {
             $users = self::field('id,auth_id')->all();
             $data = array();
             foreach ($users as $k => $val){
                 $data[$val['id']] = $val['auth'];
             }
+            \think\facade\Cache::tag('Umember')->set('titleArr1',$data,3600);
             return $data;
         },3600);
         return \think\facade\Cache::get('titleArr1',[]);
@@ -401,7 +406,7 @@ class Umember extends UserService {
      */
     public static function title2id() {
 
-        \think\facade\Cache::tag('Umember')->remember('title2id', function () {
+        \think\facade\Cache::remember('title2id', function () {
             $users = self::field('id,auth_id')->all();
             $data = array();
             foreach ($users as $k => $val){
@@ -411,6 +416,7 @@ class Umember extends UserService {
                     $data[$v1][] = $val['id'];
                 }
             }
+            \think\facade\Cache::tag('Umember')->set('title2id',$data,3600);
             return $data;
         },3600);
 

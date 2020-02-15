@@ -36,10 +36,10 @@ class SysConfig extends AdminService {
            $config1 = self::where('group', 'basic')->column('name,value');
            $config2 = self::where('group', 'admin')->column('name,value');
            $config = array_merge($config1,$config2);
+           \think\facade\Cache::tag('SysConfig')->set('SysInfo',$config,3600);
            return $config;
        },3600);
 
-       \think\facade\Cache::tag('SysConfig',['SysInfo']);
        return \think\facade\Cache::get('SysInfo');
     }
 
@@ -51,9 +51,9 @@ class SysConfig extends AdminService {
 
         \think\facade\Cache::remember('BicInfo', function () {
             $config = self::where('group', 'basic')->column('name,value');
+            \think\facade\Cache::tag('SysConfig')->set('BicInfo',$config,3600);
             return $config;
         },3600);
-        \think\facade\Cache::tag('SysConfig',['BicInfo']);
         return \think\facade\Cache::get('BicInfo');
     }
 
@@ -70,9 +70,9 @@ class SysConfig extends AdminService {
             $config1 = self::where('group', 'basic')->column('name,value');
             $config2 = self::where('group', 'user')->column('name,value');
             $config = array_merge($config1,$config2);
+            \think\facade\Cache::tag('SysConfig')->set('UserInfo',$config,3600);
             return $config;
         },3600);
-        \think\facade\Cache::tag('SysConfig',['UserInfo']);
         return \think\facade\Cache::get('UserInfo');
     }
 
@@ -81,9 +81,9 @@ class SysConfig extends AdminService {
             $config1 = self::where('group', 'basic')->column('name,value');
             $config2 = self::where('group', 'agent')->column('name,value');
             $config = array_merge($config1,$config2);
+            \think\facade\Cache::tag('SysConfig')->set('AgentInfo',$config,3600);
             return $config;
         },3600);
-        \think\facade\Cache::tag('SysConfig',['AgentInfo']);
         return \think\facade\Cache::get('AgentInfo');
     }
 
