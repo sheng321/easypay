@@ -159,7 +159,10 @@ class Level extends AdminController {
                     if(!empty($rate)){
                         $result['data'][$k]['c_rate'] = $rate['rate'];
                         $result['data'][$k]['status'] = $rate['status'];
-                        if( $rate['type'] > 1) $result['data'][$k]['status1'] = $rate['status'];
+                        // 上级状态优先级高
+                        if($rate['type'] > 1){
+                            $result['data'][$k]['status1'] = $rate['status'];
+                        }
                     }
                 }
 

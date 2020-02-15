@@ -221,6 +221,8 @@ class RateService
             }
         }
 
+        if($res['status'] == 0) return $res;
+
         //代理用户分组费率
         $data['type'] = empty($profile['pid'])?0:1; //是否代理分组 平台分组
         $data['uid'] = empty($profile['pid'])?0:$profile['pid'];
@@ -360,7 +362,7 @@ class RateService
                         $res['rate'] = $res1['rate'];
                         $res['type'] = 2;//上级通道分组费率类型
                         $res['status'] = $res1['status'];
-                        if($res['status'] == 0) return $res;
+
                     }
                 }
             }else{
@@ -373,6 +375,7 @@ class RateService
                     $res['rate'] =  $channelGroup[$aid]['c_rate'];//默认费率
                 }
             }
+            if($res['status'] == 0) return $res;
 
 
             $data['channel_id'] = $aid;

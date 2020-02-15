@@ -55,9 +55,13 @@ class SysRate extends ModelService {
         $field = 'id, uid, type,rate,update_at,p_id,status,group_id,channel_id';
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['uid desc','update_at desc'])->select()->each(function ($item, $key) use ($product,$level,$channel) {
+            //支付产品
           if(!empty($item['p_id']))  $item['product'] = $product[$item['p_id']];
+          //用户分组
           if(!empty($item['group_id']))  $item['level'] = $level[$item['group_id']];
+          //分组
             if(!empty($item['channel_id']))  $item['channel'] = $channel[$item['channel_id']];
+
         });
 
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';

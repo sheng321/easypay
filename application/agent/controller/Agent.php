@@ -147,6 +147,7 @@ class Agent extends AgentController {
                 $page = $this->request->get('page', 1);
                 $limit = $this->request->get('limit', 100);
                 $search = (array)$this->request->get('search', []);
+                $search['status'] = 1;
                 $result = model('app\common\model\ChannelGroup')->bList($page, $limit, $search);
 
                 foreach ($result['data'] as $k => $v){
@@ -157,11 +158,19 @@ class Agent extends AgentController {
                     if(!empty($rate)){
                         $result['data'][$k]['c_rate'] = $rate['rate'];
                         $result['data'][$k]['status'] = $rate['status'];
-                        if( $rate['type'] > 1) $result['data'][$k]['status1'] = $rate['status'];
+                        // 上级状态优先级高
+                        if($rate['type'] > 1){
+                            $result['data'][$k]['status1'] = $rate['status'];
+                          if(empty($rate['status'])) $result['data'][$k]['c_rate'] = '请联系上级设置';
+                        }
                     }
                 }
+
+
                 return json($result);
             }
+
+
 
             //基础数据
             $basic_data = [
@@ -294,13 +303,14 @@ class Agent extends AgentController {
         if(empty($get['group_id'])) exceptions('数据错误，请重试');
 
         $find =  model('app\common\model\Ulevel')->where(['id'=>$get['group_id'],'uid'=>$this->user['uid']])->field('type,type1,uid')->find();
+
+        if(empty($find) || !isset($find['type1']))  exceptions('数据错误，请重试');
+
         //0 商户分组 1 代理分组
         if($find['type1'] == 1){
             $data['channel_id'] = $get['id'];
         }elseif($find['type1'] == 0){
             $data['p_id'] = $get['id'];
-        }else{
-            exceptions('数据错误，请重试');
         }
 
         if(!empty($find['uid']))  $data['uid'] = $find['uid'];

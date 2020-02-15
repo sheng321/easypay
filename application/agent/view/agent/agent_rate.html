@@ -18,7 +18,11 @@
 
     <!--表单模板绑定--开始-->
     <script type="text/html" id="checkStatus">
-        {{ d.status== 1 ? '<span style="color: green">开启</span>' : '维护' }}
+        {{# if (d.status1) { }}
+        <input type="checkbox" name="{{d.id}}" value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
+        {{# } else { }}
+        关闭
+        {{# } }}
     </script>
     <!--表单模板绑定--结束-->
 
@@ -40,12 +44,32 @@
         {field: 'product', title: '支付产品', minWidth: 20, align: 'center'},
         {field: 'code', title: '支付编码', minWidth: 20, align: 'center'},
         {field: 'remark',title: '备注',minWidth: 20, align: "center"},
-    ]],false,25);
+    ]],false,function (res,curr,count){
+        //行
+        var id= -1;
+        $('tr').each(function(index, element){
+            if( typeof($(element).attr('data-index')) !== 'undefined'){
+                id++;
+                $(element).find('td').each(function(index1, element1){
+                    if(($(element1).attr('data-field') == 'c_rate') && (res.data[id].status1 != 1)  ){
+                        $(element1).removeAttr("data-edit");
+                        $(element1).removeAttr("style");
+                    }
+                });
+            }
+        });
+
+    },25);
 
     /**
      * 监听字段值编辑
      */
     $.form.editField('currentTable', '{:url("$thisRequest")}?id={$Think.get.id}');
+
+    /**
+     * 修改状态
+     */
+    $.form.switch('modifyStatus', '{:url("$thisClass/status")}?group_id={$Think.get.id}');
 
 
 </script>
