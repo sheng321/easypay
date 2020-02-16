@@ -102,4 +102,32 @@ class Uprofile extends ModelService {
         return $list;
     }
 
+    /**
+     * 获取所有的下级
+     * @param $uid 商户号
+     *  @param $who  0 商户 2 代理
+     */
+    public static function get_lower($uid,$who){
+        $data = self::cache('Uprofile',30)->column('id,uid,pid,who','id');
+        $lower = self::recursion($uid,$data);
+        if(empty($lower[$who])) return [];
+        return $lower[$who];
+    }
+
+    //递归
+    public static function recursion($uid,$data){
+        $lower = [];
+        foreach ($data as $k => $v){
+            if($v['pid'] == $uid){
+                $tmp[$v['who']][] = $v['uid'];
+                $tmp1 = self::recursion($k,$data);
+                $lower = array_merge($tmp,$tmp1);
+            }
+        }
+        return $lower;
+    }
+
+
+
+
 }

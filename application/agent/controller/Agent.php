@@ -226,6 +226,7 @@ class Agent extends AgentController {
                 $search = (array)$this->request->get('search', []);
                 $result = model('app\common\model\PayProduct')->aList($page, $limit, $search);
 
+
                 foreach ($result['data'] as $k => $v){
                     $result['data'][$k]['status1'] = 1;
 
@@ -236,6 +237,7 @@ class Agent extends AgentController {
                         $result['data'][$k]['status'] = $rate['status'];
                         if( $rate['type'] > 1) $result['data'][$k]['status1'] = $rate['status'];
                     }
+                    if($result['data'][$k]['status1'] == 0) $result['data'][$k]['p_rate'] = '未设置';
                 }
 
                 return json($result);
@@ -319,7 +321,7 @@ class Agent extends AgentController {
             $status = $SysRate['status'];
             $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
             //执行更新操作操作
-            $update =  $model->__edit(['status' => $status,'id' => $SysRate['id']],$msg);
+            $update =  $model->__edit(['status' => $status,'id' => $SysRate['id'],'uid' =>$this->user['uid']],$msg);
         }
 
         return $update;
@@ -361,6 +363,70 @@ class Agent extends AgentController {
         $this->model->commit();
 
         return __success('删除成功');
+
+    }
+
+
+
+    //选择通道
+    public function mode()
+    {
+        if (!$this->request->isPost()) {
+
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 1000);
+                $search = (array)$this->request->get('search', []);
+
+                $id =  $this->request->get('id', 0);
+                $channel =  $this->model->where('id', $id)->value('channel_id');
+                $search['channel'] = json_decode($channel,true);
+
+                return json(model('app\common\model\ChannelGroup')->uList($page, $limit, $search));
+            }
+
+
+            //基础数据
+            $basic_data = [
+                'title'  => '选择通道列表',
+            ];
+
+            return $this->fetch('', $basic_data);
+        } else {
+            $post = $this->request->post();
+
+            //验证数据
+            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
+            if (true !== $validate) return __error($validate);
+
+            //权重 和 并发 编辑
+            if($post['field'] == 'weight' || $post['field'] == 'concurrent'){
+
+                if(!is_numeric($post['value'])){
+                    return __error('请输入数字！');
+                }
+
+
+                $data[$post['field']] = json_decode($this->model->where('id', $this->request->get('g_id'))->value($post['field']),true);
+                if(empty($data[$post['field']])) $data[$post['field']] = [];
+                $data[$post['field']][$post['id']] = $post['value'];
+
+                $data2['id'] = $this->request->get('g_id');
+                $data2['field'] = $post['field'];
+                $data2['value'] = json_encode($data[$post['field']]);
+
+
+                //保存数据,返回结果
+                return $this->model->editField($data2);
+            }else{
+
+                //保存数据,返回结果
+                return model('app\common\model\Channel')->editField($post);
+            }
+
+        }
+
 
     }
 

@@ -4,6 +4,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\Uprofile;
 use app\common\service\RateService;
 
 
@@ -226,7 +227,7 @@ class Level extends AdminController {
         $get = $this->request->only('id,group_id');
         if(empty($get['group_id'])) exceptions('数据错误，请重试');
 
-        $find =  model('app\common\model\Ulevel')->where(['id'=>$get['group_id']])->field('type,type1,uid')->find();
+        $find =  $this->model->where(['id'=>$get['group_id']])->field('type,type1,uid')->find();
         //0 商户分组 1 代理分组
         if($find['type1'] == 1){
           $data['channel_id'] = $get['id'];
@@ -245,16 +246,48 @@ class Level extends AdminController {
 
         $SysRate = $model->where($data)->find();
 
+
         //验证数据
         if (empty($SysRate)){
+            $data['p_id'] =  model('app\common\model\ChannelGroup')->where(['id'=>$get['id']])->value('p_id');
             $data['status'] = 0;
             $update =  $model->__add($data,'禁用成功');
         }else{
             //判断状态
             $status = $SysRate['status'];
             $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
+
             //执行更新操作操作
             $update =  $model->__edit(['status' => $status,'id' => $SysRate['id']],$msg);
+
+
+            //代理以下商户 所有选中当前通道的要删除
+            if($find['type1'] == 1 && $status == 0){
+                //代理分组
+                $lower = Uprofile::get_lower($find['uid'],0);//代理下级所有的商户
+                $lower[]=$find['uid'];
+
+                $channel = $this->model->where([
+                    ['uid','in',$lower],
+                    ['type1','=',0]]//商户分组
+                )->column('id,channel_id','id');//代理商户分组的分配通道分组的数据
+
+                $del = [];
+                foreach ($channel as $k => $v){
+                    $temp = json_decode($v,true);
+                    if(!empty($temp[$SysRate['p_id']]) && is_array($temp[$SysRate['p_id']])){
+                        $key = array_search($get['id'],$temp[$SysRate['p_id']]);
+                        if(is_numeric($key)){
+                            unset($temp[$SysRate['p_id']][$key]); //删除通道数据
+                            if(empty($temp[$SysRate['p_id']])) unset($temp[$SysRate['p_id']]);
+                            $del[$k]['id'] = $k;
+                            $del[$k]['channel_id'] = json_encode($temp);
+                        }
+                    }
+                }
+                if(!empty($del)) $this->model->__edit($del);
+            }
+
         }
 
         return $update;
@@ -451,8 +484,10 @@ class Level extends AdminController {
                 $search = (array)$this->request->get('search', []);
 
                $id =  $this->request->get('id', 0);
-                $channel =  $this->model->where('id', $id)->value('channel_id');
-                $search['channel'] = json_decode($channel,true);
+                $level =  $this->model->where('id', $id)->column('channel_id,uid,id','id');
+               if(empty($level)) return __error('数据错误');
+                $search['channel'] = json_decode($level[$id]['channel_id'],true);
+                $search['uid'] =  $level[$id]['uid'];
 
                 return json(model('app\common\model\ChannelGroup')->uList($page, $limit, $search));
             }

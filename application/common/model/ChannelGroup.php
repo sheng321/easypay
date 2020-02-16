@@ -190,15 +190,24 @@ class ChannelGroup extends ModelService {
         $code = \app\common\model\PayProduct::idCode();
 
         foreach ($data as $k => $val){
+            //当前通道分组的状态
+            $GroupStatus =  \app\common\service\RateService::getAgentStatus($search['uid'],$val['id']);
+            $data[$k]['status'] = 1;
+            if(!empty($GroupStatus))  $data[$k]['status'] = $GroupStatus['status'];
 
+            //已选中的状态
            $data[$k]['LAY_CHECKED'] = false;
             if(isset($channel[$val['p_id']]) &&  in_array($val['id'], $channel[$val['p_id']])){
-                $data[$k]['LAY_CHECKED'] = true;
+               if($data[$k]['status'] == 1) $data[$k]['LAY_CHECKED'] = true;//通道开启的时候才为选中状态
             }
+
 
             $data[$k]['product'] = $product[$val['p_id']]; //支付产品
             $data[$k]['code'] = $code[$val['p_id']]; //支付产品
+
         }
+
+
 
         $info = [
             'limit'        => $limit,

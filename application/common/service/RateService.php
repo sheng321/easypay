@@ -176,6 +176,7 @@ class RateService
         $res['rate'] = 0;//费率
         $res['type'] = 0;//哪种类型的费率
 
+
         $data['uid'] = $uid;
         $profile = Uprofile::quickGet($data);
 
@@ -278,7 +279,7 @@ class RateService
         $res['rate'] = 0;//费率
         $res['type'] = 0;//哪种类型的费率
 
-        //没有上级的时候
+        //没有用户分组的时候
         if($group_id == 0){
             //系统通道分组
             $channelGroup = self::channelGroup();
@@ -303,33 +304,33 @@ class RateService
 
         if($Ulevel['type1'] == 0){
             //商户分组
+
+            //平台系统默认费率
             $product = self::product();
-            $status = $product[$aid]['status'];
+            if(!empty($product[$aid])){
+                $res['code'] = 1;
+                $res['status'] =  $product[$aid]['status'];
+                $res['type'] = 2;//系统费率类型
+                $res['rate'] =  $product[$aid]['p_rate'];//默认费率
+            }
+           if($res['status'] == 0) return $res;
 
             $data['p_id'] = $aid;
             $data['channel_id'] = 0;
 
             $SysRate = SysRate::quickGet($data); //查询是否有该分组下的支付产品费率
-            if(!empty($SysRate['rate'])  && $SysRate['rate'] != '0.0000' ){
+            if(!empty($SysRate['rate'])  ){
                 $res['code'] = 1;
                 $res['status'] = $SysRate['status'];//对应费率表的状态
                 $res['rate'] = $SysRate['rate'];//费率
                 $res['type'] = 1;//用户分组费率类型
             }
+           if($res['status'] == 0) return $res;
 
-            //3.获取支付产品费率
             if(empty($res['rate']) || $res['rate'] == '0.0000' ){
                 $res['code'] = 1;
-                $res['status'] = $status;
                 $res['type'] = 2;//系统费率类型
                 $res['rate'] =  $product[$aid]['p_rate'];//没有记录，统一使用支付产品的默认费率
-            }
-
-            //已存在用户分组费率 并且 支付产品关闭
-            if($status == 0 ){
-                $res['type'] = 2;//系统费率类型
-                $res['code'] = 1;
-                $res['status'] = $status;
             }
 
         }else{

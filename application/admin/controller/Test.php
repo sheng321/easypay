@@ -14,8 +14,8 @@ class Test  extends Controller
 {
     public function index()
     {
-        //$data =  \app\common\service\CountService::agent_account();
-       // halt($data);
+        $data =  Uprofile::get_lower(0,0);
+        halt($data);
 
 
         $uid = 20100010;

@@ -1,4 +1,4 @@
-{extend name="admin@public/basic" /}
+{extend name="agent@public/basic" /}
 
 {block name="style"}
 <link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
@@ -67,16 +67,17 @@
                     id: elem + 'TableId',
                     cols: cols,
                     done: function (res) {
-                        for (var i in res.data) {
-                            var item = res.data[i];
-                            if(item.status == 0){
-                                // checkbox 根据条件设置不可选中
-                                $('tr[data-index=' + i + '] input[type="checkbox"]').prop('disabled', true);
+                        $('tr').each(function(index, element){
+                            var id = index -1;
+                            if(id >=0 && id < $('tr').length -3){
+                                if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
+                                    $(element).find('td').each(function(index1, element1){
+                                        $(element1).removeAttr("data-edit");
+                                        $(element1).removeAttr("style");
+                                    });
+                                }
                             }
-
-                        }
-
-
+                        });
                         merge(res);
                     }
                 };
@@ -97,13 +98,6 @@
             {field: 'title', title: '通道分组名称', minWidth: 20, align: 'center'},
             {field: 'product', title: '支付产品', minWidth: 20, align: 'center'},
             {field: 'code', title: '支付编码', minWidth: 20, align: 'center'},
-            {field: 'status', title: '状态', minWidth: 20, align: 'center', templet: function (d) {
-                if(d.status == 1){
-                    return '<span style="color :  green">开启</span>';
-                }else {
-                    return '维护';
-                }
-            }},
 
             {field: 'remark',title: '备注',minWidth: 20, align: "center"},
         ]], false);
