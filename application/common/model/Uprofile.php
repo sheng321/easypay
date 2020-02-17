@@ -56,7 +56,6 @@ class Uprofile extends ModelService {
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['level'=>'asc','who'=>'desc'])->select()
             ->each(function ($item, $key) use ($group) {
-
                 if($item['who'] == 0){
                    // $item['level_title'] = $item['level'].'级商户';
                     $item['level_title'] = '商户';
@@ -68,6 +67,47 @@ class Uprofile extends ModelService {
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
             })->toArray();
 
+        $data = $this->where($where)
+
+
+
+            ->field($field)
+            ->page($page, $limit)
+            ->order(['level'=>'asc','who'=>'desc'])
+            ->select()
+            ->each(function ($item, $key) use ($group) {
+                if($item['who'] == 0){
+                    // $item['level_title'] = $item['level'].'级商户';
+                    $item['level_title'] = '商户';
+                }else{
+                    $item['level_title'] =  $item['level'].'级代理';
+                }
+                $item['group_title'] = isset($group[$item['group_id']])?$group[$item['group_id']]:'未分组' ;
+                $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
+                empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
+            })->toArray();
+
+
+        $data = $this->where($where)
+
+            ->join('member_profile w','pid = w.uid or ')
+
+            ->field($field)->page($page, $limit)->order(['level'=>'asc','who'=>'desc'])->select()
+            ->each(function ($item, $key) use ($group) {
+                if($item['who'] == 0){
+                    // $item['level_title'] = $item['level'].'级商户';
+                    $item['level_title'] = '商户';
+                }else{
+                    $item['level_title'] =  $item['level'].'级代理';
+                }
+                $item['group_title'] = isset($group[$item['group_id']])?$group[$item['group_id']]:'未分组' ;
+                $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
+                empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
+            })->toArray();
+
+
+
+
         //上级代理
 
         $pid = $this->where([
@@ -76,9 +116,10 @@ class Uprofile extends ModelService {
         if(!empty($pid)){
             $data1 = $this->where([
                 ['who', '=', 2],
-                ['uid', '=', $pid]])->field($field)->find()->toArray();
+                ['pid', '=', $search['uid']]])->field($field)->find()->toArray();
             if(!empty($data1)){
-                $data1['level_title'] =  $data1['level'].'级代理(上级代理)';
+                //$data1['level_title'] =  $data1['level'].'级代理(上级代理)';
+                $data1['level_title'] =  '上级代理';
                 $data1['group_title'] = isset($group[$data1['group_id']])?$group[$data1['group_id']]:'未分组' ;
                 $create_by_username = getNamebyId($data1['create_by']);  //获取后台用户名
                 empty($create_by_username) ? $data1['create_by_username'] = '无创建者信息' : $data1['create_by_username'] = $create_by_username;

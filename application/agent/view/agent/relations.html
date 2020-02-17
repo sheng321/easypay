@@ -1,100 +1,51 @@
-{extend name="admin@public/basicTree" /}
+{extend name="agent@public/basicTree" /}
 
 {block name="style"}
 <link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
 {/block}
 
 {block name="cotent"}
-<form class="layui-form">
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
 
+        <div class="layui-tab-content">
+            <blockquote class="layui-elem-quote"    >
+                下级代理数：<span class="label-info">{$data.agent|default='0'}</span>
+                下级商户数：<span class="label-info">{$data.member|default='0'}</span>
+                下级代理的商户数：<span class="label-info">{$data.agent_member|default='0'}</span>
+            </blockquote>
+            <form class="layui-form">
+                <!--主表单渲染--开始-->
+                <table id="currentTable" lay-filter="currentTable"></table>
+                <!--主表单渲染--结束-->
+            </form>
+        </div>
+    </div>
+</div>
 
-
-    <!--主表单渲染--开始-->
-    <table id="currentTable" lay-filter="currentTable"></table>
-    <!--主表单渲染--结束-->
-
-    <!--表单模板绑定--开始-->
-
-    <script type="text/html" id="checkStatus">
-        <input type="checkbox" name="{{d.id}}" value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
-    </script>
-
-    <script type="text/html" id="checkSingle">
-        <input type="checkbox" name="{{d.id}}" value="{{d.is_single}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifySingle" {{ d.is_single== 1 ? 'checked' : '' }}>
-    </script>
-
-
-    <script type="text/html" id="checkGoogle">
-        <input type="checkbox" name="{{d.id}}" value="{{d.google_token}}" lay-skin="switch" lay-text="启用|未绑定" lay-filter="modifyGoogle" {{ d.google_token == 1 ? 'checked' : '' }}>
-    </script>
-
-    <!--表单模板绑定--结束-->
-
-    <!--表单操作栏--开始-->
-    <script type="text/html" id="currentTableBar">
-
-        {if auth("$thisClass/add_staff")}
-        {{# if (d.who == 0 || d.who == 2 ) { }}
-        <a class="layui-btn layui-btn-xs" style="background-color: #2C9DD5"    value="{{d.id}}" data-open='{:url("$thisClass/add_staff")}?pid={{d.id}}&type=1' data-title="添加商户员工">添加员工</a>
-        {{# } }}
-        {/if}
-
-        {if auth("$thisClass/edit_password")}
-        <a class="layui-btn layui-btn-xs layui-btn-green" data-open='{:url("$thisClass/edit_password")}?id={{d.id}}' data-title="修改商户密码">修改密码</a>
-        {/if}
-
-        {if auth("$thisClass/edit")}
-        {{# if (d.who == 1 || d.who == 3 ) { }}
-        <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm  " data-open='{:url("$thisClass/edit_staff")}?id={{d.id}}' data-title="修改商户员工信息">编辑员工信息</a>
-        {{# } else { }}
-        <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm" data-open='{:url("$thisClass/edit")}?id={{d.id}}' data-title="修改商户信息">编辑</a>
-        {{# } }}
-
-        {/if}
-
-        {if auth("$thisClass/del")}
-        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del")}?id={{d.id}}'>删除</a>
-        {/if}
-
-    </script>
-    <!--表单操作栏--结束-->
-</form>
-{/block}
-<script>
-{block name="script"}
-
-        /**
-         * 生成表单
-         */
-        $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax&uid={$Think.get.uid}', [[
-            {field: 'level_title', title: '等级', minWidth: 20, align: "center"},
-            {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
-            {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
-
-            {field: 'create_by_username', title: '创建人', align: 'center'},
-            {field: 'create_at', title: '创建时间', align: 'center', minWidth: 150},
-        ]], 'uid','pid',true,function (res,curr,count){
-            merge(res,['level_title'],[0]);
-        })
-
-
-        /**
-         * 日期范围
-         */
-        $.laydate.range('create_at');
-
-        /**
-         * 监听字段值编辑
-         */
-        $.form.editFieldTree('currentTable', '{:url("$thisRequest")}');
-
-        /**
-         * 修改状态
-         */
-        $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
-        $.form.switch('modifySingle', '{:url("$thisClass/single")}');
-        $.form.switch('modifyGoogle', '{:url("$thisClass/google")}');
 
 
 {/block}
+<script>
+    //{block name="script"}
+
+    /**
+     * 生成表单
+     */
+    $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
+        {field: 'level_title', title: '等级', minWidth: 20, align: "center"},
+        {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
+        {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
+        {field: 'create_at', title: '创建时间', minWidth: 20,  unresize: true, align: "center"},
+    ]], 'uid','pid',true)
+
+
+    /**
+     * 日期范围
+     */
+    $.laydate.range('create_at');
+   // {/block}
 </script>

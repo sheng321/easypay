@@ -41,10 +41,31 @@ class Agent extends AgentController {
                 return json($model->aList($page, $limit, $search));
             }
 
+            $agent = $model->where([
+                ['pid','=',$this->user['uid']],
+                ['who','=',2]
+            ])->cache('agent_'.$this->user['uid'],3)->count(1);
+            $member = $model->where([
+                ['pid','=',$this->user['uid']],
+                ['who','=',0]
+            ])->cache('member_'.$this->user['uid'],3)->count(1);
+
+
+            $agent_member = $model
+                ->where('who','=',0)
+                ->where('pid', 'IN', function ($query){
+                    $query->table('cm_member_profile')->where([
+                        ['pid','=',$this->user['uid']],
+                        ['who','=',2]
+                    ])->field('uid');
+                })->cache('agent_member_'.$this->user['uid'],3)->count(1);
+
+
+
             //基础数据
             $basic_data = [
                 'title' => '代理关系表列表',
-                'data'  => '',
+                'data'  => ['agent'=>$agent,'member'=>$member,'agent_member'=>$agent_member],
             ];
 
             return $this->fetch('', $basic_data);

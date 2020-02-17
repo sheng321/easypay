@@ -43,6 +43,13 @@ class intBehavior extends Controller
                 if($k == 'geetest_seccode'){
                     $v = str_replace("|","",$v);
                 }
+
+                //数组
+                if($k == 'filterRules' || $k == 'sort' ){
+                    $v = str_replace("[","",$v);
+                    $v = str_replace("]","",$v);
+                }
+
                 $data['param'] = $v;
                 $data['param_k'] = $k;
 
