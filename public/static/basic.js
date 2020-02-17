@@ -545,6 +545,30 @@
 
     });
 
+    /**
+     * 注册 data-check-all 事件
+     */
+    $body.on('click', '[data-check-all]', function () {
+        var url = $(this).attr('data-check-all');
+        var checkStatus = table.checkStatus($(this).attr('data-table-id')),
+            data = checkStatus.data,
+            id = [];
+
+        for (let i in data) {
+            id.push(data[i].id);
+        }
+        var Index = $.msg.confirm($(this).attr('data-title'), function () {
+            $.msg.close(Index);
+            $.request.get(url, {id: id}, function (res) {
+                $.msg.success(res.msg, function () {
+                    $.tool.reload();
+                })
+            })
+        });
+
+        return false;
+    });
+
 
 
 

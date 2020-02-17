@@ -58,15 +58,14 @@
 
 
                 <script type="text/html" id="mode">
+                    {{#  if(d.type1 == '0'){ }}
+                        {{#  if(d.mode == '0'){ }}
+                        <a class="layui-btn layui-btn-xs layui-btn-danger "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---代理分组：{{d.title}}">没有通道</a>
 
-                    {{#  if(d.mode == '0'){ }}
-                    <a class="layui-btn layui-btn-xs layui-btn-danger "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---代理分组：{{d.title}}">没有通道</a>
-
-                    {{#  } else { }}
-                    <a class="layui-btn layui-btn-xs layui-btn-green "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---代理分组：{{d.title}}">通道（{{d.mode}}）</a>
+                        {{#  } else { }}
+                        <a class="layui-btn layui-btn-xs layui-btn-green "  data-width="100%"   data-open='{:url("$thisClass/mode")}?id={{d.id}}' data-title="选择通道---代理分组：{{d.title}}">通道（{{d.mode}}）</a>
+                        {{#  } }}
                     {{#  } }}
-
-
                 </script>
 
                 <script type="text/html" id="type1">

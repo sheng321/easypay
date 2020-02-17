@@ -25,45 +25,31 @@ class Agent extends AgentController {
     }
 
     /**
-     * 代理列表
-     * @return mixed
+     * 代理关系表
+     * @return mixed|\think\response\Json
      */
-    public  function  index(){
-        if ($this->request->get('type') == 'ajax') {
-            $page = $this->request->get('page/d', 1);
-            $limit = $this->request->get('limit/d', 10);
-            $search = (array)$this->request->get('search', []);
-            $search['uid'] = $this->user['uid'];
-            return $this->model->aList($page, $limit, $search);
+    public function relations() {
+        if (!$this->request->isPost()) {
+
+            $model = model('app\common\model\Uprofile');
+            //ajax访问
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                $search['uid'] = $this->user['uid'];
+                return json($model->aList($page, $limit, $search));
+            }
+
+            //基础数据
+            $basic_data = [
+                'title' => '代理关系表列表',
+                'data'  => '',
+            ];
+
+            return $this->fetch('', $basic_data);
         }
-
-        $basic_data = [
-            'title' => 'IP白名单列表',
-            'type' => [0=>'登入',1=>'结算',2=>'代付'],
-        ];
-        return $this->fetch('', $basic_data);
     }
-
-
-    /**商户列表
-     * @return mixed
-     */
-    public  function  member(){
-        if ($this->request->get('type') == 'ajax') {
-            $page = $this->request->get('page/d', 1);
-            $limit = $this->request->get('limit/d', 10);
-            $search = (array)$this->request->get('search', []);
-            $search['uid'] = $this->user['uid'];
-            return $this->model->aList($page, $limit, $search);
-        }
-
-        $basic_data = [
-            'title' => 'IP白名单列表',
-            'type' => [0=>'登入',1=>'结算',2=>'代付'],
-        ];
-        return $this->fetch('', $basic_data);
-    }
-
 
 
     /**
@@ -322,6 +308,13 @@ class Agent extends AgentController {
             $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
             //执行更新操作操作
             $update =  $model->__edit(['status' => $status,'id' => $SysRate['id'],'uid' =>$this->user['uid']],$msg);
+
+            $code =  json_decode($update->getContent())->code;
+            if($status == 0 && $code == 1){
+                //删除代理下商户分组选中的通道
+                $res = \app\common\model\Ulevel::delChennelGroupID($this->user['uid'],$SysRate['p_id'],$SysRate['id']);
+            }
+
         }
 
         return $update;
@@ -371,6 +364,7 @@ class Agent extends AgentController {
     //选择通道
     public function mode()
     {
+        $this->model = model('app\common\model\Ulevel');
         if (!$this->request->isPost()) {
 
             //ajax访问获取数据
@@ -382,10 +376,9 @@ class Agent extends AgentController {
                 $id =  $this->request->get('id', 0);
                 $channel =  $this->model->where('id', $id)->value('channel_id');
                 $search['channel'] = json_decode($channel,true);
-
+                $search['uid'] = $this->user['uid'];
                 return json(model('app\common\model\ChannelGroup')->uList($page, $limit, $search));
             }
-
 
             //基础数据
             $basic_data = [
@@ -393,41 +386,57 @@ class Agent extends AgentController {
             ];
 
             return $this->fetch('', $basic_data);
-        } else {
-            $post = $this->request->post();
-
-            //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
-            if (true !== $validate) return __error($validate);
-
-            //权重 和 并发 编辑
-            if($post['field'] == 'weight' || $post['field'] == 'concurrent'){
-
-                if(!is_numeric($post['value'])){
-                    return __error('请输入数字！');
-                }
+        }
+    }
 
 
-                $data[$post['field']] = json_decode($this->model->where('id', $this->request->get('g_id'))->value($post['field']),true);
-                if(empty($data[$post['field']])) $data[$post['field']] = [];
-                $data[$post['field']][$post['id']] = $post['value'];
+    /**
+     * 确认保存通道分组
+     * @return \think\response\Json
+     * @throws \Exception
+     */
+    public function confirm() {
 
-                $data2['id'] = $this->request->get('g_id');
-                $data2['field'] = $post['field'];
-                $data2['value'] = json_encode($data[$post['field']]);
+        $this->model = model('app\common\model\Ulevel');
+        $get = $this->request->get();
 
-
-                //保存数据,返回结果
-                return $this->model->editField($data2);
+        $mode = [];
+        //验证数据
+        if (isset($get['id'])) {
+            if (!is_array($get['id'])) {
+                $validate = $this->validate($get, 'app\common\validate\ChannelGroup.channel');
+                if (true !== $validate) return __error($validate);
+                $mode[] = $get['id'];
             }else{
-
-                //保存数据,返回结果
-                return model('app\common\model\Channel')->editField($post);
+                foreach ($get['id'] as $k => $val){
+                    $data['id'] = $val;
+                    $validate = $this->validate($data, 'app\common\validate\ChannelGroup.channel');
+                    if (true !== $validate){
+                        unset($get['id'][$k]);
+                        continue;
+                    }
+                    $mode[] = $val;
+                }
             }
 
         }
 
+        if(empty($get['pid']) || empty($mode)) return __error('请选择通道分组！');
 
+        $mode1 = [];
+        if(!empty($mode)){
+            $arr =  model('app\common\model\ChannelGroup')->where('id','in',$mode)->column('id,p_id','id');
+            foreach ($arr as $k => $v){
+                $mode1[$v][] = $k;
+            }
+        }
+
+        $data['id'] = $get['pid'];
+        $data['channel_id'] = json_encode($mode1);
+
+        //执行更新操作操作
+        $update = $this->model->__edit($data,'保存成功');
+        return $update;
     }
 
 

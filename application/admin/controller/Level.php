@@ -260,32 +260,11 @@ class Level extends AdminController {
             //执行更新操作操作
             $update =  $model->__edit(['status' => $status,'id' => $SysRate['id']],$msg);
 
-
+            $code =  json_decode($update->getContent())->code;
             //代理以下商户 所有选中当前通道的要删除
-            if($find['type1'] == 1 && $status == 0){
-                //代理分组
-                $lower = Uprofile::get_lower($find['uid'],0);//代理下级所有的商户
-                $lower[]=$find['uid'];
-
-                $channel = $this->model->where([
-                    ['uid','in',$lower],
-                    ['type1','=',0]]//商户分组
-                )->column('id,channel_id','id');//代理商户分组的分配通道分组的数据
-
-                $del = [];
-                foreach ($channel as $k => $v){
-                    $temp = json_decode($v,true);
-                    if(!empty($temp[$SysRate['p_id']]) && is_array($temp[$SysRate['p_id']])){
-                        $key = array_search($get['id'],$temp[$SysRate['p_id']]);
-                        if(is_numeric($key)){
-                            unset($temp[$SysRate['p_id']][$key]); //删除通道数据
-                            if(empty($temp[$SysRate['p_id']])) unset($temp[$SysRate['p_id']]);
-                            $del[$k]['id'] = $k;
-                            $del[$k]['channel_id'] = json_encode($temp);
-                        }
-                    }
-                }
-                if(!empty($del)) $this->model->__edit($del);
+            if($find['type1'] == 1 && $status == 0 && $code == 1){
+                //删除代理下商户分组选中的通道
+                $res = \app\common\model\Ulevel::delChennelGroupID($find['uid'],$SysRate['p_id'],$get['id']);
             }
 
         }
@@ -476,7 +455,6 @@ class Level extends AdminController {
     public function mode()
     {
         if (!$this->request->isPost()) {
-
             //ajax访问获取数据
             if ($this->request->get('type') == 'ajax') {
                 $page = $this->request->get('page', 1);
@@ -488,7 +466,6 @@ class Level extends AdminController {
                if(empty($level)) return __error('数据错误');
                 $search['channel'] = json_decode($level[$id]['channel_id'],true);
                 $search['uid'] =  $level[$id]['uid'];
-
                 return json(model('app\common\model\ChannelGroup')->uList($page, $limit, $search));
             }
 
@@ -499,40 +476,7 @@ class Level extends AdminController {
             ];
 
             return $this->fetch('', $basic_data);
-        } else {
-            $post = $this->request->post();
-
-            //验证数据
-            $validate = $this->validate($post, 'app\common\validate\Common.edit_field');
-            if (true !== $validate) return __error($validate);
-
-            //权重 和 并发 编辑
-            if($post['field'] == 'weight' || $post['field'] == 'concurrent'){
-
-                if(!is_numeric($post['value'])){
-                    return __error('请输入数字！');
-                }
-
-
-                $data[$post['field']] = json_decode($this->model->where('id', $this->request->get('g_id'))->value($post['field']),true);
-                if(empty($data[$post['field']])) $data[$post['field']] = [];
-                $data[$post['field']][$post['id']] = $post['value'];
-
-                $data2['id'] = $this->request->get('g_id');
-                $data2['field'] = $post['field'];
-                $data2['value'] = json_encode($data[$post['field']]);
-
-
-                //保存数据,返回结果
-                return $this->model->editField($data2);
-            }else{
-
-                //保存数据,返回结果
-                return model('app\common\model\Channel')->editField($post);
-            }
-
         }
-
 
     }
 
@@ -566,7 +510,7 @@ class Level extends AdminController {
 
         }
 
-        if(empty($get['pid'])) return __error('请选择通道分组！');
+        if(empty($get['pid']) || empty($mode)) return __error('请选择通道分组！');
         $mode1 = [];
        if(!empty($mode)){
            $arr =  model('app\common\model\ChannelGroup')->where('id','in',$mode)->column('id,p_id','id');

@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\Uprofile;
 
 /**
  * 支付通道分组
@@ -154,20 +155,24 @@ class Cgroup  extends AdminController
         if (true !== $validate) return __error($validate);
 
         //判断菜单状态
-        $status = $this->model->where('id', $get['id'])->value('status');
+        $data = $this->model->quickGet($get['id']);
+        $status = $data['status'];
         $status == 1 ? list($msg, $status) = ['通道分组禁用成功', $status = 0] : list($msg, $status) = ['通道分组启用成功', $status = 1];
-
 
         if($status == 0){
             //使用事物保存数据
             $this->model->startTrans();
             $save = $this->model->save(['status' => $status,'id' => $get['id']],['id'=>$get['id']]);
 
+            //权重和并发表
             $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
                 $query->where(['group_id'=>$get['id']]);
             });
 
-            if (!$save || !$del) {
+            //删除代理下商户分组选中的通道
+            $res = \app\common\model\Ulevel::delChennelGroupID(0,$data['p_id'],$get['id']);
+
+            if (!$save || !$del || !$res) {
                 $this->model->rollback();
                 $msg = '数据有误，请稍后再试！';
                 return __error($msg);

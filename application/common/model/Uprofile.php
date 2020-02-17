@@ -58,7 +58,8 @@ class Uprofile extends ModelService {
             ->each(function ($item, $key) use ($group) {
 
                 if($item['who'] == 0){
-                    $item['level_title'] = $item['level'].'级商户';
+                   // $item['level_title'] = $item['level'].'级商户';
+                    $item['level_title'] = '商户';
                 }else{
                     $item['level_title'] =  $item['level'].'级代理';
                 }

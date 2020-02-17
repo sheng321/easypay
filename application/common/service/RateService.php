@@ -213,7 +213,6 @@ class RateService
         $data['uid'] = empty($profile['pid'])?0:$profile['pid'];
         $data['group_id'] = $profile['group_id'];
         $data['channel_id'] = $channel_group_id;
-        $data['p_id'] = 0;
         $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
 
         if(!empty($SysRate['rate']) ){
@@ -249,7 +248,6 @@ class RateService
         $data['uid'] = empty($profile['pid'])?0:$profile['pid'];
         $data['group_id'] = $profile['group_id'];
         $data['channel_id'] = $channel_group_id;
-        $data['p_id'] = 0;
         $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
 
         if(!empty($SysRate['rate'])  && $SysRate['rate'] != '0.0000'  )  $rate = $SysRate['rate'];
@@ -359,11 +357,10 @@ class RateService
                     $res['rate'] =  $channelGroup[$aid]['c_rate'];//默认费率
                 }
             }
+
             if($res['status'] == 0) return $res;
 
-
             $data['channel_id'] = $aid;
-            $data['p_id'] = 0;
             $SysRate = SysRate::quickGet($data); //查询是否有该分组下的通道分组费率
 
             if(!empty($SysRate['rate'])){
@@ -372,7 +369,6 @@ class RateService
                 $res['type'] = 1;//代理分组费率类型
                 $res['rate'] = max($SysRate['rate'],$res['rate']);//代理分组费率
             }
-
         }
 
 

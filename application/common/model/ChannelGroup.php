@@ -22,9 +22,9 @@ class ChannelGroup extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> false,
-        'ttl'=> 3360 ,
-        'key'=> "String:table:ChannelGroup:id:{id}:title:{title}",
+        'is_open'=> true,
+        'ttl'=> 60 ,
+        'key'=> "String:table:ChannelGroup:title:{title}:id:{id}",
         'keyArr'=> ['id','title'],
     ];
 
@@ -141,7 +141,6 @@ class ChannelGroup extends ModelService {
         foreach ($data as $k => $v){
             $data[$k]['product'] = $product[$v['p_id']];
             $data[$k]['code'] = $code[$v['p_id']];
-
         }
 
         $info = [
@@ -175,7 +174,7 @@ class ChannelGroup extends ModelService {
         ];
 
         $field = ['id','update_at','remark','title','status','sort','verson','p_id'];
-        $count = $this->where($where)->count();
+        $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
@@ -184,6 +183,7 @@ class ChannelGroup extends ModelService {
         }else{
             $channel = [];
         }
+        if(empty($search['uid'])) $search['uid'] = 0;
 
         //支付产品
         $product = \app\common\model\PayProduct::idArr();
@@ -191,16 +191,18 @@ class ChannelGroup extends ModelService {
 
         foreach ($data as $k => $val){
             //当前通道分组的状态
-            $GroupStatus =  \app\common\service\RateService::getAgentStatus($search['uid'],$val['id']);
-            $data[$k]['status'] = 1;
-            if(!empty($GroupStatus))  $data[$k]['status'] = $GroupStatus['status'];
+            if($search['uid']>0){
+                //当为代理分组的时候
+                $GroupStatus =  \app\common\service\RateService::getAgentStatus($search['uid'],$val['id']);
+                $data[$k]['status'] = 1;
+                if(!empty($GroupStatus))  $data[$k]['status'] = $GroupStatus['status'];
+            }
 
             //已选中的状态
            $data[$k]['LAY_CHECKED'] = false;
             if(isset($channel[$val['p_id']]) &&  in_array($val['id'], $channel[$val['p_id']])){
                if($data[$k]['status'] == 1) $data[$k]['LAY_CHECKED'] = true;//通道开启的时候才为选中状态
             }
-
 
             $data[$k]['product'] = $product[$val['p_id']]; //支付产品
             $data[$k]['code'] = $code[$val['p_id']]; //支付产品

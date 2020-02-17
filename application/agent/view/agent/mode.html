@@ -9,26 +9,13 @@
 <form class="layui-form">
 
     <!--顶部操作栏--开始-->
-    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+    <blockquote id="searchBlock" class=" quoteBox">
 
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">通道分组名称</label>
-            <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入通道分组名称"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-sm"  data-search-top="currentTableId">置顶</a>
-        </div>
-
-        {if auth("$thisClass/add")}
+        {if auth("$thisClass/confirm")}
         <div class="layui-form-item layui-inline">
             <a class="layui-btn layui-btn-normal  layui-btn-sm " data-check-all='{:url("$thisClass/confirm")}?pid={$Think.get.id}' data-title="确认保存选择通道分组"   data-table-id="currentTableId"  >保存选择通道分组</a>
         </div>
         {/if}
-
-
 
     </blockquote>
     <!--顶部操作栏--结束-->
@@ -47,157 +34,36 @@
 {/block}
 
 {block name="script"}
-<script       >
-    ;layui.use(['laydate', 'form', 'layer', 'table', 'laytpl', 'jquery'], function () {
-        var table = layui.table,
-            $ = layui.jquery;
+<script >
 
-        // 当前页面Bogy对象
-        var $body = $('body');
-        $.form.table = function (elem, url, cols, isPage = true, skin = 'line', size = '', isTool = true) {
-            if (!isPage) {
-                var data = {
-                    elem: '#' + elem + 'Table',
-                    url: url,
-                    cellMinWidth: 95,
-                    page: false,
-                    height: "full-80",
-                    limits: [1000],
-                    limit: 1000,
-                    id: elem + 'TableId',
-                    cols: cols,
-                    done: function (res) {
-                        $('tr').each(function(index, element){
-                            var id = index -1;
-                            if(id >=0 && id < $('tr').length -3){
-                                if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
-                                    $(element).find('td').each(function(index1, element1){
-                                        $(element1).removeAttr("data-edit");
-                                        $(element1).removeAttr("style");
-                                    });
-                                }
-                            }
-                        });
-                        merge(res);
-                    }
-                };
-         }
-          //  if (skin != '') data.skin = skin;
-            if (size != '') data.size = size;
-            if (size == 'lg') data.limit = 10;
-            if (!isTool) data.height = "full-20";
-            table.render(data);
-        }
-
-
-        /**
-         * 生成表单
-         */
-        $.form.table('current', '{:url("$thisRequest")}?type=ajax&id={$Think.get.id}', [[
-            {type: "checkbox",fixed: "left", minWidth: 20,},
-            {field: 'title', title: '通道分组名称', minWidth: 20, align: 'center'},
-            {field: 'product', title: '支付产品', minWidth: 20, align: 'center'},
-            {field: 'code', title: '支付编码', minWidth: 20, align: 'center'},
-
-            {field: 'remark',title: '备注',minWidth: 20, align: "center"},
-        ]], false);
-
-
-        /**
-         * 监听字段值编辑
-         */
-        $.form.editField('currentTable', '{:url("$thisRequest")}?g_id={$Think.get.id}');
-
-
-        /**
-         * 注册 data-check-all 事件
-         */
-        $body.on('click', '[data-check-all]', function () {
-            var url = $(this).attr('data-check-all');
-            var checkStatus = table.checkStatus($(this).attr('data-table-id')),
-                data = checkStatus.data,
-                id = [];
-
-                for (let i in data) {
-                    id.push(data[i].id);
-                }
-            var Index = $.msg.confirm($(this).attr('data-title'), function () {
-                $.msg.close(Index);
-                    $.request.get(url, {id: id}, function (res) {
-                        $.msg.success(res.msg, function () {
-                            $.tool.reload();
-                        })
-                    })
-                });
-
-            return false;
-        });
-
-
-        /**
-         * 注册 data-search-top 事件
-         * 用于表格搜索
-         */
-        $body.on('click', '[data-search-top]', function () {
-            var searchData = Object();
-            var searchInput = $('#searchBlock div div input');
-            var searchSelect = $('#searchBlock div div select');
-            $.each(searchInput, function (i, obj) {
-                id = $(obj).attr('id');
-                if (id != undefined) {
-                    searchData[id] = $("#" + id).val();
-                }
-            });
-            $.each(searchSelect, function (i, obj) {
-                id = $(obj).attr('id');
-                if (id != undefined) {
-                    searchData[id] = $("#" + id).val();
-                }
-            });
-            $.request.get('{:url("$thisClass/top")}?id={$Think.get.id}', {search: searchData}, function (res) {
-                $.msg.success(res.msg, function () {
-                    $.tool.reload();
-                })
-            });
-            return false;
-        });
-
-
-        function merge(res) {
-
-            var data = res.data;
-            var mergeIndex = 0;//定位需要添加合并属性的行数
-            var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-            var columsName = [];//需要合并的列名称
-            var columsIndex = [];//需要合并的列索引值
-
-            for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
-                var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
-                for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
-                    var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
-                    var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
-
-                    if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
-                        mark += 1;
-                        //相同列的第一列增加rowspan属性
-                        tdPreArr.each(function () {
-                            $(this).attr("rowspan", mark);
-                        });
-                        //当前行隐藏
-                        tdCurArr.each(function () {
-                            $(this).css("display", "none");
-                        });
-                    }else {
-                        mergeIndex = i;
-                        mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
-                    }
-                }
-                mergeIndex = 0;
-                mark = 1;
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax&id={$Think.get.id}', [[
+        {type: "checkbox",fixed: "left", minWidth: 20,},
+        {field: 'title', title: '通道分组名称', minWidth: 20, align: 'center'},
+        {field: 'product', title: '支付产品', minWidth: 20, align: 'center'},
+        {field: 'code', title: '支付编码', minWidth: 20, align: 'center'},
+        {field: 'status', title: '状态', minWidth: 20, align: 'center', templet: function (d) {
+            if(d.status == 1){
+                return '<span style="color :  green">开启</span>';
+            }else {
+                return '维护';
             }
-        }
+        }},
 
+        {field: 'remark',title: '备注',minWidth: 20, align: "center"},
+    ]], false,function (res,curr,count) {
+            for (var i in res.data) {
+                var item = res.data[i];
+                if(item.status == 0){
+                    // checkbox 根据条件设置不可选中
+                    $('tr[data-index=' + i + '] input[type="checkbox"]').prop('disabled', true);
+                    $('tr[data-index=' + i + '] input[type="checkbox"]').next().remove();
+                    $('tr[data-index=' + i + '] input[type="checkbox"]').remove();
+                }
+            }
+    },500);
 
-    });
 </script>
 {/block}

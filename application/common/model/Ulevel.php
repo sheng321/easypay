@@ -123,4 +123,44 @@ class Ulevel extends ModelService {
         return \think\facade\Cache::get('UlevelIdArr');
     }
 
+
+    /**
+     *  删除代理下商户分组选中的通道
+     *  $uid 商户号
+     *  $p_id 支付产品ID
+     *  $channel_group_id 要删除的通道分组
+     */
+    public static function delChennelGroupID($uid,$p_id,$channel_group_id) {
+        
+        //代理分组
+        $lower = Uprofile::get_lower($uid,1);//代理下级所有的代理
+        $lower[]=$uid;
+        $channel = self::where([
+                ['uid','in',$lower],
+                ['type1','=',0]//商户分组
+            ]
+        )->column('id,channel_id','id');//代理商户分组的分配通道分组的数据
+
+        $needel = [];
+        foreach ($channel as $k => $v){
+            $temp = json_decode($v,true);
+            if(!empty($temp[$p_id]) && is_array($temp[$p_id])){
+                $key = array_search($channel_group_id,$temp[$p_id]);
+                if(is_numeric($key)){
+                    unset($temp[$p_id][$key]); //删除通道数据
+                    if(empty($temp[$p_id])) unset($temp[$p_id]);
+                    $needel[$k]['id'] = $k;
+                    $needel[$k]['channel_id'] = json_encode($temp);
+                }
+            }
+        }
+        $res = true;
+        if(!empty($needel)) $res =  model('app\common\model\Ulevel')->saveAll($needel);
+        return $res;
+    }
+
+
+
+
+
 }
