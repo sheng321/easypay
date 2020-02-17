@@ -749,7 +749,7 @@ class Member extends AdminController {
                 if($profile['level'] > 0){
                     \app\common\model\Urelations::destroy(function($query) use($uid){
                         $query->where([ ['uid','=',$uid]]);
-                    });
+                    });//先删除后添加
 
                     $Urelations[] =[
                         'level'=>1,
