@@ -100,15 +100,13 @@ class Umember extends UserService {
                     'df_secret'=>password($data['uid'],mt_rand(1,200))
                 ];
 
-                $agent_level = 0;
+
                 if(!empty($data['profile_pid'])){
+                    $agent_level  = $Uprofile->where('uid',$data['profile_pid'])->value('level');//代理等级
                     $profile['pid']  = $data['profile_pid'];
-                    if($data['who'] == 2){//代理
-                        $agent_level  = $Uprofile->where('uid',$data['profile_pid'])->value('level');//代理等级
-                        $agent_level = $agent_level + 1;
-                    }
                 }
-                $profile['level'] = $agent_level;
+                if(empty($agent_level)) $agent_level = 0;
+                $profile['level'] = $agent_level + 1;
                 $find = $Uprofile->create($profile);
             }
             return $find;

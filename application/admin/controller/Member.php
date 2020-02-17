@@ -592,7 +592,28 @@ class Member extends AdminController {
                 return __error('数据有误，请稍后再试!');
             }
             $Uprofile =  model('app\common\model\Uprofile')->save(['pid'=>$pid,'id'=>$result['profile']['id']],['id'=>$result['profile']['id']]);
-            if (!$Uprofile ) {
+
+
+            if($result['profile']['level'] > 0){
+                $Urelations[] =[
+                    'level'=>1,
+                     'uid' => $result['profile']['uid'],
+                     'who' => $result['profile']['who'],
+                     'pid' => $result['profile']['pid'],
+                ] ;//上级
+            }
+            if($result['profile']['level'] > 1){
+                $Urelations[] =[
+                    'level'=>2,
+                    'uid' => $result['profile']['uid'],
+                    'who' => $result['profile']['who'],
+                    'pid' => \app\common\model\Uprofile::where(['uid'=>$result['profile']['pid']])->value('pid'),
+                ] ;
+            }//上上级
+            $relations = true;
+           if(!empty($Urelations)) $relations =  model('app\common\model\Urelations')->saveAll($Urelations);
+
+            if (!$Uprofile || !$relations ) {
                 $this->model->rollback();
                 return __error('数据有误，请稍后再试!');
             }
@@ -717,17 +738,36 @@ class Member extends AdminController {
                 $profile['id'] = $pid;
 
                 $agent_level = 0;
-                if($post['who'] == 2){
-                    if(!empty($profile['pid'])){
-                        //代理等级
-                        $agent_level  = $Uprofile->where('uid',$profile['pid'])->value('level');
-                    }
-                    $agent_level = $agent_level + 1;
-                }
-                $profile['level'] = $agent_level;
+                if(!empty($profile['pid']))  $agent_level  = $Uprofile->where('uid',$profile['pid'])->value('level');
+                $profile['level'] = $agent_level + 1; //代理等级
                 $profile['who'] = $post['who'];
 
                 $Uprofile->__edit($profile);
+
+                $uid = \app\common\model\Uprofile::where(['id'=>$pid])->value('uid');
+
+                if($profile['level'] > 0){
+                    \app\common\model\Urelations::destroy(function($query) use($uid){
+                        $query->where([ ['uid','=',$uid]]);
+                    });
+
+                    $Urelations[] =[
+                        'level'=>1,
+                        'uid' => $uid,
+                        'who' => $profile['who'],
+                        'pid' => $profile['pid'],
+                    ] ;//上级
+                }
+                if($profile['level'] > 1){
+                    $Urelations[] =[
+                        'level'=>2,
+                        'uid' => $uid,
+                        'who' => $profile['who'],
+                        'pid' => \app\common\model\Uprofile::where(['uid'=>$profile['pid']])->value('pid'),
+                    ] ;
+                }//上上级
+                if(!empty($Urelations)) $relations =  model('app\common\model\Urelations')->saveAll($Urelations);
+
             }
             return  $res;
         }
