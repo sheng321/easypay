@@ -29,8 +29,4 @@ class Urelations extends ModelService {
         'keyArr'=> ['id','uid','pid'],
     ];
 
-
-
-
-
 }
