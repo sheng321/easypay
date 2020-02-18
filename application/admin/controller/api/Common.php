@@ -45,7 +45,7 @@ class Common extends AdminController {
             ['type','in',[5,6,7]],
             ['status','=',0],
         ];
-       $data = \app\common\model\Message::where($where)->select()->toArray();
+       $data = \app\common\model\Message::where($where)->cache('task',3)->select()->toArray();
 
        $arr = array();
        foreach ($data as $k =>$v){
