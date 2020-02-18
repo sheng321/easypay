@@ -94,11 +94,36 @@ class Message extends AdminController
         }
     }
 
-
-
     public function form(){
         return $this->fetch('form');
     }
 
+
+    /**
+     * 任务处理中心
+     * @return mixed|\think\response\Json
+     */
+    public function task()
+    {
+        if (!$this->request->isPost()){
+
+            //ajax访问获取数据
+            if ($this->request->get('type') == 'ajax') {
+                $page = $this->request->get('page', 1);
+                $limit = $this->request->get('limit', 10);
+                $search = (array)$this->request->get('search', []);
+                $search['type'] = $this->request->get('type1/d', 0);
+                return json($this->model->aList($page, $limit, $search));
+            }
+
+            //基础数据
+            $basic_data = [
+                'title' => '任务中心',
+                'data' => '',
+            ];
+
+            return $this->fetch('', $basic_data);
+        }
+    }
 
 }
