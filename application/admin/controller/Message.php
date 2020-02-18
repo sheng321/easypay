@@ -127,5 +127,36 @@ class Message extends AdminController
         }
     }
 
+    /**
+     * 处理任务
+     * @return \think\response\Json
+     */
+    public function do_task() {
+        $get = $this->request->get();
+        $update = [];
+        if (!is_array($get['id'])) {
+            $update[] =[
+                ['id','=',$get['id']],
+                ['status','=',1],
+            ];
+        }else{
+            foreach ($get['id'] as $v){
+                $update[] =[
+                    ['id','=',$v],
+                    ['status','=',1],
+                ];
+            }
+        }
+
+     if(!empty($update)) $up = $this->model->saveAll($update);
+
+        if (!$up) {
+            return __error('数据有误，请刷新重试！');
+        } else {
+            return __success('处理成功！');
+        }
+    }
+
+
 
 }
