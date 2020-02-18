@@ -135,13 +135,13 @@ class Message extends AdminController
         $get = $this->request->get();
         $update = [];
         if (!is_array($get['id'])) {
-            $update[] =[
+            $update[] = [
                 ['id','=',$get['id']],
                 ['status','=',1],
             ];
         }else{
             foreach ($get['id'] as $v){
-                $update[] =[
+                $update[] = [
                     ['id','=',$v],
                     ['status','=',1],
                 ];
