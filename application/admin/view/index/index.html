@@ -40,11 +40,52 @@
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
 
                 <li class="layui-nav-item" lay-unselect>
-                    <a lay-href="{:url('@admin/Message/index')}" layadmin-event="message" lay-text="消息中心">
+                    <a lay-href="{:url('@admin/Message/task')}" layadmin-event="message" lay-text="消息中心">
                         <i class="layui-icon layui-icon-notice"></i>
 
                         <!-- 如果有新消息，则显示小圆点 -->
-                        <span class="layui-badge-dot"></span>
+                        <span  ></span>
+                        <!--<span class="layui-badge-dot  blink" ></span>-->
+
+                        <style>
+
+                            /* 定义keyframe动画，命名为blink */
+                            @keyframes blink{
+                                0%{opacity: 1;}
+                                100%{opacity: 0;}
+                            }
+                            /* 添加兼容性前缀 */
+                            @-webkit-keyframes blink {
+                                0% { opacity: 1; }
+                                100% { opacity: 0; }
+                            }
+                            @-moz-keyframes blink {
+                                0% { opacity: 1; }
+                                100% { opacity: 0; }
+                            }
+                            @-ms-keyframes blink {
+                                0% {opacity: 1; }
+                                100% { opacity: 0;}
+                            }
+                            @-o-keyframes blink {
+                                0% { opacity: 1; }
+                                100% { opacity: 0; }
+                            }
+                            /* 定义blink类*/
+                            .blink{
+                                color: #dd4814;
+                                animation: blink 1s linear infinite;
+                                /* 其它浏览器兼容性前缀 */
+                                -webkit-animation: blink 1s linear infinite;
+                                -moz-animation: blink 1s linear infinite;
+                                -ms-animation: blink 1s linear infinite;
+                                -o-animation: blink 1s linear infinite;
+                            }
+
+
+                        </style>
+
+
                     </a>
                 </li>
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -158,54 +199,29 @@ easypay\public\static\plugs
         index: 'lib/index' //主入口模块
     }).use('index');
 
-
-    //消息闪烁
-    /*    if($(".layui-icon-notice").siblings('span').size() == 1){
-     var time = setInterval(function() {
-     if($(".layui-icon-notice").siblings('span').hasClass('layui-badge-dot')){
-     $(".layui-icon-notice").siblings('span').removeClass('layui-badge-dot');
-     }else{
-     $(".layui-icon-notice").siblings('span').addClass('layui-badge-dot');
-     }
-     }, 500);
-     }*/
-
-    var  iNotify;
-
-
-    iNotify = new iNotify({
-        message: '系统通知',//标题
-        effect: 'flash', // flash | scroll 闪烁还是滚动
-        interval: 300,
-        audio:{
-            file:'http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=5&text='+555555
-        }
-    });
-    iNotify.setFavicon(1).setTitle("系统通知").notify({
-        title: "系统通知",
-        body: '555555'
-    }).player();
-
+    var iNotify = new iNotify();
     //实时刷新时间单位为毫秒
-  //  setInterval('refreshQuery()',1000);//一分钟循环
+    setInterval('refreshQuery()',60000);//一分钟循环
     /* 刷新查询 */
     function refreshQuery(){
         //语音播报
         $.get("{:url('@admin/api.common/task')}", function (res) {
             if (res.code == 1) {
-               iNotify = new iNotify({
-                    message: '系统通知',//标题
-                    effect: 'flash', // flash | scroll 闪烁还是滚动
+
+                $(".layui-icon-notice").siblings('span').addClass('layui-badge-dot');
+                $(".layui-icon-notice").siblings('span').addClass('blink');//小红点闪烁
+
+                iNotify.init({
+                    message:"有消息拉！",
+                    effect: 'flash',
                     interval: 300,
                     audio:{
                         file:'http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=5&text='+res.msg
                     }
                 });
-
-                iNotify.setFavicon(1).setTitle("系统通知").notify({
-                    title: "系统通知",
-                    body: res.msg
-                }).player();
+                iNotify.setFavicon(res.data.num).setTitle("有消息拉!").player();
+            }else {
+                $(".layui-icon-notice").siblings('span').removeClass('layui-badge-dot');
             }
         })
     }

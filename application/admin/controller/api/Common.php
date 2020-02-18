@@ -41,7 +41,7 @@ class Common extends AdminController {
     public function task() {
         $time = date('Y-m-d H:i:s',time() - 30*60);
         $where = [
-          // ['create_at','>',$time],
+           ['create_at','>',$time],
             ['type','in',[5,6,7]],
             ['status','=',0],
         ];
@@ -57,7 +57,7 @@ class Common extends AdminController {
        }
 
         if(empty($arr))  return __error('');
-        return __success(implode('。',$arr));
+        return __success(implode('。',$arr),['num'=>count($data)]);
     }
 
 
