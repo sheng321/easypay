@@ -1,11 +1,17 @@
 {extend name="admin@public/basicTree" /}
 
 {block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
 <link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
 {/block}
 
 {block name="cotent"}
 <form class="layui-form">
+    <blockquote class="layui-elem-quote"    >
+        下级代理数：<span class="label-info">{$data.agent|default='0'}</span>
+        下级商户数：<span class="label-info">{$data.member|default='0'}</span>
+        下级代理的商户数：<span class="label-info">{$data.agent_member|default='0'}</span>
+    </blockquote>
 
     <!--主表单渲染--开始-->
     <table id="currentTable" lay-filter="currentTable"></table>
@@ -13,19 +19,18 @@
 </form>
 {/block}
 <script>
-{block name="script"}
-
+//{block name="script"}
         /**
          * 生成表单
          */
         $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax&uid={$Think.get.uid}', [[
-            {field: 'level_title', title: '等级', minWidth: 20, align: "center"},
             {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
+            {field: 'level_title', title: '等级', minWidth: 20, align: "center"},
             {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
             {field: 'create_by_username', title: '创建人', align: 'center'},
             {field: 'create_at', title: '创建时间', align: 'center', minWidth: 150},
-        ]], 'uid','pid',true)
+        ]], 'uid','pid',true,'','',true,'uid');
 
 
-{/block}
+//{/block}
 </script>

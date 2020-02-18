@@ -36,11 +36,11 @@
      * 生成表单
      */
     $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
-        {field: 'level_title', title: '等级', minWidth: 20, align: "center"},
         {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
+        {field: 'level_title', title: '等级', minWidth: 20, align: "center"},
         {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
         {field: 'create_at', title: '创建时间', minWidth: 20,  unresize: true, align: "center"},
-    ]], 'uid','pid',true)
+    ]], 'uid','pid',true,'','',true,'uid')
 
 
     /**

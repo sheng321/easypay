@@ -41,25 +41,25 @@ class Agent extends AgentController {
                 return json($model->aList($page, $limit, $search));
             }
 
-            $agent = $model->where([
+            $model1 = model('app\common\model\Urelations');
+
+            $agent = $model1->where([
                 ['pid','=',$this->user['uid']],
+                ['level','=',1],
                 ['who','=',2]
             ])->cache('agent_'.$this->user['uid'],3)->count(1);
-            $member = $model->where([
+            $member = $model1->where([
                 ['pid','=',$this->user['uid']],
-                ['who','=',0]
+                ['who','=',0],
+                ['level','=',1],
             ])->cache('member_'.$this->user['uid'],3)->count(1);
 
-
-            $agent_member = $model
-                ->where('who','=',0)
-                ->where('pid', 'IN', function ($query){
-                    $query->table('cm_member_profile')->where([
-                        ['pid','=',$this->user['uid']],
-                        ['who','=',2]
-                    ])->field('uid');
-                })->cache('agent_member_'.$this->user['uid'],3)->count(1);
-
+            $agent_member = $model1
+                ->where([
+                    ['pid','=',$this->user['uid']],
+                    ['level','=',2],
+                    ['who','=',0]
+                ])->cache('agent_member_'.$this->user['uid'],3)->count();
 
 
             //基础数据

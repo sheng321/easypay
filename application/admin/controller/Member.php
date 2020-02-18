@@ -120,21 +120,40 @@ class Member extends AdminController {
      */
     public function relations() {
         if (!$this->request->isPost()) {
-
+            $uid =  $this->request->get('uid/d', 0);
             $model = model('app\common\model\Uprofile');
             //ajax访问
             if ($this->request->get('type') == 'ajax') {
                 $page = $this->request->get('page', 1);
                 $limit = $this->request->get('limit', 10);
                 $search = (array)$this->request->get('search', []);
-                $search['uid'] = (int)$this->request->get('uid', 0);
+                $search['uid'] = $uid;
                 return json($model->aList($page, $limit, $search));
             }
+
+            $model1 = model('app\common\model\Urelations');
+            $agent = $model1->where([
+                ['pid','=',$uid],
+                ['level','=',1],
+                ['who','=',2]
+            ])->cache('agent_'.$uid,3)->count(1);
+            $member = $model1->where([
+                ['pid','=',$uid],
+                ['who','=',0],
+                ['level','=',1],
+            ])->cache('member_'.$uid,3)->count(1);
+
+            $agent_member = $model1
+                ->where([
+                    ['pid','=',$uid],
+                    ['level','=',2],
+                    ['who','=',0]
+                ])->cache('agent_member_'.$uid,3)->count();
 
             //基础数据
             $basic_data = [
                 'title' => '代理关系表列表',
-                'data'  => '',
+                'data'  => ['agent'=>$agent,'member'=>$member,'agent_member'=>$agent_member],
             ];
 
             return $this->fetch('', $basic_data);

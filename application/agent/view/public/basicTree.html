@@ -79,7 +79,7 @@
          * @param treeShowName 以树形式显示的字段
          * @param page 表单渲染
          */
-        $.form.tableTree = function (elem, url, cols, treeShowName = 'title',pid = 'pid', isPage = true , done = '',  size = '', isTool = true) {
+        $.form.tableTree = function (elem, url, cols, treeShowName = 'title',pid = 'pid', isPage = true , done = '',  size = '', isTool = true,idField = 'id') {
             if (!isPage) {
                 var data = {
                     id: elem + 'TableId'
@@ -87,8 +87,8 @@
                     , url: url
                     , method: 'get'
                     , cellMinWidth: 95
-                    , idField: 'id'//必須字段
-                    , treeId: 'id'//树形id字段名称
+                    , idField: idField//必須字段
+                    , treeId: idField//树形id字段名称
                     , treeUpId: pid//树形父id字段名称
                     , treeShowName: treeShowName//以树形式显示的字段
                     , height: "full-80"
@@ -109,8 +109,8 @@
                     , url: url
                     , method: 'get'
                     , cellMinWidth: 95
-                    , idField: 'id'//必須字段
-                    , treeId: 'id'//树形id字段名称
+                    , idField: idField//必須字段
+                    , treeId: idField//树形id字段名称
                     , treeUpId: pid//树形父id字段名称
                     , treeShowName: treeShowName//以树形式显示的字段
                     , height: "full-80"
