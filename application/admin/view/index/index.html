@@ -142,6 +142,9 @@
 </div>
 <script type="text/javascript"    src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
 <script type="text/javascript"   src="__ADMIN__/layuiadmin/layui/layui.all.js"></script>
+<script type="text/javascript"   src="__STATIC__/plugs/iNotify.js"></script>
+
+easypay\public\static\plugs
 <script type="text/javascript"     >
     /**
      * 跳出ifram框架
@@ -166,6 +169,38 @@
      }
      }, 500);
      }*/
+
+    setTimeout(function () {
+        layer.close(index);
+        layer.msg("服务端缓存清除失败！");
+    }, 60000);
+
+    var iNotify;
+    //实时刷新时间单位为毫秒
+    setInterval('refreshQuery()',1000);//一分钟循环
+    /* 刷新查询 */
+    function refreshQuery(){
+        //语音播报
+        $.get("{:url('@admin/api.common/task')}", function (res) {
+            if (res.code == 1) {
+                iNotify = new iNotify({
+                    message: '系统通知',//标题
+                    effect: 'flash', // flash | scroll 闪烁还是滚动
+                    interval: 300,
+                    audio:{
+                        file:'http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=5&text='+res.msg
+                    }
+                });
+
+                iNotify.setFavicon(1).setTitle("系统通知").notify({
+                    title: "系统通知",
+                    body: res.msg
+                }).player();
+            }
+        })
+    }
+
+
 
 
     //清除缓存

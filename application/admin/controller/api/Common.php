@@ -33,4 +33,30 @@ class Common extends AdminController {
             return __error('缓存刷新失败！');
         }
     }
+
+    /**
+     * 语音播报任务
+     * @return \think\response\Json
+     */
+    public function task() {
+        $time = date('Y-m-d H:i:s',time() - 30*60);
+        $where = [
+           // ['create_at','>',$time],
+            ['type','in',[5,6,7]],
+            ['status','=',0],
+        ];
+       $data = \app\common\model\Message::where($where)->select()->toArray();
+
+       dump($data);
+       $msg = '';
+       foreach ($data as $k =>$v){
+           $msg .= $v['data'];
+       }
+
+        if(empty($msg))  return __error($msg);
+
+        return $msg;
+    }
+
+
 }

@@ -2,6 +2,22 @@
 
 // 应用公共文件
 
+if (!function_exists('addTask')) {
+
+    /** 添加语音播报任务
+     * @param $title
+     * @param $msg
+     * @param $type
+     * @param int $time
+     * @return bool
+     */
+    function addTask($title,$msg,$type,$time = 1)
+    {
+        \app\common\model\Message::add_task($title,$msg,$type,$time);
+        return  true;
+    }
+}
+
 
 if (!function_exists('convertAmountToCn')) {
 /**
@@ -977,7 +993,7 @@ function Policy(){
     $report = '';
     header('Content-Type: text/javascript; charset=utf-8');
     //设置heard头
-    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com  http://cdn.bootcss.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;child-src 'self';form-action 'self';object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:; report-uri $report ");
+    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com  http://cdn.bootcss.com  https://goo.gl/rStTGz  'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;child-src 'self';form-action 'self';object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:; report-uri $report ");
 }
 
 

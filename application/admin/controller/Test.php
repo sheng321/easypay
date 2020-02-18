@@ -14,11 +14,17 @@ class Test  extends Controller
 {
     public function index()
     {
-        $data =  Uprofile::get_lower(0,0);
-        halt($data);
 
 
-        $uid = 20100010;
+
+        addTask(11,22,5);
+
+
+/*        $data =  Uprofile::get_lower(0,0);
+        halt($data);*/
+
+
+/*        $uid = 20100010;
         \app\common\model\Umember::destroy(function($query) use ($uid){
             $query->where('uid','=',$uid);
         });
@@ -27,7 +33,7 @@ class Test  extends Controller
         });
         \app\common\model\Umoney::destroy(function($query)use ($uid){
             $query->where('uid','=',$uid);
-        });
+        });*/
 
 
     }

@@ -49,4 +49,31 @@ class Message extends ModelService {
         return $list;
     }
 
+
+    /**添加任务
+     * @param $title
+     * @param $msg
+     * @param $type  5客服任务 6财务任务 7 技术任务
+     * @param int $time
+     * @return bool
+     */
+    public static function add_task($title,$msg,$type,$time = 1)
+    {
+        $data['title'] = $title;
+        $data['data'] = $msg;
+        $data['type'] = $type;
+        $find =  self::where($data)->find();
+        if(empty($find)){
+            $data['time'] = $time;
+            return  self::create($data);
+        }
+        $Time  =  strtotime($find['create_at'])  - time() - 30*60;//30分钟
+        if($Time > 0){
+            $data['time'] = $time;
+            return  self::create($data);
+        }
+
+        return true;
+    }
+
 }
