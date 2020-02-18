@@ -147,7 +147,7 @@ class Message extends AdminController
                 ];
             }
         }
-
+        $up = false;
      if(!empty($update)) $up = $this->model->saveAll($update);
 
         if (!$up) {
