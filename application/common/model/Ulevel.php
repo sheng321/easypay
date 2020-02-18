@@ -131,7 +131,6 @@ class Ulevel extends ModelService {
      *  $channel_group_id 要删除的通道分组
      */
     public static function delChennelGroupID($uid,$p_id,$channel_group_id) {
-        
         //代理分组
         $lower = Uprofile::get_lower($uid,2);//代理下级所有的代理
         $lower[]=$uid;
