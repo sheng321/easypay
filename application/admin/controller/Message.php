@@ -140,8 +140,8 @@ class Message extends AdminController
                 ['status','=',1],
             ];
         }else{
-            foreach ($get['id'] as $v){
-                $update[] = [
+            foreach ($get['id'] as $k=> $v){
+                $update[$k] = [
                     ['id','=',$v],
                     ['status','=',1],
                 ];
