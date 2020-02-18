@@ -148,7 +148,6 @@ class Message extends AdminController
             }
         }
 
-        halt($update);
         $up = false;
      if(!empty($update)) $up = $this->model->isUpdate(true)->saveAll($update);
 dump($update);
