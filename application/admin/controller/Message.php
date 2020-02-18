@@ -134,21 +134,11 @@ class Message extends AdminController
     public function do_task() {
         $get = $this->request->get();
         $update = [];
-        if (!is_array($get['id'])) {
-            $update[] = [
-                ['id','=',$get['id']],
-                ['status','=',1],
-            ];
-        }else{
-            foreach ($get['id'] as $k=> $v){
-                $update[$k] =['id'=>$v,'status'=>1];
-            }
+        foreach ($get['id'] as $k=> $v){
+            $update[$k] =['id'=>$v,'status'=>1];
         }
-        dump($update);
         $up = false;
-     if(!empty($update)) $up = $this->model->isUpdate(true)->saveAll($update);
-
-     halt($up);
+       if(!empty($update)) $up = $this->model->saveAll($update);
 
         if (!$up) {
             return __error('数据有误，请刷新重试！');
