@@ -133,7 +133,7 @@ class Ulevel extends ModelService {
     public static function delChennelGroupID($uid,$p_id,$channel_group_id) {
         
         //代理分组
-        $lower = Uprofile::get_lower($uid,1);//代理下级所有的代理
+        $lower = Uprofile::get_lower($uid,2);//代理下级所有的代理
         $lower[]=$uid;
         $channel = self::where([
                 ['uid','in',$lower],
