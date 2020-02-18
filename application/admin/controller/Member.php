@@ -594,7 +594,7 @@ class Member extends AdminController {
             $Uprofile =  model('app\common\model\Uprofile')->save(['pid'=>$pid,'id'=>$result['profile']['id']],['id'=>$result['profile']['id']]);
 
 
-            if($result['profile']['level'] > 0){
+            if($result['profile']['level'] > 1){
                 $Urelations[] =[
                     'level'=>1,
                      'uid' => $result['profile']['uid'],
@@ -602,7 +602,7 @@ class Member extends AdminController {
                      'pid' => $result['profile']['pid'],
                 ] ;//上级
             }
-            if($result['profile']['level'] > 1){
+            if($result['profile']['level'] > 2){
                 $Urelations[] =[
                     'level'=>2,
                     'uid' => $result['profile']['uid'],
@@ -746,7 +746,7 @@ class Member extends AdminController {
 
                 $uid = \app\common\model\Uprofile::where(['id'=>$pid])->value('uid');
 
-                if($profile['level'] > 0){
+                if($profile['level'] > 1){
                     \app\common\model\Urelations::destroy(function($query) use($uid){
                         $query->where([ ['uid','=',$uid]]);
                     });//先删除后添加
@@ -758,7 +758,7 @@ class Member extends AdminController {
                         'pid' => $profile['pid'],
                     ] ;//上级
                 }
-                if($profile['level'] > 1){
+                if($profile['level'] > 2){
                     $Urelations[] =[
                         'level'=>2,
                         'uid' => $uid,
