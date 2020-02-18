@@ -41,21 +41,23 @@ class Common extends AdminController {
     public function task() {
         $time = date('Y-m-d H:i:s',time() - 30*60);
         $where = [
-           // ['create_at','>',$time],
+          // ['create_at','>',$time],
             ['type','in',[5,6,7]],
             ['status','=',0],
         ];
        $data = \app\common\model\Message::where($where)->select()->toArray();
 
-       dump($data);
-       $msg = '';
+       $arr = array();
        foreach ($data as $k =>$v){
-           $msg .= $v['data'];
+         $left = (time() - strtotime($v['create_at']))%($v['time']*60) -60;//时间间隔判断
+         if($left <= 0){
+             if(empty($arr[$v['title']])) $arr[$v['title']] = $v['data'];
+             $arr[$v['title']] .= '。'.$v['data'];
+         }
        }
 
-        if(empty($msg))  return __error($msg);
-
-        return $msg;
+        if(empty($arr))  return __error('');
+        return __success(implode('。',$arr));
     }
 
 
