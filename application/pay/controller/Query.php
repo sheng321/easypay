@@ -64,14 +64,12 @@ class Query extends PayController
         $Order =  Order::quickGet(['out_trade_no'=>$out_trade_no]);
         if(empty($Order) ) __jerror('订单号不存在');
 
-        $data = array();
-        if($Order['pay_status'] == 2){
+        $time =   time() - strtotime($Order['create_time'])  - 5*60;//时间判断
+        if($Order['pay_status'] == 2 && $time <= 0){
             //已支付
-            $data['returncode'] = "00";
-            $data['trade_state'] = 'SUCCESS';
+            $data['status'] = "ok";
         }else{
-            $data['returncode'] = "01";
-            $data['trade_state'] = 'NOTPAY';
+            $data['status'] = "no";
         }
 
         return __jsuccess('查询成功',$data);

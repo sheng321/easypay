@@ -149,25 +149,23 @@
         var r = window.setInterval(function () {
             $.ajax({
                 type: 'POST',
-                url: '{:url("Pay/checkstatus")}',
+                url: '{:url("@pay/Query/checkstatus")}',
                 data: "orderid={$return['orderid']}",
                 dataType: 'json',
                 success: function (res) {
-
                     if(res.code == 1){
-                        if (str.status == "ok") {
+                        if (res.data.status == "ok") {
                             $("#ewm").attr("src", "__STATIC__/Front/img/successpay.png");
                             $(".zhifubaozhifu").hide();
                             window.clearInterval(r);
                             window.open(str.callback);
                         }
-
                     }else {
-
+                        window.clearInterval(r);
+                        $("#ewm").attr("src", "__STATIC__/Front/img/error.png");
+                        $(".zhifubaozhifu").hide();
+                        window.clearInterval(r);
                     }
-
-
-
                 }
             });
         }, 5000);

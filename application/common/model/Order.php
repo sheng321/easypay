@@ -22,7 +22,7 @@ class Order extends ModelService {
      */
     protected $redis = [
         'is_open'=> true,
-        'ttl'=> 300,
+        'ttl'=> 15*60,
         'key'=> "String:table:Order:mch_id:{mch_id}:transaction_no:{transaction_no}:out_trade_no:{out_trade_no}:system_no:{system_no}:id:{id}",
         'keyArr'=> ['id','out_trade_no','system_no','transaction_no','mch_id'],
     ];
