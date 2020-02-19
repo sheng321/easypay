@@ -10,9 +10,9 @@
 <div class="layui-card">
     <div class="layui-tab layui-tab-brief">
         <ul class="layui-tab-title">
-            <li class="layui-this">客服任务</li>
-            <li>财务任务</li>
-            <li>技术任务</li>
+            <li class="layui-this">客服任务  {if !empty($data['service']) }<span class="layui-badge">{$data.service}</span>{/if} </li>
+            <li>财务任务 {if !empty($data['account']) }<span class="layui-badge layui-bg-orange">{$data.account}</span>{/if} </li>
+            <li>技术任务 {if !empty($data['program']) }<span class="layui-badge layui-bg-green">{$data.program}</span>{/if} </li>
         </ul>
         <div class="layui-tab-content">
 

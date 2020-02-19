@@ -43,8 +43,6 @@ class ExceptionHandle extends Handle
             'close'   => false,
         ]);
 
-
-
         $trace = (array) $e->getTrace()[7]["args"][0];
         $newStr = json_decode(str_ireplace("\\u0000*\\u0000","",json_encode($trace,JSON_UNESCAPED_SLASHES)),true);
 

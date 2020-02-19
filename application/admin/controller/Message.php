@@ -117,10 +117,14 @@ class Message extends AdminController
                 return json($this->model->aList($page, $limit, $search));
             }
 
+            $service = $this->model->where(['type'=>5,'status'=>0])->count(1);
+            $account = $this->model->where(['type'=>6,'status'=>0])->count(1);
+            $program = $this->model->where(['type'=>7,'status'=>0])->count(1);
+
             //基础数据
             $basic_data = [
                 'title' => '任务中心',
-                'data' => '',
+                'data' => ['service'=>$service,'account'=>$account,'program'=>$program],
             ];
 
             return $this->fetch('', $basic_data);
@@ -139,10 +143,6 @@ class Message extends AdminController
         }
         $up = false;
        if(!empty($update)) $up = $this->model->saveAll($update);
-
-
-
-
 
         if (!$up) {
             return __error('数据有误，请刷新重试！');

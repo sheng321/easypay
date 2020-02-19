@@ -30,7 +30,7 @@ class Message extends ModelService {
         $field = '*';
         $count = $this->where($where)->count(1);
 
-        $order = ['id'=>'desc'];
+        $order = ['status'=>'asc','id'=>'desc'];
         $data = $this->where($where)->field($field)->page($page, $limit)->order($order)->select()->toArray();
 
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
+    <meta name="renderer" content="webkit"/>
+    <title>支付宝快捷收银台</title>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no,email=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"/>
+    <link rel="apple-touch-icon" href="https://i.alipayobjects.com/i/ecmng/png/201406/2qBuceUYiL.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://i.alipayobjects.com/i/ecmng/png/201406/2qBuceUYiL.png" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10" />
+    <!-- CMS:安全支付客户端网关/common/tracker.vm开始:common/tracker.vm -->
+
+    <!-- CMS:安全支付客户端网关/common/tracker.vm结束:common/tracker.vm -->
+    <script charset="utf-8" id="seajsnode" src="https://a.alipayobjects.com:443/??seajs/seajs/2.2.0/sea.js,seajs/seajs-combo/1.0.0/seajs-combo.js,seajs/seajs-localcache/1.0.3/seajs-localcache.js"></script>
+
+    <script>
+        seajs.config({
+            alias: {
+                '$': 'gallery/zepto/1.0.2/zepto',
+                'validator': 'arale/validator/0.9.7/validator',
+                'widget': 'arale/widget/1.1.1/widget',
+                'base': 'arale/base/1.1.1/base',
+                'class': 'arale/class/1.1.0/class',
+                'events': 'arale/events/1.1.0/events',
+                'wapcashier': 'mobileclientgw/wapcashier/1.1.7/wapcashier',
+                'wapcashier-css': 'mobileclientgw/wapcashier/1.1.5/wapcashier.css'
+            },
+            vars: {
+                locale: 'zh-cn'
+            }
+        });
+        <!-- CMS:安全支付客户端网关/common/localcache.vm开始:mobileclientgw/common/localcache.vm -->	//静态文件缓存开关
+        window.localcache = false;
+        if (window.localcache) {
+            seajs.config({
+                preload: ['seajs/seajs-localcache/1.0.3/seajs-localcache'],
+                localcache: {allStore: true}
+            });
+        }
+        <!-- CMS:安全支付客户端网关/common/localcache.vm结束:mobileclientgw/common/localcache.vm -->        //加载CSS
+        seajs.use('wapcashier-css');
+    </script>
+</head>
+<body>
+<noscript><h1 style="color:red">您的浏览器不支持JavaScript，请更换浏览器或开启JavaScript设置!</h1></noscript>
+<div class="J-msg-mask am-msg-mask" style="display:none"></div>
+<div class="J-msg-box am-msg-box" style="display:none">
+    <div class="am-msg-box-content">
+        <p class="J-msg-text"></p>
+        <button class="J-msg-cancel am-button am-button-blue" type="button">知道了</button>
+    </div>
+</div>
+
+<div class="J-loading am-loading"><div class="am-loading-text">加载中...</div></div>
+<!-- CMS:安全支付客户端网关/common/notice.vm开始:common/notice.vm --><!-- CMS:安全支付客户端网关/common/notice.vm结束:common/notice.vm -->
+<!-- nopage -->
+<script>window.Tracker && Tracker.click('nopage')</script>
+
+<style>
+    .am-loading{position:fixed;z-index:100;top:45%;width:100%;text-align:center}.am-loading .am-loading-text{-webkit-box-sizing:border-box;box-sizing:border-box;display:inline-block;margin:-24px auto auto;padding:9px 20px;-webkit-border-radius:5px;border-radius:5px;background-clip:padding-box;line-height:1.5em;color:#fff;background-color:rgba(0,0,0,.8)}.am-loading .am-loading-text .icon-check-error{vertical-align:-2px}.am-loading-icon{display:inline-block;width:24px;height:24px;vertical-align:middle;background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAQAAABLCVATAAACsklEQVR4AZ3PUWoqSRTG8bOFs4XeQm+ht1Bb6C30FkpERCQP9SCXEC6SkiAhSJAiXIZhCEKBXIIECYVIkEsIaQkiQfqh56vqycxNTJjY5/cp+PLHos+uiMq01KUt87JsZJA2RTNucpM+hu0rRGGK8r9ryIZsBi3ZSltxi/Zhb+2SnS3K4OMQtLN21Ka33v3cqV25qzJ5ofG4uOSSSmpwI8LDRMhUxKehLb8YZDy3ywouaF+LW0k786GO7KQd7tArLEBma1/ylxwZteMdfa7NbYEMdLMud6mCVbZmiwyIF/p/nRgZL30X2shtHiRb+ppu7ENH8kgckRe+Nskm3/iM+GqmSiHjRf+Gnu1zjpTa0GGOhA+pTJEibC2ec3AbPjjEyHhxFTJrhNbZmg6nEuUvRegpWufg1lwrxEqGFNNT+pSDeqJ6VKpUT6mEHlUIidqhpKcgpQfzmEP8SPX0ohDK6ME95MAPVE+Pv6lvqidDCB+qDyGgXy6g+o6VRyv7y63cildUzzGHkKSVWTmI6oZOohN1oo4zulf37t4txZLq+Z58V5DSUiDjlqpuqJ+GUELLCBlY8IIO1+e+Cpj6tNALt3AudXS40+RUn+p+1ieEnEDGOev40MyAByqEYh8CZ5y7c3M5p8OcpQMNckADogHcxXc+5ObikMwwOdPeIH4NAf4NQrd2Fs/oa4bxUA99KD0jD/PmPNe3FiE7S76SuRDn+lwjJYdUwSq3PDPI2Bv7M5vylD434lF2oS8QQobfh2DGM33jQ3ZqpsKypX1jHotLPQKk5Dmf0yvsdzfZTx+yODORk+Q6uqbKVXSVmGysx+ZSh1Q6ot9hb03jqQ4hO4Fr85f5E/4wP8wVGDOGSzWKR7QX2mcTq/ZCEEJynIxpH/axSTQRE3mt/gnpH+oqw+MiQx/7G9K9+OkXsPIzAAAAAElFTkSuQmCC');background-size:24px auto;-webkit-animation:rotate linear 1s infinite;animation:rotate linear 1s infinite}@-webkit-keyframes rotate{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.am-password-handy{overflow:hidden;position:relative;margin:0 0 20px;width:100%;padding-bottom:1px}.am-password-handy input[type=password],.am-password-handy input[type=tel],.am-password-handy .am-password-handy-security{-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;display:block;width:100%;height:44px;overflow:hidden;padding:0!important;border:1px solid #DDD;border-radius:4px;background-clip:padding-box;font-family:Courier,monospace;font-size:24px;line-height:32px}.am-password-handy input[type=password],.am-password-handy input[type=tel]{position:absolute;opacity:.01;border:0 none!important;left:0;-webkit-appearance:none;-webkit-box-sizing:content-box!important;-ms-box-sizing:content-box!important;box-sizing:content-box!important;outline:0}.am-password-handy input:focus{position:absolute;opacity:.01;padding:0 50px 0 200px!important;left:-300px}.am-password-handy .am-password-handy-security{display:-webkit-box!important;display:-ms-flexbox!important;display:box!important;padding:0;background-color:#fff}.am-password-handy .am-password-handy-security li{-webkit-box-flex:1;-ms-flex:1;box-flex:1;margin-right:-1px;border-right:1px solid #DDD;overflow:hidden;text-align:center}.am-password-handy .am-password-handy-security li:last-child{margin-right:0;border-right:0}.am-password-handy .am-password-handy-security i{display:inline-block;width:14px;overflow:hidden;line-height:42px;font-style:normal;visibility:hidden}.am-password-handy .am-password-handy-security i:empty{margin:16px 2px 0;width:10px;height:10px;-webkit-border-radius:10px;border-radius:10px;background-clip:padding-box;background-color:#000}*,:before,:after{text-size-adjust:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:300}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-weight:300}q:before,q:after{content:""}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}input[type=password],input[type=tel]{ime-mode:disabled}:focus{outline:0}body,input,textarea,select,button{font-size:16px;line-height:1.5;color:#333;font-family:"Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;font-weight:300}html,body{height:100%;-webkit-touch-callout:none;-ms-touch-callout:none}.am-content{padding-top:15px}.am-content h5{margin:0;padding:0}body{background-color:#f5f5f9}input{line-height:normal}a{color:#0AF;text-decoration:none}.fn-hide{display:none!important}.fn-left{float:left}.fn-right{float:right}.am-ft-pb-0{padding-bottom:0!important}.am-ft-pb-10{padding-bottom:10px!important}.am-ft-xxl{font-size:20px!important}.am-ft-md{font-size:16px!important}.am-ft-s{font-size:13px!important}.am-ft-black{color:#000!important}.am-ft-gray{color:#999!important}.am-ft-blue{color:#2861d7!important}.am-ft-orange{color:#f60!important}.am-ft-green{color:#490!important}.am-ft-ellipsis{width:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.am-flexbox{width:100%;-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;text-align:left;display:-webkit-box!important;display:-ms-flexbox!important;display:box!important;-webkit-box-orient:horizontal;-ms-box-orient:horizontal;-webkit-box-pack:center;-ms-flex-pack:center;box-pack:center;-webkit-box-align:center;-ms-flex-align:center;box-align:center}.am-flexbox .am-flexbox-item{-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;-webkit-box-flex:1;-ms-flex:1;box-flex:1;margin-left:15px;min-width:20px}.am-flexbox-item:first-child{margin-left:0}.am-header{display:-webkit-box;display:-ms-flexbox;display:box;width:100%;position:relative;padding:7px 0;-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;background:#1D222D;height:50px;text-align:center;-webkit-box-pack:center;-ms-flex-pack:center;box-pack:center;-webkit-box-align:center;-ms-flex-align:center;box-align:center}.am-header h1{-webkit-box-flex:1;-ms-flex:1;box-flex:1;line-height:18px;text-align:center;font-size:18px;font-weight:300;color:#fff}.am-header .title-sub{font-size:13px;font-weight:300}.am-header h1 a,.am-header h1 a:visited{color:#fff}.am-header .icon-arrow-back{text-indent:-300px;display:block;width:12px;height:12px;border-bottom:solid 1px #CCC;border-right:solid 1px #CCC;position:absolute;top:50%;left:11px;margin-top:-6px;-webkit-transform:rotate(135deg);-ms-transform:rotate(135deg);transform:rotate(135deg)}.am-header .am-header-reverse,.am-header .am-header-operate{position:absolute;top:6px;text-align:center;color:#fff}.am-header .am-header-reverse{top:9px;left:5px}.am-header .am-header-operate{top:12px;right:5px;padding-right:6px}.am-header .am-header-reverse-icon,.am-header .am-header-operate-icon{height:32px;padding:0 10px 0 0;color:#D3D3D2}.am-header .am-header-reverse-icon span{font-size:14px;display:inline-block;padding:6px 0 0 26px}.am-section{padding:0 10px 10px;overflow:auto}.am-button{-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;display:inline-block;margin:0;padding:4px 8px;width:100%;text-align:center;font-size:18px;line-height:2;border-radius:4px;background-clip:padding-box}.am-button-blue{border:1px solid #3EA3FE;color:#FFF;background:#3EA3FE}.am-list{-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;padding:0 0 20px}.am-list .am-list-item{-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;display:block;position:relative;z-index:10;margin:0;padding:10px 30px 10px 15px;width:100%;border-top:1px solid #e5e5e5;background-color:#fff;color:#000;text-align:left;vertical-align:middle}.am-list .am-list-item a{color:#000}.am-list .am-list-item:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0}.am-list div.am-list-item{padding:10px 15px}.am-list .am-list-item:last-child{border-bottom:1px solid #e5e5e5}.am-list .am-list-item .am-list-item-title,.am-list .am-list-item .am-list-item-text{display:block}.am-list .am-list-item .am-list-item-title{float:left;width:90px;color:#000}.am-list div.am-list-item .am-list-item-title{width:112px}.am-list .am-list-item .am-list-item-text{text-align:right;width:auto;color:gray}.am-list div.am-list-item-form{-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;padding:0 15px}.am-list div.am-list-item-form input[type=text],.am-list div.am-list-item-form input[type=email],.am-list div.am-list-item-form input[type=number],.am-list div.am-list-item-form input[type=tel],.am-list div.am-list-item-form input[type=password],.am-list div.am-list-item-form input[type=url],.am-list div.am-list-item-form input[type=search]{-webkit-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;-webkit-appearance:none;-ms-appearance:none;padding:8px 0;width:100%;height:45px;border:0;outline:0}.am-list div.am-list-item-form select{position:relative;z-index:10;cursor:pointer;width:100%;height:45px;border:0;background:transparent;-webkit-appearance:none;-ms-appearance:none;appearance:none}#ServerNum{text-align:center;color:#f5f5f9}
+</style>
+
+<header class="am-header">
+    <h1>支付宝</h1>
+</header>
+
+<div class="am-message-sysError">
+    <p style="padding-bottom: 0;">订单号： <{$return['out_trade_id']}></p>
+    <p style="padding-bottom: 40px;">订单金额： <{$return['amount']}>元</p>
+    <!-- 二维码 -->
+    <if condition="$code_url neq ''">
+        <img id="ewm" src="<{$code_url}>" width="200"/>
+        <else/>
+        <img id="ewm" src="<{$imgurl}>"  width="200"/>
+    </if>
+    <p style="margin:0.2rem; padding-bottom: 0;">温馨提示</p>
+    <p style="margin:0.2rem; padding-bottom: 0;">1、发起金额和支付宝金额请保持一致，否则不会到账</p>
+    <p style="margin:0.2rem; padding-bottom: 0;">2、请不要修改备注，修改备注将不会到账</p>
+    <p style="margin:0.2rem; padding-bottom: 0;">3、未通过网页发起充值和直接使用支付宝转账的行为将不会到账</p>
+    <p style="margin:0.2rem; padding-bottom: 0;">4、请勿直接保存二维码付款，每一个二维码都是唯一的，保存二维码付款将导致付款失败不到账</p>
+    <p style="margin:0.2rem; padding-bottom: 1rem;">5、支付宝提示补全姓名时，请参考支付宝昵称</p>
+
+
+    <div class="am-section">
+        <if condition="$deny_layer eq 0">
+            <a href="javascript:void(0);" id="sub" class="am-button am-button-blue zhifubaozhifu" seed="nopage-cancel">进入支付宝支付</a>
+        </if>
+    </div>
+</div>
+<script type="text/javascript">
+    seajs.use(['$', 'wapcashier', 'validator', 'widget', 'base', 'class', 'events'],function($, wapcashier, Validator){
+        window.$ = $;
+        var Zepto = $;
+        $('.J-loading').addClass('fn-hide');
+        $('.J-open-protocol').on('click',function(e){
+            var el = $(this)
+            wapcashier.showMsg('<div style="height: 280px;-webkit-overflow-scrolling:touch;overflow:auto;"><iframe style="height: 280px;width: 100%;" src="' + el.attr('href') + '" frameborder="0" scrolling="auto" allowTransparency="true"></iframe></div>');
+            e.preventDefault();
+        });
+
+    });
+</script>
+<!-- 弹出层 -->
+<div id="layer_out" style="width:100%; height:100%;display:none;">
+    <span style="display:block;border-radius:0.5rem;box-sizing:border-box; width:80%; height:3rem;margin:2.5rem auto; background-color: #418BCA; line-height:3rem;text-align:center;color:white;" id="startapp">启动支付宝支付</span>
+    <span style="display:block;border-radius:0.5rem;box-sizing:border-box;  width:80%; height:3rem;margin:0 auto;; background-color: #5BC0DE; line-height:3rem;text-align:center;color:white;" id="startsm">扫二维码支付</span>
+
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0; padding-top:2rem; ">温馨提示</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0;">1、发起金额和支付宝金额请保持一致，否则不会到账</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0;">2、请不要修改备注，修改备注将不会到账</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0;">3、未通过网页发起充值和直接使用支付宝转账的行为将不会到账</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0;">4、请勿直接保存二维码付款，每一个二维码都是唯一的，保存二维码付款将导致付款失败不到账</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 1rem;">5、支付宝提示补全姓名时，请参考支付宝昵称</p>
+</div>
+
+<script src="/Public/Front/js/jquery.min.js"></script>
+<script src="/Public/Front/js/bootstrap.min.js"></script>
+<script src="/Public/Front/js/plugins/layui/layui.all.js"></script>
+
+
+<script>
+    <if condition="$deny_layer eq 0">
+        var layer_index;
+    layer_index = layer.open({
+        type: 1,
+        title: "请选择支付方式",
+        area: ['95%','50%'],
+        shadeClose: true,
+        content: $("#layer_out"),
+        end: function(){
+            $("#layer_out").hide();
+        }
+    });
+            </if>
+
+</script>
+<!-- CMS:安全支付客户端网关/common/footer.vm开始:mobileclientgw/common/footer.vm -->
+<script type="text/javascript">
+    $(function(){
+        $("#sub,#startapp").click(function(){
+            window.location.href = "<{$wap_url}>";
+        })
+
+        $("#startsm").click(function(){
+            layer.close(layer_index);
+        })
+
+        var r = window.setInterval(function () {
+            $.ajax({
+                type: 'POST',
+                url: '<{:U("Pay/checkstatus")}>',
+                data: "orderid=<{$return['orderid']}>",
+                dataType: 'json',
+                success: function (str) {
+                    if (str.status == "ok") {
+                        $("#ewm").attr("src", "Uploads/successpay.png");
+                        $(".zhifubaozhifu").hide();
+                        window.clearInterval(r);
+                        window.open(str.callback);
+                    }
+                }
+            });
+        }, 5000);
+    })
+
+    if(navigator.userAgent.indexOf('sdk') > 0) {$('input[data-format]').attr('data-format', '100')}
+    //12.03下线
+    if(window.Zepto && Zepto.dialog && $('.J-header-return') != -1){
+        Zepto.dialog.hide = function() {
+            $('body').find('.am-dialog-mask').animate({
+                opacity: 0
+            }, 400, 'ease-out', function(){
+                $(this).css('display', 'none');
+            });
+            $('body').find('.am-dialog-box').animate({
+                opacity: 0
+            }, 400, 'ease-out', function(){
+                $(this).css('display', 'none');
+            });
+            window.setTimeout(function(){
+                $('body').find('.am-dialog-mask').remove();
+                $('body').find('.am-dialog-box').remove();
+            },1000);
+        }
+    }
+    // 02.11
+    if ($('.J-pwd').length > 0 && $('.J-encryptpwd').length > 0) {
+        seajs.use(['https://gw.alipayobjects.com/os/rmsportal/gHWfJyXWLsuyvHWRvFeC.js']);
+    }
+    if (location.href.indexOf('cashierPay.htm') > 0) {
+        $('.am-header').on('click', '.am-header-operate', function(e){
+            if ($(this).attr('clicked') !== '1') {
+                location.href = $(this).attr('href');
+            }
+            $(this).attr('clicked', '1');
+            e.preventDefault();
+        });
+    }
+</script><!-- CMS:安全支付客户端网关/common/footer.vm结束:mobileclientgw/common/footer.vm --><script>
+    var loading = document.querySelector(".J-loading");
+    if(loading) loading.style.display = "none";
+</script>
+</body>
+</html>
