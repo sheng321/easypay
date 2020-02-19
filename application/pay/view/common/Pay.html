@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收银台</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="__STATIC__/Front/css/bootstrap.min.css" rel="stylesheet">
+    <link href="__STATIC__/Front/css/font-awesome.css" rel="stylesheet">
+    <link href="__STATIC__/Front/css/animate.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>支付|收银台</h1>
+            <ul class="list-inline"><li>付款方式：{$return['name']}</li><li>订单号：{$return['out_trade_id']}</li><li>金额：{$return['amount']}元</li></ul>
+
+        </div>
+        <div class="col-md-12">
+            <img src="{$qrUrl|raw}" id="ewm" style="width:250px; height:auto;">
+        </div>
+       <p>
+            <span style="display:block; margin:30px 0 0  0;">温馨提示：</span>
+            <span style="display:block; margin:10px 0;;">1、发起金额和支付宝金额请保持一致，否则不会到账</span>
+            <span style="display:block; margin:10px 0;">2、请不要修改备注，修改备注将不会到账</span>
+            <span style="display:block; margin:10px 0;"> 3、未通过网页发起充值和直接使用支付宝转账的行为将不会到账</span>
+            <span style="display:block; margin:10px 0;"> 4、请勿直接保存二维码付款，每一个二维码都是唯一的，保存二维码付款将导致付款失败不到账</span>
+            <span style="display:block; margin:10px 0;"> 5、支付宝提示补全姓名时，请参考支付宝昵称</span>
+
+       </p>
+    </div>
+</div>
+
+<script type="text/javascript" src="/static/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var r = window.setInterval(function () {
+            $.ajax({
+                type: 'POST',
+                url: '{:url("Pay/checkstatus")}',
+                data: "orderid={$return['orderid']}",
+                dataType: 'json',
+                success: function (str) {
+                    if (str.status == "ok") {
+                        $("#ewm").attr("src", "__STATIC__/Front/img/successpay.png");
+                        window.clearInterval(r);
+                        window.open(str.callback);
+                    }
+                }
+            });
+        }, 5000);
+    });
+</script>
+</body>
+</html>

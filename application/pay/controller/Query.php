@@ -51,4 +51,30 @@ class Query extends PayController
         return __jsuccess('查询成功',$data);
     }
 
+
+    /**
+     * 查询订单状态
+     * @return \think\response\Json
+     */
+    public function checkstatus(){
+
+        $out_trade_no =   $this->request->post(["pay_orderid/s"],'');
+        if(empty($out_trade_no) )   __jerror('订单号不存在');
+
+        $Order =  Order::quickGet(['out_trade_no'=>$out_trade_no]);
+        if(empty($Order) ) __jerror('订单号不存在');
+
+        $data = array();
+        if($Order['pay_status'] == 2){
+            //已支付
+            $data['returncode'] = "00";
+            $data['trade_state'] = 'SUCCESS';
+        }else{
+            $data['returncode'] = "01";
+            $data['trade_state'] = 'NOTPAY';
+        }
+
+        return __jsuccess('查询成功',$data);
+    }
+
 }

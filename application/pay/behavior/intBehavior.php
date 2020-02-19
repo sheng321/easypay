@@ -21,7 +21,8 @@ class intBehavior extends Controller
         }elseif($this->request->controller() == 'Notify' && $this->request->action() == 'index'){
             PolicyApi();
         }else{
-            Policy(); //同源协议
+           //Policy(); //同源协议
+            PolicyApi();
             $this->check_param();
         }
     }

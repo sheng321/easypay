@@ -23,8 +23,8 @@ class Order extends ModelService {
     protected $redis = [
         'is_open'=> true,
         'ttl'=> 300,
-        'key'=> "String:table:Order:transaction_no:{transaction_no}:out_trade_no:{out_trade_no}:system_no:{system_no}:id:{id}",
-        'keyArr'=> ['id','out_trade_no','system_no','transaction_no'],
+        'key'=> "String:table:Order:mch_id:{mch_id}:transaction_no:{transaction_no}:out_trade_no:{out_trade_no}:system_no:{system_no}:id:{id}",
+        'keyArr'=> ['id','out_trade_no','system_no','transaction_no','mch_id'],
     ];
 
     /**
@@ -88,7 +88,7 @@ class Order extends ModelService {
         }
 
         if(empty($search['field'])){
-            $field = "id,mch_id,out_trade_no,system_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip,repair";
+            $field = "id,mch_id,out_trade_no,system_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip,repair,is_mobile";
         }else{
             //下载
             $field =  $search['field'];

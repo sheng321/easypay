@@ -23,6 +23,10 @@ class ComposerStaticInit50627e7b83feda0642d2a013e58fc540
         array (
             'app\\' => 4,
         ),
+        'S' => 
+        array (
+            'Symfony\\Component\\OptionsResolver\\' => 34,
+        ),
         'P' => 
         array (
             'Predis\\' => 7,
@@ -30,6 +34,10 @@ class ComposerStaticInit50627e7b83feda0642d2a013e58fc540
         'L' => 
         array (
             'Limen\\Redisun\\' => 14,
+        ),
+        'E' => 
+        array (
+            'Endroid\\QrCode\\' => 15,
         ),
     );
 
@@ -52,6 +60,10 @@ class ComposerStaticInit50627e7b83feda0642d2a013e58fc540
         array (
             0 => __DIR__ . '/../..' . '/application',
         ),
+        'Symfony\\Component\\OptionsResolver\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/options-resolver',
+        ),
         'Predis\\' => 
         array (
             0 => __DIR__ . '/..' . '/predis/predis/src',
@@ -59,6 +71,10 @@ class ComposerStaticInit50627e7b83feda0642d2a013e58fc540
         'Limen\\Redisun\\' => 
         array (
             0 => __DIR__ . '/..' . '/limen/redisun/src',
+        ),
+        'Endroid\\QrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/endroid/qrcode/src',
         ),
     );
 

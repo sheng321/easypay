@@ -226,6 +226,13 @@
         {field:'pay_time', title:'支付时间', minwith:1, align: 'center'},
         {field:'ip', title:'IP', minwith:1, align: 'center'},
         {field:'remark', title:'备注', minwith:1, align: 'center'},
+        {field:'is_mobile', title:'设备', minwith:1, align: 'center', templet: function (d) {
+            if (d.is_mobile == 0) {
+                return 'PC';
+            } else {
+                return '移动端';
+            }
+        }},
         {field:'update_at', title:'最近更新时间', minwith:1, align: 'center'},
 
         /**{if auth("$thisClass/details") || auth("$thisClass/replacement") }**/

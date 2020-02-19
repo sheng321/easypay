@@ -1,6 +1,7 @@
 <?php
 namespace app\pay\controller;
 use app\common\controller\PayController;
+use app\common\service\QrcodesService;
 
 class Test extends PayController
 {
@@ -48,4 +49,33 @@ class Test extends PayController
 
         return $this->fetch('', $basic_data);
     }
+
+
+    /**
+     *
+     * @return mixed
+     */
+    public function common(){
+
+        $return = [
+           'amount' => 0,
+            'out_trade_id'=>22,
+             'orderid'=>22,
+            'name'=>22,
+            'domain'=>22,
+
+        ];
+        $this->assign('return',$return);
+        $this->assign('money',100);
+        $qrUrl = 'http://www.baidu.com';
+        $this->assign('qrUrl',getQrcode($qrUrl));
+        $this->assign('wap_url',$qrUrl);
+
+       // $temple = isMobile()?'pay@common/alipaywap':'pay@common/alipay';
+
+        $temple = 'pay@common/weixinwap';
+        return view($temple);
+    }
+
+
 }

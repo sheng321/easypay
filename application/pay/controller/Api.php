@@ -280,6 +280,9 @@ class Api extends PayController
         $data['ip'] = get_client_ip();//请求ip
         $data['Platform'] = $data['amount']*($MemRate -  max($data['cost_rate'],$AgentRate1,$AgentRate2));//平台收益
         $data['create_time'] =  $param['pay_applydate'];//商户提交时间
+        $data['is_mobile'] =  isMobile()?1:0;//商户提交时间
+
+
 
         $data['over_time'] = time() + $Channel_father['limit_time']*60;//订单过期时间
 

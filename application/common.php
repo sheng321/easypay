@@ -19,6 +19,19 @@ if (!function_exists('addTask')) {
 }
 
 
+if (!function_exists('getQrcode')) {
+    /**
+     * 生成指定的二维码
+     * @param string $data
+     * @param string $label 标签参数
+     * @param string $type 0 $data 为url时
+     */
+function getQrcode($data,$type = 0,$label = '') {
+    if($type != 0) $data = base64_encode($data);
+   return  urldecode( url('@pay/qr/index','', true,true).'?data='.$data.'&label='.$label.'&type='.$type);
+}
+}
+
 if (!function_exists('convertAmountToCn')) {
 /**
  * 修改config的函数
@@ -1009,8 +1022,11 @@ function PolicyApi(){
     $report = '';
     header('Content-Type: text/javascript; charset=utf-8');
     //设置heard头
-    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url http://static.geetest.com  http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com http://cdn.bootcss.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;worker-src 'self';frame-src 'self';form-action *;object-src 'none';img-src 'self' http://static.geetest.com https://chart.googleapis.com  data:;  ");
+    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://a.alipayobjects.com https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url https://gw.alipayobjects.com http://static.geetest.com https://a.alipayobjects.com http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com http://cdn.bootcss.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;worker-src 'self';frame-src 'self';form-action *;object-src 'none';img-src 'self' https://i.alipayobjects.com  http://static.geetest.com https://chart.googleapis.com  data:;  ");
 }
+
+
+
 
 
 

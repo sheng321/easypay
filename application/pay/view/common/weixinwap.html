@@ -67,14 +67,10 @@
 </header>
 
 <div class="am-message-sysError">
-    <p style="padding-bottom: 0;">订单号：<{$return['out_trade_id']}></p>
-    <p style="padding-bottom: 40px;">订单金额： <{$return['amount']}>元</p>
+    <p style="padding-bottom: 0;">订单号：{$return['out_trade_id']}</p>
+    <p style="padding-bottom: 40px;">订单金额： {$return['amount']}元</p>
     <!-- 二维码 -->
-    <if condition="$code_url neq ''">
-        <img src="<{$code_url}>" id="ewm" style="width:<{$img_width|default=300}>; height:<{$img_height|default=300}>;">
-        <else/>
-        <img id="ewm" src="<{$imgurl}>" width="160" height="160" />
-    </if>
+    <img src="{$qrUrl|raw}" id="ewm" style="width:250px; height:auto;">
     <p>保存截图到相册，在微信中扫码支付。</p>
     <p>温馨提示：</p>
 	<p>1、支付金额和订单金额不相同，订单不会成功</p>
@@ -93,9 +89,9 @@
 
     });
 </script>
-<script src="/Public/Front/js/jquery.min.js"></script>
-<script src="/Public/Front/js/bootstrap.min.js"></script>
-<script src="/Public/Front/js/plugins/layer/layer.min.js"></script>
+<script type="text/javascript" src="/static/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="/static/layui/layui.all.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <footer>
     <div id="ServerNum">mobileclientgw-40-5652</div>
 </footer>
@@ -105,12 +101,12 @@
         var r = window.setInterval(function () {
             $.ajax({
                 type: 'POST',
-                url: '<{:U("Pay/checkstatus")}>',
-                data: "orderid=<{$return['orderid']}>",
+                url: '{:url("Pay/checkstatus")}',
+                data: "orderid={$return['orderid']}",
                 dataType: 'json',
                 success: function (str) {
                     if (str.status == "ok") {
-                        $("#ewm").attr("src", "Uploads/successpay.png");
+                        $("#ewm").attr("src", "__STATIC__/Front/img/successpay.png");
                         $("#zhifubaozhifu").hide();
                         window.clearInterval(r);
                         window.open(str.callback);

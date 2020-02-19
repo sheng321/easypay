@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <!-- <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
-    <link rel="stylesheet" href="/Public/css/bootstrap.min.css" />
+    <title>支付宝收银台</title>
+    <link rel="stylesheet" href="__STATIC__/Front/css/bootstrap.min.css" />
 </head>
 <style>
     li{list-style: none;}
@@ -33,35 +32,15 @@
     }
 </style>
 <body style="background-color: #ecedf2;">
-<!--<div class="header clearfix">
-    <div class="title">
-        <p class="logo">
-            <span>|</span>
-        </p>
-        <div class="right">
-            <div class="clearfix">
-                <ul class="clearfix">
-                    <li><span class="icon_phone">4008000888</span>
-                    </li>
-                    <li><span class="icon_qq">4008000888</span>
-                    </li>
-                    <li class="iap_new"><span class="icon_info">爱贝信息</span>
-                        <img src="https://web.iapppay.com/s/pc/n//1.7/img/iap_new.png" alt="">
-                        <div class="scan_code"><img src="" alt=""></div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>-->
+
 <!--收银台-->
 <div class="container" style="background-color:#fff;padding:15px; margin-top: 15px;">
     <div class="row">
         <!--交易信息-->
         <div class="col-md-12">
             <ul class="list-inline">
-                <li><strong>订单金额：<span class="text-danger"><{$return['amount']}></span>&nbsp;&nbsp;元</strong></li>
-                <li><strong>订单编号：</strong><{$return['out_trade_id']}></li>
+                <li><strong>订单金额：<span class="text-danger">{$return['amount']}</span>&nbsp;&nbsp;元</strong></li>
+                <li><strong>订单编号：</strong>{$return['out_trade_id']}</li>
             </ul>
         </div>
     </div>
@@ -83,34 +62,28 @@
                                 <tbody>
                                 <tr>
                                     <td align="center"><br>
-                                        扫一扫付款（<{$return['amount']}>元）</td>
+                                        扫一扫付款（{$return['amount']}元）</td>
                                     <td width="250" rowspan="3" align="center" valign="top"><br>
-                                        <img src="/Public/Front/img/logo-alipay.png" width="204" height="183">
-
+                                        <img src="__STATIC__/Front/img/logo-alipay.png" width="204" height="183">
                                         <br>
-                                        <br><!--
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;说明：单笔限额2000元，每日限额5000元--><br>
+
                                     </td>
                                 </tr>
                                 <tr align="center">
-                                    <td height="20"><strong><font style="font-size:30px; color:#F60;"><{$money}></font>&nbsp;&nbsp;</strong></td>
+                                    <td height="20"><strong><font style="font-size:30px; color:#F60;">{$money}</font>&nbsp;&nbsp;</strong></td>
                                 </tr>
                                 <tr align="center">
                                     <td><table width="100%" border="0" cellspacing="5" cellpadding="0" style="border: 1px solid #E7EAEC; ">
                                         <tbody><tr>
                                             <td>
-                                                <if condition="$code_url neq ''">
-                                                    <img src="<{$code_url}>" id="ewm" style="width:250px; height:250px;">
-                                                    <else/>
-                                                    <img src="<{$imgurl}>" id="ewm" style="width:250px; height:250px;">
-                                                </if>
+                                                <img src="{$qrUrl|raw}" id="ewm" style="width:250px; height:auto;">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                                                 <tbody><tr>
                                                     <td height="30" align="center"><img
-                                                            src="/Public/Front/img/saoyisao.png"
+                                                            src="__STATIC__/Front/img/saoyisao.png"
                                                             width="14"
                                                             height="14"></td>
                                                     <td align="center"><font style="font-size:14px; color:#F60;"><strong>打开手机支付宝，扫一扫付款</strong></font></td>
@@ -139,26 +112,30 @@
     </div>
 </div>
 <!--收银台-->
-<script src="/Public/Front/js/jquery.min.js"></script>
-<script src="/Public/Front/js/bootstrap.min.js"></script>
+<script src="__STATIC__/Front/js/jquery.min.js"></script>
+<script src="__STATIC__/Front/js/bootstrap.min.js"></script>
+
 <script>
     $(document).ready(function () {
         var r = window.setInterval(function () {
             $.ajax({
                 type: 'POST',
-                url: '<{:U("Pay/checkstatus")}>',
-                data: "orderid=<{$return['orderid']}>",
+                url: '{:url("Pay/checkstatus")}',
+                data: "orderid={$return['orderid']}",
                 dataType: 'json',
                 success: function (str) {
                     if (str.status == "ok") {
-                        $("#ewm").attr("src", "Uploads/successpay.png");
+                        $("#ewm").attr("src", "__STATIC__/Front/img/successpay.png");
                         window.clearInterval(r);
                         window.open(str.callback);
                     }
                 }
             });
+
+
         }, 5000);
     });
+
 </script>
 </body>
 </html>

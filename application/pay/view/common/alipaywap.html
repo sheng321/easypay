@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
     <meta name="renderer" content="webkit"/>
-    <title>qq快捷收银台</title>
+    <title>支付宝快捷收银台</title>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <meta name="format-detection" content="telephone=no,email=no"/>
@@ -65,20 +65,26 @@
 </style>
 
 <header class="am-header">
-    <h1>qq</h1>
+    <h1>支付宝</h1>
 </header>
 
 <div class="am-message-sysError">
-    <p style="padding-bottom: 0;">订单号： <{$return['out_trade_id']}></p>
-    <p style="padding-bottom: 40px;">订单金额： <{$return['amount']}>元</p>
+    <p style="padding-bottom: 0;">订单号： {$return['out_trade_id']}</p>
+    <p style="padding-bottom: 40px;">订单金额： {$return['amount']}元</p>
     <!-- 二维码 -->
-    <if condition="$code_url neq ''">
-        <img id="ewm" src="<{$code_url}>" width="200"/>
-        <else/>
-        <img id="ewm" src="<{$imgurl}>"  width="200"/>
-    </if>
+    <img src="{$qrUrl|raw}" id="ewm" style="width:250px; height:auto;">
+    <p style="margin:0.2rem; padding-bottom: 0;">温馨提示</p>
+    <p style="margin:0.2rem; padding-bottom: 0;">1、发起金额和支付宝金额请保持一致，否则不会到账</p>
+    <p style="margin:0.2rem; padding-bottom: 0;">2、请不要修改备注，修改备注将不会到账</p>
+    <p style="margin:0.2rem; padding-bottom: 0;">3、未通过网页发起充值和直接使用支付宝转账的行为将不会到账</p>
+    <p style="margin:0.2rem; padding-bottom: 0;">4、请勿直接保存二维码付款，每一个二维码都是唯一的，保存二维码付款将导致付款失败不到账</p>
+    <p style="margin:0.2rem; padding-bottom: 1rem;">5、支付宝提示补全姓名时，请参考支付宝昵称</p>
+
+
     <div class="am-section">
-        <a href="javascript:void(0);" id="sub" class="am-button am-button-blue zhifubaozhifu" seed="nopage-cancel">进入支付宝支付</a>
+        <if condition="$deny_layer eq 0">
+            <a href="javascript:void(0);" id="sub" class="am-button am-button-blue zhifubaozhifu" seed="nopage-cancel">进入支付宝支付</a>
+        </if>
     </div>
 </div>
 <script type="text/javascript">
@@ -96,21 +102,26 @@
 </script>
 <!-- 弹出层 -->
 <div id="layer_out" style="width:100%; height:100%;display:none;">
-    <span style="display:block;border-radius:0.5rem;box-sizing:border-box; width:80%; height:3rem;margin:2.5rem auto; background-color: #418BCA; line-height:3rem;text-align:center;color:white;" id="startapp">启动qq支付</span>
+    <span style="display:block;border-radius:0.5rem;box-sizing:border-box; width:80%; height:3rem;margin:2.5rem auto; background-color: #418BCA; line-height:3rem;text-align:center;color:white;" id="startapp">启动支付宝支付</span>
     <span style="display:block;border-radius:0.5rem;box-sizing:border-box;  width:80%; height:3rem;margin:0 auto;; background-color: #5BC0DE; line-height:3rem;text-align:center;color:white;" id="startsm">扫二维码支付</span>
+
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0; padding-top:2rem; ">温馨提示</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0;">1、发起金额和支付宝金额请保持一致，否则不会到账</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0;">2、请不要修改备注，修改备注将不会到账</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0;">3、未通过网页发起充值和直接使用支付宝转账的行为将不会到账</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 0;">4、请勿直接保存二维码付款，每一个二维码都是唯一的，保存二维码付款将导致付款失败不到账</p>
+    <p style="margin:0.2rem; text-align:center; padding-bottom: 1rem;">5、支付宝提示补全姓名时，请参考支付宝昵称</p>
 </div>
 
-<script src="/Public/Front/js/jquery.min.js"></script>
-<script src="/Public/Front/js/bootstrap.min.js"></script>
-<script src="/Public/Front/js/plugins/layui/layui.all.js"></script>
-<footer>
-    <div class="logo"></div>
-    <div id="ServerNum">mobileclientgw-40-5652</div>
-</footer>
+
+<script type="text/javascript" src="/static/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="/static/layui/layui.all.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 
 <script>
-    var layer_index;
+
+        var layer_index;
     layer_index = layer.open({
         type: 1,
         title: "请选择支付方式",
@@ -121,12 +132,14 @@
             $("#layer_out").hide();
         }
     });
+
+
 </script>
 <!-- CMS:安全支付客户端网关/common/footer.vm开始:mobileclientgw/common/footer.vm -->
 <script type="text/javascript">
     $(function(){
         $("#sub,#startapp").click(function(){
-            window.location.href = "<{$wap_url}>";
+            window.location.href = "{$wap_url}";
         })
 
         $("#startsm").click(function(){
@@ -136,16 +149,25 @@
         var r = window.setInterval(function () {
             $.ajax({
                 type: 'POST',
-                url: '<{:U("Pay/checkstatus")}>',
-                data: "orderid=<{$return['orderid']}>",
+                url: '{:url("Pay/checkstatus")}',
+                data: "orderid={$return['orderid']}",
                 dataType: 'json',
-                success: function (str) {
-                    if (str.status == "ok") {
-                        $("#ewm").attr("src", "Uploads/successpay.png");
-                        $(".zhifubaozhifu").hide();
-                        window.clearInterval(r);
-                        window.open(str.callback);
+                success: function (res) {
+
+                    if(res.code == 1){
+                        if (str.status == "ok") {
+                            $("#ewm").attr("src", "__STATIC__/Front/img/successpay.png");
+                            $(".zhifubaozhifu").hide();
+                            window.clearInterval(r);
+                            window.open(str.callback);
+                        }
+
+                    }else {
+
                     }
+
+
+
                 }
             });
         }, 5000);
