@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\common\controller\AdminController;
 use app\common\model\PayProduct;
 use app\pay\service\Payment;
+use redis\StringModel;
 use think\facade\Session;
 
 /**
@@ -412,6 +413,48 @@ class Order extends AdminController {
 
         return __error('系统异常');
     }
+
+
+    /**
+     * 异常IP
+     */
+    public function ip(){
+        $redis = (new StringModel())->instance();
+        $redis->select(2);
+
+
+        //基础数据
+        $basic_data = [
+            'title'  => '异常IP列表',
+            'data'   => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+    public function add_ip(){
+
+        //基础数据
+        $basic_data = [
+            'title'  => '异常IP列表',
+            'data'   => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+    public function del_ip(){
+
+        //基础数据
+        $basic_data = [
+            'title'  => '异常IP列表',
+            'data'   => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+
+
 
 
 }
