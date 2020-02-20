@@ -229,7 +229,7 @@ class Api extends PayController
             //上上级代理
             $Uprofile1 = Uprofile::quickGet(['uid'=>$Uprofile['pid']]);
             if(!empty($Uprofile1) || $Uprofile1['pid'] > 0){
-                $uid2 = $Uprofile['pid'];
+                $uid2 = $Uprofile1['pid'];
                 $AgentRate2 =  RateService::getAgentRate( $Uprofile1['pid'],$channel_group_id);
                 //二级代理费率费率查询失败 商户费率小于或者等于二级代理费率 一级代理小于或者等于二级代理费率
                 if(empty($AgentRate2) || ($MemRate <= $AgentRate2) ||  ($AgentRate1 <= $AgentRate2) ) $AgentRate2 = 0;
