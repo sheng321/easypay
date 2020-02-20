@@ -28,7 +28,7 @@
     /**
      * 添加、编辑
      */
-    $.form.on('submitBtn', '{:url("$thisClass/agent_group")}', function (res) {
+    $.form.on('submitBtn', '{:url("$thisClass/agent_group")}?uid={$uid}', function (res) {
         $.msg.success(res.msg, function () {
             $.tool.reload('open');
         });
