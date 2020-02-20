@@ -223,7 +223,7 @@ class Umember extends UserService {
         ];
         //搜索条件
         $searchField['like'] = ['username'];
-        $searchField['eq'] = ['phone','qq','status'];
+        $searchField['eq'] = ['phone','qq','status','uid'];
         $searchField['time'] = ['create_at'];
         $where = search($search,$searchField,$where);
 

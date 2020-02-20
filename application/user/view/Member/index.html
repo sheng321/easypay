@@ -1,0 +1,85 @@
+{extend name="user@public/basic" /}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+{block name="cotent"}
+
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$title|default=''}</li>
+        </ul>
+        <div class="layui-tab-content">
+            <form class="layui-form">
+
+                <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
+
+                    {if auth("$thisClass/add_staff")}
+                    <div class="layui-form-item layui-inline">
+                        <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add_staff")}' data-title="添加员工">添加员工</a>
+                    </div>
+                    {/if}
+
+                </blockquote>
+
+                <!-- end --->
+                <table id="currentTable" lay-filter="currentTable"></table>
+
+
+                <script type="text/html" id="checkSingle">
+                    <input type="checkbox" name="{{d.id}}" value="{{d.is_single}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifySingle" {{ d.is_single== 1 ? 'checked' : '' }}>
+                </script>
+
+                <script type="text/html" id="checkStatus">
+
+                    {{# if (d.who == 1 || d.who == 3 ) { }}
+                        <input type="checkbox" name="{{d.id}}" value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
+                    {/if}
+                </script>
+
+
+                <script type="text/html" id="currentTableBar">
+
+                    {if auth("$thisClass/edit")}
+                        {{# if (d.who == 1 || d.who == 3 ) { }}
+                        <a class="layui-btn layui-btn-xs  layui-btn layui-btn-warm  " data-open='{:url("$thisClass/edit_staff")}?id={{d.id}}' data-title="修改商户员工信息">编辑</a>
+                        {{# } else { }}
+                           主账号
+                        {{# } }}
+                    {/if}
+
+
+                </script>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {field: 'username', title: '用户名', minWidth: 80, align: "center"},
+        {field: 'nickname', title: '昵称',  minWidth: 80, align: "center"},
+        {field: 'auth_title', title: '权限配置',  minWidth: 80, align: "center"},
+        /**{if auth("$thisClass/single")}**/
+        {field: 'is_single', title: '单点登入', minWidth: 20, templet: '#checkSingle', unresize: true, align: "center"},
+        /**{/if}**/
+        /**{if auth("$thisClass/status")}**/
+        {field: 'status', title: '启用状态', minWidth: 80, templet: '#checkStatus', unresize: true, align: "center"},
+        /**{/if}**/
+        {field: 'phone', title: '用户手机', align: 'center'},
+        {field: 'qq', title: '用户QQ', align: 'center'},
+        {field: 'create_at', title: '创建时间', align: 'center', minWidth: 150},
+        {title: '操作', width: 80, templet: '#currentTableBar', fixed: "right", align: "center"},
+    ]], false , '',20);
+
+    /**
+     * 修改状态
+     */
+    $.form.switch('modifyStatus', '{:url("$thisClass/status")}');
+    $.form.switch('modifySingle', '{:url("$thisClass/single")}');
+
+</script>
+{/block}

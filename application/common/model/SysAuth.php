@@ -30,17 +30,21 @@ class SysAuth extends ModelService {
     /**
      * 获取权限组
      * @param int $type 0 后台   1 商户端
+     *  @param int $type1 0 商户   1 代理
      * @return array|\PDOStatement|string|\think\Collection
      */
-    public function getList($type = 0) {
+    public function getList($type = 0,$type1 = 3) {
         $where_auth = [
             ['status', '=', 1],
             ['type', '=', $type],
         ];
+       if($type1 != 3) $where_auth[] =  ['type1', '=', $type1];
+
         $order_auth = [
             'id' => 'asc',
         ];
         $auth = $this->where($where_auth)->field('id, title, status')->order($order_auth)->select();
+
         return $auth;
     }
 

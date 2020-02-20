@@ -27,7 +27,7 @@ class Auth extends Validate {
         'id'      => 'require|number|checkAuthId',
         'title'   => 'require|max:30',
         'sort'    => 'member',
-        'remark'  => 'require|max:250',
+        'remark'  => 'max:250',
         'auth_id' => 'require',
         'node_id' => 'require',
         'field'   => 'require',
