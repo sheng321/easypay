@@ -423,7 +423,7 @@ class Order extends AdminController {
             $redis = (new StringModel())->instance();
             $redis->select(2);
 
-            $ip = $redis->keys('IP:*');
+            $ip = $redis->keys('IP_*');
             $data = [];
             foreach ($ip as $k => $v){
                 $data[$k] = json_decode($redis->get($v),true);
