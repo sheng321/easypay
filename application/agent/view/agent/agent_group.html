@@ -1,0 +1,39 @@
+{extend name="agent@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form" style="width:80%;">
+    <br>
+
+    <div class="layui-form-item layui-row">
+        <label class="layui-form-label">用户分组</label>
+        <div class="layui-input-block">
+            {foreach $group as $vo}
+            <input type="radio" name="group_id" value="{$vo.id}" title="{$vo.title}"  {eq name='$vo.id|default=false' value='$group_id' }checked="checked"{/eq}     ><div class="layui-unselect layui-form-radio layui-form-radioed"       ><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>{$vo.title}</div></div>
+            {/foreach}
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script  >
+    /**
+     * 添加、编辑
+     */
+    $.form.on('submitBtn', '{:url("$thisClass/agent_group")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    });
+
+</script>
+{/block}

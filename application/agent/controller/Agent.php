@@ -467,5 +467,38 @@ class Agent extends AgentController {
 
 
 
+    /**
+     * 选择代理用户分组
+     * @return mixed|\think\response\Json
+     */
+    public function agent_group(){
+        $uid = $this->request->get('uid/d',0);
+        $user = \app\common\model\Uprofile::where(['uid'=>$uid])->find();
+        if(empty($user) || $user['pid'] != $this->user['uid']) exceptions('数据错误，请重试~');
+
+        if (!$this->request->isPost()) {
+
+            $type = ($user['who'] == 2)?1:0; //区分获取什么分组
+            $group =   \app\common\model\Ulevel::where(['uid'=>$user['pid'],'type1'=>$type])->field('id,title')->select()->toArray();
+
+            //基础数据
+            $basic_data = [
+                'title' => '选择用户分组',
+                'group_id'  => $user['group_id'],
+                'group'  => $group,//用户分组
+            ];
+
+            return $this->fetch('', $basic_data);
+        }else{
+            $profile['id'] = $user['id'];
+            $profile['group_id'] = $this->request->post('group_id/d',0);
+
+            $res = model('\app\common\model\Uprofile')->__edit($profile);
+            return $res;
+        }
+    }
+
+
+
 
 }
