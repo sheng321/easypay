@@ -275,7 +275,19 @@ class Api extends PayController
         $data['notify_url'] = $param['pay_notifyurl'];//异步回调
         $data['callback_url'] = $param['pay_callbackurl'];//同步跳转
         $data['ip'] = get_client_ip();//请求ip
-        $data['Platform'] = $data['amount']*($MemRate -  max($data['cost_rate'],$AgentRate1,$AgentRate2));//平台收益
+
+        switch (true){
+            case ($AgentRate2 > 0):
+                $rate = $AgentRate2 - $data['cost_rate'];
+                break;
+            case ($AgentRate1 > 0):
+                $rate = $AgentRate1 - $data['cost_rate'];
+                break;
+            default:
+                $rate = $MemRate - $data['cost_rate'];
+                break;
+        }
+        $data['Platform'] = $data['amount']*$rate;//平台收益
         $data['create_time'] =  $param['pay_applydate'];//商户提交时间
         $data['is_mobile'] =  isMobile()?1:0;//商户提交时间
 
