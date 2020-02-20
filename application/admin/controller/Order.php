@@ -496,12 +496,10 @@ class Order extends AdminController {
 
     public function del_ip(){
         $get = $this->request->only('id');
-        halt($get);
-
 
         $redis = (new StringModel())->instance();
         $redis->select(2);
-        $redis->del();
+        $redis->del($get['id']);
 
         return __success('删除成功');
     }
