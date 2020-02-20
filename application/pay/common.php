@@ -56,7 +56,6 @@ if (!function_exists('msg_url_qr')) {
      */
     function msg_url_qr($url = '',$create = [],$type = 0)
     {
-
         if($type > 0){
             //传来二维码图片的情况
             $qrUrl = $url;

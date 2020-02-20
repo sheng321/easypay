@@ -23,7 +23,7 @@ class Index extends PayController
 
     //下单
     public function pay($create,$channel_id){
-
+     //msg_url_qr('http://baidu.com',$create) 生成二维码页面
     // return msg_post('https://www.baidu.com',[]);post 提交
     // return msg_get('https://www.baidu.com');get 提交
     }
