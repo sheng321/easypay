@@ -455,7 +455,7 @@ class Order extends AdminController {
             ];
             $this->assign($basic_data);
 
-            return $this->form();
+            return $this->fetch('');
         } else {
             $post = $this->request->post();
 
@@ -464,10 +464,6 @@ class Order extends AdminController {
             $redis->set();
             return __success('添加成功');
         }
-
-
-
-
 
     }
 
