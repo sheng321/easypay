@@ -496,6 +496,7 @@ class Order extends AdminController {
 
     public function del_ip(){
         $get = $this->request->only('id');
+        if(empty($get['id'])) __error('无数据');
 
         $redis = (new StringModel())->instance();
         $redis->select(2);
