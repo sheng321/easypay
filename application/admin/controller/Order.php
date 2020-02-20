@@ -419,38 +419,48 @@ class Order extends AdminController {
      * 异常IP
      */
     public function ip(){
-        $redis = (new StringModel())->instance();
-        $redis->select(2);
+        if ($this->request->get('type') == 'ajax'){
+            $redis = (new StringModel())->instance();
+            $redis->select(2);
 
+            $ip = $redis->keys('IP:*');
+            $data = [];
+            foreach ($ip as $k => $v){
+                $data[$k] = json_decode($redis->get($v),true);
+            }
+
+            $list = [
+                'code'  => 0,
+                'msg'   => '查询成功',
+                'count' => 100,
+                'info'  => $data,
+                'data'  => $data,
+            ];
+            return json($list);
+        }
 
         //基础数据
         $basic_data = [
             'title'  => '异常IP列表',
-            'data'   => '',
         ];
 
         return $this->fetch('', $basic_data);
     }
     public function add_ip(){
+        $redis = (new StringModel())->instance();
+        $redis->select(2);
 
-        //基础数据
-        $basic_data = [
-            'title'  => '异常IP列表',
-            'data'   => '',
-        ];
+        $redis->set();
 
-        return $this->fetch('', $basic_data);
+        return __success('添加成功');
     }
 
     public function del_ip(){
+        $redis = (new StringModel())->instance();
+        $redis->select(2);
+        $redis->del();
 
-        //基础数据
-        $basic_data = [
-            'title'  => '异常IP列表',
-            'data'   => '',
-        ];
-
-        return $this->fetch('', $basic_data);
+        return __success('删除成功');
     }
 
 
