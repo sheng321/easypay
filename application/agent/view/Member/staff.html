@@ -1,0 +1,96 @@
+{extend name="agent@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form" style="width:80%;">
+    <br>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">商户账号</label>
+        <div class="layui-input-block">
+            <input type="text" id="username" name="username" class="layui-input username" lay-verify="required" value="{$user.username|default=''}" placeholder="请输入商户账号"  >
+        </div>
+    </div>
+
+    {if empty($user)}
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">初始密码</label>
+        <div class="layui-input-block">
+            <input type="password" id="password"  name="password" class="layui-input password" lay-verify="required" placeholder="请输入初始密码">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">确认密码</label>
+        <div class="layui-input-block">
+            <input type="password" id="password1" name="password1"    class="layui-input password1" lay-verify="required" placeholder="请输入确认密码">
+        </div>
+    </div>
+    {/if}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">昵称</label>
+        <div class="layui-input-block">
+            <input type="text" id="nickname"  name="nickname" class="layui-input nickname" value="{$user.nickname|default=''}" placeholder="请输入昵称">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">手机</label>
+        <div class="layui-input-block">
+            <input type="text" id="phone" name="phone" class="layui-input phone" value="{$user.phone|default=''}" placeholder="请输入手机">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">QQ</label>
+        <div class="layui-input-block">
+            <input type="text" id="qq" name="qq" class="layui-input qq" value="{$user.qq|default=''}" placeholder="请输入QQ">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row">
+        <label class="layui-form-label">用户权限</label>
+        <div class="layui-input-block">
+            {foreach auth as $vo}
+            <input type="checkbox"  name="auth_id[]" class="layui-input auth_id" value="{$vo.id|default=''}" lay-skin="primary" title="{$vo.title|default=''}" {eq name='$vo.is_checked|default=false' value='true' }checked{/eq}>
+            {/foreach}
+
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script type="text/javascript" src="__STATIC__/plugs/jquery/jquery.md5.js"></script>
+<script      >
+
+    /**
+     * 添加、编辑
+     */
+    $.form.on('submitBtn', '{:url("$thisRequest")}?id={$Think.get.id}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    },function (obj) {
+
+        if(!$.tool.isEmpty(obj.password)){
+            obj.password = $.md5(obj.password);
+            obj.password1 = $.md5(obj.password1);
+        }
+        var  data = [];
+        data.data = obj;
+        data.code = 1;
+        data.msg = '';
+        return data;
+    });
+
+</script>
+{/block}
