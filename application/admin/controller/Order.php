@@ -459,11 +459,36 @@ class Order extends AdminController {
         } else {
             $post = $this->request->post();
 
-            halt($post);
+            $data['id'] = 'IP:'.$post['ip'];
+            $data['ip'] = $post['ip'];
+
+            switch ($post['auth_id']){
+                case 1:
+                    $time = 30*60;
+                    break;
+                case 2:
+                    $time = 30*60*3;
+                    break;
+                case 3:
+                    $time = 30*60*6;
+                    break;
+                case 4:
+                    $time = 30*60*24;
+                    break;
+                case 5:
+                    $time = 30*60*24*3;
+                    break;
+                case 6:
+                    $time = 30*60*24*7;
+                    break;
+            }
+
+            $data['over_at'] = date('Y-m-d H:i:s', time() + $time);
 
             $redis = (new StringModel())->instance();
             $redis->select(2);
-            $redis->set();
+            $redis->set($data['id'], json($data));
+            $redis->expire($data['id'],$time);
             return __success('添加成功');
         }
 
