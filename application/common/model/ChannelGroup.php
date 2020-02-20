@@ -195,7 +195,11 @@ class ChannelGroup extends ModelService {
                 //当为代理分组的时候
                 $GroupStatus =  \app\common\service\RateService::getAgentStatus($search['uid'],$val['id']);
                 $data[$k]['status'] = 1;
-                if(!empty($GroupStatus))  $data[$k]['status'] = $GroupStatus['status'];
+                if(!empty($GroupStatus)){
+                    $data[$k]['status'] = $GroupStatus['status'];
+                    $data[$k]['rate'] = $GroupStatus['rate'];
+                    if($data[$k]['status'] == 0) $data[$k]['rate'] = '未设置';
+                }
             }
 
             //已选中的状态
