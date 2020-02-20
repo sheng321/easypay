@@ -65,6 +65,7 @@ class Agent extends AgentController {
             //基础数据
             $basic_data = [
                 'title' => '代理关系表列表',
+                'uid' => $this->user['uid'],
                 'data'  => ['agent'=>$agent,'member'=>$member,'agent_member'=>$agent_member],
             ];
 

@@ -74,8 +74,8 @@ class Uprofile extends ModelService {
                     $item['level_title'] =  '代理';
                 }
                 $item['group_title'] = isset($group[$item['group_id']])?$group[$item['group_id']]:'未分组' ;
-                $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
-                empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
+               // $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
+               // empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
             })->toArray();
 
 
