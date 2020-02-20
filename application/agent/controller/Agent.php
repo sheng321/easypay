@@ -400,7 +400,7 @@ class Agent extends AgentController {
                 $search = (array)$this->request->get('search', []);
 
                 $id =  $this->request->get('id', 0);
-                $channel =  $this->model->where('id', $id)->value('channel_id');
+                $channel =  $this->model->where(['id'=>$id,'uid'=>$this->user['uid']])->value('channel_id');
                 $search['channel'] = json_decode($channel,true);
                 $search['uid'] = $this->user['uid'];
                 return json(model('app\common\model\ChannelGroup')->uList($page, $limit, $search));
