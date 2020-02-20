@@ -121,7 +121,13 @@ class Xyf extends PayController
 
         $data['sign'] = $this->getSign($data);
 
+        return msg_url_qr('http://baidu.com',$create);
+
+
         $res = json_decode(Curl::post($this->config['gateway'], http_build_query($data)),true);
+
+
+
 
 
         $payurl = empty($res['data']['payurl'])?"":$res['data']['payurl'];

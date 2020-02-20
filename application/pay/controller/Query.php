@@ -57,22 +57,21 @@ class Query extends PayController
      * @return \think\response\Json
      */
     public function checkstatus(){
+        $out_trade_no =   $this->request->post("orderid/s",'');
+        if(empty($out_trade_no) ) __error('订单号不存在');
 
-        $out_trade_no =   $this->request->post(["pay_orderid/s"],'');
-        if(empty($out_trade_no) )   __jerror('订单号不存在');
+        $time =  date('Y-m-d H:i:s',time() - 15*60);//15分钟
+        $pay_status = Order::where([['out_trade_no','=',$out_trade_no],['create_at','>',$time]])->value('pay_status');
+        if(empty($pay_status) ) __error('订单号不存在');
 
-        $Order =  Order::quickGet(['out_trade_no'=>$out_trade_no]);
-        if(empty($Order) ) __jerror('订单号不存在');
-
-        $time =   time() - strtotime($Order['create_time'])  - 5*60;//时间判断
-        if($Order['pay_status'] == 2 && $time <= 0){
+        if($pay_status == 2 ){
             //已支付
             $data['status'] = "ok";
         }else{
             $data['status'] = "no";
         }
 
-        return __jsuccess('查询成功',$data);
+        return __success('查询成功',$data);
     }
 
 }

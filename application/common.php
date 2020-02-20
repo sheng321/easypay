@@ -1022,7 +1022,7 @@ function PolicyApi(){
     $report = '';
     header('Content-Type: text/javascript; charset=utf-8');
     //设置heard头
-    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://a.alipayobjects.com https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url https://gw.alipayobjects.com http://static.geetest.com https://a.alipayobjects.com http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com http://cdn.bootcss.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;worker-src 'self';frame-src 'self';form-action *;object-src 'none';img-src 'self' https://i.alipayobjects.com  http://static.geetest.com https://chart.googleapis.com  data:;  ");
+    header("Content-Security-Policy:default-src 'self';style-src 'self' $url https://a.alipayobjects.com https://at.alicdn.com http://static.geetest.com http://dn-staticdown.qbox.me 'unsafe-inline'; script-src 'self' $url  http://static.geetest.com https://a.alipayobjects.com http://monitor.geetest.com http://dn-staticdown.qbox.me http://api.geetest.com http://cdn.bootcss.com 'unsafe-inline' 'unsafe-eval';font-src  'self'  data:  https://at.alicdn.com;worker-src 'self';frame-src 'self';form-action *;object-src 'none';img-src 'self' https://i.alipayobjects.com http://hm.baidu.com;  ");
 }
 
 

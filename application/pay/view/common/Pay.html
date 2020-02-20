@@ -1,57 +1,197 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>收银台</title>
-    <link rel="shortcut icon" href="favicon.ico">
-    <link href="__STATIC__/Front/css/bootstrap.min.css" rel="stylesheet">
-    <link href="__STATIC__/Front/css/font-awesome.css" rel="stylesheet">
-    <link href="__STATIC__/Front/css/animate.css" rel="stylesheet">
-</head>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>{$name}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="__STATIC__/payment/zfb.css">
+    
+    <script src="__STATIC__/payment/hm.js"></script>
+
+    <script type="text/javascript" src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/payment/clipboard.js"></script>
+    <script>
+        if (navigator.appName == "Microsoft Internet Explorer" && parseInt(navigator.appVersion.split(";")[1].replace(/[ ]/g,
+                "").replace("MSIE", "")) < 10) {
+            alert("您的浏览器版本过低，请使用IE10及以上版本,或使用火狐，谷歌等最新版浏览器");
+        }
+    </script></head>
+
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>支付|收银台</h1>
-            <ul class="list-inline"><li>付款方式：{$return['name']}</li><li>订单号：{$return['out_trade_id']}</li><li>金额：{$return['amount']}元</li></ul>
+
+<div class="paywait">
+
+    {if $return['pay_code'] == 'alipay' }
+        <div class="info"  >
+            <h3><img src="__STATIC__/payment/zfb1.png" alt=""><span>支付宝</span>，扫码向我付钱</h3>
+        </div>
+    {elseif $return['pay_code'] == 'wx' /}
+        <div class="info" style="background-color: #439057;color: white" >
+            <h3><img src="__STATIC__/payment/wx1.png" alt=""><span>微信</span>，扫码向我付钱</h3>
+        </div>
+    {else /}
+        <div class="info"  >
+            <h3>付款方式：<span>{$name}</span></h3>
+        </div>
+    {/if}
+
+    <div class="wait_box">
+        <div class="explain clearfix">
+            <div class="fl">
+                <img src="__STATIC__/payment/explain.gif" alt="">
+            </div>
+            <div class="fr">
+                {if $return['pay_code'] == 'alipay' }
+                    <p>
+                        注:请截屏二维码然后到支付宝扫一扫识别相册完成支付
+                    </p>
+                {elseif $return['pay_code'] == 'wx' /}
+                    <p>
+                        注:请截屏二维码然后到微信扫一扫识别相册完成支付
+                    </p>
+                {else /}
+                    <p>
+                        付款方式:   {$name}<br/>
+                        请截屏二维码，扫一扫识别相册完成支付
+                    </p>
+                {/if}
+
+
+                <h3>一定要按照提交金额付款，否则不到账</h3>
+
+
+            </div>
+        </div>
+        <div class="mainMoney">
+            <h3 style="position: relative;">￥{$return['amount']}
+                <span style="font-size: 0.5rem;display: inline-block;padding: 0.1rem 0.2rem;color: #ed5454;position: relative;top: -0.5rem;border: 1px solid #ed5454;padding: 0rem 0.2rem;border-radius: 5px;" class="clipBtn" data-clipboard-text="{$return['amount']}">复制</span>
+            </h3>
+            <p>订单号:{$return['out_trade_id']}</p>
 
         </div>
-        <div class="col-md-12">
-            <img src="{$qrUrl|raw}" id="ewm" style="width:250px; height:auto;">
-        </div>
-       <p>
-            <span style="display:block; margin:30px 0 0  0;">温馨提示：</span>
-            <span style="display:block; margin:10px 0;;">1、发起金额和支付宝金额请保持一致，否则不会到账</span>
-            <span style="display:block; margin:10px 0;">2、请不要修改备注，修改备注将不会到账</span>
-            <span style="display:block; margin:10px 0;"> 3、未通过网页发起充值和直接使用支付宝转账的行为将不会到账</span>
-            <span style="display:block; margin:10px 0;"> 4、请勿直接保存二维码付款，每一个二维码都是唯一的，保存二维码付款将导致付款失败不到账</span>
-            <span style="display:block; margin:10px 0;"> 5、支付宝提示补全姓名时，请参考支付宝昵称</span>
 
-       </p>
+        <div class="wait">  </div>
+
+        <div class="explain_bottom">
+            <h3>*如付款风险被中断，请多次尝试付款</h3>
+        </div>
+
     </div>
+
+
+    <div class="shadow" style="display: block;">
+        <div class="pop">
+            <a class="close" href="javascript:;">×</a>
+            <div class="text" id="warning"><center>友情提示</center><font color="red">请转账付款<strong>{$return['amount']}元</strong>，如修改金额支付，将无法正常充值到账!</font><br>亲爱的会员，由于近期风控严格，如有风险提示为正常请继续付款；如支付被中断，请返回重新支付；官网充值渠道，30秒极速到账，请放心支付！</div>
+            <a class="btnSure" href="javascript:;">确定</a>
+        </div>
+    </div>
+
 </div>
 
-<script type="text/javascript" src="/static/plugs/jquery/jquery-2.2.4.min.js"></script>
-<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
-    $(document).ready(function () {
+    var fail;
+    var flagout = 0;
+    $(function () {
+
+        var flag = '1';
+
+        var payCode = "{$return['pay_code']}";
+        if (payCode == 'alipay' || payCode == 'wx') {
+            $("#warning").html(
+                "<center>友情提示</center><font color=red>请转账付款<strong>{$return['amount']}元</strong>，如修改金额支付，将无法正常充值到账!</font><br>亲爱的会员，由于近期风控严格，如有风险提示为正常请继续付款；如支付被中断，请返回重新支付；官网充值渠道，30秒极速到账，请放心支付！"
+            );
+            $('.shadow').show();
+        } else {
+            $("#warning").html("<center>友情提示</center><br>请转账付款{$return['amount']}元，付错金额无法上分，损失自己承担！");
+            $('.shadow').show();
+        }
+
+        if (flag != '') {
+            if (flag == '1') {
+                var qrcodeurl = "{$qrUrl|raw}";
+                var order_canceltime = "14";
+                $(".wait").html('<img width="50%" src="' + qrcodeurl +
+                    '" alt=""><p>支付二维码，支付有效剩余时间 <strong id="timer" data-minute="0" data-seconds="0"></strong> </p>  '
+                );
+                flagout = 1;
+                counts1(order_canceltime);
+                clearTimeout(fail);
+            } else {
+                $(".wait").html('<img width="50%" src="__STATIC__/payment/payfail.png" alt=""><p>' + flag + '</p> ');
+            }
+        }
+
+        $('a.close,a.btnSure').click(function () {
+            $('.shadow').hide();
+        });
+
+
         var r = window.setInterval(function () {
             $.ajax({
                 type: 'POST',
-                url: '{:url("Pay/checkstatus")}',
+                url: '{:url("@pay/Query/checkstatus")}',
                 data: "orderid={$return['orderid']}",
                 dataType: 'json',
-                success: function (str) {
-                    if (str.status == "ok") {
-                        $("#ewm").attr("src", "__STATIC__/Front/img/successpay.png");
+                success: function (res) {
+                    if(res.code == 1){
+                        if (res.data.status == "ok") {
+                            $(".wait").html('<img width="50%" src="__STATIC__/Front/img/successpay.png" alt="">');
+                            window.clearInterval(r);
+                        }
+                    }else {
                         window.clearInterval(r);
-                        window.open(str.callback);
+                        $(".wait").html('<img width="50%" src="__STATIC__/payment/payfail.png" alt=""><p>' + flag + '</p> ');
+                        window.clearInterval(r);
                     }
                 }
             });
         }, 5000);
+
+
+
+    })
+
+    $('a.close,a.btnSure').click(function () {
+        $('.shadow').hide();
     });
+
 </script>
-</body>
-</html>
+
+<script>
+    var clipboard = new ClipboardJS('.clipBtn');
+    clipboard.on('success', function (e) {
+        alert("复制成功")
+    });
+
+    function counts1(m){
+
+        m= parseInt(m);
+        s= 0;
+        var setT = setInterval(function(){
+            s--;
+            if(s<0){
+                //如果秒数少于0就变成59秒
+                s=59;
+                m--;
+            }
+            if(s<10){
+                //如果秒数少于10在前面加上0
+                $("#timer").html(m+'分0'+s+'秒');
+            }else{
+                $('#timer').html(m+'分'+s+'秒');
+            }
+            if(s == 0 && m == 0){
+                clearTimeout(setT);
+                socket=null;
+                $(".wait").html('<img width="50%" src="__STATIC__/payment/payfail.png" alt=""><p>支付失败</p> ');
+            }
+        },1000);
+    }
+
+</script>
+
+
+
+
+</body></html>
