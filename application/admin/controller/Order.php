@@ -459,6 +459,8 @@ class Order extends AdminController {
         } else {
             $post = $this->request->post();
 
+            halt($post);
+
             $redis = (new StringModel())->instance();
             $redis->select(2);
             $redis->set();
