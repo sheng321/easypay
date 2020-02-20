@@ -1,0 +1,67 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--顶部操作栏--开始-->
+
+    <!--顶部操作栏--结束-->
+
+
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+    <!--主表单渲染--结束-->
+
+</form>
+{/block}
+
+{block name="script"}
+<script  >
+    var btu ;
+
+    function query_order(url) {
+        var Index = $.msg.confirm('确定要查询订单吗？', function () {
+            $.msg.close(Index);
+            $.request.post(url,{}, function (res) {
+                alert(res['data']);
+            }, true);
+
+        });
+    }
+
+    function back_order(url) {
+        var Index = $.msg.confirm('确定要退单吗？', function () {
+            $.msg.close(Index);
+            $.request.post(url,{}, function (res) {
+                $.msg.success(res.msg)
+            }, true);
+
+        });
+    }
+
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {field:'ip', title:'IP', minwith:1, align: 'center'},
+        {field:'update_at', title:'过期时间', minwith:1, align: 'center'},
+        /**{if auth("$thisClass/del") }**/
+        {title: '操作', minWidth: 130, templet: '#barDemo', fixed: "right", align: "center"},
+        /**{/if}**/
+    ]], false , '',100);
+
+    /**
+     * 日期范围
+     */
+    $.laydate.range('create_at',5);
+
+</script>
+{/block}
