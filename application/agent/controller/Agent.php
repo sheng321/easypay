@@ -426,6 +426,9 @@ class Agent extends AgentController {
         $this->model = model('app\common\model\Ulevel');
         $get = $this->request->get();
 
+        $id =  $this->model->where(['id'=>$get['pid'],'uid'=>$this->user['uid']])->value('id');
+        if(empty($id)) __error('数据错误');
+
         $mode = [];
         //验证数据
         foreach ($get['id'] as $k => $val){
@@ -448,7 +451,7 @@ class Agent extends AgentController {
             }
         }
 
-        $data['id'] = $get['pid'];
+        $data['id'] = $id;
         $data['channel_id'] = json_encode($mode1);
 
         //执行更新操作操作
