@@ -459,7 +459,7 @@ class Order extends AdminController {
         } else {
             $post = $this->request->post();
 
-            $data['id'] = 'IP:'.$post['ip'];
+            $data['id'] = 'IP_'.strtr($post['ip'], '.', '_');
             $data['ip'] = $post['ip'];
 
             switch ($post['auth_id']){
