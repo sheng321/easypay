@@ -27,10 +27,6 @@ return [
     'query'=>'http://120.24.166.163:66/pay.php/query',//网关
 
 
-
-
-
-
    // 'api'=>'http://www.test4.com/pay.php/api',//支付网关
 
 
