@@ -21,7 +21,21 @@
                 <!--主表单渲染--开始-->
                 <table id="currentTable" lay-filter="currentTable"></table>
                 <!--主表单渲染--结束-->
+
+
+                <script type="text/html" id="group">
+
+                    {{# if (d.group_title == '未分组') { }}
+                    <a class="layui-btn layui-btn-xs layui-btn-danger "     value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择用户分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
+                    {{# } else { }}
+                    <a class="layui-btn layui-btn-xs" style="background-color: #7EC0EE"  data-width="40%"   data-height="auto"  value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择用户分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
+                    {{# } }}
+
+                </script>
             </form>
+
+
+
         </div>
     </div>
 </div>
@@ -38,14 +52,9 @@
     $.form.tableTree('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'uid', title: '商户号', minWidth: 20, align: "center"},
         {field: 'level_title', title: '等级', minWidth: 20, align: "center"},
-        {field: 'group_title', title: '用户分组', minWidth: 20,  unresize: true, align: "center"},
+        {field: 'group_title', title: '用户分组', minWidth: 20, align: "center", templet: '#group'},
         {field: 'create_at', title: '创建时间', minWidth: 20,  unresize: true, align: "center"},
     ]], 'uid','pid',true,'','',true,'uid')
 
-
-    /**
-     * 日期范围
-     */
-    $.laydate.range('create_at');
    // {/block}
 </script>

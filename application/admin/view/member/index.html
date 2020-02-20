@@ -115,9 +115,9 @@
 
         {{# if (d.pid == 0) { }}
         {{# if (d.group_title == '未分组') { }}
-        <a class="layui-btn layui-btn-xs layui-btn-danger "     value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择通道分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger "     value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择用户分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
         {{# } else { }}
-        <a class="layui-btn layui-btn-xs" style="background-color: #7EC0EE"  data-width="40%"   data-height="auto"  value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择通道分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
+        <a class="layui-btn layui-btn-xs" style="background-color: #7EC0EE"  data-width="40%"   data-height="auto"  value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择用户分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
         {{# } }}
         {{# } }}
     </script>
