@@ -485,7 +485,7 @@ class Agent extends AgentController {
             $basic_data = [
                 'title' => '选择用户分组',
                 'group_id'  => $user['group_id'],
-                'uid'  => $uid,
+                'uid'  => $user['uid'],
                 'group'  => $group,//用户分组
             ];
 
