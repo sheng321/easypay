@@ -44,12 +44,6 @@ class Api extends PayController
         if($PayProduct['visit'] == 1 && isMobile()) __jerror('只能PC端访问！');
 
 
-
-
-
-
-
-
         //验证支付产品金额
         $amount['amount'] = $param['pay_amount'];
         $amount['min_amount'] = $PayProduct['min_amount'];
@@ -223,7 +217,7 @@ class Api extends PayController
         $AgentRate2 = 0;
         $uid1 = 0;
         $uid2 = 0;
-        //代理费率  只记二级代理
+        //代理费率  二级分销
         if($Uprofile['pid'] > 0){
             $uid1 = $Uprofile['pid'];
             $AgentRate1 =  RateService::getAgentRate($Uprofile['pid'],$ChannelProduct[$channel_id]['group_id']);
@@ -289,6 +283,9 @@ class Api extends PayController
         $param1 = $this->request->only(["pay_productname","pay_attach"],'post');
         $data['productname'] = $param1['pay_productname'];//商品名称
         $data['attach'] = $param1['pay_attach'];//备注
+
+
+        halt($data);
 
         //插入数据库
         //文件排它锁 阻塞模式
