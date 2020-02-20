@@ -341,7 +341,7 @@ class Level extends AdminController {
 
 
    //添加代理分组
-    public function add_agent() {
+    public function add_agent(){
         if (!$this->request->isPost()) {
 
             //基础数据
@@ -354,6 +354,7 @@ class Level extends AdminController {
         } else {
             $post = $this->request->only('title,remark,type1,uid');
 
+            $post['title'] = $post['uid'].$post['title'];
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Level.add_agent');
             if (true !== $validate) return __error($validate);

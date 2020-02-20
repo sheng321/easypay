@@ -119,6 +119,7 @@ class Agent extends AgentController {
         } else {
             $post = $this->request->only('title,remark,type1');
             $post['uid'] = $this->user['uid'];
+            $post['title'] = $this->user['uid'].$post['title'];
             //验证数据
             $validate = $this->validate($post, 'app\common\validate\Level.add_agent');
             if (true !== $validate) return __error($validate);
