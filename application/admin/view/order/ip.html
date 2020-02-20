@@ -17,7 +17,8 @@
         </div>
         {/if}
         {if auth("$thisClass/del_ip")}
-        <a class="layui-btn layui-btn-xs layui-btn-danger" data-title="确定删除？" data-del='{:url("$thisClass/del_ip")}?id={{d.id}}'>删除</a>
+
+        <a class="layui-btn layui-btn-danger layui-btn-normal layui-btn-sm" data-title="确定批量删除？" data-del-all='{:url("$thisClass/del_ip")}' data-table-id="currentTable">删除</a>
         {/if}
 
     </blockquote>
