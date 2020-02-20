@@ -62,7 +62,7 @@ class RateService
         $profile = Uprofile::quickGet($data);
 
         //是否 存在  为商户 设定了分组
-        if(empty($profile) || $profile['who'] != 0 ||$profile['group_id'] == 0  ) return $rate;
+        if(empty($profile) || $profile['who'] != 0 ||$profile['group_id'] == 0  ) return false;
 
         //是否给用户单独设置了费率
         $data['type'] = 2;

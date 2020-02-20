@@ -212,6 +212,7 @@ class Api extends PayController
 
         //获取商户费率
         $MemRate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$channel_id);
+        if($MemRate === false)  __jerror('商户号不存在，或者未分配用户分组。');
 
         $AgentRate1 = 0;
         $AgentRate2 = 0;
@@ -219,15 +220,15 @@ class Api extends PayController
         $uid2 = 0;
         //代理费率  二级分销
         if($Uprofile['pid'] > 0){
-            $uid1 = $Uprofile['pid'];
-            $AgentRate1 =  RateService::getAgentRate($Uprofile['pid'],$ChannelProduct[$channel_id]['group_id']);
+           //上级代理
+            $AgentRate1 =  RateService::getAgentRate($Uprofile['pid'],$channel_group_id);
             //如果商户费率小于或者等于代理费率  不给代理分配费率
             if(empty($AgentRate1) || ($MemRate <= $AgentRate1)) $AgentRate1 = 0;
 
-            $Uprofile1 = Uprofile::quickGet(['uid'=>$Uprofile['pid']]);//一级代理
+            //上上级代理
+            $Uprofile1 = Uprofile::quickGet(['uid'=>$Uprofile['pid']]);
             if(!empty($Uprofile1) || $Uprofile1['pid'] > 0){
-                $uid2 = $Uprofile1['pid'];
-                $AgentRate2 =  RateService::getAgentRate($Uprofile1['pid'],$ChannelProduct[$channel_id]['group_id']);
+                $AgentRate2 =  RateService::getAgentRate( $Uprofile1['pid'],$channel_group_id);
                 //二级代理费率费率查询失败 商户费率小于或者等于二级代理费率 一级代理小于或者等于二级代理费率
                 if(empty($AgentRate2) || ($MemRate <= $AgentRate2) ||  ($AgentRate1 <= $AgentRate2) ) $AgentRate2 = 0;
 
@@ -263,8 +264,8 @@ class Api extends PayController
         $data['agent_rate'] =  $AgentRate1;//上级代理费率
         $data['agent_rate2'] =  $AgentRate2;//上上级代理费率
         $data['upstream_settle'] = $data['amount']*$Channel['c_rate'];//上游结算
-        $data['agent_amount'] =$AgentRate1 == 0?0: $data['amount']*($MemRate -  $AgentRate1);//上级代理商结算
-        $data['agent_amount2'] =$AgentRate2 ==0?0: $data['amount']*($AgentRate1 -  $AgentRate2);//上上级代理商结算
+        $data['agent_amount'] = ($AgentRate1 == 0)?0: $data['amount']*($MemRate -  $AgentRate1);//上级代理商结算
+        $data['agent_amount2'] = ($AgentRate2 ==0)?0: $data['amount']*($AgentRate1 -  $AgentRate2);//上上级代理商结算
         $data['channel_id'] = $channel_id;//渠道id
         $data['channel_group_id'] = $channel_group_id;//支付通道分组ID
         $data['pay_code'] = $PayProduct['code'];
@@ -276,16 +277,11 @@ class Api extends PayController
         $data['create_time'] =  $param['pay_applydate'];//商户提交时间
         $data['is_mobile'] =  isMobile()?1:0;//商户提交时间
 
-
-
         $data['over_time'] = time() + $Channel_father['limit_time']*60;//订单过期时间
 
         $param1 = $this->request->only(["pay_productname","pay_attach"],'post');
         $data['productname'] = $param1['pay_productname'];//商品名称
         $data['attach'] = $param1['pay_attach'];//备注
-
-
-        halt($data);
 
         //插入数据库
         //文件排它锁 阻塞模式
