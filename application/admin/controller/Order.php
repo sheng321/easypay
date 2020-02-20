@@ -447,12 +447,28 @@ class Order extends AdminController {
         return $this->fetch('', $basic_data);
     }
     public function add_ip(){
-        $redis = (new StringModel())->instance();
-        $redis->select(2);
+        if (!$this->request->isPost()) {
 
-        $redis->set();
+            //基础数据
+            $basic_data = [
+                'title' => '添加IP',
+            ];
+            $this->assign($basic_data);
 
-        return __success('添加成功');
+            return $this->form();
+        } else {
+            $post = $this->request->post();
+
+            $redis = (new StringModel())->instance();
+            $redis->select(2);
+            $redis->set();
+            return __success('添加成功');
+        }
+
+
+
+
+
     }
 
     public function del_ip(){
