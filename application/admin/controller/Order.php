@@ -487,7 +487,7 @@ class Order extends AdminController {
 
             $redis = (new StringModel())->instance();
             $redis->select(2);
-            $redis->set($data['id'], json($data));
+            $redis->set($data['id'], json_encode($data));
             $redis->expire($data['id'],$time);
             return __success('添加成功');
         }
