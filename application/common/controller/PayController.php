@@ -211,9 +211,12 @@ class PayController extends BaseController
          throw new \think\exception\HttpResponseException(exit($returnBack));//停止运行，关闭。
      }
 
-     //订单接受回调 时间限制
-        if(time() > $order['over_time']) __jerror('over_time');
-
+        //订单接受回调 时间限制
+     if(time() > $order['over_time']){
+         //当某个通道出现大量未回调的情况，客服临时调大通道的订单限时
+         $time =  time() - strtotime($order['create_at']) - $this->config['limit_time']*60;
+         if($time > 0) __jerror('over_time');
+      }
 
      //判断订单金额
       if(!empty($this->config['amount'])  && abs( $order['amount'] - $this->config['amount']) > 1 )  __jerror('money_wrong1');

@@ -203,7 +203,6 @@ class Xyf extends PayController
         if( empty($resp['data']) || $resp['data']['status'] != '1'   ){
             $result['msg'] =  '订单：'.$Order['system_no'].'未支付';
             return $result;
-
         }
 
         $flag = $this->verifys($resp['data']);
