@@ -428,23 +428,14 @@ class Agent extends AgentController {
 
         $mode = [];
         //验证数据
-        if (isset($get['id'])) {
-            if (!is_array($get['id'])) {
-                $validate = $this->validate($get, 'app\common\validate\ChannelGroup.channel');
-                if (true !== $validate) return __error($validate);
-                $mode[] = $get['id'];
-            }else{
-                foreach ($get['id'] as $k => $val){
-                    $data['id'] = $val;
-                    $validate = $this->validate($data, 'app\common\validate\ChannelGroup.channel');
-                    if (true !== $validate){
-                        unset($get['id'][$k]);
-                        continue;
-                    }
-                    $mode[] = $val;
-                }
+        foreach ($get['id'] as $k => $val){
+            $data['id'] = $val;
+            $validate = $this->validate($data, 'app\common\validate\ChannelGroup.channel');
+            if (true !== $validate){
+                unset($get['id'][$k]);
+                continue;
             }
-
+            $mode[] = $val;
         }
 
         if(empty($get['pid']) || empty($mode)) return __error('请选择通道分组！');
