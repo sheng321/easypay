@@ -117,6 +117,10 @@ class Agent extends AgentController {
 
             return $this->fetch('agent_form');
         } else {
+            $count = $this->model->where(['uid'=>$this->user['uid']])->count(1);
+            if($count > 7) return __error('分组个数不能超过 8 个');
+
+
             $post = $this->request->only('title,remark,type1');
             $post['uid'] = $this->user['uid'];
             $post['title'] = $this->user['uid'].$post['title'];
