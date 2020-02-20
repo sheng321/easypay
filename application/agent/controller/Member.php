@@ -66,9 +66,9 @@ class Member extends UserController {
             !isset($member['auth_id']) && $member['auth_id'] = [];
             //数组转json
             $member['auth_id'] = json_encode($member['auth_id']);
-            $member['who'] = 1;//1 商户下的员工
+            $member['who'] = 3;//1 代理下的员工
             $member['uid'] = $this->user['uid'];
-            $member['pid'] = $this->model->where(['uid'=>$this->user['uid'],'who'=>0])->value('id');
+            $member['pid'] = $this->model->where(['uid'=>$this->user['uid'],'who'=>2])->value('id');
 
             //验证数据
             $validate = $this->validate($member, 'app\common\validate\Umember.add_staff');
@@ -107,7 +107,7 @@ class Member extends UserController {
 
             //基础数据
             $basic_data = [
-                'title' => '修改商户员工信息',
+                'title' => '修改代理员工信息',
                 'user'  => $Member->hidden(['password','who','pid','is_single','single_key','google_token']),
                 'auth'  => $auth,
             ];
@@ -132,7 +132,7 @@ class Member extends UserController {
     }
 
     /**
-     * 商户单点登入
+     * 代理单点登入
      * @return \think\response\Json
      */
     public function single() {
@@ -146,7 +146,7 @@ class Member extends UserController {
         $validate = $this->validate($get, 'app\common\validate\Umember.single');
         if (true !== $validate) return __error($validate);
 
-        //判断商户状态
+        //判断代理状态
         $status = $this->model->where('id', $get['id'])->value('is_single');
         $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
 
@@ -156,7 +156,7 @@ class Member extends UserController {
     }
 
     /**
-     * 更改商户状态
+     * 更改代理状态
      * @return \think\response\Json
      */
     public function status() {
@@ -169,7 +169,7 @@ class Member extends UserController {
         $validate = $this->validate($get, 'app\common\validate\Umember.status');
         if (true !== $validate) return __error($validate);
 
-        //判断商户状态
+        //判断代理状态
         $status = $this->model->where('id', $get['id'])->value('status');
         $status == 1 ? list($msg, $status) = ['禁用成功', $status = 0] : list($msg, $status) = ['启用成功', $status = 1];
 
