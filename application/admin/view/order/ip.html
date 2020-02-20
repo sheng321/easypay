@@ -45,6 +45,7 @@
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 50,},
+        {field:'uid', title:'商户号', minwith:1, align: 'center'},
         {field:'ip', title:'IP', minwith:1, align: 'center'},
         {field:'over_at', title:'过期时间', minwith:1, align: 'center'},
     ]], false , '',100);

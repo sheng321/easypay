@@ -461,6 +461,7 @@ class Order extends AdminController {
 
             $data['id'] = 'IP_'.$post['uid'].strtr($post['ip'], '.', '_');
             $data['ip'] = $post['ip'];
+            $data['uid'] = $post['uid'];
 
             switch ($post['auth_id']){
                 case 1:
