@@ -91,7 +91,7 @@ class Member extends UserController {
     public function edit_staff() {
         //查找所需修改用户
         $Member = $this->model->where(['id'=>$this->request->get('id','0'),'uid'=>$this->user['uid']])->find();
-        if (empty($Member)) return exceptions('暂无数据，请重新刷新页面！');
+        if (empty($Member)  || ($Member['who'] != 1 && $Member['who'] != 3)   ) return exceptions('暂无数据，请重新刷新页面！');
 
         if (!$this->request->isPost()) {
 
@@ -163,7 +163,7 @@ class Member extends UserController {
         $get = $this->request->get();
 
         $Member = $this->model->where(['id'=> $get['id'],'uid'=>$this->user['uid']])->find();
-        if (empty($Member)) return __error('暂无数据，请重新刷新页面！');
+        if (empty($Member) || ($Member['who'] != 1 && $Member['who'] != 3) ) return __error('暂无数据，请重新刷新页面！');
 
         //验证数据
         $validate = $this->validate($get, 'app\common\validate\Umember.status');

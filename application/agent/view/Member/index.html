@@ -32,9 +32,10 @@
                 </script>
 
                 <script type="text/html" id="checkStatus">
-
-                    {{# if (d.who == 1 || d.who == 3 ) { }}
+                    {if auth("$thisClass/status")}
+                        {{# if (d.who == 1 || d.who == 3 ) { }}
                         <input type="checkbox" name="{{d.id}}" value="{{d.status}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifyStatus" {{ d.status== 1 ? 'checked' : '' }}>
+                        {{# } }}
                     {/if}
                 </script>
 
