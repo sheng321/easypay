@@ -54,12 +54,32 @@ class Member extends UserController {
         if (!$this->request->isPost()) {
 
 
-            var_export(model('app\common\model\SysAuth')->getList(1,0));exit();
+            $auth = array (
+                0 =>
+                    array (
+                        'id' => 7,
+                        'title' => '商户管理员',
+                        'status' => 1,
+                    ),
+                1 =>
+                    array (
+                        'id' => 8,
+                        'title' => '商户客服组',
+                        'status' => 1,
+                    ),
+                2 =>
+                    array (
+                        'id' => 9,
+                        'title' => '商户财务组',
+                        'status' => 1,
+                    ),
+            );
+
 
             //基础数据
             $basic_data = [
                 'title' => '添加员工',
-                'auth'  => model('app\common\model\SysAuth')->getList(1,0),//权限组
+                'auth'  => $auth,//权限组
             ];
             $this->assign($basic_data);
             return $this->fetch('staff');
@@ -98,7 +118,30 @@ class Member extends UserController {
 
         if (!$this->request->isPost()) {
 
-            $auth = model('app\common\model\SysAuth')->getList(1,0)->toArray();
+            $auth = array (
+                0 =>
+                    array (
+                        'id' => 7,
+                        'title' => '商户管理员',
+                        'status' => 1,
+                    ),
+                1 =>
+                    array (
+                        'id' => 8,
+                        'title' => '商户客服组',
+                        'status' => 1,
+                    ),
+                2 =>
+                    array (
+                        'id' => 9,
+                        'title' => '商户财务组',
+                        'status' => 1,
+                    ),
+            );
+
+
+
+
 
             $auth_id = json_decode($Member['auth_id'], true);
 

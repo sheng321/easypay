@@ -53,10 +53,27 @@ class Member extends UserController {
 
         if (!$this->request->isPost()) {
 
+            $auth =  array (
+
+                3 =>
+                    array (
+                        'id' => 15,
+                        'title' => '代理管理员',
+                        'status' => 1,
+                    ),
+                4 =>
+                    array (
+                        'id' => 18,
+                        'title' => '代理观察员',
+                        'status' => 1,
+                    ),
+
+            );
+
             //基础数据
             $basic_data = [
                 'title' => '添加员工',
-                'auth'  => model('app\common\model\SysAuth')->getList(1,1),//权限组
+                'auth'  => $auth,//权限组
             ];
             $this->assign($basic_data);
             return $this->fetch('staff');
@@ -95,7 +112,22 @@ class Member extends UserController {
 
         if (!$this->request->isPost()) {
 
-            $auth = model('app\common\model\SysAuth')->getList(1,1)->toArray();
+            $auth =  array (
+
+                3 =>
+                    array (
+                        'id' => 15,
+                        'title' => '代理管理员',
+                        'status' => 1,
+                    ),
+                4 =>
+                    array (
+                        'id' => 18,
+                        'title' => '代理观察员',
+                        'status' => 1,
+                    ),
+
+            );
 
             $auth_id = json_decode($Member['auth_id'], true);
 

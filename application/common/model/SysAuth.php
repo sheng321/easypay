@@ -43,7 +43,7 @@ class SysAuth extends ModelService {
         $order_auth = [
             'id' => 'asc',
         ];
-        $auth = $this->where($where_auth)->field('id, title, status')->order($order_auth)->select();
+        $auth = $this->where($where_auth)->field('id, title, status')->order($order_auth)->select()->toArray();
 
         return $auth;
     }
