@@ -11,7 +11,6 @@ use think\facade\Env;
  *  提现记录
  */
 class Withdrawal extends AdminController {
-
     /**
      * config模型对象
      */
