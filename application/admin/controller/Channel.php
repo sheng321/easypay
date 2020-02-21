@@ -2,7 +2,11 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\ChannelGroup;
+use app\common\model\PayProduct;
+use app\common\model\Ulevel;
 use app\common\model\Umoney;
+use app\common\model\Uprofile;
 
 /**
  * 通道管理
@@ -574,6 +578,68 @@ class Channel  extends AdminController
         $update =  $this->model->__edit($data);
 
         return $update;
+    }
+
+    //测试链接
+    public function test() {
+        $get = $this->request->get();
+
+         //第一步
+        $pay_memberid = config('set.memberid');   //商户ID
+        if(empty($pay_memberid)) __error('测试商户号不存在');
+        $Uprofile =  Uprofile::quickGet(['uid'=>$pay_memberid]);
+        if(empty($Uprofile)) __error('测试商户号不存在');
+
+        $UlevelId = Ulevel::where(['title'=>'商户测试分组','type'=>0,'type1'=>0])->value('id');
+        if(empty($UlevelId)) __error('商户测试分组不存在');
+
+
+        //支付通道分组
+        $ChannelGroupId =  ChannelGroup::where(['title'=>'测试分组'])->value("id");
+        if(empty($ChannelGroupId)) __error('测试分组不存在');
+
+        //给商户分配到商户测试分组
+        if($UlevelId != $Uprofile['group_id']){
+            $Uprofile1['group_id'] = $UlevelId;
+            $Uprofile1['id'] = $Uprofile['id'];
+            model('app\common\model\Uprofile')->save($Uprofile1,['id'=>$Uprofile1['id']]);
+        }
+
+        $Channel = \app\common\model\Channel::quickGet($get['id']);
+
+        $p_id = json_decode($Channel['p_id'])[0];
+
+        //更新用户分组分配通道分组
+        $Ulevel['id'] =  $UlevelId;
+        $Ulevel['channel_id'] =  json_encode([
+            $p_id=>[$ChannelGroupId],
+        ]);
+        model('app\common\model\Ulevel')->save($Ulevel,['id'=>$Ulevel['id']]);
+
+        //更新通道分组属于哪个支付产品信息
+        $ChannelGroup['id'] = $ChannelGroupId;
+        $ChannelGroup['p_id'] = $p_id;
+        $ChannelGroup['status'] = 1;
+        model('app\common\model\ChannelGroup')->save($ChannelGroup,['id'=>$ChannelGroup['id']]);
+
+        //删除通道分组和通道关联的数据
+        model('app\common\model\ChannelProduct')->destroy(function($query) use ($ChannelGroupId){
+            $query->where(['group_id'=>$ChannelGroupId]);
+        });
+        $ChannelProduct['p_id'] = $p_id;
+        $ChannelProduct['group_id'] = $ChannelGroupId;
+        $ChannelProduct['channel_id'] = $Channel['id'];
+        model('app\common\model\ChannelProduct')->create($ChannelProduct);
+
+        $token = mt_rand(1000,999999999).$this->user['username'];
+        cache('pay_token'.$token,$token,60*30);//缓存token
+        //支付编码
+        $code = PayProduct::where(['id'=>$p_id])->value('code');
+
+        //生成支付链接
+        $url = $this->request->domain()."/pay.php/test/index.html?code={$code}&amount={$get['money']}&token={$token}";
+
+       return __success($url);
     }
 
 

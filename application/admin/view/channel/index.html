@@ -113,6 +113,9 @@
         {{# if (d.pid == '0') { }}
         <a class="layui-btn layui-btn-normal  layui-btn-xs "  data-check='{:url("$thisClass/top")}?id={{d.id}}&sort=2' data-title="置顶">置顶</a>
         <a class="layui-btn layui-btn-danger  layui-btn-xs " data-check='{:url("$thisClass/top")}?id={{d.id}}&sort=0' data-title="置后">置后</a>
+        {{# } else { }}
+        <a class="layui-btn layui-btn-warm  layui-btn-xs "  onclick="test(this)"   data-url='{:url("$thisClass/test")}?id={{d.id}}'    data-title="测试链接">测试链接</a>
+
         {{# } }}
 
     </script>
@@ -152,6 +155,39 @@
     </script>
     <!--表单操作栏--结束-->
 </form>
+<script type="text/javascript" src="__STATIC__/plugs/jquery/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="__STATIC__/plugs/layui-layer/layer.js"></script>
+<script>
+    function test(obj) {
+        var url = $(obj).attr('data-url');
+         layer.prompt({
+            formType: 1,
+            title: '请输入测试金额，链接有效时间为30分钟！',
+            close: false,
+            btn: ['确定','取消']
+        }, function (value,index1){
+            if($.tool.isEmpty(value)) return false;
+            layer.close(index1);
+            $.request.get(url,{money:value},function (res) {
+                if(res.code == 1){
+                    layer.open({
+                        title: '测试支付链接,有效时间30分钟',
+                        type: 1,
+                        area: '50%',
+                        content: '    <blockquote class="layui-elem-quote"    >' +
+                        res.msg+
+                        '</blockquote>'
+                    });
+
+                }else {
+                    $.msg.error(res.msg);
+                }
+            });
+        });
+    }
+
+</script>
+
 {/block}
 <script>
 //{block name="script"}
