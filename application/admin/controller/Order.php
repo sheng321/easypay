@@ -486,6 +486,8 @@ class Order extends AdminController {
 
             $data['over_at'] = date('Y-m-d H:i:s', time() + $time);
 
+            halt($data);
+
             $redis = (new StringModel())->instance();
             $redis->select(2);
             $redis->set($data['id'], json_encode($data));
