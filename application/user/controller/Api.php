@@ -51,7 +51,7 @@ class Api extends UserController
                $product = \app\common\model\PayProduct::idArr();
                $channel_id = json_decode($Ulevel['channel_id'],true);
                foreach ($channel_id as $k =>$v){
-                   $ChannelGroup =  \app\common\model\ChannelGroup::where(['id','in',$v])->column('id,title,remark','id');//通道分组
+                   $ChannelGroup =  \app\common\model\ChannelGroup::where([['id','in',$v]])->column('id,title,remark','id');//通道分组
                    foreach ($ChannelGroup as $k1 => $v1){
                        $group[$k.'_'.$v1]['PayProduct'] = $product[$k];
                        $group[$k.'_'.$v1]['title'] = $v1['title'];
