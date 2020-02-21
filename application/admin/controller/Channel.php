@@ -586,25 +586,17 @@ class Channel  extends AdminController
 
          //第一步
         $pay_memberid = config('set.memberid');   //商户ID
-        if(empty($pay_memberid)) __error('测试商户号不存在');
+        if(empty($pay_memberid)) return __error('测试商户号不存在');
         $Uprofile =  Uprofile::quickGet(['uid'=>$pay_memberid]);
-        if(empty($Uprofile)) __error('测试商户号不存在');
+        if(empty($Uprofile)) return __error('测试商户号不存在');
 
         $UlevelId = Ulevel::where(['title'=>'商户测试分组','type'=>0,'type1'=>0])->value('id');
-        if(empty($UlevelId)) __error('商户测试分组不存在');
-
-        dump(empty($UlevelId));
-        dump($UlevelId);
-        dump(empty(null));
-
-        dump($UlevelId);
-
+        if(empty($UlevelId)) return  __error('商户测试分组不存在');
 
         //支付通道分组
         $ChannelGroupId =  ChannelGroup::where(['title'=>'测试分组'])->value("id");
-        if(empty($ChannelGroupId)) __error('测试分组不存在');
+        if(empty($ChannelGroupId)) return __error('测试分组不存在');
 
-        halt($Uprofile['id']);
         //给商户分配到商户测试分组
         if($UlevelId != $Uprofile['group_id']){
             $Uprofile1['group_id'] = $UlevelId;
