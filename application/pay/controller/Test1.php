@@ -4,16 +4,13 @@ use app\common\controller\PayController;
 use app\common\service\QrcodesService;
 use think\facade\Cache;
 
-class Test extends PayController
+class Test1 extends PayController
 {
     public function index(){
-      $token = $this->request->get('token','原样返回字段');
-      $has = Cache::has($token);
-      dump($has);
-      halt($token);
-      if(!$has){
-          $this->redirect('http://www.baidu.com');
-      }
+        $ip =  get_client_ip();
+        if(!in_array($ip,['127.0.0.1','113.61.61.77'])){
+            $this->redirect('http://www.baidu.com');
+        }
 
         $pay_memberid = config('set.memberid');   //商户ID
         $Md5key =  config('set.Md5key');   //密钥
@@ -45,7 +42,7 @@ class Test extends PayController
 
         $jsapi["pay_md5sign"] = $sign;
         $jsapi["pay_productname"] = '会员服务'; //商品名称
-        $jsapi["pay_attach"] = $token;
+        $jsapi["pay_attach"] = '原样返回字段';
 
         //基础数据
         $basic_data = [
@@ -55,7 +52,7 @@ class Test extends PayController
             'data' => \app\common\model\PayProduct::codeTitle(),
         ];
 
-        return $this->fetch('', $basic_data);
+        return $this->fetch('test', $basic_data);
     }
 
 }

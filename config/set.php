@@ -13,15 +13,9 @@ return [
     'is_api'=> false,//是否禁止下单
     'noentry'=> '0',//是否禁止入账  1 禁止所有通道入账
 
-    //'memberid'=> '20100002',//测试商户号
+    'memberid'=> '20100002',//测试商户号
 
-    //'Md5key'=> '5aa92e107b75d63b9d94da50de7f3d1300aa2b41',//测试秘钥
-
-
-    'memberid'=> '20100008',//测试商户号
-
-    'Md5key'=> '84f0e083cc91e631cd5712a6cd80323f9a2663bb',//测试秘钥
-
+    'Md5key'=> '5aa92e107b75d63b9d94da50de7f3d1300aa2b41',//测试秘钥
 
     'api'=>'http://120.24.166.163:66/pay.php/api',//支付网关
     'query'=>'http://120.24.166.163:66/pay.php/query',//网关
