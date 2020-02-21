@@ -42,13 +42,11 @@ class Api extends UserController
 
             }
 
-            dump($this->user);
-            dump($this->user['profile']);
-            halt($this->user['profile']['group_id']);
-
             //支付通道分组
             $Ulevel = Ulevel::quickGet($this->user['profile']['group_id']);
             if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户分组不正确');
+
+            halt($Ulevel);
 
 
 
