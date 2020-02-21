@@ -8,7 +8,7 @@ class Test extends PayController
 {
     public function index(){
       $token = $this->request->get('token','原样返回字段');
-      $has = Cache::has($token);
+      $has = Cache::has('pay_token'.$token);
       dump($has);
       halt($token);
       if(!$has){
