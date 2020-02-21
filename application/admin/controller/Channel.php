@@ -593,6 +593,7 @@ class Channel  extends AdminController
         $UlevelId = Ulevel::where(['title'=>'商户测试分组','type'=>0,'type1'=>0])->value('id');
         if(empty($UlevelId)) __error('商户测试分组不存在');
 
+        dump(empty($UlevelId));
         dump($UlevelId);
         dump(empty(null));
 
