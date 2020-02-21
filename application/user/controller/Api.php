@@ -44,12 +44,26 @@ class Api extends UserController
             }
 
 
-
             //支付通道分组
             $Ulevel = Ulevel::quickGet($this->user['profile']['group_id']);
-            if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户分组不正确');
+            $group = [];
+           if(!empty($Ulevel['channel_id'])){
+               //支付产品
+               $product = \app\common\model\PayProduct::idArr();
+               $channel_id = json_decode($Ulevel['channel_id'],true);
+               foreach ($channel_id as $k =>$v){
+                   $ChannelGroup =  \app\common\model\ChannelGroup::where(['id','in',$v])->column('id,title,remark','id');//通道分组
+                   foreach ($ChannelGroup as $k1 => $v1){
+                       $group[$k.'_'.$v1]['PayProduct'] = $product[$k];
+                       $group[$k.'_'.$v1]['title'] = $v1['title'];
+                       $group[$k.'_'.$v1]['remark'] = $v1['remark'];
+                   }
+               }
+           }
 
-            halt($Ulevel);
+           halt($group);
+
+
 
 
 
@@ -60,6 +74,7 @@ class Api extends UserController
             $basic_data = [
                 'title'  => '支付通道费率',
                 'data'   => $data,
+                'group'   => $group,
             ];
 
             return $this->fetch('', $basic_data);
