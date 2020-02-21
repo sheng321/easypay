@@ -43,7 +43,7 @@ class Api extends PayController
 
         //支付产品属性
         $PayProduct = PayProduct::quickGet(['code'=>$param['pay_bankcode']]);
-        if(empty($PayProduct) || $PayProduct['status'] != 1) __jerror('通道不存在，或者已维护');
+        if(empty($PayProduct) || $PayProduct['status'] != 1) __jerror('支付产品不存在，或者已维护');
 
 
         //判断是否国内IP
@@ -68,12 +68,11 @@ class Api extends PayController
         unset($amount);
 
 
-
         //下一步选择通道
 
         //验证用户分组
         $Ulevel = Ulevel::quickGet($Uprofile['group_id']);
-        if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户的用户分组不正确');
+        if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户分组不正确');
 
         //通道分组ID
         $channel_group_idArr = json_decode($Ulevel['channel_id'],true);
