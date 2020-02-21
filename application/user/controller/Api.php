@@ -60,15 +60,6 @@ class Api extends UserController
                }
            }
 
-           halt($group);
-
-
-
-
-
-
-
-
             //基础数据
             $basic_data = [
                 'title'  => '支付通道费率',
