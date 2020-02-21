@@ -43,7 +43,6 @@ class Api extends UserController
 
             }
 
-
             //支付通道分组
             $Ulevel = Ulevel::quickGet($this->user['profile']['group_id']);
             $group = [];
