@@ -28,7 +28,9 @@
 
 
                 <script type="text/html" id="checkSingle">
-                    <input type="checkbox" name="{{d.id}}" value="{{d.is_single}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifySingle" {{ d.is_single== 1 ? 'checked' : '' }}>
+                    {if auth("$thisClass/single")}
+                        <input type="checkbox" name="{{d.id}}" value="{{d.is_single}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="modifySingle" {{ d.is_single== 1 ? 'checked' : '' }}>
+                    {/if}
                 </script>
 
                 <script type="text/html" id="checkStatus">
