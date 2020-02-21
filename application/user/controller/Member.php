@@ -53,6 +53,9 @@ class Member extends UserController {
 
         if (!$this->request->isPost()) {
 
+
+            var_export(model('app\common\model\SysAuth')->getList(1,0));exit();
+
             //基础数据
             $basic_data = [
                 'title' => '添加员工',
