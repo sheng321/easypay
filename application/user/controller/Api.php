@@ -2,6 +2,7 @@
 namespace app\user\controller;
 
 use app\common\controller\UserController;
+use app\common\model\Ulevel;
 
 /**
  * Api 管理
@@ -42,8 +43,10 @@ class Api extends UserController
 
             }
 
+
+
             //支付通道分组
-            $Ulevel = \app\user\controller\Ulevel::quickGet($this->user['profile']['group_id']);
+            $Ulevel = Ulevel::quickGet($this->user['profile']['group_id']);
             if(empty($Ulevel) || $Ulevel['type1'] != 0 )  __jerror('未分配用户分组或商户分组不正确');
 
             halt($Ulevel);
