@@ -22,11 +22,11 @@ class Api extends PayController
     public function index(){
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign"],'post');
 
-        $redis = (new StringModel())->instance();
-        $redis->select(2);
+        $redis1 = (new StringModel())->instance();
+        $redis1->select(2);
 
         $ip = 'IP_'.$param['pay_memberid'].strtr(get_client_ip(), '.', '_');
-        $value = $redis->get($ip);
+        $value = $redis1->get($ip);
         if(!empty($value)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
 
         //商户属性
@@ -126,17 +126,17 @@ class Api extends PayController
             if(!empty($v['concurrent']) &&  is_int($v['concurrent']) && $v['concurrent'] > 0){
                 //存入redis，判断数量
                 $key = date('YmdHi').'to'.$Channel['id'];
-                $num = $redis->get($key);
+                $num = $redis1->get($key);
                 if(empty($num)){
-                    $redis->set($key,0);
-                    $redis->expire($key,61);
+                    $redis1->set($key,0);
+                    $redis1->expire($key,61);
                     $num = 0;
                 }
                 if($v['concurrent'] < $num){
                     unset($ChannelProduct[$k]);
                     continue;
                 }
-                $redis->incr($key);
+                $redis1->incr($key);
             }
 
 
@@ -182,6 +182,9 @@ class Api extends PayController
 
             //6.通道限额
             $check_money = $this->check_money($Channel);
+
+            //todo  通道限额将满通知
+
             if(!$check_money){
                 unset($ChannelProduct[$k]);
                 continue;

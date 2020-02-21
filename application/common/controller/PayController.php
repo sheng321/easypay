@@ -131,8 +131,6 @@ class PayController extends BaseController
         //通道可用余额 小于通道限额
         if($Umoney['balance'] < $Channel_father['limit_money']) return true;
 
-
-
         return false;
     }
 
