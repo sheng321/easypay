@@ -66,6 +66,7 @@
                             <thead>
                             <tr >
                                 <th>通道分组名称</th>
+                                <th>支付产品类型</th>
                                 <th>备注</th>
 
                             </tr>
@@ -74,6 +75,7 @@
 
                             {foreach $data as $vo}
                             <tr>
+                                <td>{$vo.title|default=''}</td>
                                 <td>{$vo.title|default=''}</td>
                                 <td>{$vo.remark|default=''}</td>
                             </tr>
