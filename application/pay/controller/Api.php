@@ -27,9 +27,9 @@ class Api extends PayController
         $redis = (new StringModel())->instance();
         $redis->select(2);
 
-        $keys = $redis->keys('ip_*');
         $ip = 'IP_'.$param['pay_memberid'].strtr(get_client_ip(), '.', '_');
-        if(in_array($ip,$keys)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+        $value = $redis->get($ip);
+        if(empty($value)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
 
 
         //商户属性
