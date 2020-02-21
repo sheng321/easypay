@@ -53,9 +53,9 @@ class Api extends UserController
                foreach ($channel_id as $k =>$v){
                    $ChannelGroup =  \app\common\model\ChannelGroup::where([['id','in',$v]])->column('id,title,remark','id');//通道分组
                    foreach ($ChannelGroup as $k1 => $v1){
-                       $group[$k.'_'.$v1]['PayProduct'] = $product[$k];
-                       $group[$k.'_'.$v1]['title'] = $v1['title'];
-                       $group[$k.'_'.$v1]['remark'] = $v1['remark'];
+                       $group[$k.'_'.$k1]['PayProduct'] = $product[$k];
+                       $group[$k.'_'.$k1]['title'] = $v1['title'];
+                       $group[$k.'_'.$k1]['remark'] = $v1['remark'];
                    }
                }
            }
