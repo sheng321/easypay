@@ -165,6 +165,18 @@ class Agent extends AgentController {
                             $result['data'][$k]['status1'] = $rate['status'];
                           if(empty($rate['status'])) $result['data'][$k]['c_rate'] = '请联系上级设置';
                         }
+
+                        //当为分组客户端隐藏的时候 且后台没有为其设置费率，不显示
+                        if($rate['type'] != 1 && $v['cli'] == 0){
+                            unset($result['data'][$k]);
+                            continue;
+                        }
+                    }else{
+                        //当为分组客户端隐藏的时候 且后台没有为其设置费率，不显示
+                        if( $v['cli'] == 0){
+                            unset($result['data'][$k]);
+                            continue;
+                        }
                     }
                 }
 
@@ -403,6 +415,7 @@ class Agent extends AgentController {
                 $channel =  $this->model->where(['id'=>$id,'uid'=>$this->user['uid']])->value('channel_id');
                 $search['channel'] = json_decode($channel,true);
                 $search['uid'] = $this->user['uid'];
+
                 return json(model('app\common\model\ChannelGroup')->uList($page, $limit, $search));
             }
 

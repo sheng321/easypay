@@ -88,9 +88,9 @@
     <script type="text/html" id="group">
 
         {{# if (d.group_title == '未分组') { }}
-        <a class="layui-btn layui-btn-xs layui-btn-danger "     value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择通道分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger "     value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择通道分组">{{ d.profile.pid != 0 ? d.profile.pid: '平台' }}-{{d.group_title}}</a>
         {{# } else { }}
-        <a class="layui-btn layui-btn-xs" style="background-color: #7EC0EE"    value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择通道分组">{{ d.profile.pid != 0 ? d.profile.pid : '' }}{{d.group_title}}</a>
+        <a class="layui-btn layui-btn-xs" style="background-color: #7EC0EE"    value="{{d.id}}" data-open='{:url("$thisClass/group")}?uid={{d.uid}}' data-title="{{d.uid}}--选择通道分组">{{ d.profile.pid != 0 ? d.profile.pid: '平台' }}-{{d.group_title}}</a>
         {{# } }}
     </script>
 

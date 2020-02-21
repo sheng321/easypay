@@ -118,7 +118,7 @@ class ChannelGroup extends ModelService {
      */
     public function bList($page = 1, $limit = 10, $search = []) {
         $where = [
-            ['cli','=',1]
+          //['cli','=',1]
         ];
 
         //搜索条件
@@ -173,7 +173,7 @@ class ChannelGroup extends ModelService {
             ['status','=',1],
         ];
 
-        $field = ['id','update_at','remark','title','status','sort','verson','p_id'];
+        $field = ['id','update_at','remark','title','status','sort','verson','p_id','cli'];
         $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['p_id'=>'desc','sort'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
@@ -202,15 +202,21 @@ class ChannelGroup extends ModelService {
                 }
             }
 
+
             //已选中的状态
            $data[$k]['LAY_CHECKED'] = false;
             if(isset($channel[$val['p_id']]) &&  in_array($val['id'], $channel[$val['p_id']])){
                if($data[$k]['status'] == 1) $data[$k]['LAY_CHECKED'] = true;//通道开启的时候才为选中状态
+            }else{
+                //当为客户端隐藏的时候 不显示；如果后台设为选中，就显示
+               if( $val['cli'] == 0){
+                   unset($data[$k]);
+                   continue;
+               }
             }
 
             $data[$k]['product'] = $product[$val['p_id']]; //支付产品
             $data[$k]['code'] = $code[$val['p_id']]; //支付产品
-
         }
 
 
