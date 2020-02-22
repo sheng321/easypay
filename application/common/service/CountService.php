@@ -416,6 +416,8 @@ class CountService {
 
                 $data['channel_father'][$v['day']]['info'] = json_encode(!isset($data['channel'][$v['day']][$v['pid']])?'':$data['channel'][$v['day']][$v['pid']]);
 
+                $data['channel_father'][$v['day']]['type'] = 3;
+
 
                 if(!empty($id)){
                     $data['channel_father'][$v['day']]['id'] = $id;
@@ -513,7 +515,6 @@ class CountService {
                 $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库没有记录的数据
             }
         }
-
 
         //插入每日对账表
         if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
