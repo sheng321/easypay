@@ -2,6 +2,7 @@
 namespace app\user\controller;
 
 use app\common\controller\UserController;
+use app\common\model\Accounts;
 
 class Index extends UserController
 {
@@ -20,13 +21,16 @@ class Index extends UserController
      */
     public function welcome() {
 
-        $data =  \app\common\service\CountService::mem_today_account();
-        if(!empty($data['data'][$this->user['uid']])) $data['data'] = $data['data'][$this->user['uid']];
-        if(empty($data['data'][$this->user['uid']]['total_orders'])){
-            $data['data'][$this->user['uid']]['wait'] = 0;
+
+        $find =  Accounts::where(['uid'=>$this->user['uid'],'type'=>0])->order(['day'=>'desc'])->find();
+        if(empty($data)){
+            $data = [];
+            $data['wait'] = 0;
         }else{
-            $data['data'][$this->user['uid']]['wait'] = $data['data'][$this->user['uid']]['total_orders'] - $data['data'][$this->user['uid']]['total_paid'];
+            $data = $find->toArray();
+            $data['wait'] = $data['total_orders'] - $data['total_paid'];
         }
+
 
         //商户公告
         $Message =  model('app\common\model\Message')->where([

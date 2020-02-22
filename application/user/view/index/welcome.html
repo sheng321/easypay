@@ -29,44 +29,44 @@
 
     <div class="layui-col-md12">
         <div class="layui-card">
-            <div class="layui-card-header">统计时间 {$info.time|default=''}</div>
+            <div class="layui-card-header">统计时间 {$info.update_at|default=''}</div>
             <div class="layui-card-body" >
                 <div carousel-item="">
                     <ul class="layui-row layui-col-space10 layui-this">
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
                                 <h3>今日总订单数（单）</h3>
-                                <p><cite>{$info.data.total_orders|default='0'}</cite></p>
+                                <p><cite>{$info.total_orders|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a l class="layadmin-backlog-body">
                                 <h3>今日已付订单数（单）</h3>
-                                <p><cite>{$info.data.total_paid|default='0'}</cite></p>
+                                <p><cite>{$info.total_paid|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
                                 <h3>今日未付订单（单）</h3>
-                                <p><cite>{$info.data.wait|default='0'}</cite></p>
+                                <p><cite>{$info.wait|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
                                 <h3>今日总入金（元）</h3>
-                                <p><cite>{$info.data.total_fee_all|default='0'}</cite></p>
+                                <p><cite>{$info.total_fee_all|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
                                 <h3>今日实付金额（元）</h3>
-                                <p><cite>{$info.data.total_fee_paid|default='0'}</cite></p>
+                                <p><cite>{$info.total_fee_paid|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
                                 <h3>手续费（元）</h3>
-                                <p><cite>{$info.data.total_fee|default='0'}</cite></p>
+                                <p><cite>{$info.total_fee|default='0'}</cite></p>
                             </a>
                         </li>
 

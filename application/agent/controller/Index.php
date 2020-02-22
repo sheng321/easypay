@@ -2,6 +2,7 @@
 namespace app\agent\controller;
 
 use app\common\controller\AgentController;
+use app\common\model\Accounts;
 
 class Index extends AgentController
 {
@@ -19,22 +20,15 @@ class Index extends AgentController
      * @return mixed
      */
     public function welcome() {
-        $data =  \app\common\service\CountService::agent_today_account();
 
-        if(!empty($data['data1'][$this->user['uid']])) $data['data1'] = $data['data1'][$this->user['uid']];
-        if(empty($data['data1'][$this->user['uid']]['total_orders'])){
-            $data['data1'][$this->user['uid']]['wait'] = 0;
+        $find =  Accounts::where(['uid'=>$this->user['uid'],'type'=>1])->order(['day'=>'desc'])->find();
+        if(empty($data)){
+            $data = [];
+            $data['wait'] = 0;
         }else{
-            $data['data1'][$this->user['uid']]['wait'] = $data['data1'][$this->user['uid']]['total_orders'] - $data['data1'][$this->user['uid']]['total_paid'];
+            $data = $find->toArray();
+            $data['wait'] = $data['total_orders'] - $data['total_paid'];
         }
-
-        if(!empty($data['data2'][$this->user['uid']])) $data['data2'] = $data['data2'][$this->user['uid']];
-        if(empty($data['data2'][$this->user['uid']]['total_orders'])){
-            $data['data2'][$this->user['uid']]['wait'] = 0;
-        }else{
-            $data['data2'][$this->user['uid']]['wait'] = $data['data2'][$this->user['uid']]['total_orders'] - $data['data2'][$this->user['uid']]['total_paid'];
-        }
-
 
         //代理公告
         $Message =  model('app\common\model\Message')->where([

@@ -84,6 +84,7 @@ class Accounts  extends AdminController
             $search = (array)$this->request->get('search', []);
             $search['channel_id'] = 0;
             $search['df_id'] = 0;
+            $search['withdraw_id'] = 0;
             return json($this->model->aList($page, $limit, $search));
         }
 
@@ -121,6 +122,11 @@ class Accounts  extends AdminController
      */
     public function channel()
     {
+
+        CountService::channel_account();//通道统计
+
+
+
         //ajax访问
         if ($this->request->get('type') == 'ajax'){
             $page = $this->request->get('page', 1);
@@ -128,6 +134,7 @@ class Accounts  extends AdminController
             $search = (array)$this->request->get('search', []);
             $search['df_id'] = 0;
             $search['uid'] = 0;
+             $search['withdraw_id'] = 0;
             return json($this->model->aList($page, $limit, $search));
         }
 
@@ -146,6 +153,36 @@ class Accounts  extends AdminController
 
         return $this->fetch('', $basic_data);
     }
+
+    /**
+     * 提现结算对账
+     * @return mixed
+     */
+    public function withdraw()
+    {
+
+        CountService::withdraw_account();//提现下发统计
+        //ajax访问
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 15);
+            $search = (array)$this->request->get('search', []);
+            $search['df_id'] = 0;
+            $search['uid'] = 0;
+            $search['channel_id'] = 0;
+            return json($this->model->aList($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '提现结算对账列表',
+            'data'  => '',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+
 
     /**
      * 代付通道对账

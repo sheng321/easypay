@@ -29,80 +29,38 @@
 
     <div class="layui-col-md12">
         <div class="layui-card">
-            <div class="layui-card-header">统计时间 {$info.time|default=''}</div>
+            <div class="layui-card-header">统计时间 {$info.update_at|default=''}</div>
             <div class="layui-card-body" >
                 <div carousel-item="">
                     <ul class="layui-row layui-col-space10 layui-this">
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
-                                <h3>一级商户今日总订单数（单）</h3>
-                                <p><cite>{$info.data1.total_orders|default='0'}</cite></p>
+                                <h3>今日总订单数（单）</h3>
+                                <p><cite>{$info.total_orders|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a l class="layadmin-backlog-body">
-                                <h3>一级商户今日已付订单数（单）</h3>
-                                <p><cite>{$info.data1.total_paid|default='0'}</cite></p>
+                                <h3>今日已付订单数（单）</h3>
+                                <p><cite>{$info.total_paid|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
-                                <h3>一级商户今日未付订单（单）</h3>
-                                <p><cite>{$info.data1.wait|default='0'}</cite></p>
+                                <h3>今日未付订单（单）</h3>
+                                <p><cite>{$info.wait|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
-                                <h3>一级商户今日总入金（元）</h3>
-                                <p><cite>{$info.data1.total_fee_all|default='0'}</cite></p>
+                                <h3>今日实付金额（元）</h3>
+                                <p><cite>{$info.total_fee_paid|default='0'}</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-xs3">
                             <a  class="layadmin-backlog-body">
-                                <h3>一级商户今日实付金额（元）</h3>
-                                <p><cite>{$info.data1.total_fee_paid|default='0'}</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-xs3">
-                            <a  class="layadmin-backlog-body">
-                                <h3>一级商户-盈利（元）</h3>
-                                <p><cite>{$info.data1.agent_amount|default='0'}</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-xs3">
-                            <a  class="layadmin-backlog-body">
-                                <h3>二级商户今日总订单数（单）</h3>
-                                <p><cite>{$info.data2.total_orders|default='0'}</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-xs3">
-                            <a l class="layadmin-backlog-body">
-                                <h3>二级商户今日已付订单数（单）</h3>
-                                <p><cite>{$info.data2.total_paid|default='0'}</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-xs3">
-                            <a  class="layadmin-backlog-body">
-                                <h3>二级商户今日未付订单（单）</h3>
-                                <p><cite>{$info.data2.wait|default='0'}</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-xs3">
-                            <a  class="layadmin-backlog-body">
-                                <h3>二级商户今日总入金（元）</h3>
-                                <p><cite>{$info.data2.total_fee_all|default='0'}</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-xs3">
-                            <a  class="layadmin-backlog-body">
-                                <h3>二级商户今日实付金额（元）</h3>
-                                <p><cite>{$info.data2.total_fee_paid|default='0'}</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-xs3">
-                            <a  class="layadmin-backlog-body">
-                                <h3>二级商户-盈利（元）</h3>
-                                <p><cite>{$info.data2.agent_amount2|default='0'}</cite></p>
+                                <h3>代理收益（元）</h3>
+                                <p><cite>{$info.platform|default='0'}</cite></p>
                             </a>
                         </li>
 
