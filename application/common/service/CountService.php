@@ -504,11 +504,13 @@ class CountService {
 
             $data['channel'][$v['day']][$v['channel_id']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
 
+            $data['channel'][$v['day']][$v['channel_id']]['type'] = 4;
+
             if(!empty($id)){
                 $data['channel'][$v['day']][$v['channel_id']]['id'] = $id;
-                $update[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库更新记录的数据
+                $update[$v['channel_id'].$v['day']][$v['channel_id']] = $data['channel'][$v['day']][$v['channel_id']]; //数据库更新记录的数据
             }else{
-                $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库没有记录的数据
+                $insert[$v['channel_id'].$v['day']][$v['channel_id']] = $data['channel'][$v['day']][$v['channel_id']]; //数据库没有记录的数据
             }
         }
 
