@@ -521,7 +521,6 @@ class CountService {
 
             $data['channel'][$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']])?'':$data['merch'][$v['day']]);
 
-
             if(!empty($id)){
                 $data['channel'][$v['day']]['id'] = $id;
                 $update[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库更新记录的数据
