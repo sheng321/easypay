@@ -173,10 +173,17 @@ class Accounts  extends AdminController
             return json($this->model->aList($page, $limit, $search));
         }
 
+        $Channel =   \app\common\model\Channel::idRate();//通道
+        $Channel_data = [];
+        foreach ($Channel as $k =>$v){
+            if($v['pid'] == 0) $Channel_data[$k] = $v['title'];
+        }
+
         //基础数据
         $basic_data = [
             'title' => '提现结算对账列表',
             'data'  => '',
+            'channel'  => $Channel_data,
         ];
 
         return $this->fetch('', $basic_data);
