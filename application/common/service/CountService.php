@@ -457,21 +457,6 @@ class CountService {
         $select =  Db::query($sql,[$day,$now]);
 
 
-        /*
-         * array(1) {
-  [0] => array(9) {
-    ["total_orders"] => int(1)
-    ["day"] => string(10) "2020-02-22"
-    ["total_fee_all"] => string(7) "100.000"
-    ["total_fee_paid"] => string(5) "0.000"
-    ["total_paid"] => string(1) "0"
-    ["total_fee"] => string(5) "0.000"
-    ["platform"] => string(5) "0.000"
-    ["channel_id"] => int(0)
-    ["mch_id"] => string(8) "20100002"
-  }
-}*/
-
         $Channel =  Channel::idRate();//通道
         foreach ($select as $k => $v) {
             $channel_name = empty($Channel[$v['channel_id']])?'未选择下发通道':$Channel[$v['channel_id']]['title'];
@@ -528,10 +513,6 @@ class CountService {
                 $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库没有记录的数据
             }
         }
-
-        halt($insert);
-
-
 
         //插入每日对账表
         if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
