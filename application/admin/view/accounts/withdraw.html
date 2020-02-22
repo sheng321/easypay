@@ -1,0 +1,121 @@
+{extend name="admin@public/basic" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+<form class="layui-form">
+
+    <!--顶部操作栏--开始-->
+    <blockquote id="searchBlock" class=" quoteBox">
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">商户号</label>
+            <div class="layui-input-inline">
+                <input type="text" id="uid" class="layui-input" placeholder="请输入用商户号"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label-99admin">日期</label>
+            <div class="layui-input-inline">
+                <input type="text" id="day" class="layui-input " placeholder="请选择日期"    >
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
+        </div>
+
+    </blockquote>
+    <!--顶部操作栏--结束-->
+
+    <!--主表单渲染--开始-->
+    <table id="currentTable" lay-filter="currentTable"></table>
+    <!--主表单渲染--结束-->
+
+
+    <script type="text/html" id="info">
+
+        {{# if (d.type == 0) { }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="商户号：{{d.uid}}--日期：{{d.day}}--支付通道分析">支付通道分析</a>
+        {{# } else if(d.type == 1) { }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="代理号：{{d.uid}}--日期：{{d.day}}--支付通道分组分析">支付通道分组分析</a>
+        {{# } }}
+    </script>
+
+
+</form>
+{/block}
+
+{block name="script"}
+
+<script >
+
+    /**
+     * 生成表单
+     */
+    $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {field: 'id', title: 'ID', minWidth: 40, align: "center"},
+        {field: 'day', title: '日期', minWidth: 20, align: "center"},
+        {field: 'uid', title: '商户号', minWidth: 40, align: "center",templet:function (d) {
+            if (d.type == 0) {
+                return '商户 '+ d.uid;
+            } else if (d.type == 1) {
+                return ' <span   class = "text-danger" >代理</span> '+ d.uid;
+            }
+        }},
+        {field: 'total_orders', title: '总订单数', align: 'center', minWidth: 20},
+        {field: 'total_paid', title: '已支付订单数', align: 'center', minWidth: 20},
+        {field: 'total_fee_all', title: '总金额（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee_paid', title: '总支付金额（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee', title: '手续费（元）', align: 'center', minWidth: 20},
+        {field: 'rate', title: '成功率（%）', align: 'center', width: 80,style: ' color: red; '},
+        {field: 'platform', title: '商户-平台收益/代理-代理收益（元）', align: 'center', width: 200,style: ' color: red; '},
+        {field: 'info', title: '详情', align: 'center', minWidth: 20, templet: '#info'},
+    ]], true,function (res,curr,count){
+        merge(res)
+    },25);
+
+    function merge(res) {
+        var data = res.data;
+        var mergeIndex = 0;//定位需要添加合并属性的行数
+        var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+        var columsName = ['day'];//需要合并的列名称
+        var columsIndex = [1];//需要合并的列索引值
+
+        for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+            var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+            for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+                if (data[i][columsName[k]] === data[i-1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                    mark += 1;
+                    //相同列的第一列增加rowspan属性
+                    tdPreArr.each(function () {
+                        $(this).attr("rowspan", mark);
+                    });
+                    //当前行隐藏
+                    tdCurArr.each(function () {
+                        $(this).css("display", "none");
+                    });
+                }else {
+                    mergeIndex = i;
+                    mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                }
+            }
+            mergeIndex = 0;
+            mark = 1;
+        }
+    }
+
+    /**
+     * 日期范围
+     */
+    $.laydate.datetime('day');
+
+</script>
+{/block}
