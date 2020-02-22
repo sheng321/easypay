@@ -14,7 +14,7 @@
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label-99admin">通道名称</label>
             <div class="layui-input-inline">
-                <select id="channel_id"   lay-filter="channel_id"  lay-search=""  >
+                <select id="withdraw_id"   lay-filter="withdraw_id"  lay-search=""  >
                     <option value="">请输入通道通道名称</option>
                     {foreach $channel as $k => $vo}
                     <option value="{$k|default='0'}">{$vo|default=''}</option>
@@ -60,7 +60,7 @@
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'id', title: 'ID', minWidth: 40, align: "center"},
         {field: 'day', title: '日期', minWidth: 20, align: "center"},
-        {field: 'channel_id', title: '通道ID', minWidth: 40, align: "center"},
+        {field: 'withdraw_id', title: '通道ID', minWidth: 40, align: "center"},
         {field: 'title', title: '名称', minWidth: 40, align: "center"},
         {field: 'total_orders', title: '总订单数', align: 'center', minWidth: 20},
         {field: 'total_paid', title: '已支付订单数', align: 'center', minWidth: 20},
