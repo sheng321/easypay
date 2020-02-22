@@ -486,7 +486,7 @@ class CountService {
             $data['channel'][$v['day']]['withdraw_id'] = $v['channel_id'];
             $data['channel'][$v['day']]['day'] = $v['day'];
 
-            $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day']])->cache($v['channel_id'].$v['day'].'_',30)->value('id');
+            $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>4])->cache($v['withdraw_id'].$v['day'].'_',30)->value('id');
 
             $data['channel'][$v['day']]['title'] = $channel_name;
 
