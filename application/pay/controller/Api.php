@@ -230,16 +230,16 @@ class Api extends PayController
             $uid1 = $Uprofile['pid'];
            //上级代理
             $AgentRate1 =  RateService::getAgentRate($Uprofile['pid'],$channel_group_id);
-            //如果商户费率小于或者等于代理费率  不给代理分配费率
-            if(empty($AgentRate1) || ($MemRate <= $AgentRate1)) $AgentRate1 = 0;
+            //如果商户费率小于或者等于代理费率      代理费率小于成本 不给代理分配费率
+            if(empty($AgentRate1) || ($MemRate <= $AgentRate1) || ($AgentRate1 <= $Channel['c_rate'])  ) $AgentRate1 = 0;
 
             //上上级代理
             $Uprofile1 = Uprofile::quickGet(['uid'=>$Uprofile['pid']]);
             if(!empty($Uprofile1) || $Uprofile1['pid'] > 0){
                 $uid2 = $Uprofile1['pid'];
                 $AgentRate2 =  RateService::getAgentRate( $Uprofile1['pid'],$channel_group_id);
-                //二级代理费率费率查询失败 商户费率小于或者等于二级代理费率 一级代理小于或者等于二级代理费率
-                if(empty($AgentRate2) || ($MemRate <= $AgentRate2) ||  ($AgentRate1 <= $AgentRate2) ) $AgentRate2 = 0;
+                //二级代理费率费率查询失败 商户费率小于或者等于二级代理费率 一级代理小于或者等于二级代理费率  代理费率小于成本
+                if(empty($AgentRate2) || ($MemRate <= $AgentRate2) ||  ($AgentRate1 <= $AgentRate2)  || ($AgentRate2 <= $Channel['c_rate']) ) $AgentRate2 = 0;
 
             }
         }

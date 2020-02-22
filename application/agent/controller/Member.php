@@ -43,8 +43,6 @@ class Member extends UserController {
         }
     }
 
-
-
     /**
      * 添加员工
      * @return mixed
