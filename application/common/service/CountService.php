@@ -22,11 +22,16 @@ class CountService {
         Cache::remember('success_rate', function () {
             $data = [];
             $three = timeToDate(0,-3);//三分钟前的时间
-            $ten =  timeToDate(0,-10);//十分钟
+            $ten =  timeToDate(0,-15);//十分钟
 
             //总订单数 total_orders //总订单金额 total_fee_all //已支付金额 total_fee_paid //已支付订单数 total_paid //通道ID //支付类型 // 通道分组
-            $sql = "select count(1) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,channel_id,payment_id,channel_group_id from cm_order where  create_at BETWEEN ? AND ? GROUP BY channel_id  ORDER BY id DESC ";//每个通道的成功率
+            $sql = "select count(1) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,channel_id,payment_id,channel_group_id,create_at from cm_order where  create_at BETWEEN ? AND ? GROUP BY channel_id  ORDER BY id DESC ";//每个通道的成功率
             $data['channel'] =  Db::query($sql, [$ten,$three]);
+
+            dump($three);
+            dump($ten);
+
+            halt( $data['channel']);
 
             $ChannelGroup =  ChannelGroup::idArr();//通道分组
             $Channel =  Channel::idRate();//通道
@@ -84,7 +89,7 @@ class CountService {
             $data['time'] = timeToDate();
 
             return  $data;
-        },180);
+        },1);
 
         return \think\facade\Cache::get('success_rate');
 

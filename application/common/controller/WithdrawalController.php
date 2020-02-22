@@ -52,7 +52,7 @@ class WithdrawalController extends BaseController
             $msg = '获取支付链接失败!';
             if(!empty($error_msg)) $msg = Str::substr($error_msg,0,100) ;
             //下单失败
-            Order::save(['id'=>$orderId,'pay_status'=>1,'remark'=>$msg]);
+            model('app\common\model\Order')->save(['id'=>$orderId,'pay_status'=>1,'remark'=>$msg],['id'=>$orderId]);
             __jerror($msg);
         }
     }
