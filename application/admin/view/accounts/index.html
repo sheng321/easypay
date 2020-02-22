@@ -1,0 +1,148 @@
+{extend name="admin@public/basicMessage" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+<link rel="stylesheet" href="__STATIC__/css/admin/99admin.css" media="all" />
+{/block}
+
+{block name="cotent"}
+
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+
+        <blockquote  class="layui-elem-quote quoteBox">
+            3到15分钟订单成功率，3分钟统计一次
+            <br/>
+            <br/>
+            当前统计时间：{$data.time}
+        </blockquote>
+
+        <ul class="layui-tab-title">
+            <li class="layui-this">支付通道</li>
+            <li>支付产品</li>
+            <li>支付通道分组</li>
+        </ul>
+        <div class="layui-tab-content">
+
+            <div class="layui-tab-item layui-show">
+
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150">
+                        <col width="200">
+                        <col width="150">
+                        <col width="200">
+                        <col width="150">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>支付通道名称</th>
+                        <th>支付产品</th>
+                        <th>总订单</th>
+                        <th>已支付订数</th>
+                        <th>总金额</th>
+                        <th>已支付金额</th>
+                        <th>成功率</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $data['channel'] as $k => $vo}
+                        <tr>
+                            <td>{$vo.channel_name}</td>
+                            <td>{$vo.product_name}</td>
+                            <td>{$vo.total_orders}</td>
+                            <td>{$vo.total_paid}</td>
+                            <td>{$vo.total_fee_all}</td>
+                            <td>{$vo.total_fee_paid}</td>
+                            <th><span style="color: red" >{$vo.rate}</span></th>
+                        </tr>
+                    {/foreach}
+
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="layui-tab-item">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150">
+                        <col width="150">
+                        <col width="200">
+                        <col width="150">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>支付产品</th>
+                        <th>总订单</th>
+                        <th>已支付订数</th>
+                        <th>总金额</th>
+                        <th>已支付金额</th>
+                        <th>成功率</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $data['payment'] as $k => $vo}
+                    <tr>
+                        <td>{$vo.title}</td>
+                        <td>{$vo.total_orders}</td>
+                        <td>{$vo.total_paid}</td>
+                        <td>{$vo.total_fee_all}</td>
+                        <td>{$vo.total_fee_paid}</td>
+                        <th><span style="color: red" >{$vo.rate}</span></th>
+                    </tr>
+                    {/foreach}
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="layui-tab-item">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150">
+                        <col width="150">
+                        <col width="200">
+                        <col width="150">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>支付通道分组</th>
+                        <th>总订单</th>
+                        <th>已支付订数</th>
+                        <th>总金额</th>
+                        <th>已支付金额</th>
+                        <th>成功率</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $data['channel_group'] as $k => $vo}
+                    <tr>
+                        <td>{$vo.title}</td>
+                        <td>{$vo.total_orders}</td>
+                        <td>{$vo.total_paid}</td>
+                        <td>{$vo.total_fee_all}</td>
+                        <td>{$vo.total_fee_paid}</td>
+                        <th><span style="color: red" >{$vo.rate}</span></th>
+                    </tr>
+                    {/foreach}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script>
+
+
+</script>
+
+{/block}

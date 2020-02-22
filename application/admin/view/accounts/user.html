@@ -44,10 +44,6 @@
         {{# } else if(d.type == 1) { }}
         <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="代理号：{{d.uid}}--日期：{{d.day}}--支付通道分组分析">支付通道分组分析</a>
         {{# } }}
-
-
-
-
     </script>
 
 
@@ -72,7 +68,7 @@
             }
         }},
         {field: 'total_orders', title: '总订单数', align: 'center', minWidth: 20},
-        {field: 'total_paid', title: '支付订单数', align: 'center', minWidth: 20},
+        {field: 'total_paid', title: '已支付订单数', align: 'center', minWidth: 20},
         {field: 'total_fee_all', title: '总金额（元）', align: 'center', minWidth: 20},
         {field: 'total_fee_paid', title: '总支付金额（元）', align: 'center', minWidth: 20},
         {field: 'total_fee', title: '手续费（元）', align: 'center', minWidth: 20},
