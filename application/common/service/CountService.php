@@ -426,8 +426,6 @@ class CountService {
 
             }
 
-            halt($insert);
-
             //插入每日对账表
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
@@ -513,6 +511,8 @@ class CountService {
                 $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库没有记录的数据
             }
         }
+
+        halt($insert);
 
 
         //插入每日对账表
