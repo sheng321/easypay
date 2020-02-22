@@ -387,7 +387,7 @@ class CountService {
 
 
                 //单日 通道产品分析
-                $data['channel'][$v['day']][$v['channel_id']] = $v;
+                $data['channel'][$v['day']][$v['pid']][$v['channel_id']] = $v;
 
                //单日 支付通道分析
 
@@ -404,19 +404,17 @@ class CountService {
                 empty( $data['channel_father'][$v['day']]['total_fee']) &&  $data['channel_father'][$v['day']]['total_fee']= 0;
                 empty( $data['channel_father'][$v['day']]['platform']) &&  $data['channel_father'][$v['day']]['platform']= 0;
 
-                $data['channel_father'][$v['day']]['total_orders'] += $v['total_orders'];
-                $data['channel_father'][$v['day']]['total_fee_all'] += $v['total_fee_all'];
-                $data['channel_father'][$v['day']]['total_fee_paid'] += $v['total_fee_paid'];
-                $data['channel_father'][$v['day']]['total_paid'] += $v['total_paid'];
-                $data['channel_father'][$v['day']]['rate'] += $v['rate'];
-                $data['channel_father'][$v['day']]['total_fee'] += $v['total_fee'];
+                $data['channel_father'][$v['day']]['total_orders'] +=  $data['channel'][$v['day']][$v['pid']][$v['channel_id']]['total_orders'];
+                $data['channel_father'][$v['day']]['total_fee_all'] +=  $data['channel'][$v['day']][$v['pid']][$v['channel_id']]['total_fee_all'];
+                $data['channel_father'][$v['day']]['total_fee_paid'] +=  $data['channel'][$v['day']][$v['pid']][$v['channel_id']]['total_fee_paid'];
+                $data['channel_father'][$v['day']]['total_paid'] +=  $data['channel'][$v['day']][$v['pid']][$v['channel_id']]['total_paid'];
+                $data['channel_father'][$v['day']]['rate'] +=  $data['channel'][$v['day']][$v['pid']][$v['channel_id']]['rate'];
+                $data['channel_father'][$v['day']]['total_fee'] +=  $data['channel'][$v['day']][$v['pid']][$v['channel_id']]['total_fee'];
 
-                $data['channel_father'][$v['day']]['platform'] += $v['platform'];
-                $data['channel_father'][$v['day']]['title'] = $v['channel_name'];
+                $data['channel_father'][$v['day']]['platform'] +=  $data['channel'][$v['day']][$v['pid']][$v['channel_id']]['platform'];
+                $data['channel_father'][$v['day']]['title'] =   empty($Channel[$v['pid']])?'未知':$Channel[$v['pid']]['title'];;
 
-                $data['channel_father'][$v['day']]['info'] = json_encode(!isset($data['channel'][$v['day']])?'':$data['channel'][$v['day']]);
-
-
+                $data['channel_father'][$v['day']]['info'] = json_encode(!isset($data['channel'][$v['day']][$v['pid']])?'':$data['channel'][$v['day']][$v['pid']]);
 
 
                 if(!empty($id)){
