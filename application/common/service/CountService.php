@@ -509,7 +509,7 @@ class CountService {
             $data['channel'][$v['day']]['type'] = 4;
 
             if(!empty($id)){
-                $data['channel'][$v['day']][$v['channel_id']]['id'] = $id;
+                $data['channel'][$v['day']]['id'] = $id;
                 $update[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库更新记录的数据
             }else{
                 $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库没有记录的数据
