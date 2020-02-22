@@ -70,9 +70,6 @@ class Member extends UserController {
 
             );
 
-
-
-
             //基础数据
             $basic_data = [
                 'title' => '添加员工',
