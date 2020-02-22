@@ -481,36 +481,36 @@ class CountService {
 
             //下发通道的统计
 
-            $data['channel'][$v['day']][$v['channel_id']]['withdraw_id'] = $v['channel_id'];
-            $data['channel'][$v['day']][$v['channel_id']]['day'] = $v['day'];
+            $data['channel'][$v['day']]['withdraw_id'] = $v['channel_id'];
+            $data['channel'][$v['day']]['day'] = $v['day'];
 
             $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day']])->cache($v['channel_id'].$v['day'].'_',30)->value('id');
 
-            $data['channel'][$v['day']][$v['channel_id']]['title'] = $channel_name;
+            $data['channel'][$v['day']]['title'] = $channel_name;
 
 
-            empty( $data['channel'][$v['day']][$v['channel_id']]['total_orders']) &&  $data['channel'][$v['day']][$v['channel_id']]['total_orders']= 0;
-            empty( $data['channel'][$v['day']][$v['channel_id']]['total_fee_all']) &&  $data['channel'][$v['day']][$v['channel_id']]['total_fee_all']= 0;
-            empty( $data['channel'][$v['day']][$v['channel_id']]['total_fee_paid']) &&  $data['channel'][$v['day']][$v['channel_id']]['total_fee_paid']= 0;
-            empty( $data['channel'][$v['day']][$v['channel_id']]['total_paid']) &&  $data['channel'][$v['day']][$v['channel_id']]['total_paid']= 0;
-            empty( $data['channel'][$v['day']][$v['channel_id']]['total_fee']) &&  $data['channel'][$v['day']][$v['channel_id']]['total_fee']= 0;
-            empty( $data['channel'][$v['day']][$v['channel_id']]['platform']) &&  $data['channel'][$v['day']][$v['channel_id']]['platform']= 0;
+            empty( $data['channel'][$v['day']]['total_orders']) &&  $data['channel'][$v['day']]['total_orders']= 0;
+            empty( $data['channel'][$v['day']]['total_fee_all']) &&  $data['channel'][$v['day']]['total_fee_all']= 0;
+            empty( $data['channel'][$v['day']]['total_fee_paid']) &&  $data['channel'][$v['day']]['total_fee_paid']= 0;
+            empty( $data['channel'][$v['day']]['total_paid']) &&  $data['channel'][$v['day']]['total_paid']= 0;
+            empty( $data['channel'][$v['day']]['total_fee']) &&  $data['channel'][$v['day']]['total_fee']= 0;
+            empty( $data['channel'][$v['day']]['platform']) &&  $data['channel'][$v['day']]['platform']= 0;
 
-            $data['channel'][$v['day']][$v['channel_id']]['total_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'];
-            $data['channel'][$v['day']][$v['channel_id']]['total_fee_all'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all'];
-            $data['channel'][$v['day']][$v['channel_id']]['total_fee_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'];
-            $data['channel'][$v['day']][$v['channel_id']]['total_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'];
-            $data['channel'][$v['day']][$v['channel_id']]['total_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
+            $data['channel'][$v['day']]['total_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'];
+            $data['channel'][$v['day']]['total_fee_all'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all'];
+            $data['channel'][$v['day']]['total_fee_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'];
+            $data['channel'][$v['day']]['total_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'];
+            $data['channel'][$v['day']]['total_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
 
-            $data['channel'][$v['day']][$v['channel_id']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
+            $data['channel'][$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
 
-            $data['channel'][$v['day']][$v['channel_id']]['type'] = 4;
+            $data['channel'][$v['day']]['type'] = 4;
 
             if(!empty($id)){
                 $data['channel'][$v['day']][$v['channel_id']]['id'] = $id;
-                $update[$v['channel_id'].$v['day']][$v['channel_id']] = $data['channel'][$v['day']][$v['channel_id']]; //数据库更新记录的数据
+                $update[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库更新记录的数据
             }else{
-                $insert[$v['channel_id'].$v['day']][$v['channel_id']] = $data['channel'][$v['day']][$v['channel_id']]; //数据库没有记录的数据
+                $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库没有记录的数据
             }
         }
 
