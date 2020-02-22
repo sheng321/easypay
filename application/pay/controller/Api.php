@@ -244,7 +244,6 @@ class Api extends PayController
             }
         }
 
-
         //检测订单好是否重复
         $date = timeToDate(0,0,0,-3); //默认只搜索3天
         $id =  Order::where([
