@@ -85,6 +85,7 @@ class Accounts  extends AdminController
             $search['channel_id'] = 0;
             $search['df_id'] = 0;
             $search['withdraw_id'] = 0;
+            $search['user'] = 1;
             return json($this->model->aList($page, $limit, $search));
         }
 
@@ -124,9 +125,6 @@ class Accounts  extends AdminController
     {
 
         CountService::channel_account();//通道统计
-
-
-
         //ajax访问
         if ($this->request->get('type') == 'ajax'){
             $page = $this->request->get('page', 1);
@@ -135,6 +133,7 @@ class Accounts  extends AdminController
             $search['df_id'] = 0;
             $search['uid'] = 0;
              $search['withdraw_id'] = 0;
+            $search['type'] = 3;
             return json($this->model->aList($page, $limit, $search));
         }
 
@@ -170,6 +169,7 @@ class Accounts  extends AdminController
             $search['df_id'] = 0;
             $search['uid'] = 0;
             $search['channel_id'] = 0;
+            $search['type'] = 4;
             return json($this->model->aList($page, $limit, $search));
         }
 
@@ -202,7 +202,10 @@ class Accounts  extends AdminController
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 15);
             $search = (array)$this->request->get('search', []);
-            $search['type1'] = 3;
+            $search['withdraw_id'] = 0;
+            $search['uid'] = 0;
+            $search['channel_id'] = 0;
+            $search['type'] = 5;
             return json($this->model->aList($page, $limit, $search));
         }
 
@@ -237,7 +240,6 @@ class Accounts  extends AdminController
             $search['type1'] = 2;
             return json($this->model->aList($page, $limit, $search));
         }
-
 
 
 

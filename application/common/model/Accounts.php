@@ -49,6 +49,7 @@ class Accounts extends ModelService {
         $where = [];
 
         if(!empty($search['day'])) $search['day'] = date('Y-m-d',strtotime($search['day']));
+        if(!empty($search['user'])) $where[] = ['type','in',[0,1]];//会员
 
 
         //搜索条件
