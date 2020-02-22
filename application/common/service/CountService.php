@@ -149,7 +149,7 @@ class CountService {
                  $data['account'][$v['mch_id']][$v['day']]['uid'] = $v['mch_id'];
                  $data['account'][$v['mch_id']][$v['day']]['day'] = $v['day'];
 
-                $id =  $Accounts->where(['uid'=>$v['mch_id'],'day'=>$v['day']])->cache($v['mch_id'].$v['day'],30)->value('id');
+                $id =  $Accounts->where(['uid'=>$v['mch_id'],'day'=>$v['day'],'type'=>0])->cache($v['mch_id'].$v['day'],30)->value('id');
 
 
                 empty( $data['account'][$v['mch_id']][$v['day']]['total_orders']) &&  $data['account'][$v['mch_id']][$v['day']]['total_orders']= 0;
@@ -227,7 +227,7 @@ class CountService {
                     $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['uid'] = $v['mch_id1'];
                     $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['day'] = $v['day'];
 
-                    $id1 =  $Accounts->where(['uid'=>$v['mch_id1'],'day'=>$v['day']])->cache($v['mch_id1'].$v['day'],30)->value('id');
+                    $id1 =  $Accounts->where(['uid'=>$v['mch_id1'],'day'=>$v['day'],'type'=>1])->cache($v['mch_id1'].$v['day'],30)->value('id');
 
                     $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['channelgroup_name'] = $v['channelgroup_name'];
                     $data['channelgroup'][$v['day']][$v['mch_id1']][$v['channel_group_id']]['product_name'] = $v['product_name'];
@@ -287,7 +287,7 @@ class CountService {
                     $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['uid'] = $v['mch_id2'];
                     $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['day'] = $v['day'];
 
-                    $id2 =  $Accounts->where(['uid'=>$v['mch_id2'],'day'=>$v['day']])->cache($v['mch_id2'].$v['day'],30)->value('id');//是否存在
+                    $id2 =  $Accounts->where(['uid'=>$v['mch_id2'],'day'=>$v['day'],'type'=>1])->cache($v['mch_id2'].$v['day'],30)->value('id');//是否存在
 
                     $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['channelgroup_name'] = $v['channelgroup_name'];
                     $data['channelgroup'][$v['day']][$v['mch_id2']][$v['channel_group_id']]['product_name'] = $v['product_name'];
@@ -394,7 +394,7 @@ class CountService {
                 $data['channel_father'][$v['day']]['channel_id'] = $v['pid'];
                 $data['channel_father'][$v['day']]['day'] = $v['day'];
 
-                $id =  $Accounts->where(['channel_id'=>$v['pid'],'day'=>$v['day']])->cache($v['channel_id'].$v['day'],30)->value('id');
+                $id =  $Accounts->where(['channel_id'=>$v['pid'],'day'=>$v['day'],'type'=>3])->cache($v['channel_id'].$v['day'],30)->value('id');
 
                 empty( $data['channel_father'][$v['day']]['total_orders']) &&  $data['channel_father'][$v['day']]['total_orders']= 0;
                 empty( $data['channel_father'][$v['day']]['total_fee_all']) &&  $data['channel_father'][$v['day']]['total_fee_all']= 0;
