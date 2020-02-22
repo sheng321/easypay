@@ -12,9 +12,14 @@
     <blockquote id="searchBlock" class=" quoteBox">
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">商户号</label>
+            <label class="layui-form-label-99admin">通道名称</label>
             <div class="layui-input-inline">
-                <input type="text" id="uid" class="layui-input" placeholder="请输入用商户号"/>
+                <select id="channel_id"   lay-filter="channel_id"  lay-search=""  >
+                    <option value="">请输入通道通道名称</option>
+                    {foreach $channel as $k => $vo}
+                    <option value="{$k|default='0'}">{$vo|default=''}</option>
+                    {/foreach}
+                </select>
             </div>
         </div>
 
@@ -36,19 +41,14 @@
     <table id="currentTable" lay-filter="currentTable"></table>
     <!--主表单渲染--结束-->
 
-
     <script type="text/html" id="info">
-
-        {{# if (d.type == 0) { }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="商户号：{{d.uid}}--日期：{{d.day}}--支付通道分析">支付通道分析</a>
-        {{# } else if(d.type == 1) { }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="代理号：{{d.uid}}--日期：{{d.day}}--支付通道分组分析">支付通道分组分析</a>
-        {{# } }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="通道名称：{{d.title}}--日期：{{d.day}}--下发分析">下发分析</a>
     </script>
 
 
 </form>
 {/block}
+
 
 {block name="script"}
 
@@ -60,20 +60,16 @@
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'id', title: 'ID', minWidth: 40, align: "center"},
         {field: 'day', title: '日期', minWidth: 20, align: "center"},
-        {field: 'uid', title: '商户号', minWidth: 40, align: "center",templet:function (d) {
-            if (d.type == 0) {
-                return '商户 '+ d.uid;
-            } else if (d.type == 1) {
-                return ' <span   class = "text-danger" >代理</span> '+ d.uid;
-            }
-        }},
+        {field: 'channel_id', title: '通道ID', minWidth: 40, align: "center"},
+        {field: 'title', title: '名称', minWidth: 40, align: "center"},
         {field: 'total_orders', title: '总订单数', align: 'center', minWidth: 20},
         {field: 'total_paid', title: '已支付订单数', align: 'center', minWidth: 20},
         {field: 'total_fee_all', title: '总金额（元）', align: 'center', minWidth: 20},
-        {field: 'total_fee_paid', title: '总支付金额（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee_paid', title: '总实支付金额（元）', align: 'center', minWidth: 20},
         {field: 'total_fee', title: '手续费（元）', align: 'center', minWidth: 20},
         {field: 'rate', title: '成功率（%）', align: 'center', width: 80,style: ' color: red; '},
-        {field: 'platform', title: '商户-平台收益/代理-代理收益（元）', align: 'center', width: 200,style: ' color: red; '},
+
+        {field: 'platform', title: '平台收益（元）', align: 'center', width: 100,style: ' color: red; '},
         {field: 'info', title: '详情', align: 'center', minWidth: 20, templet: '#info'},
     ]], true,function (res,curr,count){
         merge(res)
