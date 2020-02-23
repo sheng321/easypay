@@ -326,7 +326,7 @@ class Api extends PayController
 
 
          setcookie('666666777',222222);
-        cookie('666666777',1,[ 'samesite' => "None"]);
+        cookie('6666667778',333,[ 'samesite' => "None"]);
 
 
         //提交上游
