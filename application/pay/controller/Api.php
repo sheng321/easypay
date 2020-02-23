@@ -23,8 +23,9 @@ class Api extends PayController
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign"],'post');
 
 
-        setcookie('666666777',222222);
-        cookie('6666667778',333,[ 'samesite' => "None"]);
+        halt(cookie('6666667778'));
+
+        cookie('6666667778',444,[ 'samesite' => "None"]);
 
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
