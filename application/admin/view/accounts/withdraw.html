@@ -42,7 +42,7 @@
     <!--主表单渲染--结束-->
 
     <script type="text/html" id="info">
-        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info")}?id={{d.id}}' data-title="通道名称：{{d.title}}--日期：{{d.day}}--下发分析">下发分析</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info1")}?id={{d.id}}' data-title="通道名称：{{d.title}}--日期：{{d.day}}--下发通道分析">下发通道分析</a>
     </script>
 
 
@@ -60,14 +60,14 @@
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'id', title: 'ID', minWidth: 40, align: "center"},
         {field: 'day', title: '日期', minWidth: 20, align: "center"},
-        {field: 'withdraw_id', title: '通道ID', minWidth: 40, align: "center"},
-        {field: 'title', title: '名称', minWidth: 40, align: "center"},
-        {field: 'total_orders', title: '总单数', align: 'center', minWidth: 20},
-        {field: 'total_paid', title: '已下发单数', align: 'center', minWidth: 20},
+        {field: 'withdraw_id', title: '通道ID', width: 50, align: "center"},
+        {field: 'title', title: '下发通道', minWidth: 40, align: "center"},
+        {field: 'total_orders', title: '总单数', align: 'center', width: 50},
+        {field: 'total_paid', title: '已下发单数', align: 'center', width: 80},
         {field: 'do_orders', title: '处理中单数', align: 'center', width: 80,style: ' color: red; '},
         {field: 'total_fee_all', title: '总申请金额（元）', align: 'center', minWidth: 20},
-        {field: 'total_fee_paid', title: '申请下发通道（元）', align: 'center', minWidth: 20},
-        {field: 'total_fee', title: '实际到账（元）', align: 'center', minWidth: 20},
+        {field: 'total_fee_paid', title: '申请下发通道（元）', align: 'center', width: 110},
+        {field: 'total_fee', title: '手续费（元）', align: 'center', minWidth: 20},
         {field: 'do_fee', title: '冻结（元）', align: 'center', minWidth: 20},
         {field: 'platform', title: '平台收益（元）', align: 'center', width: 100,style: ' color: red; '},
         {field: 'info', title: '详情', align: 'center', minWidth: 20, templet: '#info'},

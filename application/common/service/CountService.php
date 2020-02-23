@@ -488,7 +488,7 @@ class CountService {
 
             //下发通道的统计
 
-            $data['channel'][$v['day']]['withdraw_id'] = $v['channel_id'];
+            $data['channel'][$v['day']] = $v['channel_id'];
             $data['channel'][$v['day']]['day'] = $v['day'];
 
             $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>4])->cache($v['channel_id'].$v['day'].'_',30)->value('id');
