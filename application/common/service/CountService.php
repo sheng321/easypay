@@ -676,144 +676,143 @@ class CountService {
     public static function sys_account()
     {
 
-        $channel_data = [];
-        $insert = [];
-        $update = [];
-        $Accounts = model('app\common\model\Accounts');
+        Cache::remember('sys_account', function () {
+            $channel_data = [];
+            $insert = [];
+            $update = [];
+            $Accounts = model('app\common\model\Accounts');
 
-        //支付通道
-        $channel = $Accounts->where([['channel_id', '>', 0], ['type', '=', 3]])->order(['day desc'])->select()->toArray();
-        foreach ($channel as $k => $val) {
+            //支付通道
+            $channel = $Accounts->where([['channel_id', '>', 0], ['type', '=', 3]])->order(['day desc'])->select()->toArray();
+            foreach ($channel as $k => $val) {
 
-            $channel_data[$val['day']]['day'] = $val['day'];
-            $channel_data[$val['day']]['type'] = 6;
+                $channel_data[$val['day']]['day'] = $val['day'];
+                $channel_data[$val['day']]['type'] = 6;
 
-            $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->cache($val['day'] . 'totle', 3)->field('id,info')->find();
+                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->cache($val['day'] . 'totle', 3)->field('id,info')->find();
 
-            empty($channel_data[$val['day']]['total_orders']) && $channel_data[$val['day']]['total_orders'] = 0;
-            empty($channel_data[$val['day']]['total_fee_all']) && $channel_data[$val['day']]['total_fee_all'] = 0;
-            empty($channel_data[$val['day']]['total_fee_paid']) && $channel_data[$val['day']]['total_fee_paid'] = 0;
-            empty($channel_data[$val['day']]['total_paid']) && $channel_data[$val['day']]['total_paid'] = 0;
-            empty($channel_data[$val['day']]['total_fee']) && $channel_data[$val['day']]['total_fee'] = 0;
-            empty($channel_data[$val['day']]['platform']) && $channel_data[$val['day']]['platform'] = 0;
+                empty($channel_data[$val['day']]['total_orders']) && $channel_data[$val['day']]['total_orders'] = 0;
+                empty($channel_data[$val['day']]['total_fee_all']) && $channel_data[$val['day']]['total_fee_all'] = 0;
+                empty($channel_data[$val['day']]['total_fee_paid']) && $channel_data[$val['day']]['total_fee_paid'] = 0;
+                empty($channel_data[$val['day']]['total_paid']) && $channel_data[$val['day']]['total_paid'] = 0;
+                empty($channel_data[$val['day']]['total_fee']) && $channel_data[$val['day']]['total_fee'] = 0;
+                empty($channel_data[$val['day']]['platform']) && $channel_data[$val['day']]['platform'] = 0;
 
-            $channel_data[$val['day']]['total_orders'] += $val['total_orders'];
-            $channel_data[$val['day']]['total_fee_all'] += $val['total_fee_all'];
-            $channel_data[$val['day']]['total_fee_paid'] += $val['total_fee_paid'];
-            $channel_data[$val['day']]['total_paid'] += $val['total_paid'];
-            $channel_data[$val['day']]['total_fee'] += $val['total_fee'];
-            $channel_data[$val['day']]['platform'] += $val['platform'];
-            $channel_data[$val['day']]['rate'] = round($channel_data[$val['day']]['total_paid'] / $channel_data[$val['day']]['total_orders'], 3) * 100;
+                $channel_data[$val['day']]['total_orders'] += $val['total_orders'];
+                $channel_data[$val['day']]['total_fee_all'] += $val['total_fee_all'];
+                $channel_data[$val['day']]['total_fee_paid'] += $val['total_fee_paid'];
+                $channel_data[$val['day']]['total_paid'] += $val['total_paid'];
+                $channel_data[$val['day']]['total_fee'] += $val['total_fee'];
+                $channel_data[$val['day']]['platform'] += $val['platform'];
+                $channel_data[$val['day']]['rate'] = round($channel_data[$val['day']]['total_paid'] / $channel_data[$val['day']]['total_orders'], 3) * 100;
 
-            if (!empty($temp)) {
-                $info = json_decode($temp['info'], true);
-                $info['channel'] = $channel_data[$val['day']];
-                $update[$val['day']]['info'] = json_encode($info); //数据库更新记录的数据
-                $update[$val['day']]['id'] = $temp['id'];
-                $update[$val['day']]['day'] = $val['day'];
-                $update[$val['day']]['type'] = 6;
-            } else {
-                $insert[$val['day']]['info'] = json_encode(['channel' => $channel_data[$val['day']]]); //数据库没有记录的数据
-                $insert[$val['day']]['day'] = $val['day'];
-                $insert[$val['day']]['type'] = 6;
+                if (!empty($temp)) {
+                    $info = json_decode($temp['info'], true);
+                    $info['channel'] = $channel_data[$val['day']];
+                    $update[$val['day']]['info'] = json_encode($info); //数据库更新记录的数据
+                    $update[$val['day']]['id'] = $temp['id'];
+                    $update[$val['day']]['day'] = $val['day'];
+                    $update[$val['day']]['type'] = 6;
+                } else {
+                    $insert[$val['day']]['info'] = json_encode(['channel' => $channel_data[$val['day']]]); //数据库没有记录的数据
+                    $insert[$val['day']]['day'] = $val['day'];
+                    $insert[$val['day']]['type'] = 6;
+                }
             }
-        }
 
-
-        //插入每日对账表
-        if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
-        if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
-
-
-        $withdraw_data = [];
-        $insert = [];
-        $update = [];
-        //下发通道
-        $withdraw = $Accounts->where([['type', 'in', [4, 5]]])->order(['day desc'])->select()->toArray();
-        foreach ($withdraw as $k => $val) {
-
-            $withdraw_data[$val['day']]['day'] = $val['day'];
-            $withdraw_data[$val['day']]['type'] = 6;
-
-            $temp = $Accounts->where([['withdraw_id', '=', $val['withdraw_id']], ['df_id', '=', $val['df_id']], ['day', '=', $val['day']], ['type', '=', $val['type']]])->cache($val['day'] . 'totle_withdraw', 3)->field('id,info')->find();
-
-            empty($withdraw_data[$val['day']]['total_orders']) && $withdraw_data[$val['day']]['total_orders'] = 0;
-            empty($withdraw_data[$val['day']]['total_fee_all']) && $withdraw_data[$val['day']]['total_fee_all'] = 0;
-            empty($withdraw_data[$val['day']]['total_fee_paid']) && $withdraw_data[$val['day']]['total_fee_paid'] = 0;
-            empty($withdraw_data[$val['day']]['total_paid']) && $withdraw_data[$val['day']]['total_paid'] = 0;
-            empty($withdraw_data[$val['day']]['total_fee']) && $withdraw_data[$val['day']]['total_fee'] = 0;
-            empty($withdraw_data[$val['day']]['platform']) && $withdraw_data[$val['day']]['platform'] = 0;
-
-            empty($withdraw_data[$val['day']]['do_orders']) && $withdraw_data[$val['day']]['do_orders'] = 0;
-            empty($withdraw_data[$val['day']]['do_fee']) && $withdraw_data[$val['day']]['do_fee'] = 0;
-
-            $withdraw_data[$val['day']]['total_orders'] += $val['total_orders'];
-            $withdraw_data[$val['day']]['total_fee_all'] += $val['total_fee_all'];
-            $withdraw_data[$val['day']]['total_fee_paid'] += $val['total_fee_paid'];
-            $withdraw_data[$val['day']]['total_paid'] += $val['total_paid'];
-            $withdraw_data[$val['day']]['total_fee'] += $val['total_fee'];
-            $withdraw_data[$val['day']]['platform'] += $val['platform'];
-
-            $withdraw_data[$val['day']]['do_orders'] += $val['do_orders'];
-            $withdraw_data[$val['day']]['do_fee'] += $val['do_fee'];
-
-
-            if (!empty($temp)) {
-                $info = json_decode($temp['info'], true);
-                $info['withdraw'] = $withdraw_data[$val['day']];
-                $update[$val['day']]['info'] = json_encode($info); //数据库更新记录的数据
-                $update[$val['day']]['id'] = $temp['id'];
-                $update[$val['day']]['day'] = $val['day'];
-                $update[$val['day']]['type'] = 6;
-            } else {
-                $insert[$val['day']]['info'] = json_encode(['withdraw' => $withdraw_data[$val['day']]]); //数据库没有记录的数据
-                $insert[$val['day']]['day'] = $val['day'];
-                $insert[$val['day']]['type'] = 6;
-            }
-        }
-
-        //插入每日对账表
-        if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
-        if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
-
-        //支出/收入
-        $money_data = [];
-        $insert = [];
-        $update = [];
-        //    3 => '手动增加', 4 => '手动减少',
-        $money = \app\common\model\UmoneyLog::where([['type1','=',2],['type','in',[3,4]]])->field(['create_at','type','change'])->select();
-        foreach ($money as $k => $val) {
-            $val['day'] = date('Y-m-d',strtotime($val['create_at']));
-
-            $temp = $Accounts->where([ ['day', '=', $val['day']], ['type', '=',6]])->cache($val['day'] . 'totle_money', 3)->field('id,info')->find();
-
-            empty($money_data[$val['day']]['dec']) && $money_data[$val['day']]['dec'] = 0;
-            empty($money_data[$val['day']]['inc']) && $money_data[$val['day']]['inc'] = 0;
-            if($val['type'] == 4)  $money_data[$val['day']]['dec'] += $val['change'];
-            if($val['type'] == 3) $money_data[$val['day']]['inc'] += $val['change'];
-
-
-            if (!empty($temp)) {
-                $info = json_decode($temp['info'], true);
-                $info['money'] = $money_data[$val['day']];
-                $update[$val['day']]['info'] = json_encode($info); //数据库更新记录的数据
-                $update[$val['day']]['id'] = $temp['id'];
-                $update[$val['day']]['day'] = $val['day'];
-                $update[$val['day']]['type'] = 6;
-            } else {
-                $insert[$val['day']]['info'] = json_encode(['money' => $money_data[$val['day']]]); //数据库没有记录的数据
-                $insert[$val['day']]['day'] = $val['day'];
-                $insert[$val['day']]['type'] = 6;
-            }
 
             //插入每日对账表
             if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
 
-        }
+            $withdraw_data = [];
+            $insert = [];
+            $update = [];
+            //下发通道
+            $withdraw = $Accounts->where([['type', 'in', [4, 5]]])->order(['day desc'])->select()->toArray();
+            foreach ($withdraw as $k => $val) {
+
+                $withdraw_data[$val['day']]['day'] = $val['day'];
+                $withdraw_data[$val['day']]['type'] = 6;
+
+                $temp = $Accounts->where([['withdraw_id', '=', $val['withdraw_id']], ['df_id', '=', $val['df_id']], ['day', '=', $val['day']], ['type', '=', $val['type']]])->cache($val['day'] . 'totle_withdraw', 3)->field('id,info')->find();
+
+                empty($withdraw_data[$val['day']]['total_orders']) && $withdraw_data[$val['day']]['total_orders'] = 0;
+                empty($withdraw_data[$val['day']]['total_fee_all']) && $withdraw_data[$val['day']]['total_fee_all'] = 0;
+                empty($withdraw_data[$val['day']]['total_fee_paid']) && $withdraw_data[$val['day']]['total_fee_paid'] = 0;
+                empty($withdraw_data[$val['day']]['total_paid']) && $withdraw_data[$val['day']]['total_paid'] = 0;
+                empty($withdraw_data[$val['day']]['total_fee']) && $withdraw_data[$val['day']]['total_fee'] = 0;
+                empty($withdraw_data[$val['day']]['platform']) && $withdraw_data[$val['day']]['platform'] = 0;
+
+                empty($withdraw_data[$val['day']]['do_orders']) && $withdraw_data[$val['day']]['do_orders'] = 0;
+                empty($withdraw_data[$val['day']]['do_fee']) && $withdraw_data[$val['day']]['do_fee'] = 0;
+
+                $withdraw_data[$val['day']]['total_orders'] += $val['total_orders'];
+                $withdraw_data[$val['day']]['total_fee_all'] += $val['total_fee_all'];
+                $withdraw_data[$val['day']]['total_fee_paid'] += $val['total_fee_paid'];
+                $withdraw_data[$val['day']]['total_paid'] += $val['total_paid'];
+                $withdraw_data[$val['day']]['total_fee'] += $val['total_fee'];
+                $withdraw_data[$val['day']]['platform'] += $val['platform'];
+
+                $withdraw_data[$val['day']]['do_orders'] += $val['do_orders'];
+                $withdraw_data[$val['day']]['do_fee'] += $val['do_fee'];
 
 
+                if (!empty($temp)) {
+                    $info = json_decode($temp['info'], true);
+                    $info['withdraw'] = $withdraw_data[$val['day']];
+                    $update[$val['day']]['info'] = json_encode($info); //数据库更新记录的数据
+                    $update[$val['day']]['id'] = $temp['id'];
+                    $update[$val['day']]['day'] = $val['day'];
+                    $update[$val['day']]['type'] = 6;
+                } else {
+                    $insert[$val['day']]['info'] = json_encode(['withdraw' => $withdraw_data[$val['day']]]); //数据库没有记录的数据
+                    $insert[$val['day']]['day'] = $val['day'];
+                    $insert[$val['day']]['type'] = 6;
+                }
+            }
+
+            //插入每日对账表
+            if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
+            if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
+
+            //支出/收入
+            $money_data = [];
+            $insert = [];
+            $update = [];
+            //    3 => '手动增加', 4 => '手动减少',
+            $money = \app\common\model\UmoneyLog::where([['type1','=',2],['type','in',[3,4]]])->field(['create_at','type','change'])->select();
+            foreach ($money as $k => $val) {
+                $val['day'] = date('Y-m-d',strtotime($val['create_at']));
+
+                $temp = $Accounts->where([ ['day', '=', $val['day']], ['type', '=',6]])->cache($val['day'] . 'totle_money', 3)->field('id,info')->find();
+
+                empty($money_data[$val['day']]['dec']) && $money_data[$val['day']]['dec'] = 0;
+                empty($money_data[$val['day']]['inc']) && $money_data[$val['day']]['inc'] = 0;
+                if($val['type'] == 4)  $money_data[$val['day']]['dec'] += $val['change'];
+                if($val['type'] == 3) $money_data[$val['day']]['inc'] += $val['change'];
+
+
+                if (!empty($temp)) {
+                    $info = json_decode($temp['info'], true);
+                    $info['money'] = $money_data[$val['day']];
+                    $update[$val['day']]['info'] = json_encode($info); //数据库更新记录的数据
+                    $update[$val['day']]['id'] = $temp['id'];
+                    $update[$val['day']]['day'] = $val['day'];
+                    $update[$val['day']]['type'] = 6;
+                } else {
+                    $insert[$val['day']]['info'] = json_encode(['money' => $money_data[$val['day']]]); //数据库没有记录的数据
+                    $insert[$val['day']]['day'] = $val['day'];
+                    $insert[$val['day']]['type'] = 6;
+                }
+
+                //插入每日对账表
+                if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
+                if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
+            }
+
+        },600);
 
 
         return true;
