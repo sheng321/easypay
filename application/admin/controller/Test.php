@@ -15,9 +15,9 @@ class Test  extends Controller
     public function index()
     {
 
-       cookie('555555555555555555555555555',1);
+       cookie('666666',1,[ 'samesite' => "None"]);
 
-       halt( cookie('555555555555555555555555555'));
+       halt( cookie('666666'));
 
       //  addTask(11,22,5);
 
