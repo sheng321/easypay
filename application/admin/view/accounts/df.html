@@ -12,10 +12,10 @@
     <blockquote id="searchBlock" class=" quoteBox">
 
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">通道名称</label>
+            <label class="layui-form-label-99admin">代付通道名称</label>
             <div class="layui-input-inline">
-                <select id="withdraw_id"   lay-filter="withdraw_id"  lay-search=""  >
-                    <option value="">请输入通道通道名称</option>
+                <select id="df_id"   lay-filter="df_id"  lay-search=""  >
+                    <option value="">请输入代付通道名称</option>
                     {foreach $channel as $k => $vo}
                     <option value="{$k|default='0'}">{$vo|default=''}</option>
                     {/foreach}
@@ -42,7 +42,7 @@
     <!--主表单渲染--结束-->
 
     <script type="text/html" id="info">
-        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info1")}?id={{d.id}}' data-title="通道名称：{{d.title}}--日期：{{d.day}}--下发通道分析">下发通道分析</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal "    value="{{d.id}}" data-open='{:url("$thisClass/info1")}?id={{d.id}}' data-title="通道名称：{{d.title}}--日期：{{d.day}}--代付通道分析">代付通道分析</a>
     </script>
 
 

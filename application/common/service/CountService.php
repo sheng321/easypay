@@ -559,7 +559,7 @@ class CountService {
 
         $Channel =  Channel::idRate();//通道
         foreach ($select as $k => $v) {
-            $channel_name = empty($Channel[$v['channel_id']])?'未选择下发通道':$Channel[$v['channel_id']]['title'];
+            $channel_name = empty($Channel[$v['channel_id']])?'未选择代付通道':$Channel[$v['channel_id']]['title'];
             $v['platform'] = $v['total_fee'] - $v['channel_fee'];
 
             //商户的下发统计

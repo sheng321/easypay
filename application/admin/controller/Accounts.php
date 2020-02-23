@@ -230,10 +230,10 @@ class Accounts  extends AdminController
         }
 
 
-        $Channel =   \app\common\model\Channel::idRate();//通道
+        $Channel =   \app\common\model\ChannelDf::info();//通道
         $Channel_data = [];
         foreach ($Channel as $k =>$v){
-            if($v['pid'] == 0) $Channel_data[$k] = $v['title'];
+             $Channel_data[$k] = $v['title'];
         }
 
         //基础数据
