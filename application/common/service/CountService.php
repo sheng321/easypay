@@ -463,7 +463,7 @@ class CountService {
             $v['platform'] = $v['total_fee'] - $v['channel_fee'];
 
             //商户的下发统计
-            $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']][$v['channel_id']]['mch_id'] = $v['mch_id'];
+            $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['mch_id'] = $v['mch_id'];
             $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['day'] = $v['day'];
 
 
@@ -488,7 +488,7 @@ class CountService {
 
             //下发通道的统计
 
-            $data['channel'][$v['day']] = $v['channel_id'];
+            $data['channel'][$v['day']]['withdraw_id'] = $v['channel_id'];
             $data['channel'][$v['day']]['day'] = $v['day'];
 
             $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>4])->cache($v['channel_id'].$v['day'].'_',30)->value('id');
@@ -514,7 +514,7 @@ class CountService {
             $data['channel'][$v['day']]['do_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'];
             $data['channel'][$v['day']]['do_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'];
 
-            $data['channel'][$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
+            $data['channel'][$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']])?'':$data['merch'][$v['day']]);
 
             $data['channel'][$v['day']]['type'] = 4;
 
