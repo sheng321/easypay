@@ -61,8 +61,8 @@ class Test extends PayController
             $this->redirect('http://www.baidu.com');
         }
 
-        $pay_memberid = config('set.memberid');   //商户ID
-        $Md5key =  config('set.Md5key');   //密钥
+        $pay_memberid = '20100005';   //商户ID
+        $Md5key =  'f3625fe82f1ca0f2b20c228457a1cdf2fd96faf0';   //密钥
 
         $pay_orderid = getOrder('c');    //测试订单号
         $pay_amount = $this->request->get('amount',100.00);    //交易金额
