@@ -24,13 +24,16 @@ class Api extends PayController
 
         //通过cookie判断是否刷单
         $cookieName = md5($param['pay_memberid']);
-        $orderId = json_decode(cookie($cookieName),true);//15分钟
+        $orderId = json_decode(addslashes(cookie($cookieName)),true);//15分钟
         if(!empty($orderId) && is_array($orderId)){
             $num1 = count($orderId);
             if($num1 > 10){
-                $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);
+                $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
                 if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+                $orderId = [];//有支付的情况
             }
+        }else{
+            $orderId = [];
         }
 
 
@@ -343,7 +346,8 @@ class Api extends PayController
         $html  = $Payment->pay($create);
 
         //到这里表示请求下单成功，给给客户端一个标识，处理刷单的情况
-        cookie($cookieName,444,[ 'samesite' => "None",'expire'=>15*60]);//15分钟
+        $orderId[] = $create['id'];
+        cookie($cookieName,json_encode($orderId),[ 'samesite' => "None",'expire'=>15*60]);//15分钟
         return $html;
     }
 
