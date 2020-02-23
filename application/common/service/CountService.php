@@ -439,12 +439,112 @@ class CountService {
 
     //提现结算每日对账
     public static function withdraw_account(){
+        Cache::remember('withdraw_account', function () {
+            $data = [];
+            $insert = [];
+            $update = [];
+            $Accounts = model('app\common\model\Accounts');
+
+            $day = $Accounts->where([['withdraw_id','>',0]])->order(['day desc'])->cache('account_withdraw_id',3)->value('day');
+            $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
+            if(empty($day)){
+                $day = '2019-01-01 00:00:00';
+            }else{
+                $day = $day.' 00:00:00';//需要统计的起始时间
+            }
+
+            //商户每天的 通道支付订单统计
+            $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(status=3,channel_amount,0)),0) as total_fee_paid,COALESCE(sum(if(status=3,1,0)),0) as total_paid,COALESCE(sum(if(status=3,fee,0)),0) as total_fee,COALESCE(sum(if(status=3,channel_fee,0)),0) as channel_fee,COALESCE(sum(if(status<3,1,0)),0) as do_orders,COALESCE(sum(if(status<3,amount,0)),0) as do_fee,channel_id,mch_id from cm_withdrawal where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
+            $select =  Db::query($sql,[$day,$now]);
+
+
+            $Channel =  Channel::idRate();//通道
+            foreach ($select as $k => $v) {
+                $channel_name = empty($Channel[$v['channel_id']])?'未选择下发通道':$Channel[$v['channel_id']]['title'];
+                $v['platform'] = $v['total_fee'] - $v['channel_fee'];
+
+                //商户的下发统计
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['mch_id'] = $v['mch_id'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['day'] = $v['day'];
+
+
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders']= 0;
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all']= 0;
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid']= 0;
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid']= 0;
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee']= 0;
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform']= 0;
+
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders']= 0;
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee']= 0;
+
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'] += $v['total_orders'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all'] += $v['total_fee_all'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'] += $v['total_fee_paid'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'] += $v['total_paid'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'] += $v['total_fee'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'] += $v['do_orders'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'] += $v['do_fee'];
+
+
+                //下发通道的统计
+
+                $data['channel'][$v['channel_id'].$v['day']]['withdraw_id'] = $v['channel_id'];
+                $data['channel'][$v['channel_id'].$v['day']]['day'] = $v['day'];
+
+                $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>4])->cache($v['channel_id'].$v['day'].'_',30)->value('id');
+
+                $data['channel'][$v['channel_id'].$v['day']]['title'] = $channel_name;
+
+
+                empty( $data['channel'][$v['channel_id'].$v['day']]['total_orders']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_orders']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee_all']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee_all']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee_paid']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee_paid']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['total_paid']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_paid']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['platform']= 0;
+
+                empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_orders']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_fee']= 0;
+
+                $data['channel'][$v['channel_id'].$v['day']]['total_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'];
+                $data['channel'][$v['channel_id'].$v['day']]['total_fee_all'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all'];
+                $data['channel'][$v['channel_id'].$v['day']]['total_fee_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'];
+                $data['channel'][$v['channel_id'].$v['day']]['total_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'];
+                $data['channel'][$v['channel_id'].$v['day']]['total_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
+                $data['channel'][$v['channel_id'].$v['day']]['do_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'];
+                $data['channel'][$v['channel_id'].$v['day']]['do_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'];
+
+                $data['channel'][$v['channel_id'].$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
+
+                $data['channel'][$v['channel_id'].$v['day']]['type'] = 4;
+
+                if(!empty($id)){
+                    $data['channel'][$v['channel_id'].$v['day']]['id'] = $id;
+                    $update[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库更新记录的数据
+                }else{
+                    $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库没有记录的数据
+                }
+            }
+
+            //插入每日对账表
+            if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
+            if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
+
+        },600);
+
+    return true;
+}
+
+
+    //代付每日对账
+    public static function df_account(){
         $data = [];
         $insert = [];
         $update = [];
         $Accounts = model('app\common\model\Accounts');
 
-        $day = $Accounts->where([['withdraw_id','>',0]])->order(['day desc'])->cache('account_withdraw_id',3)->value('day');
+        $day = $Accounts->where([['df_id','>',0]])->order(['day desc'])->cache('account_df_id',3)->value('day');
         $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
         if(empty($day)){
             $day = '2019-01-01 00:00:00';
@@ -453,7 +553,7 @@ class CountService {
         }
 
         //商户每天的 通道支付订单统计
-        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(status=3,channel_amount,0)),0) as total_fee_paid,COALESCE(sum(if(status=3,1,0)),0) as total_paid,COALESCE(sum(if(status=3,fee,0)),0) as total_fee,COALESCE(sum(if(status=3,channel_fee,0)),0) as channel_fee,COALESCE(sum(if(status<3,1,0)),0) as do_orders,COALESCE(sum(if(status<3,amount,0)),0) as do_fee,channel_id,mch_id from cm_withdrawal where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
+        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(status=3,channel_amount,0)),0) as total_fee_paid,COALESCE(sum(if(status=3,1,0)),0) as total_paid,COALESCE(sum(if(status=3,fee,0)),0) as total_fee,COALESCE(sum(if(status=3,channel_fee,0)),0) as channel_fee,COALESCE(sum(if(status<3,1,0)),0) as do_orders,COALESCE(sum(if(status<3,amount,0)),0) as do_fee,channel_id,mch_id from cm_withdrawal_api where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
         $select =  Db::query($sql,[$day,$now]);
 
 
@@ -488,41 +588,41 @@ class CountService {
 
             //下发通道的统计
 
-            $data['channel'][$v['day']]['withdraw_id'] = $v['channel_id'];
-            $data['channel'][$v['day']]['day'] = $v['day'];
+            $data['channel'][$v['channel_id'].$v['day']]['withdraw_id'] = $v['channel_id'];
+            $data['channel'][$v['channel_id'].$v['day']]['day'] = $v['day'];
 
-            $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>4])->cache($v['channel_id'].$v['day'].'_',30)->value('id');
+            $id =  $Accounts->where(['df_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>5])->cache($v['channel_id'].$v['day'].'__',30)->value('id');
 
-            $data['channel'][$v['day']]['title'] = $channel_name;
+            $data['channel'][$v['channel_id'].$v['day']]['title'] = $channel_name;
 
 
-            empty( $data['channel'][$v['day']]['total_orders']) &&  $data['channel'][$v['day']]['total_orders']= 0;
-            empty( $data['channel'][$v['day']]['total_fee_all']) &&  $data['channel'][$v['day']]['total_fee_all']= 0;
-            empty( $data['channel'][$v['day']]['total_fee_paid']) &&  $data['channel'][$v['day']]['total_fee_paid']= 0;
-            empty( $data['channel'][$v['day']]['total_paid']) &&  $data['channel'][$v['day']]['total_paid']= 0;
-            empty( $data['channel'][$v['day']]['total_fee']) &&  $data['channel'][$v['day']]['total_fee']= 0;
-            empty( $data['channel'][$v['day']]['platform']) &&  $data['channel'][$v['day']]['platform']= 0;
+            empty( $data['channel'][$v['channel_id'].$v['day']]['total_orders']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_orders']= 0;
+            empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee_all']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee_all']= 0;
+            empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee_paid']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee_paid']= 0;
+            empty( $data['channel'][$v['channel_id'].$v['day']]['total_paid']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_paid']= 0;
+            empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee']= 0;
+            empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['platform']= 0;
 
-            empty( $data['channel'][$v['day']]['platform']) &&  $data['channel'][$v['day']]['do_orders']= 0;
-            empty( $data['channel'][$v['day']]['platform']) &&  $data['channel'][$v['day']]['do_fee']= 0;
+            empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_orders']= 0;
+            empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_fee']= 0;
 
-            $data['channel'][$v['day']]['total_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'];
-            $data['channel'][$v['day']]['total_fee_all'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all'];
-            $data['channel'][$v['day']]['total_fee_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'];
-            $data['channel'][$v['day']]['total_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'];
-            $data['channel'][$v['day']]['total_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
-            $data['channel'][$v['day']]['do_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'];
-            $data['channel'][$v['day']]['do_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'];
+            $data['channel'][$v['channel_id'].$v['day']]['total_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'];
+            $data['channel'][$v['channel_id'].$v['day']]['total_fee_all'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all'];
+            $data['channel'][$v['channel_id'].$v['day']]['total_fee_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'];
+            $data['channel'][$v['channel_id'].$v['day']]['total_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'];
+            $data['channel'][$v['channel_id'].$v['day']]['total_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
+            $data['channel'][$v['channel_id'].$v['day']]['do_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'];
+            $data['channel'][$v['channel_id'].$v['day']]['do_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'];
 
-            $data['channel'][$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']])?'':$data['merch'][$v['day']]);
+            $data['channel'][$v['channel_id'].$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
 
-            $data['channel'][$v['day']]['type'] = 4;
+            $data['channel'][$v['channel_id'].$v['day']]['type'] = 5;
 
             if(!empty($id)){
-                $data['channel'][$v['day']]['id'] = $id;
-                $update[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库更新记录的数据
+                $data['channel'][$v['channel_id'].$v['day']]['id'] = $id;
+                $update[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库更新记录的数据
             }else{
-                $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['day']]; //数据库没有记录的数据
+                $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库没有记录的数据
             }
         }
 
@@ -532,32 +632,6 @@ class CountService {
 
         return true;
     }
-
-
-    //代付每日对账
-    public static function df_account(){
-        $data = [];
-        $insert = [];
-        $update = [];
-        $Accounts = model('app\common\model\Accounts');
-
-        $day = $Accounts->where([['df_id','>',0]])->order(['day desc'])->cache('account_df_id',3)->value('day');
-        $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
-        if(empty($day)){
-            $day = '2019-01-01 00:00:00';
-        }else{
-            $day = $day.' 00:00:00';//需要统计的起始时间
-        }
-
-        //商户每天的 通道支付订单统计
-        $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(status=3,channel_amount,0)),0) as total_fee_paid,COALESCE(sum(if(status=3,1,0)),0) as total_paid,COALESCE(sum(if(status=3,fee,0)),0) as total_fee,COALESCE(sum(if(status=3,channel_fee,0)),0) as platform,channel_id,mch_id from cm_withdrawal_api where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
-        $select =  Db::query($sql,[$day,$now]);
-
-
-
-    }
-
-
 
 
 

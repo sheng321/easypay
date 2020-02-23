@@ -215,6 +215,8 @@ class Accounts  extends AdminController
      */
     public function df()
     {
+
+        CountService::df_account();//代付下发统计
         //ajax访问
         if ($this->request->get('type') == 'ajax') {
             $page = $this->request->get('page', 1);
