@@ -682,8 +682,13 @@ class CountService {
             $update = [];
             $Accounts = model('app\common\model\Accounts');
 
+            //时间范围
+            $end = date('Y-m-d H:i:s');
+            $star =  timeToDate( 0,0,0,-3);
+            $date[] = ['update_at', 'BETWEEN', ["{$star}", "{$end}"]];
+
             //支付通道
-            $channel = $Accounts->where([['channel_id', '>', 0], ['type', '=', 3]])->order(['day desc'])->select()->toArray();
+            $channel = $Accounts->where([['channel_id', '>', 0], ['type', '=', 3]])->where($date)->order(['day desc'])->select()->toArray();
             foreach ($channel as $k => $val) {
 
                 $channel_data[$val['day']]['day'] = $val['day'];
@@ -730,7 +735,7 @@ class CountService {
             $insert = [];
             $update = [];
             //下发通道
-            $withdraw = $Accounts->where([['type', 'in', [4, 5]]])->order(['day desc'])->select()->toArray();
+            $withdraw = $Accounts->where([['type', 'in', [4, 5]]])->where($date)->order(['day desc'])->select()->toArray();
             foreach ($withdraw as $k => $val) {
 
                 $withdraw_data[$val['day']]['day'] = $val['day'];
@@ -782,7 +787,7 @@ class CountService {
             $insert = [];
             $update = [];
             //    3 => '手动增加', 4 => '手动减少',
-            $money = \app\common\model\UmoneyLog::where([['type1','=',2],['type','in',[3,4]]])->field(['create_at','type','change'])->select();
+            $money = \app\common\model\UmoneyLog::where([['type1','=',2],['type','in',[3,4]]])->where($date)->field(['create_at','type','change'])->select();
             foreach ($money as $k => $val) {
                 $val['day'] = date('Y-m-d',strtotime($val['create_at']));
 
