@@ -103,13 +103,19 @@ class CountService {
 
             $Accounts = model('app\common\model\Accounts');
 
-            $day = $Accounts->where([['uid','>',0],['type','=',0]])->order(['day desc'])->cache('account_uid',60)->value('day');
+            //$day = $Accounts->where([['uid','>',0],['type','=',0]])->order(['day desc'])->cache('account_uid',60)->value('day');
+            $last = $Accounts->where([['uid','>',0],['type','=',0]])->order(['day desc'])->cache('account_uid',3)->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
-
-            if(empty($day)){
+            if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
             }else{
-                $day = $day.' 00:00:00';//需要统计的起始时间
+                $today = date('Y-m-d',time());
+
+                $day = $last['day'].' 00:00:00';//需要统计的起始时间
+                if($today == $last['day']){
+                    $time = strtotime( $last['update_at']) - strtotime( $today.' 00:20:00');//更新时间小于凌晨的20分 需要重新统计前一天的数据
+                    if($time < 0) $day = timeToDate( 0,0,0,-1);
+                }
             }
 
             //商户每天的 通道支付订单统计
@@ -200,12 +206,19 @@ class CountService {
 
             $Accounts = model('app\common\model\Accounts');
 
-            $day = $Accounts->where([['uid', '>', 0],['type', '=', 1]])->order(['day desc'])->cache('agent_account_id',1)->value('day');
+           // $day = $Accounts->where([['uid', '>', 0],['type', '=', 1]])->order(['day desc'])->cache('agent_account_id',1)->value('day');
+            $last = $Accounts->where([['uid','>',0],['type','=',1]])->order(['day desc'])->cache('agent_account_id',3)->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
-            if(empty($day)){
+            if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
             }else{
-                $day = $day.' 00:00:00';//需要统计的起始时间
+                $today = date('Y-m-d',time());
+
+                $day = $last['day'].' 00:00:00';//需要统计的起始时间
+                if($today == $last['day']){
+                    $time = strtotime( $last['update_at']) - strtotime( $today.' 00:20:00');//更新时间小于凌晨的20分 需要重新统计前一天的数据
+                    if($time < 0) $day = timeToDate( 0,0,0,-1);
+                }
             }
 
             //商户每天的 通道支付订单统计
@@ -363,13 +376,21 @@ class CountService {
             $update = [];
             $Accounts = model('app\common\model\Accounts');
 
-            $day = $Accounts->where([['channel_id','>',0],['type','>',3]])->order(['day desc'])->cache('account_channel_id',1)->value('day');
+           // $day = $Accounts->where([['channel_id','>',0],['type','>',3]])->order(['day desc'])->cache('account_channel_id',1)->value('day');
+            $last = $Accounts->where([['channel_id','>',0],['type','=',3]])->order(['day desc'])->cache('account_channel_id',3)->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
-            if(empty($day)){
+            if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
             }else{
-                $day = $day.' 00:00:00';//需要统计的起始时间
+                $today = date('Y-m-d',time());
+
+                $day = $last['day'].' 00:00:00';//需要统计的起始时间
+                if($today == $last['day']){
+                    $time = strtotime( $last['update_at']) - strtotime( $today.' 00:20:00');//更新时间小于凌晨的20分 需要重新统计前一天的数据
+                    if($time < 0) $day = timeToDate( 0,0,0,-1);
+                }
             }
+
 
             //商户每天的 通道支付订单统计
             $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,upstream_settle,0)),0) as total_fee,COALESCE(sum(if(pay_status=2,platform,0)),0) as platform,channel_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,channel_id,payment_id ORDER BY id DESC ";//每个通道的成功率
@@ -445,12 +466,19 @@ class CountService {
             $update = [];
             $Accounts = model('app\common\model\Accounts');
 
-            $day = $Accounts->where([['withdraw_id','>',0]])->order(['day desc'])->cache('account_withdraw_id',3)->value('day');
+            //$day = $Accounts->where([['withdraw_id','>',0]])->order(['day desc'])->cache('account_withdraw_id',3)->value('day');
+            $last = $Accounts->where([['type','=',4]])->order(['day desc'])->cache('account_withdraw_id',3)->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
-            if(empty($day)){
+            if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
             }else{
-                $day = $day.' 00:00:00';//需要统计的起始时间
+                $today = date('Y-m-d',time());
+
+                $day = $last['day'].' 00:00:00';//需要统计的起始时间
+                if($today == $last['day']){
+                    $time = strtotime( $last['update_at']) - strtotime( $today.' 03:00:00');//更新时间小于凌晨的3点 需要重新统计前一天的数据
+                    if($time < 0) $day = timeToDate( 0,0,0,-1);
+                }
             }
 
             //商户每天的 通道支付订单统计
@@ -545,12 +573,19 @@ class CountService {
             $update = [];
             $Accounts = model('app\common\model\Accounts');
 
-            $day = $Accounts->where([['df_id','>',0]])->order(['day desc'])->cache('account_df_id',3)->value('day');
+           // $day = $Accounts->where([['df_id','>',0]])->order(['day desc'])->cache('account_df_id',3)->value('day');
+            $last = $Accounts->where([['type','=',5]])->order(['day desc'])->cache('account_df_id',3)->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
-            if(empty($day)){
+            if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
             }else{
-                $day = $day.' 00:00:00';//需要统计的起始时间
+                $today = date('Y-m-d',time());
+
+                $day = $last['day'].' 00:00:00';//需要统计的起始时间
+                if($today == $last['day']){
+                    $time = strtotime( $last['update_at']) - strtotime( $today.' 03:00:00');//更新时间小于凌晨的3点 需要重新统计前一天的数据
+                    if($time < 0) $day = timeToDate( 0,0,0,-1);
+                }
             }
 
             //商户每天的 通道支付订单统计

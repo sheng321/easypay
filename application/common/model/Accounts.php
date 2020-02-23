@@ -55,7 +55,7 @@ class Accounts extends ModelService {
         //搜索条件
         $searchField['eq'] = ['uid','channel_id','df_id','day','type','withdraw_id'];
         $where = search($search,$searchField,$where);
-        $field = '*';
+        $field = ['id','uid','channel_id','df_id','day','total_orders','total_fee_all','total_fee_paid','total_paid','rate','total_fee','type','title','platform','withdraw_id','update_at','do_orders','do_fee'];
 
         $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['day'=>'desc','id'=>'desc'])->select();
