@@ -324,7 +324,7 @@ class Api extends PayController
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
         $create['code'] = $Channel['code'];
 
-        setcookie('666666777',1);
+
 
         cookie('666666777',1,[ 'samesite' => "None"]);
 
