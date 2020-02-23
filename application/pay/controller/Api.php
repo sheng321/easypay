@@ -325,9 +325,7 @@ class Api extends PayController
         $create['code'] = $Channel['code'];
 
 
-
         cookie('666666777',1,[ 'samesite' => "None"]);
-
 
 
         //提交上游
