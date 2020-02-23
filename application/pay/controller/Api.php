@@ -22,10 +22,18 @@ class Api extends PayController
     public function index(){
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign"],'post');
 
+        //通过cookie判断是否刷单
+        $cookieName = md5($param['pay_memberid']);
+        $orderId = json_decode(cookie($cookieName),true);//15分钟
+        if(!empty($orderId) && is_array($orderId)){
+            $num1 = count($orderId);
+            if($num1 > 10){
+                $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);
+                if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+            }
+        }
 
-        halt(cookie('6666667778'));
 
-        cookie('6666667778',444,[ 'samesite' => "None"]);
 
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
@@ -334,8 +342,8 @@ class Api extends PayController
         // $Payment = Payment::factory('Index');
         $html  = $Payment->pay($create);
 
-
-
+        //到这里表示请求下单成功，给给客户端一个标识，处理刷单的情况
+        cookie($cookieName,444,[ 'samesite' => "None",'expire'=>15*60]);//15分钟
         return $html;
     }
 
