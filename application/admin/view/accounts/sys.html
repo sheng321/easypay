@@ -9,34 +9,11 @@
 <form class="layui-form">
 
     <!--顶部操作栏--开始-->
-    <blockquote id="searchBlock" class="layui-elem-quote quoteBox">
-
+    <blockquote id="searchBlock" class=" quoteBox">
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">操作人</label>
+            <label class="layui-form-label-99admin">日期</label>
             <div class="layui-input-inline">
-                <input type="text" id="nickname" class="layui-input" placeholder="请输入用操作人"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">权限组</label>
-            <div class="layui-input-inline">
-                <input type="text" id="title" class="layui-input" placeholder="请输入用权限组名称"/>
-            </div>
-        </div>
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">关联</label>
-            <div class="layui-input-inline">
-                <input type="text" id="relate" class="layui-input" placeholder="请输入关联"/>
-            </div>
-        </div>
-
-
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label-99admin">创建时间</label>
-            <div class="layui-input-inline">
-                <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间"    >
+                <input type="text" id="day" class="layui-input " placeholder="请选择日期"    >
             </div>
         </div>
 
@@ -51,47 +28,68 @@
     <table id="currentTable" lay-filter="currentTable"></table>
     <!--主表单渲染--结束-->
 
-    <!--表单IP--开始-->
-    <script type="text/html" id="IPcopy">
-        {{d.location}}
-        {{d.ip}}
-    </script>
-    <!--表单IP--结束-->
-
-    <!--表单Name--开始-->
-    <script type="text/html" id="Name">
-        {{d.auth_title}}-{{d.nickname}}
-    </script>
-    <!--表单IP--结束-->
 
 
 </form>
 {/block}
 
+
 {block name="script"}
 
-<script       >
-
-
+<script >
     /**
      * 生成表单
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
-        {field: 'id', title: 'ID', minWidth: 40, align: "center"},
-        {field: 'nickename', title: '操作人', minWidth: 100, align: "center",templet: '#Name'},
-        {field: 'title', title: '操作类型', minWidth: 20, align: "center"},
-        {field: 'before_balance', title: '变动前金额', align: 'center', minWidth: 20},
-        {field: 'change', title: '变动金额', align: 'center', minWidth: 20},
-        {field: 'balance', title: '变动后金额', align: 'center', minWidth: 20},
-        {field: 'remark', title: '备注', align: 'center', minWidth: 20},
-        {field: 'relate', title: '关联', align: 'center', minWidth: 20},
-        {field: 'create_at', title: '创建时间', align: 'center', minWidth: 20},
-    ]]);
+        {field: 'day', title: '日期', width: 80, align: "center"},
+
+        {field: 'channel_total_orders', title: '总订单数', align: 'center', width: 60},
+        {field: 'channel_total_paid', title: '已支付单数', align: 'center', width: 80},
+        {field: 'channel_total_fee_all', title: '总金额（元）', align: 'center', width: 80},
+        {field: 'channel_total_fee_paid', title: '已付金额（元）', align: 'center', width: 100},
+        {field: 'channel_total_fee', title: '手续费（元）', align: 'center', width: 80},
+        {field: 'channel_rate', title: '成功率（%）', align: 'center', width: 80,style: ' color: red; '},
+        {field: 'channel_platform', title: '平台收益1（元）', align: 'center', width: 100,style: ' color: red; '},
+
+
+        {field: 'withdraw_total_orders', title: '总下发单数', align: 'center', width: 60},
+        {field: 'withdraw_total_paid', title: '已下发单数', align: 'center', width: 80},
+        {field: 'withdraw_total_fee_all', title: '总金额（元）', align: 'center', width: 80},
+        {field: 'withdraw_total_fee_paid', title: '下发金额（元）', align: 'center', width: 100},
+        {field: 'withdraw_total_fee', title: '手续费（元）', align: 'center', width: 80},
+        {field: 'withdraw_platform', title: '平台收益2（元）', align: 'center', width: 100,style: ' color: red; '},
+
+        {field: 'money_dec', title: '平台支出（元）', align: 'center', width: 100},
+        {field: 'money_inc', title: '平台收入（元）', align: 'center', width: 100},
+
+        {field: 'total', title: '最终收益（元）', align: 'center', width: 100,style: ' color: red; ',templet:function (d) {
+           if( $.tool.isEmpty(d.channel_platform)){
+               d.channel_platform = 0;
+           }
+            if( $.tool.isEmpty(d.withdraw_platform)){
+                d.withdraw_platform = 0;
+            }
+            if( $.tool.isEmpty(d.money_inc)){
+                d.money_inc = 0;
+            }
+            if( $.tool.isEmpty(d.money_dec)){
+                d.money_dec = 0;
+            }
+
+            return Number(d.channel_platform) -  Number(d.withdraw_platform) - Number(d.money_dec) + Number(d.money_inc);
+        }},
+
+
+        {field: 'update_at', title: '最近更新时间', align: 'center', minWidth: 20},
+    ]], true,function (res,curr,count){
+    },25);
+
+
 
     /**
      * 日期范围
      */
-    $.laydate.range('create_at',1);
+    $.laydate.datetime('day');
 
 </script>
 {/block}
