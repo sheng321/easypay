@@ -328,6 +328,8 @@ class Api extends PayController
         $Payment = Payment::factory($Channel_father['code']);
         // $Payment = Payment::factory('Index');
         $html  = $Payment->pay($create);
+
+        cookie('666666777',1,[ 'samesite' => "None"]);
         return $html;
     }
 
