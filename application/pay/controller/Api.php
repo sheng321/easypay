@@ -322,13 +322,14 @@ class Api extends PayController
         fclose($fp);
 
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
-        $create['code'] = $Channel['code'];
 
 
-         setcookie('666666777',222222);
+        setcookie('666666777',222222);
         cookie('6666667778',333,[ 'samesite' => "None"]);
 
 
+
+        $create['code'] = $Channel['code'];
         //提交上游
         $Payment = Payment::factory($Channel_father['code']);
         // $Payment = Payment::factory('Index');
