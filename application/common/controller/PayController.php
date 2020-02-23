@@ -4,6 +4,7 @@ namespace app\common\controller;
 use app\common\model\Channel;
 use app\common\model\Order;
 use app\common\model\Umoney;
+use app\common\model\UmoneyLog;
 use app\pay\service\Payment;
 use think\facade\Url;
 use think\helper\Str;
@@ -125,8 +126,14 @@ class PayController extends BaseController
         $limit_money = (int) $Channel_father['limit_money'];
         if(empty($limit_money)) return true; //没有设置通道限额的情况
 
-        $Umoney = Umoney::quickGet(['channel_id'=>$Channel_father['id'],'uid'=>0]);
+        //算走量
+        $Umoney = UmoneyLog::where(['channel_id'=>$Channel_father['id'],'uid'=>0,'df_id'=>0])->sum('change');
         if(empty($Umoney)) return false;
+
+        //Todo 通道限额将满通知    查询两条数据
+        if($Umoney['balance'] < $Channel_father['limit_money'] + 6000){
+            addTask('通道限额将满',$Channel['title'].'通道限额将满，请及时处理。',5,$time = 1);
+        }
 
         //通道可用余额 小于通道限额
         if($Umoney['balance'] < $Channel_father['limit_money']) return true;

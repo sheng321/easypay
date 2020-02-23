@@ -199,7 +199,7 @@ class Api extends PayController
             //6.通道限额
             $check_money = $this->check_money($Channel);
 
-            //todo  通道限额将满通知
+
 
             if(!$check_money){
                 unset($ChannelProduct[$k]);
@@ -232,6 +232,7 @@ class Api extends PayController
         if(empty($channel_id)) __jerror('未匹配支付通道4');
         unset($train);
         unset($random_keys);
+        unset($ChannelProduct);
 
         //获取商户费率
         $MemRate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$channel_id);
@@ -319,6 +320,7 @@ class Api extends PayController
         $data['productname'] = $param1['pay_productname'];//商品名称
         $data['attach'] = $param1['pay_attach'];//备注
 
+        unset($param);
         //插入数据库
         //文件排它锁 阻塞模式
         $fp = fopen("lock/api.txt", "w+");
@@ -338,8 +340,10 @@ class Api extends PayController
         fclose($fp);
 
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
+        unset($data);
 
         $create['code'] = $Channel['code'];
+        unset($Channel);
         //提交上游
         $Payment = Payment::factory($Channel_father['code']);
         // $Payment = Payment::factory('Index');

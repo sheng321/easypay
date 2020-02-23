@@ -68,6 +68,8 @@ class Message extends ModelService {
             return  self::create($data);
         }
         $Time  =  strtotime($find['create_at'])  - time() - 30*60;//30分钟
+        //已处理的通知
+        if($find['status'] == 1) $Time  =  strtotime($find['create_at'])  - time() - 10*60;//15分钟
         if($Time > 0){
             $data['time'] = $time;
             return  self::create($data);

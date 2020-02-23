@@ -7,7 +7,7 @@ if (!function_exists('addTask')) {
     /** 添加语音播报任务
      * @param $title
      * @param $msg
-     * @param $type
+     * @param $type 5客服任务 6财务任务 7 技术任务
      * @param int $time
      * @return bool
      */
