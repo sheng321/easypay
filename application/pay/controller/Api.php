@@ -22,6 +22,10 @@ class Api extends PayController
     public function index(){
         $param =   $this->request->only(["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign"],'post');
 
+
+        setcookie('666666777',222222);
+        cookie('6666667778',333,[ 'samesite' => "None"]);
+
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
 
@@ -322,12 +326,6 @@ class Api extends PayController
         fclose($fp);
 
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
-
-
-        setcookie('666666777',222222);
-        cookie('6666667778',333,[ 'samesite' => "None"]);
-
-
 
         $create['code'] = $Channel['code'];
         //提交上游
