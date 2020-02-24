@@ -189,7 +189,7 @@ class CountService {
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
-            return  $data['account'];
+            return empty($data['account'])?'':$data['account'] ;
         },600);
 
         return true;
@@ -359,7 +359,7 @@ class CountService {
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
-            return  $data['agent'];
+            return empty($data['agent'])?'':$data['agent'];
         },600);
 
         return true;
@@ -558,7 +558,8 @@ class CountService {
             //插入每日对账表
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
-            return $data['channel'];
+
+            return empty($data['channel'])?'':$data['channel'];
         },600);
 
     return true;
@@ -666,7 +667,7 @@ class CountService {
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
-            return $data['channel'];
+            return empty($data['channel'])?'':$data['channel'];
     },600);
 
         return true;
