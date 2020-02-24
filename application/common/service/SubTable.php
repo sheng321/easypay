@@ -16,7 +16,6 @@ class SubTable{
         Db::execute($sql);
     }
 
-
     /** 插入数据库
      * @param $tableName
      * @param $begin
@@ -24,7 +23,7 @@ class SubTable{
      */
     public static function  insert_table($tableName,$begin,$end){
 
-      $res = Db::table('cm_order')->where([['create_at', 'BETWEEN', [$begin, $end]]])->chunk(1, function($data)use($tableName) {
+      $res = Db::table('cm_order')->where([['create_at', 'BETWEEN', [$begin, $end]]])->chunk(500, function($data)use($tableName) {
           // 启动事务
           Db::startTrans();
           try {
@@ -47,6 +46,7 @@ class SubTable{
     //同步数据库
     public static function  syn_table(){
 
+        //当天
         $d = date('d');
         if($d < 3){
             //上一个月

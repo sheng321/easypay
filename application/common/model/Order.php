@@ -2,6 +2,7 @@
 
 namespace app\common\model;
 use app\common\service\ModelService;
+use think\Db;
 use think\helper\Str;
 
 /**
@@ -28,7 +29,7 @@ class Order extends ModelService {
     ];
 
     /**
-     * Undocumented 分页获取
+     *  分页获取
      * @param integer $page
      * @param integer $limit
      * @param array $search
@@ -130,9 +131,129 @@ class Order extends ModelService {
         return $list;
     }
 
+    /** 历史订单数据
+     * @param int $page
+     * @param int $limit
+     * @param array $search
+     * @param int $type
+     * @return array
+     */
+    public function hlist($page = 1,$limit = 10,$search = [],$type = 0){
+        $where = [];
+
+        if(empty($search['table'])) $search['table'] =  date('Y-m');
+        $tableName = 'cm_order_'.date('Y_m',strtotime($search['table']));
+        $isTable= Db::query("SHOW TABLES LIKE '{$tableName}'");
+        if(!$isTable){
+            //表不存在
+            $list = [
+                'code'  => 1,
+                'msg'   => "没有 ".$search['table'].' 月的数据',
+                'count' => 0,
+                'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>0],
+                'data'  => [],
+            ];
+            return $list;
+        }
+        $this->table = $tableName;
+
+        $ChannelGroup =  ChannelGroup::idArr();//通道分组
+        $Channel =  Channel::idRate();//通道
+
+        //通道分组模糊搜索
+        if(!empty($search['channelgroup_name'])){
+            foreach($ChannelGroup as $key=>$values ){
+                if (strstr( $values , $search['channelgroup_name']) !== false ){
+                    $search['channel_group_id'][] = $key;
+                }
+            }
+            if(empty($search['channel_group_id']))  $search['channel_group_id'][] = 0;
+            $searchField['in'][] = 'channel_group_id';
+        }
+
+        //通道模糊搜索
+        if(!empty($search['channel_name'])){
+            foreach($Channel as $key=>$values ){
+                if (strstr( $values['title'] , $search['channel_name']) !== false ){
+                    $search['channel_id'][] = $key;
+                }
+            }
+            if(empty($search['channel_id'])) $search['channel_id'][] = 0;
+            $searchField['in'][] = 'channel_id';
+        }
+
+        if(empty($search['create_at'])){
+            $date = timeToDate(0,0,0,-5); //默认只搜索5天
+            $where[] = ['create_at','>',$date];
+        }
+
+        //搜索条件
+        $searchField['eq'] = ['mch_id','payment_id','pay_status','notice','ip'];
+        $searchField['like'] = ['out_trade_no','system_no','transaction_no'];
+        $searchField['time'] = ['create_at'];
+        $where = search($search,$searchField,$where);
+
+        //价格区间
+        if(!empty($search['amount'])){
+            $value_list = explode("-", $search['amount']);
+            $where[] = ['amount', 'BETWEEN', ["{$value_list[0]}", "{$value_list[1]}"]];
+        }
+        //代理
+        if(!empty($search['mch_id1'])){
+            $where[] = ['mch_id1|mch_id2', '=', $search['mch_id1']];
+        }else{
+            if($type == 1){
+                $where[] = ['mch_id1|mch_id2', '>', 0];
+            }
+        }
+
+        if(empty($search['field'])){
+            $field = "id,mch_id,out_trade_no,system_no,transaction_no,amount,actual_amount,total_fee,upstream_settle,Platform,channel_id,channel_group_id,payment_id,pay_status,notice,pay_time,create_time,create_at,update_at,cost_rate,run_rate,mch_id1,mch_id2,agent_rate2,agent_rate,agent_amount,agent_amount2,remark,over_time,ip,repair,is_mobile";
+        }else{
+            //下载
+            $field =  $search['field'];
+        }
+
+        $count = $this->where($where)->count(1);
+
+        $list = $this->where($where)->page($page,$limit)->field($field)->cache('order_list_admin',2)->order(['create_at'=>'desc'])->select()->toArray();
+        empty($list) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
+        $PayProduct =  PayProduct::idArr();//支付产品
+
+
+        $order = config('order.');
+        foreach ($list as $k=>$v){
+            $list[$k]['product_name'] = empty($PayProduct[$v['payment_id']])?'未知':$PayProduct[$v['payment_id']];
+            $list[$k]['channelgroup_name'] = empty($ChannelGroup[$v['channel_group_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
+            $list[$k]['channel_name'] = empty($Channel[$v['channel_id']])?'未知':$Channel[$v['channel_id']]['title'];
+
+            empty($list[$k]['pay_time'])?'':$list[$k]['pay_time'] = Str::substr($list[$k]['pay_time'],8,11);
+            $list[$k]['create_time'] =Str::substr($list[$k]['create_time'],8,11);
+            $list[$k]['update_at'] = Str::substr($list[$k]['update_at'],8,11);
+
+            if(($v['pay_status'] == 0) && (time() > $v['over_time'])) $list[$k]['pay_status'] = 3;//显示订单关闭
+
+            $list[$k]['pay_status_name'] = $order['pay_status'][$v['pay_status']];
+            $list[$k]['notice_name'] = $order['notice'][$v['notice']];
+
+        }
+
+        $list = [
+            'code'  => 0,
+            'msg'   => $msg,
+            'count' => $count,
+            'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
+            'data'  => $list,
+        ];
+        if(!empty($search['field'])) $list['code'] = 1 && $list['msg'] = $msg.'本页数据不显示。'; //下载
+        return $list;
+    }
+    
+
 
     /**
-     * Undocumented 处理订单分页获取
+     *  处理订单分页获取
      * @param integer $page
      * @param integer $limit
      * @param array $search
