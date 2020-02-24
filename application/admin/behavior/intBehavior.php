@@ -99,6 +99,17 @@ class intBehavior extends Controller
                     $v = str_replace("*","",$v);
                 }
 
+                if($k == 'email'){
+                    $v = str_replace("@","",$v);
+                    $v = str_replace(".","",$v);
+                }
+                if($k == 'url'){
+                    $v = str_replace("http://","",$v);
+                    $v = str_replace("https://","",$v);
+                    $v = str_replace("/","",$v);
+                    $v = str_replace(".","",$v);
+                }
+
                 $data['param'] = $v;
                 $data['param_k'] = $k;
 
