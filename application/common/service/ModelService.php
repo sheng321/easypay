@@ -299,7 +299,7 @@ class ModelService extends Model {
             return $ok;
         }else{
             if ($redisModel->get($lockKey) == $random) {
-                $redisModel->del($lockKey);
+                $redisModel->del([$lockKey]);
             }
         }
     }

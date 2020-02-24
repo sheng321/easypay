@@ -4,6 +4,7 @@ namespace app\admin\controller;
 use app\common\model\Umember;
 use app\common\model\Umoney;
 use app\common\model\Uprofile;
+use app\common\service\SubTable;
 use think\Controller;
 use redis\StringModel;
 use think\Queue;
@@ -15,9 +16,8 @@ class Test  extends Controller
     public function index()
     {
 
-       cookie('666666',1,[ 'samesite' => "None"]);
-
-       halt( cookie('666666'));
+       $res = SubTable::syn_table();
+       halt($res);
 
       //  addTask(11,22,5);
 

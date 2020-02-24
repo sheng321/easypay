@@ -39,7 +39,7 @@ class Api extends PayController
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
 
-        //通过redi缓存IP判断是否刷单
+        //通过redis缓存IP判断是否刷单
         $ip_record = 'recordIP_'.$param['pay_memberid'].get_client_ip();
         $orderId_ip_record = json_decode($redis1->get($ip_record),true);
         if(!empty($orderId_ip_record) && is_array($orderId_ip_record)){
