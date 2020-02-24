@@ -30,7 +30,7 @@ class Api extends PayController
             $num1 = count($orderId);
             if($num1 > 0){
                 $orderIdType = is_numeric(implode('',$orderId)); //是否数字
-                halt($orderIdType);
+               dump(implode('',$orderId));
                 if($orderIdType){
                     $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
                     if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
