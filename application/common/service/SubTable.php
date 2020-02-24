@@ -26,7 +26,7 @@ class SubTable{
 
 
         //文件排它锁 非阻塞模式
-        $fp = fopen(Env::get('root_path')."lock/SubTable.txt", "w+");
+        $fp = fopen(Env::get('root_path')."hooklock/SubTable.txt", "w+");
         if(flock($fp,LOCK_EX | LOCK_NB))
         {
           $res = Db::table('cm_order')->where([['create_at', 'BETWEEN', [$begin, $end]]])->chunk(500, function($data)use($tableName) {
@@ -56,7 +56,6 @@ class SubTable{
 
     //同步数据库
     public static function  syn_table(){
-
         //当天
         $d = date('d');
         if($d < 3){
@@ -78,6 +77,7 @@ class SubTable{
             }
         }
 
+
         //当月
         $tableName = 'cm_order_'.date('Y_m');
         self::create_table($tableName);
@@ -93,7 +93,6 @@ class SubTable{
 
         $res = true;
         if($time > 0) $res = self::insert_table($tableName,$begin,$end);
-
         return $res;
     }
 
