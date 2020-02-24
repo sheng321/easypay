@@ -99,7 +99,7 @@ class User extends AdminController {
             $user = $this->model->where('id', $this->request->get('id'))->find();
             if (empty($user)) return msg_error('暂无数据，请重新刷新页面！');
 
-            $auth = model('app\common\model\SysAuth')->getList()->toArray();
+            $auth = model('app\common\model\SysAuth')->getList();
 
             $auth_id = json_decode($user['auth_id'], true);
 
