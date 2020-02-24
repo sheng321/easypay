@@ -56,8 +56,8 @@ class WlfPaySign
 
                 $this->user_name = '000000000100641';             //测试的用户名
                 $this->merchant_id = '000000000100641';          //测试的商户号
-                $this->pfx_path = "/www/wwwroot/easypay/public/Files/Wlf/testKey/TESTUSER.pfx";               //测试的私钥文件路径
-                $this->pem_path = "/www/wwwroot/easypay/public/Files/Wlf/testKey/TESTUSER.pem";              //测试的公钥文件路径
+                $this->pfx_path = Env::get('root_path')."/Files/Wlf/testKey/TESTUSER.pfx";               //测试的私钥文件路径
+                $this->pem_path = Env::get('root_path')."/Files/Wlf/testKey/TESTUSER.pem";              //测试的公钥文件路径
                 $this->url = 'https://120.31.132.118:8181/d/merchant/';   //测试的接口地址
 
         $this->private_key_pw = '123456';            //私钥密码

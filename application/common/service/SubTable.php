@@ -2,6 +2,7 @@
 
 namespace app\common\service;
 use think\Db;
+use think\facade\Env;
 
 /**
  * 订单表分表模型
@@ -23,23 +24,33 @@ class SubTable{
      */
     public static function  insert_table($tableName,$begin,$end){
 
-      $res = Db::table('cm_order')->where([['create_at', 'BETWEEN', [$begin, $end]]])->chunk(500, function($data)use($tableName) {
-          // 启动事务
-          Db::startTrans();
-          try {
-              //避免重复插入
-              Db::table($tableName)->insertAll($data,"IGNORE");
-              // 提交事务
-              Db::commit();
-          } catch (\Exception $e) {
-              // 回滚事务
-              Db::rollback();
-              return false;
-          }
 
-        },'id', 'asc');
+        //文件排它锁 非阻塞模式
+        $fp = fopen(Env::get('root_path')."lock/SubTable.txt", "w+");
+        if(flock($fp,LOCK_EX | LOCK_NB))
+        {
+          $res = Db::table('cm_order')->where([['create_at', 'BETWEEN', [$begin, $end]]])->chunk(500, function($data)use($tableName) {
+              // 启动事务
+              Db::startTrans();
+              try {
+                  //避免重复插入
+                  Db::table($tableName)->insertAll($data,"IGNORE");
+                  // 提交事务
+                  Db::commit();
+              } catch (\Exception $e) {
+                  // 回滚事务
+                  Db::rollback();
+                  return false;
+              }
 
-      return $res;
+            },'id', 'asc');
+
+            flock($fp,LOCK_UN);//释放锁
+        }else{
+            $res = false;
+        }
+        fclose($fp);
+        return $res;
     }
 
 
