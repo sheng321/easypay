@@ -36,10 +36,24 @@ class Api extends PayController
             $orderId = [];
         }
 
-
-
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
+
+        $ip_record = 'recordIP_'.$param['pay_memberid'].get_client_ip();
+        $orderId_ip_record = json_decode($redis1->get($ip_record),true);
+        if(!empty($orderId_ip_record) && is_array($orderId_ip_record)){
+            $num1 = count($orderId_ip_record);
+            if($num1 > 10){
+                $num =  Order::where([['id','in',$orderId_ip_record],['pay_status','=',2]])->count(1);//是否有支付的情况
+                if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+                $orderId_ip_record = [];//有支付的情况
+            }
+        }else{
+            $orderId_ip_record = [];
+        }
+
+
+
 
         $ip = 'IP_'.$param['pay_memberid'].strtr(get_client_ip(), '.', '_');
         $value = $redis1->get($ip);
@@ -198,9 +212,6 @@ class Api extends PayController
 
             //6.通道限额
             $check_money = $this->check_money($Channel);
-
-
-
             if(!$check_money){
                 unset($ChannelProduct[$k]);
                 continue;
@@ -351,7 +362,14 @@ class Api extends PayController
 
         //到这里表示请求下单成功，给给客户端一个标识，处理刷单的情况
         $orderId[] = $create['id'];
+        $orderId_ip_record[] = $create['id'];
+
         cookie($cookieName,json_encode($orderId),[ 'samesite' => "None",'expire'=>15*60]);//15分钟
+
+        //实时记录IP的下单情况
+        $redis1->set($ip_record,json_encode($orderId_ip_record));
+        $redis1->expire($ip_record,60*30);
+
         return $html;
     }
 

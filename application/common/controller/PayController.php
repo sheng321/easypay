@@ -6,6 +6,7 @@ use app\common\model\Order;
 use app\common\model\Umoney;
 use app\common\model\UmoneyLog;
 use app\pay\service\Payment;
+use redis\StringModel;
 use think\facade\Url;
 use think\helper\Str;
 use think\Queue;
@@ -257,6 +258,12 @@ class PayController extends BaseController
         //同步
         //$res = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
        // halt($res);
+
+        //删除实时记录IP
+        $redis1 = (new StringModel())->instance();
+        $redis1->select(2);
+        $ip_record = 'recordIP_'.$order['mch_id'].$order['ip'];
+        $redis1->del([$ip_record]);
 
         return  $this->config['returnBack'];
     }
