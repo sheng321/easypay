@@ -68,7 +68,7 @@ class Api extends PayController
         //通过后台封禁IP
         $ip = 'IP_'.$param['pay_memberid'].strtr(get_client_ip(), '.', '_');
         $value = $redis1->get($ip);
-        if(!empty($value)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+        if(!empty($value)) __jerror('系统检测到存在刷单的情况，请稍后在试4！！');
 
 
 
