@@ -24,7 +24,7 @@ class Api extends PayController
 
         //通过cookie判断是否刷单
         $cookieName = md5($param['pay_memberid']);
-        $orderId = json_decode(addslashes(cookie($cookieName)),true);//15分钟
+        $orderId = json_decode(cookie($cookieName),true);//15分钟
 
         halt($orderId);
         if(!empty($orderId) && is_array($orderId)){
