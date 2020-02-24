@@ -26,20 +26,20 @@ class Api extends PayController
         $cookieName = md5($param['pay_memberid']);
         $orderId = json_decode(cookie($cookieName),true);//15分钟
 
-        dump($orderId);
         if(!empty($orderId) && is_array($orderId)){
             $num1 = count($orderId);
             if($num1 > 0){
-                $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
-                dump($num);
-                dump(implode(',',$orderId));
-                dump(mysqli_escape_string(implode(',',$orderId)));
-                $num =  Order::where([['id','in',mysqli_escape_string(implode(',',$orderId))],['pay_status','=',2]])->count(1);
-                dump($num);
-                halt();
+                $orderIdType = is_numeric(implode('',$orderId)); //是否数字
+                halt($orderIdType);
+                if($orderIdType){
+                    $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
+                    if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+                    $orderId = [];//有支付的情况
+                }else{
+                    //不是数字，表明受到了攻击
+                    __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+                }
 
-                if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
-                $orderId = [];//有支付的情况
             }
         }else{
             $orderId = [];
