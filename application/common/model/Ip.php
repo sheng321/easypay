@@ -69,6 +69,11 @@ class Ip extends ModelService {
         return $list;
     }
 
+    /**
+     * @param $uid
+     * @param null $type  0 登入IP 1 结算IP 2 代付IP 3后台登入
+     * @return array|mixed
+     */
     public static function bList($uid,$type = null){
         \think\facade\Cache::remember('IP_'.$uid, function ()use($uid) {
             $data = self::where("uid",$uid)->column("id,ip,type",'id');
