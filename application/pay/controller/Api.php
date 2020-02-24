@@ -44,6 +44,7 @@ class Api extends PayController
         }else{
             $orderId = [];
         }
+        halt(111);
 
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
