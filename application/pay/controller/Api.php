@@ -44,7 +44,7 @@ class Api extends PayController
         }else{
             $orderId = [];
         }
-        halt(111);
+
 
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
@@ -52,6 +52,7 @@ class Api extends PayController
         //通过redis缓存IP判断是否刷单
         $ip_record = 'recordIP_'.$param['pay_memberid'].get_client_ip();
         $orderId_ip_record = json_decode($redis1->get($ip_record),true);
+        dump($orderId_ip_record);
         if(!empty($orderId_ip_record) && is_array($orderId_ip_record)){
             $num1 = count($orderId_ip_record);
             if($num1 > 10){
@@ -62,6 +63,7 @@ class Api extends PayController
         }else{
             $orderId_ip_record = [];
         }
+        halt(111);
 
         //通过后台封禁IP
         $ip = 'IP_'.$param['pay_memberid'].strtr(get_client_ip(), '.', '_');
