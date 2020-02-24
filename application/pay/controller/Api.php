@@ -33,11 +33,11 @@ class Api extends PayController
                dump(implode('',$orderId));
                 if($orderIdType){
                     $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
-                    if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+                    if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试1！！');
                     $orderId = [];//有支付的情况
                 }else{
                     //不是数字，表明受到了攻击
-                    __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+                    __jerror('系统检测到存在刷单的情况，请稍后在试2！！');
                 }
 
             }
@@ -57,7 +57,7 @@ class Api extends PayController
             $num1 = count($orderId_ip_record);
             if($num1 > 10){
                 $num =  Order::where([['id','in',$orderId_ip_record],['pay_status','=',2]])->count(1);//是否有支付的情况
-                if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+                if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试3！！');
                 $orderId_ip_record = [];//有支付的情况
             }
         }else{
