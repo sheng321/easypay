@@ -39,6 +39,7 @@ class Api extends PayController
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
 
+        //通过redi缓存IP判断是否刷单
         $ip_record = 'recordIP_'.$param['pay_memberid'].get_client_ip();
         $orderId_ip_record = json_decode($redis1->get($ip_record),true);
         if(!empty($orderId_ip_record) && is_array($orderId_ip_record)){
@@ -52,12 +53,12 @@ class Api extends PayController
             $orderId_ip_record = [];
         }
 
-
-
-
+        //通过后台封禁IP
         $ip = 'IP_'.$param['pay_memberid'].strtr(get_client_ip(), '.', '_');
         $value = $redis1->get($ip);
         if(!empty($value)) __jerror('系统检测到存在刷单的情况，请稍后在试！！');
+
+
 
         //商户属性
         $Uprofile =  Uprofile::quickGet(['uid'=>$param['pay_memberid']]);
