@@ -699,7 +699,7 @@ class Member extends AdminController {
 
             $group =   \app\common\model\Ulevel::field('id,title')->select()->toArray();
 
-            $auth = model('app\common\model\SysAuth')->getList(1)->toArray();
+            $auth = model('app\common\model\SysAuth')->getList(1);
 
             $auth_id = json_decode($Member['auth_id'], true);
 
