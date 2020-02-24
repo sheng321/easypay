@@ -804,7 +804,7 @@ class Member extends AdminController {
             $Member = $this->model->where('id', $this->request->get('id','0'))->find();
             if (empty($Member)) return msg_error('暂无数据，请重新刷新页面！');
 
-            $auth = model('app\common\model\SysAuth')->getList(1)->toArray();
+            $auth = model('app\common\model\SysAuth')->getList(1);
 
             $auth_id = json_decode($Member['auth_id'], true);
 
