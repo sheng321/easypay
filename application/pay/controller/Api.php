@@ -28,7 +28,7 @@ class Api extends PayController
 
         if(!empty($orderId) && is_array($orderId)){
             $num1 = count($orderId);
-            if($num1 > 0){
+            if($num1 > 10){
                 $orderIdType = is_numeric(implode('',$orderId)); //是否数字
                dump(implode('',$orderId));
                 if($orderIdType){
