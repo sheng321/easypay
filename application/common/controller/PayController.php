@@ -126,17 +126,22 @@ class PayController extends BaseController
         $limit_money = (int) $Channel_father['limit_money'];
         if(empty($limit_money)) return true; //没有设置通道限额的情况
 
-        //算走量
-        $Umoney = UmoneyLog::where(['channel_id'=>$Channel_father['id'],'uid'=>0,'df_id'=>0])->sum('change');
+        //时间范围
+        $end = date('Y-m-d H:i:s');
+        $star =  timeToDate( 0,0,0,-1);
+        $date[] = ['update_at', 'BETWEEN', ["{$star}", "{$end}"]];
+
+        //算走量  充值入账
+        $Umoney = UmoneyLog::where(['channel_id'=>$Channel_father['id'],'uid'=>0,'df_id'=>0,'type1'=>1,'type'=>7])->where($date)->cache('UmoneyLog_check_money'.$Channel_father['id'],1)->sum('change');
         if(empty($Umoney)) return false;
 
-        //Todo 通道限额将满通知    查询两条数据
-        if($Umoney['balance'] < $Channel_father['limit_money'] + 6000){
-            addTask('通道限额将满',$Channel['title'].'通道限额将满，请及时处理。',5,$time = 1);
+        // 通道限额将满通知
+        if($Umoney < $Channel_father['limit_money'] + 6000){
+            addTask('通道限额将满',$Channel_father['title'].'通道限额将满，请及时处理。',5,$time = 1);
         }
 
         //通道可用余额 小于通道限额
-        if($Umoney['balance'] < $Channel_father['limit_money']) return true;
+        if($Umoney < $Channel_father['limit_money']) return true;
 
         return false;
     }
