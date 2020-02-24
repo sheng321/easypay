@@ -10,7 +10,6 @@ use app\common\model\Uprofile;
 use app\common\service\RateService;
 use app\pay\service\Payment;
 use redis\StringModel;
-use think\facade\Env;
 
 /**
  * 支付下单接口
@@ -30,7 +29,6 @@ class Api extends PayController
             $num1 = count($orderId);
             if($num1 > 10){
                 $orderIdType = is_numeric(implode('',$orderId)); //是否数字
-               dump(implode('',$orderId));
                 if($orderIdType){
                     $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
                     if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试1！！');
@@ -52,7 +50,6 @@ class Api extends PayController
         //通过redis缓存IP判断是否刷单
         $ip_record = 'recordIP_'.$param['pay_memberid'].get_client_ip();
         $orderId_ip_record = json_decode($redis1->get($ip_record),true);
-        dump($orderId_ip_record);
         if(!empty($orderId_ip_record) && is_array($orderId_ip_record)){
             $num1 = count($orderId_ip_record);
             if($num1 > 10){
@@ -63,7 +60,6 @@ class Api extends PayController
         }else{
             $orderId_ip_record = [];
         }
-        halt(111);
 
         //通过后台封禁IP
         $ip = 'IP_'.$param['pay_memberid'].strtr(get_client_ip(), '.', '_');
