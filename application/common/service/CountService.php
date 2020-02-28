@@ -408,7 +408,7 @@ class CountService {
 
 
                 //单日 通道产品的产品分析
-                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['uid'] = $v['mch_id'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['mch_id'] = $v['mch_id'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['day'] = $v['day'];
 
                 empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders']= 0;
