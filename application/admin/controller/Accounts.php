@@ -143,7 +143,6 @@ class Accounts  extends AdminController
 
         $Channel_data = [];
         foreach ($Channel as $k =>$v){
-
             if($v['pid'] != 0){
                 $p_id = json_decode($v['p_id'],true);
                 $product_name = empty($p_id)?'未知':$PayProduct[$p_id[0]];
