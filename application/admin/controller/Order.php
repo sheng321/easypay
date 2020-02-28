@@ -575,20 +575,22 @@ class Order extends AdminController {
         return $this->fetch('', $basic_data);
     }
     public function add_merch(){
-        if (!$this->request->isPost()) {
 
-            $Channel =   \app\common\model\Channel::idRate();//通道
-            $PayProduct =  \app\common\model\PayProduct::idArr();//支付产品
+        $Channel =   \app\common\model\Channel::idRate();//通道
+        $PayProduct =  \app\common\model\PayProduct::idArr();//支付产品
 
-            $Channel_data = [];
-            foreach ($Channel as $k =>$v){
-                if($v['pid'] != 0){
-                    $p_id = json_decode($v['p_id'],true);
-                    $product_name = empty($p_id)?'未知':$PayProduct[$p_id[0]];
-                    $Channel_data[$k] = $v['title'].'-'.$product_name;
-                }
+        $Channel_data = [];
+        foreach ($Channel as $k =>$v){
+            if($v['pid'] != 0){
+                $p_id = json_decode($v['p_id'],true);
+                $product_name = empty($p_id)?'未知':$PayProduct[$p_id[0]];
+                $Channel_data[$k] = $v['title'].'-'.$product_name;
             }
+        }
 
+
+
+        if (!$this->request->isPost()) {
 
             //基础数据
             $basic_data = [
@@ -601,12 +603,10 @@ class Order extends AdminController {
         } else {
             $post = $this->request->post();
 
-
-            halt($post);
-
-            $data['id'] = 'merch_'.$post['uid'].strtr($post['ip'], '.', '_');
-            $data['ip'] = $post['ip'];
+            $data['id'] = 'merch_'.$post['channel_id'].$post['uid'];
+            $data['channel_id'] = $post['channel_id'];
             $data['uid'] = $post['uid'];
+            $data['title'] = $Channel_data[$post['channel_id']];
 
             switch ($post['auth_id']){
                 case 1:
@@ -640,16 +640,7 @@ class Order extends AdminController {
 
     }
 
-    public function del_merch(){
-        $get = $this->request->only('id');
-        if(empty($get['id'])) __error('无数据');
 
-        $redis = (new StringModel())->instance();
-        $redis->select(2);
-        $redis->del($get['id']);
-
-        return __success('删除成功');
-    }
 
 
 
