@@ -585,6 +585,7 @@ class Member extends AdminController {
         } else {
 
             $member = $this->request->only('username,password,password1,nickname,phone,qq,who,remark,auth_id,url,email,introducer');
+
             $pid = $this->request->post('pid/d',0);
 
             !isset($member['auth_id']) && $member['auth_id'] = [];
@@ -734,7 +735,7 @@ class Member extends AdminController {
             return $this->form();
         } else {
 
-            $post = $this->request->only('username,nickname,phone,qq,remark,auth_id,id');
+            $post = $this->request->only('username,nickname,phone,qq,remark,auth_id,id,url,email,introducer');
             $post['who'] = $Member['who'];//不给修改商户和代理身份
 
             $profile = $this->request->only('pid');
