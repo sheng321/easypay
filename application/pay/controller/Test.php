@@ -49,6 +49,7 @@ class Test extends PayController
             'order'  => $jsapi ,
             'data' => \app\common\model\PayProduct::codeTitle(),
         ];
+        halt(config('set.api'));
 
         return $this->fetch('', $basic_data);
     }
