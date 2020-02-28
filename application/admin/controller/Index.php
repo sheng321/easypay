@@ -39,7 +39,6 @@ class Index  extends AdminController
         foreach($info as $k=>$v){
             $info[$k] = json_decode($v,true);
         }
-        halt($info);
         $basic_data = [
             'title'=> '欢迎页',
             'info' => $info,

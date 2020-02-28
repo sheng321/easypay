@@ -63,6 +63,7 @@ class Api extends PayController
                 $flow_data[$v['code'].'title'] = $v['title'];
             }
             $flow_data[$param['pay_bankcode']] = 1;
+            $flow_data[$param['time']] = date('H:i');
             $redis1->set($flow,json_encode($flow_data));
             $redis1->expire($flow,60*60*6);//6小时
         }
