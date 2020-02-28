@@ -143,12 +143,12 @@ class Accounts  extends AdminController
 
         $Channel_data = [];
         foreach ($Channel as $k =>$v){
-            dump($PayProduct);
-            halt($v);
-            dump($PayProduct[$v['p_id']]);
 
-            $product_name = empty($PayProduct[$v['p_id']])?'未知':$PayProduct[$v['p_id']];
-            if($v['pid'] != 0) $Channel_data[$k] = $v['title'].'-'.$product_name;
+            if($v['pid'] != 0){
+                $p_id = json_decode($v['p_id'],true);
+                $product_name = empty($PayProduct[$p_id])?'未知':$PayProduct[$p_id[0]];
+                $Channel_data[$k] = $v['title'].'-'.$product_name;
+            }
         }
 
         //基础数据
