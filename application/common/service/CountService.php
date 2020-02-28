@@ -451,7 +451,7 @@ class CountService {
                 $data['channel'][$v['channel_id'].$v['day']]['total_fee'] +=  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
 
                 $data['channel'][$v['channel_id'].$v['day']]['platform'] +=  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform'];
-                $data['channel'][$v['channel_id'].$v['day']]['title'] =   empty($Channel[$v['channel_id']])?'未知':$Channel[$v['channel_id']]['title'];;
+                $data['channel'][$v['channel_id'].$v['day']]['title'] =    $v['channel_name'];
 
                 $data['channel'][$v['channel_id'].$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
 
