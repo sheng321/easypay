@@ -4,7 +4,7 @@ $local = '/www/wwwroot/easypay';
 
 set_time_limit(360);
 //文件排它锁 阻塞模式
-$fp = fopen($local."/hooklock/git.txt", "w+");
+$fp = fopen($local."/lock/git.txt", "w+");
 if(flock($fp,LOCK_EX))
 {
     //仓库地址

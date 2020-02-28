@@ -26,7 +26,7 @@ class SubTable{
 
 
         //文件排它锁 非阻塞模式
-        $fp = fopen(Env::get('root_path')."hooklock/SubTable.txt", "w+");
+        $fp = fopen(Env::get('root_path')."lock/SubTable.txt", "w+");
         if(flock($fp,LOCK_EX | LOCK_NB))
         {
           $res = Db::table('cm_order')->where([['create_at', 'BETWEEN', [$begin, $end]]])->chunk(500, function($data)use($tableName) {
