@@ -30,7 +30,12 @@ class Index  extends AdminController
         //当前访问量
         $keys =  $redis1->keys('flow_*');
 
-        $info = $redis1->mget($keys);
+        if(empty($keys)){
+            $info = [];
+        }else{
+            $info = $redis1->mget($keys);
+        }
+
         foreach($info as $k=>$v){
             $info[$k] = json_decode($v,true);
         }
