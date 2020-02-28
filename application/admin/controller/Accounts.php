@@ -143,6 +143,9 @@ class Accounts  extends AdminController
 
         $Channel_data = [];
         foreach ($Channel as $k =>$v){
+            dump($PayProduct);
+            dump($PayProduct[$v['p_id']]);
+            halt($v);
             $product_name = empty($PayProduct[$v['p_id']])?'未知':$PayProduct[$v['p_id']];
             if($v['pid'] != 0) $Channel_data[$k] = $v['title'].'-'.$product_name;
         }
