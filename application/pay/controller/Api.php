@@ -47,6 +47,26 @@ class Api extends PayController
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
 
+        //当前访问量
+        $flow = 'flow_'.date('H:i:s');
+        if($redis1->exists($flow)){
+            $flow_data = json_decode($redis1->get($flow),true);
+            $flow_data['total'] += 1;
+            $flow_data[$param['pay_bankcode']] += 1;
+            $redis1->set($flow,json_encode($flow_data));
+        }else{
+            $flow_data['total'] = 1;
+            $PayCode =  \app\common\model\PayProduct::idCode();
+            foreach ($PayCode as $k=>$v){
+                $flow_data[$PayCode['code']] = 0;
+            }
+            $flow_data[$param['pay_bankcode']] = 1;
+            $redis1->set($flow,json_encode($flow_data));
+            $redis1->expire($flow,60*60*6);//6小时
+        }
+
+
+
         //通过redis缓存IP判断是否刷单
         $ip_record = 'recordIP_'.$param['pay_memberid'].get_client_ip();
         $orderId_ip_record = json_decode($redis1->get($ip_record),true);

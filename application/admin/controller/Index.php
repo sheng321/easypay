@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use redis\StringModel;
 
 class Index  extends AdminController
 {
@@ -22,6 +23,17 @@ class Index  extends AdminController
      * @return mixed
      */
     public function welcome(){
+        //当前访问量
+        $redis1 = (new StringModel())->instance();
+        $redis1->select(2);
+
+        //当前访问量
+        $keys =  $redis1->keys('flow_*');
+        halt($keys);
+
+
+
+
 
         return $this->fetch('');
     }
