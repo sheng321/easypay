@@ -29,7 +29,14 @@ class Index  extends AdminController
 
         //当前访问量
         $keys =  $redis1->keys('flow_*');
-        halt($keys);
+
+        $info=$redis1->smembers($keys);
+        foreach($info as $k=>$v){
+            $info[$k] = json_decode($v,true);
+        }
+
+        halt($info);
+
 
 
 
