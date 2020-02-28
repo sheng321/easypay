@@ -123,9 +123,7 @@ class Xyf extends PayController
 
         //$this->config['gateway'] = 'http://baidu.com';
 
-       halt($this->config['gateway']);
         $res = json_decode(Curl::post($this->config['gateway'], http_build_query($data)),true);
-
 
         $payurl = empty($res['data']['payurl'])?"":$res['data']['payurl'];
         $msg =  empty($res['msg'])?"":$res['msg'];
