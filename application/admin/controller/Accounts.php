@@ -138,9 +138,13 @@ class Accounts  extends AdminController
         }
 
         $Channel =   \app\common\model\Channel::idRate();//通道
+        $PayProduct =  \app\common\model\PayProduct::idArr();//支付产品
+
+
         $Channel_data = [];
         foreach ($Channel as $k =>$v){
-            if($v['pid'] == 0) $Channel_data[$k] = $v['title'];
+            $product_name = empty($PayProduct[$v['p_id']])?'未知':$PayProduct[$v['p_id']];
+            if($v['pid'] != 0) $Channel_data[$k] = $v['title'].'-'.$product_name;
         }
 
         //基础数据
