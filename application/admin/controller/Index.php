@@ -46,11 +46,11 @@ class Index  extends AdminController
             $option['xAxis'][$k] = $des['time'];
 
             foreach ($PayCode as $k1 =>$v1){
-                $option['legend'][$k] = $des[$v1.'title'];
-                $option['series'][$k]['name'] = $des[$v1.'title'];
-                $option['series'][$k]['type'] = 'line';
-                $option['series'][$k]['stack'] = '总量';
-                $option['series'][$k]['data'][] = $des[$v1];
+                $option['legend'][$k][] = $des[$v1.'title'];
+                $option['series'][$k1]['name'] = $des[$v1.'title'];
+                $option['series'][$k1]['type'] = 'line';
+                $option['series'][$k1]['stack'] = '总量';
+                $option['series'][$k1]['data'][] = $des[$v1];
             }
         }
         halt($option);
