@@ -477,6 +477,8 @@ class CountService {
 
         },600);
 
+        halt( 111);
+
         return true;
     }
 
