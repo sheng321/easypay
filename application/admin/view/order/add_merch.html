@@ -1,0 +1,59 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form" style="width:80%;">
+    <br>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">商户号</label>
+        <div class="layui-input-block">
+            <input type="text" id="uid" name="uid" class="layui-input " lay-verify="required|number"  placeholder="请输入商户号"  >
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">IP</label>
+        <div class="layui-input-block">
+            <input type="text" id="ip" name="ip" class="layui-input " lay-verify="required|ip"  placeholder="请输入IP"  >
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row">
+        <label class="layui-form-label">封禁时间</label>
+        <div class="layui-input-block">
+            <input type="radio"  name="auth_id" class="layui-input " value="1" lay-skin="primary" title="半个小时" >
+            <input type="radio"  name="auth_id" class="layui-input " value="2" lay-skin="primary" title="3个小时" >
+            <input type="radio"  name="auth_id" class="layui-input " value="3" lay-skin="primary" title="半天" >
+            <input type="radio"  name="auth_id" class="layui-input " value="4" lay-skin="primary" title="1天" >
+            <input type="radio"  name="auth_id" class="layui-input " value="5" lay-skin="primary" title="3天" >
+            <input type="radio"  name="auth_id" class="layui-input " value="6" lay-skin="primary" title="7天" >
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+
+<script      >
+
+    /**
+     * 添加、编辑
+     */
+    $.form.on('submitBtn', '{:url("$thisRequest")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    });
+
+</script>
+{/block}

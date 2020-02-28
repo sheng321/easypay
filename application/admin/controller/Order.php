@@ -543,6 +543,100 @@ class Order extends AdminController {
     }
 
 
+    /**
+     * 异常商户
+     */
+    public function merch(){
+        if ($this->request->get('type') == 'ajax'){
+            $redis = (new StringModel())->instance();
+            $redis->select(2);
+
+            $ip = $redis->keys('merch_*');
+            $data = [];
+            foreach ($ip as $k => $v){
+                $data[$k] = json_decode($redis->get($v),true);
+            }
+
+            $list = [
+                'code'  => 0,
+                'msg'   => '查询成功',
+                'count' => 100,
+                'info'  => $data,
+                'data'  => $data,
+            ];
+            return json($list);
+        }
+
+        //基础数据
+        $basic_data = [
+            'title'  => '异常商户列表',
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+    public function add_merch(){
+        if (!$this->request->isPost()) {
+
+            //基础数据
+            $basic_data = [
+                'title' => '添加异常商户',
+            ];
+            $this->assign($basic_data);
+
+            return $this->fetch('');
+        } else {
+            $post = $this->request->post();
+
+
+
+            $data['id'] = 'IP_'.$post['uid'].strtr($post['ip'], '.', '_');
+            $data['ip'] = $post['ip'];
+            $data['uid'] = $post['uid'];
+
+            switch ($post['auth_id']){
+                case 1:
+                    $time = 30*60;
+                    break;
+                case 2:
+                    $time = 30*60*3;
+                    break;
+                case 3:
+                    $time = 30*60*6;
+                    break;
+                case 4:
+                    $time = 30*60*24;
+                    break;
+                case 5:
+                    $time = 30*60*24*3;
+                    break;
+                case 6:
+                    $time = 30*60*24*7;
+                    break;
+            }
+
+            $data['over_at'] = date('Y-m-d H:i:s', time() + $time);
+
+            $redis = (new StringModel())->instance();
+            $redis->select(2);
+            $redis->set($data['id'], json_encode($data));
+            $redis->expire($data['id'],$time);
+            return __success('添加成功');
+        }
+
+    }
+
+    public function del_merch(){
+        $get = $this->request->only('id');
+        if(empty($get['id'])) __error('无数据');
+
+        $redis = (new StringModel())->instance();
+        $redis->select(2);
+        $redis->del($get['id']);
+
+        return __success('删除成功');
+    }
+
+
 
 
 
