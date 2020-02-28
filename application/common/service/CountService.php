@@ -471,7 +471,7 @@ class CountService {
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
-            return empty( $data['channel'])?'': $data['channel'];
+          //  return empty( $data['channel'])?'': $data['channel'];
 
       //  },600);
 
