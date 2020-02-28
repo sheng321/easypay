@@ -17,11 +17,11 @@ return [
 
     'Md5key'=> '5aa92e107b75d63b9d94da50de7f3d1300aa2b41',//测试秘钥
 
-   // 'api'=>'http://120.24.166.163:66/pay.php/api',//支付网关
+    'api'=>'http://120.24.166.163:66/pay.php/api',//支付网关
     'query'=>'http://120.24.166.163:66/pay.php/query',//网关
 
 
-     'api'=>'http://www.test4.com/pay.php/api',//支付网关
+     //'api'=>'http://www.test4.com/pay.php/api',//支付网关
 
 
     'DfMd5key'=> '4e10c1434813ac1ad65f82b608dbfe1f73204948',//代付测试秘钥
