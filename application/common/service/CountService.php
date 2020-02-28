@@ -399,6 +399,10 @@ class CountService {
             $PayProduct =  PayProduct::idArr();//支付产品
             foreach ($select as $k => $v) {
 
+                dump($v);
+                dump($PayProduct[$v['payment_id']]);
+                dump($Channel);
+                dump($Channel[$v['channel_id']]);
 
                 $v['product_name'] = empty($PayProduct[$v['payment_id']]) ? '未知' : $PayProduct[$v['payment_id']];
                 $v['channel_name'] = empty($Channel[$v['channel_id']])?'未知':$Channel[$v['channel_id']]['title'].'-'.$v['product_name'];
