@@ -369,7 +369,7 @@ class CountService {
     //支付通道每日对账
     public static function channel_account(){
 
-       // Cache::remember('agent_account', function () {
+        Cache::remember('agent_account', function () {
 
             $data = [];
             $insert = [];
@@ -398,11 +398,6 @@ class CountService {
             $Channel =  Channel::idRate();//通道
             $PayProduct =  PayProduct::idArr();//支付产品
             foreach ($select as $k => $v) {
-
-                dump($v);
-                dump($PayProduct[$v['payment_id']]);
-                dump($Channel);
-                dump($Channel[$v['channel_id']]);
 
                 $v['product_name'] = empty($PayProduct[$v['payment_id']]) ? '未知' : $PayProduct[$v['payment_id']];
                 $v['channel_name'] = empty($Channel[$v['channel_id']])?'未知':$Channel[$v['channel_id']]['title'].'-'.$v['product_name'];
@@ -474,12 +469,9 @@ class CountService {
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
-          //  return empty( $data['channel'])?'': $data['channel'];
+           return empty( $data['channel'])?'': $data['channel'];
 
-      //  },600);
-
-        dump( $insert);
-        dump( $update);
+        },600);
 
         return true;
     }
