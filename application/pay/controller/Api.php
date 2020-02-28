@@ -60,7 +60,7 @@ class Api extends PayController
 
             foreach ($PayCode as $k=>$v){
                 $flow_data[$v['code']] = 0;
-                $flow_data['code'] = $v['code'];
+                $flow_data['code'][] = $v['code'];
                 $flow_data[$v['code'].'title'] = $v['title'];
             }
             $flow_data[$param['pay_bankcode']] = 1;

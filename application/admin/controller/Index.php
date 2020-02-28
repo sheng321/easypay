@@ -37,6 +37,7 @@ class Index  extends AdminController
         }
 
         dump($info);
+        $PayCode =  \app\common\model\PayProduct::idCode1();
 
         $option = [];
         foreach($info as $k=>$v){
