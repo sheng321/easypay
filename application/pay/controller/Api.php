@@ -57,6 +57,7 @@ class Api extends PayController
         }else{
             $flow_data['total'] = 1;
             $PayCode =  \app\common\model\PayProduct::idCode1();
+            halt($PayCode);
             foreach ($PayCode as $k=>$v){
                 $flow_data[$v['code']] = 0;
                 $flow_data[$v['code']]['title'] = $v['title'];
