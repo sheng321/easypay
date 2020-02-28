@@ -139,7 +139,7 @@ class PayProduct extends ModelService {
     }
     public static function idCode1() {
         \think\facade\Cache::remember('idCode1', function () {
-            $value = self::column('id,code,status','code');
+            $value = self::column('id,code,status,title','code');
             \think\facade\Cache::tag('PayProduct')->set('idCode1',$value,3600);
             return $value;
         },3600);

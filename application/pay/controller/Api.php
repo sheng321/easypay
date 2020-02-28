@@ -56,9 +56,10 @@ class Api extends PayController
             $redis1->set($flow,json_encode($flow_data));
         }else{
             $flow_data['total'] = 1;
-            $PayCode =  \app\common\model\PayProduct::idCode();
+            $PayCode =  \app\common\model\PayProduct::idCode1();
             foreach ($PayCode as $k=>$v){
-                $flow_data[$v] = 0;
+                $flow_data[$v['code']] = 0;
+                $flow_data[$v['code']]['title'] = $v['title'];
             }
             $flow_data[$param['pay_bankcode']] = 1;
             $redis1->set($flow,json_encode($flow_data));
