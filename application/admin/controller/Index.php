@@ -41,6 +41,8 @@ class Index  extends AdminController
         $option = [];
         foreach($info as $k=>$v){
             $des = json_decode($v,true);
+            dump($des);
+
             $option['legend'][$k] = $des[$v['code'].'title'];
             $option['xAxis'][$k] = $des['time'];
 
