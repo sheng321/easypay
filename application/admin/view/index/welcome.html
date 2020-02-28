@@ -41,7 +41,7 @@
             trigger: 'axis'
         },
         legend: {
-            data:{$option.legend}
+            data:{$option.legend|raw}
         },
         grid: {
             left: '3%',
@@ -57,7 +57,7 @@
         xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: {$option.xAxis}
+            data: {$option.xAxis|raw}
         },
         yAxis: {
 
