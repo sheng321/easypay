@@ -37,20 +37,21 @@ class Index  extends AdminController
         }
 
         dump($info);
-        $PayCode =  \app\common\model\PayProduct::idCode1();
+        $PayCode =  \app\common\model\PayProduct::idCode();
 
         $option = [];
         foreach($info as $k=>$v){
             $des = json_decode($v,true);
-            dump($des);
 
-            $option['legend'][$k] = $des[$v['code'].'title'];
+            $option['legend'][$k] = $des[$k.'title'];
             $option['xAxis'][$k] = $des['time'];
 
-            $option['series'][$v['code']]['name'] = $des[$k.'title'];
-            $option['series'][$v['code']]['type'] = 'line';
-            $option['series'][$v['code']]['stack'] = '总量';
-            $option['series'][$v['code']]['data'][] = $des[$k];
+            foreach ($PayCode as $k1 =>$v1){
+                $option['series'][$k]['name'] = $des[$v1.'title'];
+                $option['series'][$k]['type'] = 'line';
+                $option['series'][$k]['stack'] = '总量';
+                $option['series'][$k]['data'][] = $des[$v1];
+            }
         }
         halt($option);
 
