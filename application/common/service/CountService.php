@@ -475,7 +475,8 @@ class CountService {
 
       //  },600);
 
-        dump( $data['channel']);
+        dump( $insert);
+        dump( $update);
 
         return true;
     }
