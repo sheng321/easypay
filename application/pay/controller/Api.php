@@ -83,9 +83,7 @@ class Api extends PayController
 
         //通过后台封禁IP
         $ip = 'IP_'.$param['pay_memberid'].strtr(get_client_ip(), '.', '_');
-        dump($redis1->get($ip));
-        halt($redis1->exists($ip));
-        if(!$redis1->exists($ip)) __jerror('系统检测到存在刷单的情况，请稍后在试4！！');
+        if($redis1->exists($ip)) __jerror('系统检测到存在刷单的情况，请稍后在试4！！');
 
 
         //商户属性
@@ -156,7 +154,7 @@ class Api extends PayController
 
             //通过后台屏蔽商户
             $merch = 'merch_'.$v['channel_id'].$param['pay_memberid'];
-            if(!$redis1->exists($merch)){
+            if($redis1->exists($merch)){
                 unset($ChannelProduct[$k]);
                 continue;
             }
