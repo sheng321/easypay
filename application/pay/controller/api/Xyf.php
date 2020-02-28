@@ -131,7 +131,9 @@ class Xyf extends PayController
         //下单失败
         $this->order_error($payurl,$msg,$create['id']);
 
-     return msg_get($res['data']['payurl']);
+        return '下单成功！';
+
+    // return msg_get($res['data']['payurl']);
     }
 
     private function getSign($data){
