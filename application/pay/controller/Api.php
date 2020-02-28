@@ -60,7 +60,7 @@ class Api extends PayController
             halt($PayCode);
             foreach ($PayCode as $k=>$v){
                 $flow_data[$v['code']] = 0;
-                $flow_data[$v['code']]['title'] = $v['title'];
+                $flow_data[$v['code'].'title'] = $v['title'];
             }
             $flow_data[$param['pay_bankcode']] = 1;
             $redis1->set($flow,json_encode($flow_data));
