@@ -45,7 +45,6 @@ class Test extends PayController
 
         //基础数据
         $basic_data = [
-            'api'  => config(''),
             'title'  => '测试',
             'order'  => $jsapi ,
             'data' => \app\common\model\PayProduct::codeTitle(),
@@ -95,12 +94,12 @@ class Test extends PayController
 
         //基础数据
         $basic_data = [
-            'api'  => config(''),
             'title'  => '测试',
             'order'  => $jsapi ,
             'data' => \app\common\model\PayProduct::codeTitle(),
         ];
 
+        dump(config('set.api'));
         return $this->fetch('index', $basic_data);
     }
 
