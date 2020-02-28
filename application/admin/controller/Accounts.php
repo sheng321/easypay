@@ -160,6 +160,22 @@ class Accounts  extends AdminController
         return $this->fetch('', $basic_data);
     }
 
+    public function info2()
+    {
+        $id = $this->request->get('id/d', 0);
+        $info = json_decode($this->model->where(['id'=>$id])->value('info'),true);
+        if(empty($info)) return msg_error('无数据，请重试。');
+
+        //基础数据
+        $basic_data = [
+            'title' => '通道分析',
+            'info'  => $info,
+        ];
+
+        return $this->fetch('', $basic_data);
+
+    }
+
     /**
      * 提现结算对账
      * @return mixed
