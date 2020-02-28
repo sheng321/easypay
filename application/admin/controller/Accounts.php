@@ -146,7 +146,7 @@ class Accounts  extends AdminController
 
             if($v['pid'] != 0){
                 $p_id = json_decode($v['p_id'],true);
-                $product_name = empty($PayProduct[$p_id])?'未知':$PayProduct[$p_id[0]];
+                $product_name = empty($p_id)?'未知':$PayProduct[$p_id[0]];
                 $Channel_data[$k] = $v['title'].'-'.$product_name;
             }
         }
