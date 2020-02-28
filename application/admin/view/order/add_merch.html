@@ -16,7 +16,7 @@
         <label class="layui-form-label">通道产品</label>
 
         <div class="layui-input-block">
-            <select id="channel_id"   lay-filter="channel_id"  lay-search=""  >
+            <select id="channel_id" name="channel_id"  lay-filter="channel_id"  lay-search=""  >
                 <option value="">请输入通道名称</option>
                 {foreach $channel as $k => $vo}
                 <option value="{$k|default='0'}">{$vo|default=''}</option>
