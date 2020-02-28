@@ -99,7 +99,6 @@ class Test extends PayController
             'data' => \app\common\model\PayProduct::codeTitle(),
         ];
 
-        dump(config('set.api'));
         return $this->fetch('index', $basic_data);
     }
 
