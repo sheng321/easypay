@@ -384,7 +384,7 @@ class Api extends PayController
 
         //实时记录IP的下单情况
         $redis1->set($ip_record,json_encode($orderId_ip_record));
-        $redis1->expire($ip_record,60*30);
+        $redis1->expire($ip_record,60*30);//三十分钟
 
         return $html;
     }
