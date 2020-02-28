@@ -35,14 +35,11 @@ class Index  extends AdminController
             $info[$k] = json_decode($v,true);
         }
 
-        halt($info);
-
-
-
-
-
-
-        return $this->fetch('');
+        $basic_data = [
+            'title'=> '欢迎页',
+            'info' => $info,
+        ];
+        return $this->fetch('',$basic_data);
     }
 
 }
