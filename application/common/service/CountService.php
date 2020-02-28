@@ -376,7 +376,6 @@ class CountService {
             $update = [];
             $Accounts = model('app\common\model\Accounts');
 
-           // $day = $Accounts->where([['channel_id','>',0],['type','>',3]])->order(['day desc'])->cache('account_channel_id',1)->value('day');
             $last = $Accounts->where([['channel_id','>',0],['type','=',3]])->order(['day desc'])->cache('account_channel_id',3)->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
             if(empty($last['day'])){
@@ -451,7 +450,7 @@ class CountService {
                 $data['channel'][$v['channel_id'].$v['day']]['total_fee'] +=  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
 
                 $data['channel'][$v['channel_id'].$v['day']]['platform'] +=  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform'];
-                $data['channel'][$v['channel_id'].$v['day']]['title'] =    $v['channel_name'];
+                $data['channel'][$v['channel_id'].$v['day']]['title'] = $v['channel_name'];
 
                 $data['channel'][$v['channel_id'].$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
 
