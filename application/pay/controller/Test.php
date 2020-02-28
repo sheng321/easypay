@@ -56,6 +56,8 @@ class Test extends PayController
 
 
     public function test(){
+
+        halt(11111);
         $ip =  get_client_ip();
         if(!in_array($ip,['127.0.0.1','113.61.61.77'])){
             $this->redirect('http://www.baidu.com');
