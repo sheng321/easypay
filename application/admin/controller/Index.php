@@ -36,6 +36,8 @@ class Index  extends AdminController
             $info = $redis1->mget($keys);
         }
 
+        dump($info);
+
         $option = [];
         foreach($info as $k=>$v){
             $info[$k] = json_decode($v,true);
