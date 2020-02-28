@@ -17,7 +17,7 @@
 
         {if auth("$thisClass/add_merch")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add_merch")}' data-title="添加IP">添加商户</a>
+            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-open='{:url("$thisClass/add_merch")}' data-title="添加异常商户">添加商户</a>
         </div>
         {/if}
         {if auth("$thisClass/del_merch")}
@@ -50,7 +50,7 @@
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {type: "checkbox", fixed: "left", width: 50,},
         {field:'uid', title:'商户号', minwith:1, align: 'center'},
-        {field:'ip', title:'通道产品', minwith:1, align: 'center'},
+        {field:'title', title:'通道产品', minwith:1, align: 'center'},
         {field:'over_at', title:'过期时间', minwith:1, align: 'center'},
     ]], false , '',100);
 

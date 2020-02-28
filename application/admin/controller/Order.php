@@ -577,8 +577,22 @@ class Order extends AdminController {
     public function add_merch(){
         if (!$this->request->isPost()) {
 
+            $Channel =   \app\common\model\Channel::idRate();//通道
+            $PayProduct =  \app\common\model\PayProduct::idArr();//支付产品
+
+            $Channel_data = [];
+            foreach ($Channel as $k =>$v){
+                if($v['pid'] != 0){
+                    $p_id = json_decode($v['p_id'],true);
+                    $product_name = empty($p_id)?'未知':$PayProduct[$p_id[0]];
+                    $Channel_data[$k] = $v['title'].'-'.$product_name;
+                }
+            }
+
+
             //基础数据
             $basic_data = [
+                'channel'  => $Channel_data,
                 'title' => '添加异常商户',
             ];
             $this->assign($basic_data);
@@ -589,7 +603,7 @@ class Order extends AdminController {
 
 
 
-            $data['id'] = 'IP_'.$post['uid'].strtr($post['ip'], '.', '_');
+            $data['id'] = 'merch_'.$post['uid'].strtr($post['ip'], '.', '_');
             $data['ip'] = $post['ip'];
             $data['uid'] = $post['uid'];
 

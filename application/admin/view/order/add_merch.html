@@ -13,9 +13,15 @@
     </div>
 
     <div class="layui-form-item layui-row layui-col-xs12">
-        <label class="layui-form-label">IP</label>
+        <label class="layui-form-label">通道产品</label>
+
         <div class="layui-input-block">
-            <input type="text" id="ip" name="ip" class="layui-input " lay-verify="required|ip"  placeholder="请输入IP"  >
+            <select id="channel_id"   lay-filter="channel_id"  lay-search=""  >
+                <option value="">请输入通道名称</option>
+                {foreach $channel as $k => $vo}
+                <option value="{$k|default='0'}">{$vo|default=''}</option>
+                {/foreach}
+            </select>
         </div>
     </div>
 

@@ -140,7 +140,6 @@ class Accounts  extends AdminController
         $Channel =   \app\common\model\Channel::idRate();//通道
         $PayProduct =  \app\common\model\PayProduct::idArr();//支付产品
 
-
         $Channel_data = [];
         foreach ($Channel as $k =>$v){
             if($v['pid'] != 0){
