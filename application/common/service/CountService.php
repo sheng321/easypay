@@ -475,7 +475,7 @@ class CountService {
 
       //  },600);
 
-        halt( 111);
+        dump( $data['channel']);
 
         return true;
     }
