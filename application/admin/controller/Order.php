@@ -601,6 +601,7 @@ class Order extends AdminController {
         } else {
             $post = $this->request->post();
 
+
             halt($post);
 
             $data['id'] = 'merch_'.$post['uid'].strtr($post['ip'], '.', '_');
