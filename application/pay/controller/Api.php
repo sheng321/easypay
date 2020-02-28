@@ -48,7 +48,7 @@ class Api extends PayController
         $redis1->select(2);
 
         //当前访问量
-        $flow = 'flow_'.date('H:i:s');
+        $flow = 'flow_'.date('H:i');
         if($redis1->exists($flow)){
             $flow_data = json_decode($redis1->get($flow),true);
             $flow_data['total'] += 1;
