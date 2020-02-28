@@ -24,7 +24,6 @@ class SubTable{
      */
     public static function  insert_table($tableName,$begin,$end){
 
-
         //文件排它锁 非阻塞模式
         $fp = fopen(Env::get('root_path')."lock/SubTable.txt", "w+");
         if(flock($fp,LOCK_EX | LOCK_NB))
