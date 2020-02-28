@@ -37,6 +37,7 @@ class Test extends PayController
             $md5str = $md5str . $key . "=" . $val . "&";
         }
 
+
         $sign = strtoupper(md5($md5str . "key=" . $Md5key));
 
         $jsapi["pay_md5sign"] = $sign;
