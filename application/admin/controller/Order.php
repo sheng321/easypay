@@ -412,7 +412,10 @@ class Order extends AdminController {
 
             if($res['code'] == 0) return json($res);
 
-            $msg = '查询订单号：'.$order['system_no'].'支付成功';
+            //添加到订单查询日志
+            logs($res['data'],$type = 'order/query/'.$code);
+
+            $msg = "查询订单号：".$order['system_no']."<span style='color: red'>支付成功</span>";
             $msg .= "\n";
             $msg .= '返回报文：';
             $msg .= "\n";

@@ -696,7 +696,7 @@ if (!function_exists('__suc')) {
      * 成功时返回的信息
      * @param $msg 消息
      */
-    function __suc($msg, $data = '')
+    function __suc($msg = '成功', $data = '')
     {
         return ['code' => 1, 'msg' => $msg, 'data' => $data];
     }
@@ -708,7 +708,7 @@ if (!function_exists('__err')) {
      * 错误时返回的信息
      * @param $msg 消息
      */
-    function __err($msg, $data = '')
+    function __err($msg = '失败', $data = '')
     {
         return ['code' => 0, 'msg' => $msg, 'data' => $data];
     }

@@ -120,9 +120,6 @@ class Xyf extends PayController
         $data['nonceStr'] = Str::random(32);
 
         $data['sign'] = $this->getSign($data);
-
-        //$this->config['gateway'] = 'http://baidu.com';
-
         $res = json_decode(Curl::post($this->config['gateway'], http_build_query($data)),true);
 
         $payurl = empty($res['data']['payurl'])?"":$res['data']['payurl'];
@@ -197,32 +194,22 @@ class Xyf extends PayController
   }
 } */
 
-        $result = ['code' => 0, 'msg' => '查询失败', 'data' => []];
 
         if(empty($resp) ||$resp['code'] !== 1){
-            if($resp['msg']) return $result['msg'] = $resp['msg'];
-           return $result;
+            $msg = '查询失败';
+            if($resp['msg']) $msg = $resp['msg'];
+           return __err($msg);
         }
-        if( empty($resp['data']) || $resp['data']['status'] != '1'   ){
-            $result['msg'] =  '订单：'.$Order['system_no'].'未支付';
-            return $result;
-        }
+        if( empty($resp['data']) || $resp['data']['status'] != '1'   ) return __err('订单：'.$Order['system_no'].'未支付');
 
         $flag = $this->verifys($resp['data']);
-        if(!$flag){
-            $result['msg'] = '查询失败：验签不通过';
-            return $result;
-         }
+        if(!$flag) return __err('查询失败：验签不通过');
 
         $orderAmt = floatval($resp['data']['orderAmt']);
-        if(abs($orderAmt - $Order['amount']) >1){
-            $result['msg'] = '查询订单金额不匹配：'.$orderAmt;
-            return $result;
-         }
+        if(abs($orderAmt - $Order['amount']) >1) return __err('查询订单金额不匹配：'.$orderAmt);
 
-          //添加到订单查询日志
-         logs($res,$type = 'order/query/'.$this->config['code']);
-         return ['code' => 1, 'msg' => '查询成功！', 'data' => $res];
+
+        return __suc('查询成功！',$res);
     }
     //回调
     public function notify(){
