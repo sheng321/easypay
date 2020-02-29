@@ -21,7 +21,42 @@
                     </div>
 
                 </div>
-            </div></div></div>
+            </div>
+        </div>
+
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">会员今日跑量</div>
+                <div class="layui-card-body">
+                    <div id="speedChart2" >
+                        <div id="speedChartMain2" style=" height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">通道今日跑量</div>
+                <div class="layui-card-body">
+                    <div id="speedChart3" >
+                        <div id="speedChartMain3" style=" height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">平台盈利</div>
+                <div class="layui-card-body">
+                    <div id="speedChart1" >
+                        <div id="speedChartMain1" style=" height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 
 
@@ -86,12 +121,181 @@
 
         ]
     };
-
-
-    console.log(option);
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
-    //弹出一个页面层
+
+
+
+    var myChart1 = echarts.init(document.getElementById('speedChartMain1'));
+    var  option1 = {
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        legend: {
+            data:[
+                /***{foreach sys_data.legend as $val}***/
+                '{$val}',
+                /***{/foreach}***/
+            ]
+        },
+        grid: {
+            left: '1%',
+            right: '1%',
+            bottom: '1%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: true,
+            data:[ /***{foreach sys_data.xAxis as $val}***/
+                '{$val}',
+                /***{/foreach}***/
+            ],
+        },
+        yAxis: {
+
+            type: 'value'
+        },
+        series: [
+            /***{foreach sys_data.series as $val}***/
+            {
+                name: '{$val.name}',
+                barWidth:10,
+                type:'bar',
+                data:[
+                    /***{foreach $val.data as $val1}***/
+                    '{$val1}',
+                    /***{/foreach}***/
+                ]
+            },
+            /***{/foreach}***/
+
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart1.setOption(option1);
+
+
+    var myChart2 = echarts.init(document.getElementById('speedChartMain2'));
+    var  option2 = {
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        legend: {
+            data:[
+                /***{foreach user_data.legend as $val}***/
+                '{$val}',
+                /***{/foreach}***/
+            ]
+        },
+        grid: {
+            left: '1%',
+            right: '1%',
+            bottom: '1%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: true,
+            data:[ /***{foreach user_data.xAxis as $val}***/
+                '{$val}',
+                /***{/foreach}***/
+            ],
+        },
+        yAxis: {
+
+            type: 'value'
+        },
+        series: [
+            /***{foreach user_data.series as $val}***/
+            {
+                name: '{$val.name}',
+                barWidth:10,
+                type:'bar',
+                data:[
+                    /***{foreach $val.data as $val1}***/
+                    '{$val1}',
+                    /***{/foreach}***/
+                ]
+            },
+            /***{/foreach}***/
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart2.setOption(option2);
+
+
+    var myChart3 = echarts.init(document.getElementById('speedChartMain3'));
+    var  option3 = {
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        legend: {
+            data:[
+                /***{foreach channel_data.legend as $val}***/
+                '{$val}',
+                /***{/foreach}***/
+            ]
+        },
+        grid: {
+            left: '1%',
+            right: '1%',
+            bottom: '1%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: true,
+            data:[ /***{foreach channel_data.xAxis as $val}***/
+                '{$val}',
+                /***{/foreach}***/
+            ],
+        },
+        yAxis: {
+
+            type: 'value'
+        },
+        series: [
+            /***{foreach channel_data.series as $val}***/
+            {
+                name: '{$val.name}',
+                barWidth:10,
+                type:'bar',
+                data:[
+                    /***{foreach $val.data as $val1}***/
+                    '{$val1}',
+                    /***{/foreach}***/
+                ]
+            },
+            /***{/foreach}***/
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart3.setOption(option3);
 
 </script>
 
