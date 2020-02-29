@@ -36,7 +36,7 @@ class Index  extends AdminController
             $info = $redis1->mget($keys);
         }
 
-        dump($info);
+
 
 
         $option['legend'] = [];
@@ -47,7 +47,6 @@ class Index  extends AdminController
 
             $option['legend'] = $des['title'];
             $option['xAxis'][$k] = $des['time'];
-           // $option['series'][$k] = $des['num'];
 
             foreach ($des['num'] as $k1 => $v1){
                 $option['series'][$k1]['name'] = $des['title'][$k1];
@@ -55,7 +54,6 @@ class Index  extends AdminController
             }
         }
 
-        halt($option);
 
         $basic_data = [
             'title'=> '欢迎页',
