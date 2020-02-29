@@ -53,6 +53,8 @@ class Index  extends AdminController
             }
         }
 
+        halt($option);
+
 
         $basic_data = [
             'title'=> '欢迎页',
