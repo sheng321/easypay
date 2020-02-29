@@ -36,9 +36,7 @@ class Index  extends AdminController
             $info = $redis1->mget($keys);
         }
 
-        dump($info);
         $PayCode =  \app\common\model\PayProduct::idCode();
-
 
         $option['legend'] = [];
         $option['xAxis'] = [];
