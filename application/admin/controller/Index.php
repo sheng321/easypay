@@ -39,7 +39,10 @@ class Index  extends AdminController
         dump($info);
         $PayCode =  \app\common\model\PayProduct::idCode();
 
-        $option = [];
+
+        $option['legend'] = [];
+        $option['xAxis'] = [];
+        $option['series'] = [];
         foreach($info as $k=>$v){
             $des = json_decode($v,true);
 
@@ -52,9 +55,6 @@ class Index  extends AdminController
                 $option['series'][$k1]['data'][] = $des[$v1];
             }
         }
-
-        halt($option);
-
 
         $basic_data = [
             'title'=> '欢迎页',
