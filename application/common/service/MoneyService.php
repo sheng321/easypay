@@ -77,7 +77,7 @@ class MoneyService {
             $log = array_merge($log,$res2['change']);
 
         }
-        //上上上级代理
+        //上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
             $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
             if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
@@ -264,6 +264,7 @@ class MoneyService {
             $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动退单']);
         }else{
             $save3 = $OrderDispose->isUpdate(true)->save([
+                'id'=>$Dispose['id'],
                 'system_no'=>$system_no,
                 'pid'=>$Order['id'],
                 'record'=>$Dispose['record']."|".session('admin_info.username').'-手动退单'
