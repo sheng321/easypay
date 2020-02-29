@@ -63,7 +63,7 @@ class Api extends PayController
                 $flow_data['title'][$v['code']] =  $v['title'];
                 $flow_data['num'][$v['code']] = 0;
             }
-            $flow_data[$param['pay_bankcode']] = 1;
+            $flow_data['num'][$param['pay_bankcode']] = 1;
             $flow_data['title']['total'] =  '总量';
 
             $flow_data['time'] = date('H:i');
