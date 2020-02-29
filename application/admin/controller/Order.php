@@ -372,10 +372,11 @@ class Order extends AdminController {
                 if(md5(strtolower($ok)) == md5('ok')){
                     $this->model->save(['id'=>$data['order']['id'],'notice'=>2,'repair'=>1],['id'=>$data['order']['id']]);
 
-                    return __success('手动回调单号-'.$order['system_no'].' 成功！ 商户返回： '.$ok);
+                    return __success('手动回调单号-'.$order['system_no']." 成功！\n  商户返回： ".$ok);
                 }else{
                     $this->model->save(['id'=>$data['order']['id'],'notice'=>3,'repair'=>1],['id'=>$data['order']['id']]);
                     $str = '手动回调单号-'.$order['system_no'].' 失败！ 商户返回： ';
+                    $str.=  "\n";
                     $str.=  "\n";
                     $str.=  "<code>";
                     $str.=  "\n";
