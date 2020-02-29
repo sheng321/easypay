@@ -787,7 +787,7 @@ class CountService {
     public static function sys_account()
     {
 
-        Cache::remember('sys_account', function () {
+       // Cache::remember('sys_account', function () {
             $channel_data = [];
             $insert = [];
             $update = [];
@@ -928,7 +928,11 @@ class CountService {
                 if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
             }
 
-        },600);
+            halt($money_data);
+
+            return $money_data;
+
+     //   },600);
 
 
         return true;
