@@ -29,6 +29,7 @@ class Crontab  extends Controller
     {
         //3-10分钟成功率
         CountService::success_rate();
+        echo '更新成功';
     }
 
 
@@ -37,13 +38,13 @@ class Crontab  extends Controller
      */
     public function count_10()
     {
-
         CountService::mem_account();
         CountService::agent_account();
         CountService::channel_account();
         CountService::withdraw_account();
         CountService::df_account();
         CountService::sys_account();
+        echo '更新成功';
     }
 
 
