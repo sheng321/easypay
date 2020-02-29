@@ -143,9 +143,10 @@ class MoneyService {
         $save3 = true;
         if (app('request')->module() == 'admin') {
                 if(empty($Dispose)){
-                    $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动回调']);
+                    $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动补单']);
                 }else{
                     $save3 = $OrderDispose->isUpdate(true)->save([
+                        'id'=>$Dispose['id'],
                         'system_no'=>$system_no,
                         'pid'=>$Order['id'],
                         'record'=>$Dispose['record']."|".session('admin_info.username').'-手动补单'
