@@ -48,9 +48,6 @@ class Index  extends AdminController
             $option['series'][$k] = $des['num'];
         }
 
-        halt($option);
-
-
         $basic_data = [
             'title'=> '欢迎页',
             'option' => $option,
