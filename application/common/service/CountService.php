@@ -14,7 +14,7 @@ use think\facade\Cache;
  */
 class CountService {
 
-    /**通道成功率 3-10分钟的成功率 3分钟统计一次  支付通道产品，通道分组，支付类型
+    /**通道成功率 3-10分钟的成功率 5分钟统计一次  支付通道产品，通道分组，支付类型
      * @return mixed
      */
     public static function success_rate(){
@@ -87,7 +87,7 @@ class CountService {
             $data['time'] = timeToDate();
 
             return  $data;
-        },180);
+        },300);
 
         return \think\facade\Cache::get('success_rate');
 
