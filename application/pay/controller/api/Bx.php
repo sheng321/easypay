@@ -188,8 +188,6 @@ class Bx extends PayController
         return $this->async($order);
     }
 
-
-
     //话费 通道查询库存
     public function repertory(){
         $data1['USER_ID'] =  $this->config['mch_id'];
