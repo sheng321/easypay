@@ -129,7 +129,7 @@ class MoneyService {
         if(!empty($amount)) $Order_update['actual_amount'] = $amount;
 
         //添加到处理订单列表
-        if(!empty(session('admin_info.id'))){
+        if (app('request')->module() == 'admin') {
             $OrderDispose =  model('app\common\model\OrderDispose');
             $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
         }
@@ -141,16 +141,16 @@ class MoneyService {
 
         //添加到处理订单列表  在后台处理订单列表显示
         $save3 = true;
-        if(!empty(session('admin_info.id'))){
-            if(empty($Dispose)){
-                $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动回调']);
-            }else{
-                $save3 = $OrderDispose->isUpdate(true)->save([
-                    'system_no'=>$system_no,
-                    'pid'=>$Order['id'],
-                    'record'=>$Dispose['record']."|".session('admin_info.username').'-手动回调'
-                ],['id'=>$Dispose['id']]);
-            }
+        if (app('request')->module() == 'admin') {
+                if(empty($Dispose)){
+                    $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动回调']);
+                }else{
+                    $save3 = $OrderDispose->isUpdate(true)->save([
+                        'system_no'=>$system_no,
+                        'pid'=>$Order['id'],
+                        'record'=>$Dispose['record']."|".session('admin_info.username').'-手动补单'
+                    ],['id'=>$Dispose['id']]);
+                }
         }
 
         if (!$save || !$save1|| !$save2|| !$save3){
@@ -161,8 +161,8 @@ class MoneyService {
 
         //添加到异步T1处理 --支付通道
         //T1 结算
-       // if($Channel['account'] == 1) \think\Queue::later(3600*24,'app\\common\\job\\T1', $t1, 't1');//24小时
-        if($Channel['account'] == 1) \think\Queue::push('app\\common\\job\\T1', $t1, 't1');
+        if($Channel['account'] == 1) \think\Queue::later(3600*24,'app\\common\\job\\T1', $t1, 't1');//24小时
+       // if($Channel['account'] == 1) \think\Queue::push('app\\common\\job\\T1', $t1, 't1');
         return true;
     }
 
