@@ -36,6 +36,8 @@ class Index  extends AdminController
             $info = $redis1->mget($keys);
         }
 
+        dump($info);
+
 
         $option['legend'] = [];
         $option['xAxis'] = [];
@@ -48,8 +50,8 @@ class Index  extends AdminController
            // $option['series'][$k] = $des['num'];
 
             foreach ($des['num'] as $k1 => $v1){
-                $option['series'][$k1]['name'] = $des['title'][$v1];
-                $option['series'][$k1]['data'][] = $des['num'][$v1];
+                $option['series'][$k1]['name'] = $des['title'][$k1];
+                $option['series'][$k1]['data'][] = $des['num'][$k1];
             }
         }
 
