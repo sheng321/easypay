@@ -51,8 +51,8 @@ class Api extends PayController
         $flow = 'flow_'.date('H:i');
         if($redis1->exists($flow)){
             $flow_data = json_decode($redis1->get($flow),true);
-            $flow_data['total'] += 1;
-            $flow_data[$param['pay_bankcode']] += 1;
+            $flow_data['num']['total'] += 1;
+            $flow_data['num'][$param['pay_bankcode']] += 1;
             $redis1->set($flow,json_encode($flow_data));
         }else{
             $flow_data['num']['total'] = 1;
