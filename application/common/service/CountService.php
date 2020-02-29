@@ -787,7 +787,7 @@ class CountService {
     public static function sys_account()
     {
 
-       // Cache::remember('sys_account', function () {
+        Cache::remember('sys_account', function () {
             $channel_data = [];
             $insert = [];
             $update = [];
@@ -835,8 +835,6 @@ class CountService {
                     $insert[$val['day']]['type'] = 6;
                 }
             }
-
-            halt($channel_data);
 
 
             //插入每日对账表
@@ -930,11 +928,9 @@ class CountService {
                 if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
             }
 
-            halt($money_data);
+            return 1;
 
-            return $money_data;
-
-     //   },600);
+        },600);
 
 
         return true;
