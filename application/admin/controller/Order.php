@@ -270,6 +270,9 @@ class Order extends AdminController {
             $order['channelgroup_name'] = empty($ChannelGroup[$order['channel_group_id']])?'未知':$ChannelGroup[$order['channel_group_id']];
             $order['channel_name'] = empty($Channel[$order['channel_id']])?'未知':$Channel[$order['channel_id']]['title'];
 
+
+            if(($order['pay_status'] == 0) && (time() > $order['over_time'])) $order['pay_status'] = 3;//显示订单关闭
+
             $order['over_time'] = date('Y-m-d H:i:s',$order['over_time']);
 
             $order['pay_status1'] = config('order.pay_status.'.$order['pay_status']);
