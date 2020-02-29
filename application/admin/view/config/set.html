@@ -1,0 +1,84 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+
+<form class="layui-form form-width-99admin">
+    <br>
+    <div class="layui-card">
+        <div class="layui-card-header">{$title|default=''}</div>
+    </div>
+    <br>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">网站名称</label>
+        <div class="layui-input-block">
+            <input type="text"   name="title"   class="layui-input"  value="{$data.title|default=''}" placeholder="请输入网站名称">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">联系链接</label>
+        <div class="layui-input-block">
+            <input type="text"   name="link"   class="layui-input"  value="{$data.link|default=''}" placeholder="请输入联系链接">
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">联系QQ</label>
+        <div class="layui-input-block">
+            <input type="text"   name="qq"   class="layui-input"  value="{$data.qq|default=''}" placeholder="请输入联系QQ">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">网站是否维护</label>
+        <div class="layui-input-block">
+            <input type="radio" name="is_close" value="0" title="正常" {eq name='$data.is_close|default=false' value='0' }checked="checked"{/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>正常</div></div>
+            <input type="radio" name="is_close" value="1" title="维护" {eq name='$data.is_close|default=false' value='1' }checked="checked"{/eq}   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>维护</div></div>
+        </div>
+
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">是否禁止下单</label>
+        <div class="layui-input-block">
+            <input type="radio" name="is_api" value="0" title="正常" {eq name='$data.is_api|default=false' value='0' }checked="checked"{/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>正常</div></div>
+            <input type="radio" name="is_api" value="1" title="禁止" {eq name='$data.is_api|default=false' value='1' }checked="checked"{/eq}   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>禁止</div></div>
+        </div>
+
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">是否禁止入账</label>
+        <div class="layui-input-block">
+            <input type="radio" name="noentry" value="0" title="正常" {eq name='$data.noentry|default=false' value='0' }checked="checked"{/eq}  ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i><div>正常</div></div>
+            <input type="radio" name="noentry" value="1" title="禁止" {eq name='$data.noentry|default=false' value='1' }checked="checked"{/eq}   ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>禁止</div></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn"    >提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+
+{block name="script"}
+<script  >
+
+    /**
+     * 添加、编辑
+     */
+
+    $.form.on('submitBtn', '{:url("$thisRequest")}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload();
+        });
+        return false;
+    },true);
+
+</script>
+{/block}
+

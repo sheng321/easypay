@@ -59,4 +59,25 @@ class Config extends AdminController {
             return $this->model->editField($post);
         }
     }
+
+    /**
+     * 设置
+     * @return mixed
+     */
+    public function set() {
+        $this->assign(['data'  => config('set.')]);
+        if ($this->request->isPost()) {
+            $post= $this->request->post();
+            setconfig('set',$post);//配置文件只用单引号
+
+            return __success('操作成功');
+
+        }
+
+        //基础数据
+        $basic_data = [
+            'title' => '网站配置',
+        ];
+        return $this->fetch('', $basic_data);
+    }
 }
