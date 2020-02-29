@@ -194,20 +194,18 @@ class Xyf extends PayController
   }
 } */
 
-
         if(empty($resp) ||$resp['code'] !== 1){
             $msg = '查询失败';
             if($resp['msg']) $msg = $resp['msg'];
            return __err($msg);
         }
-        if( empty($resp['data']) || $resp['data']['status'] != '1'   ) return __err('订单：'.$Order['system_no'].'未支付');
+        if( empty($resp['data']) || $resp['data']['status'] != '1'   ) return __err('订单：'.$Order['system_no'].' 未支付');
 
         $flag = $this->verifys($resp['data']);
         if(!$flag) return __err('查询失败：验签不通过');
 
         $orderAmt = floatval($resp['data']['orderAmt']);
         if(abs($orderAmt - $Order['amount']) >1) return __err('查询订单金额不匹配：'.$orderAmt);
-
 
         return __suc('查询成功！',$res);
     }
@@ -219,7 +217,7 @@ class Xyf extends PayController
         if($param['status'] !== '1') __jerror('pay_fail');
 
         $this->config['returnBack'] = 'success';//返回数据
-        $this->config['system_no'] = $param['orderId'];//返回数据
+        $this->config['system_no'] = $param['orderId'];//订单号
         $this->config['transaction_no'] =$param['sysOrderId']; //第三方订单号
         $this->config['amount'] = $param['orderAmt'];//下订单金额
         //$this->config['upstream_settle'] = 0;//上游结算金额
@@ -229,6 +227,10 @@ class Xyf extends PayController
         //验签
         $flag = $this->verifys($param);
         if(!$flag) __jerror('sign_wrong');
+
+        //查询订单
+        $query = $this->query($order);
+        if($query['code'] != 1) __jerror('no_pay');
 
         return $this->async($order);
     }

@@ -68,13 +68,13 @@ class PayController extends BaseController
          //通道
          $Channel_father = Channel::quickGet($Channel['pid']);
 
-         $num[10] = 0;
-         $num[30] = 0;
-         $num[50] = 0;
-         $num[100] = 0;
-         $num[200] = 0;
-         $num[300] = 0;
-         $num[500] = 0;
+         $num[10] = 10;
+         $num[30] = 10;
+         $num[50] = 10;
+         $num[100] = 10;
+         $num[200] = 10;
+         $num[300] = 10;
+         $num[500] = 10;
 
          if(empty($Channel_father) || empty($Channel_father['code']))   return $num;
 
@@ -89,26 +89,19 @@ class PayController extends BaseController
                    }catch (\Exception $exception){
                        logs($exception->getMessage().'|'.$exception->getFile().'|查询话费库存失败','api');
                    }
-                    !empty($res[10]) &&  $num[10] = $res[10];
-                    !empty($res[30]) &&  $num[30] = $res[30];
-                    !empty($res[50]) &&  $num[50] = $res[50];
-                    !empty($res[100]) &&  $num[100] = $res[100];
-                    !empty($res[200]) &&  $num[200] = $res[200];
-                    !empty($res[300]) &&  $num[300] = $res[300];
-                    !empty($res[500]) &&  $num[500] = $res[500];
+                    !isset($res[10]) &&  $num[10] = $res[10];
+                    !isset($res[30]) &&  $num[30] = $res[30];
+                    !isset($res[50]) &&  $num[50] = $res[50];
+                    !isset($res[100]) &&  $num[100] = $res[100];
+                    !isset($res[200]) &&  $num[200] = $res[200];
+                    !isset($res[300]) &&  $num[300] = $res[300];
+                    !isset($res[500]) &&  $num[500] = $res[500];
                     return $num;
                 },60);
                 $num = \think\facade\Cache::get('charge_num_'.$id);
                 break;
             default:
                 //不查询的情况
-                $num[10] = 10;
-                $num[30] = 10;
-                $num[50] = 10;
-                $num[100] = 10;
-                $num[200] = 10;
-                $num[300] = 10;
-                $num[500] = 10;
                 break;
         }
        return $num;

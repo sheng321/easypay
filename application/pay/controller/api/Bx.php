@@ -180,6 +180,10 @@ class Bx extends PayController
 
         if($sign !== $sign2) __jerror('sign_wrong');
 
+        //查询订单
+        $query = $this->query($order);
+        if($query['code'] != 1) __jerror('no_pay');
+
 
         return $this->async($order);
     }
