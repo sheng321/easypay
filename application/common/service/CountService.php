@@ -836,6 +836,8 @@ class CountService {
                 }
             }
 
+            halt($channel_data);
+
 
             //插入每日对账表
             if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
