@@ -191,17 +191,12 @@ class Withdrawal extends AdminController {
                 $Umoney_data = $res1['data'];
                 $UmoneyLog_data = $res1['change'];
 
+                $change['change'] = $order['channel_amount'];//通道变动金额
+                $res2 = Umoney::dispose($channel_money, $change); //通道处理
+                if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
 
-                    $change['change'] = $order['channel_amount'];//通道变动金额
-                    $res2 = Umoney::dispose($channel_money, $change); //通道处理
-
-                    dump($channel_money);
-                    dump($change);
-                    halt($res2);
-                    if (true !== $res2['msg']) return __error('通道:' . $res2['msg']);
-
-                    $Umoney_data = array_merge($Umoney_data,$res2['data']);
-                    $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
+                $Umoney_data = array_merge($Umoney_data,$res2['data']);
+                $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
 
 
                 $post['actual_amount'] = $order['amount'] - $order['fee'];//实际到账
