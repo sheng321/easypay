@@ -287,6 +287,9 @@ class Api extends PayController
         unset($random_keys);
         unset($ChannelProduct);
 
+        //已选中的通道产品
+        $Channel = Channel::quickGet($channel_id);
+
         //获取商户费率
         $MemRate =  RateService::getMemRate($param['pay_memberid'],$PayProduct['id'],$channel_id);
         if($MemRate === false)  __jerror('商户号不存在，或者未分配用户分组。');
@@ -322,8 +325,7 @@ class Api extends PayController
         ])->value('id');
         if(!empty($id)) __jerror('订单号重复！');
 
-        //已选中的通道产品
-        $Channel = Channel::quickGet($channel_id);
+
         //已选中所属通道
         $Channel_father = Channel::quickGet($Channel['pid']);
         if(empty($Channel_father) || empty($Channel_father['code']) || empty($Channel_father['limit_time'])) __jerror('支付服务不存在0');
