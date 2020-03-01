@@ -15,9 +15,6 @@ class intBehavior extends Controller
 {
     public function run(){
 
-
-        //IP 白名单
-
         Policy(); //同源协议
       $this->check_param();
       $this->command();
