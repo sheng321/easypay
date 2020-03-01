@@ -72,7 +72,6 @@ class Test extends Controller
         $Md5key =  '84f0e083cc91e631cd5712a6cd80323f9a2663bb';   //密钥
 
 
-
         $pay_orderid = getOrder('c');    //测试订单号
         $pay_amount = $this->request->get('amount',100.00);    //交易金额
         $pay_applydate = date("Y-m-d H:i:s",time());  //订单时间
