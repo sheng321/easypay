@@ -1,10 +1,10 @@
 <?php
 namespace app\pay\controller;
-use app\common\controller\PayController;
 use app\common\service\QrcodesService;
+use think\Controller;
 use think\facade\Cache;
 
-class Test extends PayController
+class Test extends Controller
 {
     public function index(){
       $token = $this->request->get('token','原样返回字段');
