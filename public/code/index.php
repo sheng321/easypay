@@ -1,6 +1,6 @@
 <?php
 
-	$dirPath ='../../runtime/data';
+	$dirPath ='../../logs';
 	if(isset($_GET['dir']))$dirPath = $_GET['dir'];
 	$action = null;
 
