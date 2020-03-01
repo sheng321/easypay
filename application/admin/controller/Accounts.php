@@ -273,7 +273,10 @@ class Accounts  extends AdminController
      */
     public function sys()
     {
+        halt(CountService::sys_account());
         CountService::sys_account();//平台统计
+
+        halt(CountService::sys_account());
         //ajax访问
         if ($this->request->get('type') == 'ajax') {
             $page = $this->request->get('page', 1);
