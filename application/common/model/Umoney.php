@@ -205,6 +205,7 @@ class Umoney extends ModelService {
             $change1['remark'] = $change['remark'];
         }
 
+        dump($change['type']);
         switch ($change['type']){
             case 1: //成功-解冻扣除  (把解冻金额去掉)
                 $res['log'] = $temp.'成功-解冻扣除'.$change['change'];
