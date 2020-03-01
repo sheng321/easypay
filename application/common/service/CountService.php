@@ -795,7 +795,7 @@ class CountService {
     public static function sys_account()
     {
 
-        Cache::remember('sys_account', function () {
+       // Cache::remember('sys_account', function () {
             $channel_data = [];
             $insert = [];
             $update = [];
@@ -860,7 +860,9 @@ class CountService {
                 $withdraw_data[$val['day']]['day'] = $val['day'];
                 $withdraw_data[$val['day']]['type'] = 6;
 
-                $temp = $Accounts->where([['withdraw_id', '=', $val['withdraw_id']], ['df_id', '=', $val['df_id']], ['day', '=', $val['day']], ['type', '=', $val['type']]])->cache($val['day'] . 'totle_withdraw', 3)->field('id,info')->find();
+               // $temp = $Accounts->where([['withdraw_id', '=', $val['withdraw_id']], ['df_id', '=', $val['df_id']], ['day', '=', $val['day']], ['type', '=', $val['type']]])->cache($val['day'] . 'totle_withdraw', 3)->field('id,info')->find();
+
+                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->cache($val['day'] . 'totle', 3)->field('id,info')->find();
 
                 empty($withdraw_data[$val['day']]['total_orders']) && $withdraw_data[$val['day']]['total_orders'] = 0;
                 empty($withdraw_data[$val['day']]['total_fee_all']) && $withdraw_data[$val['day']]['total_fee_all'] = 0;
@@ -910,7 +912,9 @@ class CountService {
             foreach ($money as $k => $val) {
                 $val['day'] = date('Y-m-d',strtotime($val['create_at']));
 
-                $temp = $Accounts->where([ ['day', '=', $val['day']], ['type', '=',6]])->cache($val['day'] . 'totle_money', 3)->field('id,info')->find();
+               // $temp = $Accounts->where([ ['day', '=', $val['day']], ['type', '=',6]])->cache($val['day'] . 'totle_money', 3)->field('id,info')->find();
+
+                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->cache($val['day'] . 'totle', 3)->field('id,info')->find();
 
                 empty($money_data[$val['day']]['dec']) && $money_data[$val['day']]['dec'] = 0;
                 empty($money_data[$val['day']]['inc']) && $money_data[$val['day']]['inc'] = 0;
@@ -938,7 +942,7 @@ class CountService {
 
             return 1;
 
-        },540);
+       // },540);
 
 
         return true;
