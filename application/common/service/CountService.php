@@ -96,7 +96,7 @@ class CountService {
             $data['time'] = timeToDate();
 
             return  $data;
-        },300);
+        },240);
 
         return \think\facade\Cache::get('success_rate');
 
