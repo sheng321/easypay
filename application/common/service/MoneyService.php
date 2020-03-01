@@ -178,6 +178,14 @@ class MoneyService {
 
         if(empty($Order) || $Order['pay_status'] !== 2) __jerror('该订单不存在，或者未支付');
 
+        //不能修改前一天的订单
+
+        halt($Order);
+
+
+
+
+
         //通道
         $Channel =  Channel::alias('a')->where(['a.id'=>$Order['channel_id']])
             ->join('channel w','a.pid = w.id')
@@ -217,7 +225,7 @@ class MoneyService {
             $log = array_merge($log,$res2['change']);
         }
 
-        //上上上级代理
+        //上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
             $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
             if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
