@@ -11,7 +11,7 @@ if (!function_exists('addTask')) {
      * @param int $time
      * @return bool
      */
-    function addTask($title,$msg,$type,$time = 1)
+    function addTask($title,$msg,$type,$time = 5)
     {
         \app\common\model\Message::add_task($title,$msg,$type,$time);
         return  true;

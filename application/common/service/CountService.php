@@ -19,15 +19,12 @@ class CountService {
      */
     public static function success_rate(){
 
-       // Cache::remember('success_rate', function () {
+        Cache::remember('success_rate', function () {
             $data = [];
             $three = timeToDate(0,-3);//三分钟前的时间
             //$three = timeToDate(0,-1);//三分钟前的时间
             $ten =  timeToDate(0,-15);//十分钟
-            $ten =  timeToDate(0,-1000);//十分钟
-
-        dump($three);
-        halt($ten);
+           // $ten =  timeToDate(0,-1000);//十分钟
 
             //总订单数 total_orders //总订单金额 total_fee_all //已支付金额 total_fee_paid //已支付订单数 total_paid //通道ID //支付类型 // 通道分组
             $sql = "select count(1) as total_orders,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,amount,0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,channel_id,payment_id,channel_group_id,create_at from cm_order where  create_at BETWEEN ? AND ? GROUP BY channel_id  ORDER BY id DESC ";//每个通道的成功率
@@ -87,10 +84,19 @@ class CountService {
                 $data['channel_group'][$v['channel_group_id']]['rate'] =  round($data['channel_group'][$v['channel_group_id']]['total_paid']/$data['channel_group'][$v['channel_group_id']]['total_orders'],3)*100;
 
             }
+
+            if(!empty($data['channel'])){
+                foreach ($data['channel'] as $k =>$v){
+                    if($v['rate'] < 40){
+                        addTask('通道成功率通知',$v['channel_name'].','.$v['product_name'].'成功率只有'.$v['rate'].',请及时处理。',5);
+                    }
+
+                }
+            }
             $data['time'] = timeToDate();
 
             return  $data;
-       // },300);
+        },300);
 
         return \think\facade\Cache::get('success_rate');
 
@@ -193,7 +199,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['account'])?'':$data['account'] ;
-        },600);
+        },540);
 
         return true;
     }
