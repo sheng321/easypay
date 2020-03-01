@@ -214,12 +214,8 @@ class Umoney extends ModelService {
                 $data['total_money'] = $data['total_money'] - $change['change'];
                 if($data['frozen_amount'] < 0)   $res['msg'] = '成功-解冻扣除大于冻结金额';
 
-                $total_money =  $data['total_money'] - $data['balance'] - $data['artificial'] - $data['frozen_amount'] - $data['frozen_amount_t1'] - $data['df'];
-
                 $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
 
-
-                dump($total_money);
                 $change['balance'] = $data['frozen_amount'];//变动后的金额
 
                 $data['total_money'] =  Db::raw('total_money-'.$change['change']);
@@ -232,7 +228,7 @@ class Umoney extends ModelService {
 
                 $data['balance'] = $data['balance'] + $change['change'];
                 $data['total_money'] = $data['total_money'] + $change['change'];
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance+'.$change['change']);
@@ -253,7 +249,7 @@ class Umoney extends ModelService {
                 $data['balance'] = $data['balance'] - $change['change'];
                 if($data['balance'] < 0)   $res['msg'] = '变动金额大于可用金额';
                 $data['total_money'] = $data['total_money'] - $change['change'];
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance-'.$change['change']);
@@ -275,7 +271,7 @@ class Umoney extends ModelService {
                 $data['balance'] = $data['balance'] - $change['change'];
                 if($data['balance'] < 0)   $res['msg'] = '申请金额冻结大于可用金额';
                 $data['frozen_amount'] = $data['frozen_amount'] + $change['change'];
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance-'.$change['change']);
@@ -289,7 +285,7 @@ class Umoney extends ModelService {
                 $data['balance'] = $data['balance'] + $change['change'];
                 if($data['frozen_amount'] < 0)   $res['msg'] = '解冻退款大于冻结金额';
 
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance+'.$change['change']);
@@ -302,7 +298,7 @@ class Umoney extends ModelService {
                 $data['total_money'] = $data['total_money'] + $change['change'];
                 $data['balance'] = $data['balance'] + $change['change'];
 
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance+'.$change['change']);
@@ -315,7 +311,7 @@ class Umoney extends ModelService {
                 $data['balance'] = $data['balance'] - $change['change'];
                 if($data['balance'] < 0)   $res['msg'] = '变动金额大于可用余额:'.$data['balance'];
                 $data['artificial'] = $data['artificial'] +  $change['change'];
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance-'.$change['change']);
@@ -329,7 +325,7 @@ class Umoney extends ModelService {
                 $data['artificial'] = $data['artificial'] - $change['change'];
                 if($data['artificial'] < 0)   $res['msg'] = '变动金额大于人工冻结金额';
                 $data['balance'] = $data['balance'] + $change['change'];
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance+'.$change['change']);
@@ -345,7 +341,7 @@ class Umoney extends ModelService {
                 $data['total_money'] = $data['total_money'] + $change['change'];
                 $data['frozen_amount_t1'] = $data['frozen_amount_t1'] + $change['change'];
 
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['frozen_amount_t1'];//变动后的金额
 
                 $data['frozen_amount_t1'] =  Db::raw('frozen_amount_t1+'.$change['change']);
@@ -359,7 +355,7 @@ class Umoney extends ModelService {
                 $data['total_money'] = $data['total_money'] - $change['change'];
                 $data['balance'] = $data['balance'] - $change['change'];
 
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance-'.$change['change']);
@@ -371,7 +367,7 @@ class Umoney extends ModelService {
                 $data['balance'] = $data['balance'] - $change['change'];
                 if($data['balance'] < 0)   $res['msg'] = '变动金额大于可用金额';
                 $data['df'] = $data['df'] + $change['change'];
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance-'.$change['change']);
@@ -385,7 +381,7 @@ class Umoney extends ModelService {
                 $data['balance'] = $data['balance'] + $change['change'];
                 if($data['df'] < 0)   $res['msg'] = '代付金额大于可用金额';
 
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance+'.$change['change']);
@@ -399,7 +395,7 @@ class Umoney extends ModelService {
                 $data['df'] = $data['df'] - $change['change'];
                 if($data['balance'] < 0)   $res['msg'] = '代付需冻结金额大于代付金额';
                 $data['frozen_amount'] = $data['frozen_amount'] + $change['change'];
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['df'];//变动后的金额
 
                 $data['df'] =  Db::raw('df-'.$change['change']);
@@ -414,7 +410,7 @@ class Umoney extends ModelService {
                 $data['df'] = $data['df'] + $change['change'];
                 if($data['frozen_amount'] < 0)   $res['msg'] = '代付解冻退款大于冻结金额';
 
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['balance'];//变动后的金额
 
                 $data['df'] =  Db::raw('df+'.$change['change']);
@@ -428,7 +424,7 @@ class Umoney extends ModelService {
                 $data['balance'] = $data['balance'] + $change['change'];
                 if($data['frozen_amount_t1'] < 0)   $res['msg'] = 'T1解冻入账金额大于冻结金额';
 
-                $total_money =  $data['total_money'] - ($data['balance'] + $data['artificial'] + $data['frozen_amount'] + $data['frozen_amount_t1'] + $data['df']);
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
                 $change['balance'] = $data['frozen_amount_t1'];//变动后的金额
 
                 $data['balance'] =  Db::raw('balance+'.$change['change']);
