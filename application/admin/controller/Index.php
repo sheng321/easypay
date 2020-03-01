@@ -76,6 +76,8 @@ class Index  extends AdminController
 
 
         $user_data['legend'] = ['总交易金额','已支付金额','手续费'];
+        $user_data['xAxis'] = [];
+        $user_data['series'] = [];
         foreach ($user['data'] as $k =>$v){
             $name = '代理';
             if($v['type'] == 0){
@@ -105,6 +107,8 @@ class Index  extends AdminController
         $PayProduct =  \app\common\model\PayProduct::idArr();//支付产品
         $Channel1 =   \app\common\model\Channel::idRate();//通道
         $channel_data['legend'] = ['总交易金额','已支付金额','手续费'];
+        $channel_data['xAxis'] = [];
+        $channel_data['series'] = [];
         foreach ($channel['data'] as $k =>$v){
             $p_id = json_decode($Channel1[$v['channel_id']]['p_id'],true);
             $product_name = empty($p_id)?'未知':$PayProduct[$p_id[0]];
