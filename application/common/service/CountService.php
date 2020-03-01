@@ -392,7 +392,7 @@ class CountService {
 
 
             //商户每天的 通道支付订单统计
-            $sql = "select count(1) as total_orders, left(create_at, 10) as day GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
+            $sql = "select count(1) as total_orders, left(create_at, 10) as day from cm_order where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
             $select =  Db::query($sql,[$day,$now]);
 
             halt($select);
