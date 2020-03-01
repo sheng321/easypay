@@ -461,7 +461,7 @@ class Order extends ModelService {
             $list[$k]['channelgroup_name'] = empty($ChannelGroup[$v['channel_group_id']])?'未知':$ChannelGroup[$v['channel_group_id']];
             $list[$k]['pay_status_name'] = $order['pay_status'][$v['pay_status']];
             $list[$k]['notice_name'] = $order['notice'][$v['notice']];
-            if(empty($v['mch_id2'])){
+            if($v['mch_id2'] == $uid){
                 $list[$k]['next'] = '无';//上级代理
                 $list[$k]['commission'] = $v['agent_amount'];//代理费
             }else{
