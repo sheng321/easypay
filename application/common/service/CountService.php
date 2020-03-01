@@ -88,7 +88,7 @@ class CountService {
             if(!empty($data['channel'])){
                 foreach ($data['channel'] as $k =>$v){
                     if($v['rate'] < 40){
-                        addTask('通道成功率通知',$v['channel_name'].','.$v['product_name'].'成功率只有'.$v['rate'].',请及时处理。',5);
+                        addTask('通道成功率通知',$v['channel_name'].','.$v['product_name'].'成功率只有'.$v['rate'].',请及时处理。',5,2);
                     }
 
                 }
