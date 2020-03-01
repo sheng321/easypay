@@ -35,6 +35,8 @@ class Accounts  extends AdminController
 
         $data = CountService::success_rate();
 
+        halt($data);
+
         //根据字段last_name对数组$data进行降序排列
         if(!empty($data['channel'])){
             $rate1 = array_column($data['channel'],'rate');
