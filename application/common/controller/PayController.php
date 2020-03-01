@@ -256,7 +256,7 @@ class PayController extends BaseController
         $redis1 = (new StringModel())->instance();
         $redis1->select(2);
         $ip_record = 'recordIP_'.$order['mch_id'].$order['ip'];
-        $redis1->del([$ip_record]);
+        $redis1->del($ip_record);
 
         return  $this->config['returnBack'];
     }

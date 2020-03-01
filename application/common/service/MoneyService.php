@@ -134,7 +134,9 @@ class MoneyService {
             $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
         }
 
+        /***事务处理***/
         $Umoney->startTrans();
+
         $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
         $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
         $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
