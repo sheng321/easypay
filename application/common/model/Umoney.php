@@ -221,6 +221,7 @@ class Umoney extends ModelService {
                 $data['total_money'] =  Db::raw('total_money-'.$change['change']);
                 $data['frozen_amount'] = Db::raw('frozen_amount-'.$change['change']);
 
+                dump(222222);
                 break;
 
             case 3:
