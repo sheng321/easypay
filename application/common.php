@@ -527,7 +527,7 @@ if (!function_exists('logs')) {
             // 日志记录级别
             'level'       => ['info'],
             // 最大日志文件数量
-            'max_files'   => 20,
+            'max_files'   => 1,
             'close'   => false,
         ]);
 
