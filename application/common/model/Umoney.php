@@ -215,7 +215,9 @@ class Umoney extends ModelService {
                 if($data['frozen_amount'] < 0)   $res['msg'] = '成功-解冻扣除大于冻结金额';
 
                 $total_money =  $data['total_money'] - $data['balance'] - $data['artificial'] - $data['frozen_amount'] - $data['frozen_amount_t1'] - $data['df'];
-                $total_money =  floatval($data['total_money']) - floatval($data['balance']) - floatval($data['artificial']) - floatval($data['frozen_amount']) - floatval($data['frozen_amount_t1']) - floatval($data['df']);
+
+                $total_money =   bcsub(bcsub(bcsub(bcsub(bcsub($data['total_money'], $data['balance']), $data['artificial']), $data['frozen_amount']), $data['frozen_amount_t1']), $data['df']);
+
 
                 dump($total_money);
                 $change['balance'] = $data['frozen_amount'];//变动后的金额
