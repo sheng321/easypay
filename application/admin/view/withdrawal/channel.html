@@ -66,19 +66,7 @@
         {field: 'balance', title: '余额', minWidth: 20, align: 'center', style: ' color: red;',sort:true},
         {field: 'frozen_amount', title: '冻结', minWidth: 20, align: 'center',sort:true},
 
-    ]], false,function (res,curr,count){
-        $('tr').each(function(index, element){
-            var id = index -1;
-            if(id >=0 && id < $('tr').length -3){
-                if( typeof(res.data[id]) !== 'undefined' && res.data[id].LAY_CHECKED !== true){
-                    $(element).find('td').each(function(index1, element1){
-                        $(element1).removeAttr("data-edit");
-                        $(element1).removeAttr("style");
-                    });
-                }
-            }
-        });
-    },100);
+    ]], false,'',100);
 
     /**
      * 监听字段值编辑
