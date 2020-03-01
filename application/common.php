@@ -523,7 +523,7 @@ if (!function_exists('logs')) {
     function logs($data,$type = 'logs') {
         \think\facade\Log::init([
             // 日志保存目录
-            'path'        => \think\facade\Env::get('root_path') ."runtime/data/{$type}/",
+            'path'        => \think\facade\Env::get('root_path') ."logs/{$type}/",
             // 日志记录级别
             'level'       => ['info'],
             // 最大日志文件数量
