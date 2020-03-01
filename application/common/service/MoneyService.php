@@ -171,20 +171,12 @@ class MoneyService {
     /**
      * 手动退单
      * @param $system_no 系统订单号
-     * 只修改商户，代理的金额
+     * 只修改商户，代理，通道的金额
      */
     public static function back($system_no){
         $Order = Order::quickGet(['system_no'=>$system_no]);
 
         if(empty($Order) || $Order['pay_status'] !== 2) __jerror('该订单不存在，或者未支付');
-
-        //不能修改前一天的订单
-
-        halt($Order);
-
-
-
-
 
         //通道
         $Channel =  Channel::alias('a')->where(['a.id'=>$Order['channel_id']])

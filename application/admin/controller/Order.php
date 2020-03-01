@@ -360,6 +360,10 @@ class Order extends AdminController {
 
             //订单已关闭 订单未支付
             if( $order['pay_status'] == 0 || $order['pay_status'] == 3){
+                //不能修改前一天的订单
+                $time =   strtotime($order['create_at']) - strtotime(date('Y-m-d'));
+                if($time < 0) return __error('不能修改前一天的订单！');
+
                 $res = \app\common\service\MoneyService::api($order['system_no']);//修改金额
                 if($res !== true)  msg_error("系统异常，变动金额失败");
 
@@ -445,6 +449,10 @@ class Order extends AdminController {
 
             $order =  $this->model->quickGet($id);
             if(empty($order) || $order['pay_status'] != 2   ) return __error("订单不存在或者该订单未支付");
+
+            //不能修改前一天的订单
+            $time =   strtotime($order['create_at']) - strtotime(date('Y-m-d'));
+            if($time < 0) return __error('不能修改前一天的订单！');
 
             $res = \app\common\service\MoneyService::back($order['system_no']);//修改金额
             if($res !== true)  __error("系统异常，变动金额失败");
