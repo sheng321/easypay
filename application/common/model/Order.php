@@ -422,12 +422,11 @@ class Order extends ModelService {
      * @param array $search
      * @return void
      */
-    public function dlist($page = 1,$limit = 10,$search = [],$type = 0){
+    public function dlist($page = 1,$limit = 10,$search = []){
 
         $uid = $search['agent'];
         $where[] =  ['mch_id1|mch_id2','=',$uid];
 
-        $where = [];
         if(empty($search['create_at'])){
             $date = timeToDate(0,0,0,-3); //默认只搜索5天
             $where[] = ['create_at','>',$date];
