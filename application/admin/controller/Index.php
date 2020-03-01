@@ -127,9 +127,6 @@ class Index  extends AdminController
 
         }
 
-
-
-
         //平台盈利
         $search['withdraw_id'] = 0;
         $search['uid'] = 0;
