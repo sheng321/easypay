@@ -362,7 +362,7 @@ class Order extends AdminController {
             if( $order['pay_status'] == 0 || $order['pay_status'] == 3){
                 //不能修改前一天的订单
                 $time =   strtotime($order['create_at']) - strtotime(date('Y-m-d'));
-                if($time < 0) return __error('不能修改前一天的订单！');
+                if($time < 0) return __error('只能修改当天的订单！');
 
                 $res = \app\common\service\MoneyService::api($order['system_no']);//修改金额
                 if($res !== true)  msg_error("系统异常，变动金额失败");
@@ -452,7 +452,7 @@ class Order extends AdminController {
 
             //不能修改前一天的订单
             $time =   strtotime($order['create_at']) - strtotime(date('Y-m-d'));
-            if($time < 0) return __error('不能修改前一天的订单！');
+            if($time < 0) return __error('只能修改当天的订单！');
 
             $res = \app\common\service\MoneyService::back($order['system_no']);//修改金额
             if($res !== true)  __error("系统异常，变动金额失败");
