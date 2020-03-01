@@ -435,13 +435,13 @@ class Umoney extends ModelService {
                 break;
             default:
                 $total_money = false;
-                $res['msg'] = '资金异常!';
+                $res['msg'] = '资金异常1!';
                 break;
 
 
         }
 
-        if($total_money != 0)  $res['msg'] = '资金异常!';
+        if($total_money != 0)  $res['msg'] = '资金异常2!';
 
         $res['data'][] = $data;
 
