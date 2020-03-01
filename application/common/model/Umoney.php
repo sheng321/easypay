@@ -223,7 +223,6 @@ class Umoney extends ModelService {
 
                 dump(222222);
                 break;
-
             case 3:
                 $res['log'] = $temp.'添加金额'.$change['change'];
 
@@ -278,6 +277,8 @@ class Umoney extends ModelService {
                 $data['balance'] =  Db::raw('balance-'.$change['change']);
                 $data['frozen_amount'] = Db::raw('frozen_amount+'.$change['change']);
 
+                dump($data);
+                dump($total_money);
                 break;
             case 6: //解冻
                 $res['log'] = $temp.'解冻退款'.$change['change'];
@@ -434,13 +435,13 @@ class Umoney extends ModelService {
                 break;
             default:
                 $total_money = false;
-                $res['msg'] = '资金异常!';
+                $res['msg'] = '资金异常1!';
                 break;
 
 
         }
 
-        if($total_money != 0)  $res['msg'] = '资金异常!';
+        if($total_money != 0)  $res['msg'] = '资金异常2!';
 
         $res['data'][] = $data;
 
