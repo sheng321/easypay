@@ -1,4 +1,6 @@
 <?php
+var_dump($_SERVER["HTTP_VIA"]);
+
 
     if(!in_array($_SERVER["REMOTE_ADDR"],['127.0.0.1','113.61.61.77'])){
        exit(111111111);
