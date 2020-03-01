@@ -19,7 +19,7 @@ class CountService {
      */
     public static function success_rate(){
 
-        Cache::remember('success_rate', function () {
+       // Cache::remember('success_rate', function () {
             $data = [];
             $three = timeToDate(0,-3);//三分钟前的时间
             //$three = timeToDate(0,-1);//三分钟前的时间
@@ -87,7 +87,7 @@ class CountService {
             $data['time'] = timeToDate();
 
             return  $data;
-        },300);
+       // },300);
 
         return \think\facade\Cache::get('success_rate');
 
