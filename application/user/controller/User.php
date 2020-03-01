@@ -349,10 +349,10 @@ class User extends UserController {
             if (true !== $validate) return __error($validate);
             unset($post['__token__']);
             if(empty($post['id'])){
-                __log( $this->user['user'].'编辑银行卡:'.$post['card_number'],2);
+                __log( $this->user['username'].'编辑银行卡:'.$post['card_number'],2);
                 return $Bank->__add($post);
             }else{
-                __log( $this->user['user'].'添加银行卡:'.$post['card_number'],2);
+                __log( $this->user['username'].'添加银行卡:'.$post['card_number'],2);
                 return $Bank->__edit($post);
             }
         }
