@@ -40,10 +40,13 @@ class Bank extends ModelService {
         $field = '*';
         $count = $this->where($where)->count();
 
-
-
         $data = $this->where($where)->field($field)->page($page, $limit)->order($order)->select()->each(function ($item, $key) {
-            !empty($item['update_by']) &&   $item['update_name'] =  getUnamebyId($item['update_by']);
+
+           if(!empty($item['update_by'])){
+                $item['update_name'] =  getUnamebyId($item['update_by']);
+            }else{
+                $item['update_name'] =  getUnamebyId($item['create_by']);
+            }
             if($item['uid'] == 0)  $item['update_name'] =  getNamebyId($item['create_by']);
         });
 
