@@ -26,7 +26,7 @@ class MoneyService {
     public static function api($system_no,$transaction_no = '',$amount = ''){
 
       // $Order = Order::quickGet(['system_no'=>$system_no]);
-        $Order = Order::where(['system_no'=>$system_no])->find();
+        $Order = Order::where(['system_no'=>$system_no])->order(['id'=>'desc'])->find();
 
        //不存在 或者下单失败 已支付
        if(empty($Order) || $Order['pay_status'] == 1  || $Order['pay_status'] == 3   ) return '订单不存在或者下单失败或者订单已关闭';
@@ -178,7 +178,7 @@ class MoneyService {
      */
     public static function back($system_no){
        // $Order = Order::quickGet(['system_no'=>$system_no]);
-        $Order = Order::where(['system_no'=>$system_no])->find();
+        $Order = Order::where(['system_no'=>$system_no])->order(['id'=>'desc'])->find();
 
         if(empty($Order) || $Order['pay_status'] !== 2) __jerror('该订单不存在，或者未支付');
 
