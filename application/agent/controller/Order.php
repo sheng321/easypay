@@ -73,7 +73,7 @@ class Order extends AgentController {
             "out_trade_no"=>'商户单号',
             "system_no"=>'系统单号',
             "amount"=>'交易金额',
-            "next"=>'下级代理',
+            "next"=>'上级代理',
             'commission'=>'代理收益',
             "productname"=>'订单描述',
             'product_name'=>'支付银行',

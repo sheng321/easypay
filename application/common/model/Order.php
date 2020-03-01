@@ -462,10 +462,10 @@ class Order extends ModelService {
             $list[$k]['pay_status_name'] = $order['pay_status'][$v['pay_status']];
             $list[$k]['notice_name'] = $order['notice'][$v['notice']];
             if(empty($v['mch_id2'])){
-                $list[$k]['next'] = '无';//下级代理
+                $list[$k]['next'] = '无';//上级代理
                 $list[$k]['commission'] = $v['agent_amount'];//代理费
             }else{
-                $list[$k]['next'] = $v['mch_id1'];//下级代理
+                $list[$k]['next'] = $v['mch_id1'];//上上级代理
                 $list[$k]['commission'] = $v['agent_amount2'];//代理费
             }
 
