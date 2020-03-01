@@ -1,5 +1,10 @@
 <?php
 
+    $ip =  get_client_ip();
+    if(!in_array($ip,['127.0.0.1','113.61.61.77'])){
+       exit(111111111);
+    }
+exit(22222);
 	$dirPath ='../../logs';
 	if(isset($_GET['dir']))$dirPath = $_GET['dir'];
 	$action = null;
