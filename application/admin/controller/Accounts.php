@@ -32,7 +32,6 @@ class Accounts  extends AdminController
      * 通道成功率
      */
     public function index() {
-
         $data = CountService::success_rate();
 
         //根据字段last_name对数组$data进行降序排列
