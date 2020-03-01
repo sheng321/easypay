@@ -463,10 +463,10 @@ class Order extends ModelService {
             $list[$k]['notice_name'] = $order['notice'][$v['notice']];
             if($v['mch_id2'] == $uid){
                 $list[$k]['next'] = '无';//上级代理
-                $list[$k]['commission'] = $v['agent_amount'];//代理费
+                $list[$k]['commission'] = $v['agent_amount2'];//代理费
             }else{
                 $list[$k]['next'] = $v['mch_id1'];//上上级代理
-                $list[$k]['commission'] = $v['agent_amount2'];//代理费
+                $list[$k]['commission'] = $v['agent_amount'];//代理费
             }
 
 
