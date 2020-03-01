@@ -424,9 +424,7 @@ class Order extends ModelService {
      */
     public function dlist($page = 1,$limit = 10,$search = [],$type = 0){
 
-        if(!empty($search['agent'])){
-            $where[] = ['mch_id1|mch_id2','=',$search['agent']] ;
-        }
+        $where[] = $uid = ['mch_id1|mch_id2','=',$search['agent']];
 
         $where = [];
         if(empty($search['create_at'])){
