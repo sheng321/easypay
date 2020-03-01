@@ -369,7 +369,7 @@ class CountService {
     //支付通道每日对账
     public static function channel_account(){
 
-        Cache::remember('agent_account', function () {
+       // Cache::remember('agent_account', function () {
 
             $data = [];
             $insert = [];
@@ -462,8 +462,9 @@ class CountService {
                 }else{
                     $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库没有记录的数据
                 }
-
             }
+
+            halt( $data['channel']);
 
             //插入每日对账表
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
@@ -471,7 +472,7 @@ class CountService {
 
            return empty( $data['channel'])?'': $data['channel'];
 
-        },600);
+     //   },600);
 
         return true;
     }
