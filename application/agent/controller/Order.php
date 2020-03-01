@@ -30,6 +30,7 @@ class Order extends AgentController {
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 10);
             $search = (array)$this->request->get('search', []);
+            $search['agent'] = $this->user['uid'];
             return json($this->model->dlist($page, $limit, $search));
         }
 
