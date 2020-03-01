@@ -369,7 +369,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['agent'])?'':$data['agent'];
-        },600);
+        },540);
 
         return true;
     }
@@ -479,7 +479,7 @@ class CountService {
 
            return empty( $data['channel'])?'': $data['channel'];
 
-        },600);
+        },540);
 
         return true;
     }
@@ -571,7 +571,7 @@ class CountService {
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
-        },600);
+        },540);
 
         return true;
     }
@@ -678,7 +678,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['channel'])?'':$data['channel'];
-        },600);
+        },540);
 
     return true;
 }
@@ -786,7 +786,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['channel'])?'':$data['channel'];
-    },600);
+    },540);
 
         return true;
     }
@@ -828,7 +828,7 @@ class CountService {
                 $channel_data[$val['day']]['total_paid'] += $val['total_paid'];
                 $channel_data[$val['day']]['total_fee'] += $val['total_fee'];
                 $channel_data[$val['day']]['platform'] += $val['platform'];
-                $channel_data[$val['day']]['rate'] = round($channel_data[$val['day']]['total_paid'] / $channel_data[$val['day']]['total_orders'], 3) * 100;
+                $channel_data[$val['day']]['rate'] = strval(round($channel_data[$val['day']]['total_paid'] / $channel_data[$val['day']]['total_orders'], 3) * 100) ;
 
                 if (!empty($temp)) {
                     $info = json_decode($temp['info'], true);
@@ -938,7 +938,7 @@ class CountService {
 
             return 1;
 
-        },600);
+        },540);
 
 
         return true;
