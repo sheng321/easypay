@@ -18,8 +18,8 @@ class Test extends PayController
         $pay_amount = $this->request->get('amount',100.00);    //交易金额
         $pay_applydate = date("Y-m-d H:i:s",time());  //订单时间
         $pay_bankcode = $this->request->get('code','');
-        $pay_notifyurl = 'http://'.$_SERVER['HTTP_HOST'].'/Run/notify.php';   //服务端返回地址
-        $pay_callbackurl = 'http://'.$_SERVER['HTTP_HOST'].'/api/yunjihe/return.php';  //页面跳转返回地址
+        $pay_notifyurl = 'http://'.$_SERVER['HTTP_HOST'].'/pay.php/test/notify.html';   //服务端返回地址
+        $pay_callbackurl = 'http://'.$_SERVER['HTTP_HOST'].'/pay.php/test/callback.html';  //页面跳转返回地址
 
         $jsapi = array(
             "pay_memberid" => $pay_memberid,
@@ -77,8 +77,8 @@ class Test extends PayController
         $pay_amount = $this->request->get('amount',100.00);    //交易金额
         $pay_applydate = date("Y-m-d H:i:s",time());  //订单时间
         $pay_bankcode = $this->request->get('code','');
-        $pay_notifyurl = 'http://'.$_SERVER['HTTP_HOST'].'/Run/notify.php';   //服务端返回地址
-        $pay_callbackurl = 'http://'.$_SERVER['HTTP_HOST'].'/api/yunjihe/return.php';  //页面跳转返回地址
+        $pay_notifyurl = 'http://'.$_SERVER['HTTP_HOST'].'/pay.php/test/notify.html';   //服务端返回地址
+        $pay_callbackurl = 'http://'.$_SERVER['HTTP_HOST'].'/pay.php/test/callback.html';  //页面跳转返回地址
 
         $jsapi = array(
             "pay_memberid" => $pay_memberid,
@@ -110,6 +110,16 @@ class Test extends PayController
         ];
 
         return $this->fetch('index', $basic_data);
+    }
+
+
+    public function notify(){
+        logs($this->request->post(),'test');
+        return 'notify';
+    }
+
+    public function callback(){
+        return '交易成功';
     }
 
 
