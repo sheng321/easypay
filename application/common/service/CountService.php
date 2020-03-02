@@ -690,7 +690,7 @@ class CountService {
     //代付每日对账
     public static function df_account(){
 
-      //  Cache::remember('df_account', function () {
+        Cache::remember('df_account', function () {
             $data = [];
             $insert = [];
             $update = [];
@@ -717,8 +717,6 @@ class CountService {
 
 
             $Channel = ChannelDf::info();//代付通道
-
-        dump($Channel);
             foreach ($select as $k => $v) {
                 $channel_name = empty($Channel[$v['channel_id']])?'未选择代付通道':$Channel[$v['channel_id']]['title'];
                 $v['platform'] = $v['total_fee'] - $v['channel_fee'];
@@ -788,14 +786,13 @@ class CountService {
                     $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库没有记录的数据
                 }
             }
-            halt($data['channel']);
 
             //插入每日对账表
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['channel'])?'':$data['channel'];
-   // },30);
+    },30);
 
         return true;
     }
