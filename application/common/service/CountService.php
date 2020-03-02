@@ -96,7 +96,7 @@ class CountService {
             $data['time'] = timeToDate();
 
             return  $data;
-        },240);
+        },30);
 
         return \think\facade\Cache::get('success_rate');
 
@@ -199,7 +199,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['account'])?'':$data['account'] ;
-        },540);
+        },30);
 
         return true;
     }
@@ -369,7 +369,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['agent'])?'':$data['agent'];
-        },540);
+        },30);
 
         return true;
     }
@@ -479,7 +479,7 @@ class CountService {
 
            return empty( $data['channel'])?'': $data['channel'];
 
-        },540);
+        },30);
 
         return true;
     }
@@ -571,7 +571,7 @@ class CountService {
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
-        },540);
+        },30);
 
         return true;
     }
@@ -681,7 +681,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['channel'])?'':$data['channel'];
-        },540);
+        },30);
 
     return true;
 }
@@ -791,7 +791,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['channel'])?'':$data['channel'];
-    },540);
+    },30);
 
         return true;
     }
@@ -943,7 +943,7 @@ class CountService {
 
             return 1;
 
-        },300);
+        },30);
 
 
         return true;
