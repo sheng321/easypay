@@ -817,7 +817,7 @@ class CountService {
                 $channel_data[$val['day']]['day'] = $val['day'];
                 $channel_data[$val['day']]['type'] = 6;
 
-                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->cache($val['day'] . 'total', 2)->field('id,info')->find();
+                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->field('id,info')->find();
 
                 empty($channel_data[$val['day']]['total_orders']) && $channel_data[$val['day']]['total_orders'] = 0;
                 empty($channel_data[$val['day']]['total_fee_all']) && $channel_data[$val['day']]['total_fee_all'] = 0;
@@ -865,7 +865,7 @@ class CountService {
                 $withdraw_data[$val['day']]['day'] = $val['day'];
                 $withdraw_data[$val['day']]['type'] = 6;
 
-                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->cache($val['day'] . 'total', 2)->field('id,info')->find();
+                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->field('id,info')->find();
 
                 empty($withdraw_data[$val['day']]['total_orders']) && $withdraw_data[$val['day']]['total_orders'] = 0;
                 empty($withdraw_data[$val['day']]['total_fee_all']) && $withdraw_data[$val['day']]['total_fee_all'] = 0;
@@ -915,7 +915,7 @@ class CountService {
             foreach ($money as $k => $val) {
                 $val['day'] = date('Y-m-d',strtotime($val['create_at']));
 
-                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->cache($val['day'] . 'total', 2)->field('id,info')->find();
+                $temp = $Accounts->where(['day' => $val['day'], 'type' => 6])->field('id,info')->find();
 
                 empty($money_data[$val['day']]['dec']) && $money_data[$val['day']]['dec'] = 0;
                 empty($money_data[$val['day']]['inc']) && $money_data[$val['day']]['inc'] = 0;
