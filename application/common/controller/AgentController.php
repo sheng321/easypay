@@ -52,6 +52,8 @@ class AgentController extends BaseController
             }
         }
 
+        $this->__cc();
+
 
         list( $this->is_login, $this->is_auth,) = [ true, true];
 
@@ -101,7 +103,7 @@ class AgentController extends BaseController
     /**
      * 检测登录
      */
-    public function __checkLogin()
+    protected function __checkLogin()
     {
         $user1 = session('agent_info');
         //判断是否登录
@@ -112,7 +114,7 @@ class AgentController extends BaseController
     }
 
 
-    public function __checkLock($user)
+    protected function __checkLock($user)
     {
         if(!isset($user['status']) || $user['status'] != 1){
             $data = ['status' => 'error', 'code' => 0, 'msg' => '账号已被冻结，强制退出！', 'url' => url('@agent/login/logout')];
@@ -126,7 +128,7 @@ class AgentController extends BaseController
     /**
      * 检测登录情况
      */
-    public function __checkAuth()
+    protected function __checkAuth()
     {
         if (\app\common\service\AuthService::checkAgentNode() == false){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '抱歉，您暂无该权限，请联系管理员！', 'url' => url('@agent')];
@@ -137,7 +139,7 @@ class AgentController extends BaseController
     /**
      * 单点登入
      */
-    public function __single($user)
+    protected function __single($user)
     {
         $session_id  = getSessionid();
         if($user['single_key'] !== session('agent_info.single_key')  ||  $user['single_key'] !== $session_id){
@@ -148,7 +150,7 @@ class AgentController extends BaseController
         }
     }
 
-    public function __google($user)
+    protected function __google($user)
     {
         if(empty($user['google_token']) && $this->request->controller() !== 'Index' && $this->request->action() !== 'save_google' && $this->request->action() !== 'getmenu' ){
             $data = ['type' => 'error', 'code' => 0, 'msg' => '请先绑定谷歌', 'url' => url('@agent/user/save_google')];
@@ -156,6 +158,30 @@ class AgentController extends BaseController
         }
         //保存当前 google_token
         session('agent_info.google_token', $user['google_token']);
+    }
+
+    //防止CC攻击 防止快速刷新
+    protected function __cc()
+    {
+        $seconds = '45'; //时间段[秒]
+        $refresh = '20'; //刷新次数
+        //设置监控变量
+        $cur_time = time();
+        if(Session::has('last_time')){
+            Session::set('refresh_times', Session::get('refresh_times') + 1);
+        }else{
+            Session::set('refresh_times',1);
+            Session::set('last_time',$cur_time);
+        }
+        //处理监控结果
+        if($cur_time - Session::get('last_time') < $seconds){
+            if(Session::get('refresh_times') >= $refresh){
+                exceptions(['msg'=>'请求频率太快，稍候30秒后再访问！','wait'=>30]);
+            }
+        }else{
+            Session::set('refresh_times',0);
+            Session::set('last_time',$cur_time);
+        }
     }
 
 }
