@@ -544,11 +544,14 @@ if (!function_exists('exceptions')) {
         $result['code'] = 0;
         $result['msg'] = '未知错误~';
         $result['data'] = $data;
+        $result['wait'] = 5;
+
         $url = null;
         if(is_array($msg)){
             if(array_key_exists('code',$msg)) $result['code'] = $msg['code'];
             if(array_key_exists('msg',$msg)) $result['msg'] = $msg['msg'];
             if(array_key_exists('url',$msg)) $url = $msg['url'];
+            if(array_key_exists('wait',$msg)) $result['wait'] = $msg['wait'];
         }else{
             $result['msg'] = $msg;
         }
@@ -563,7 +566,6 @@ if (!function_exists('exceptions')) {
             }
 
             $result['url'] = $url;
-            $result['wait'] = 5;
 
             $response = \think\facade\Response::create($result, 'jump')->options(['jump_template' => config('app.dispatch_error_tmpl') ]);
             throw new \think\exception\HttpResponseException( $response);
