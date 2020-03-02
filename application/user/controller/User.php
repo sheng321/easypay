@@ -95,14 +95,12 @@ class User extends UserController {
 
             if (!$save || !$add || !$save2) {
                 $Umoney->rollback();
-                $msg = '数据有误，请稍后再试！';
                 if($money['change'] > 0)   __log($res['log'].'失败',2);
-                return __error($msg);
+                return __error('数据有误，请稍后再试！');
             }
             $Umoney->commit();
             if($money['change'] > 0) __log($res['log'].'成功',2);
-            empty($msg) && $msg = '操作成功';
-            return __success($msg);
+            return __success('操作成功');
         }
     }
 
