@@ -21,10 +21,10 @@
 
             <div class="layui-tab-item layui-show">
 
-                <form class="layui-form" style="width:80%;">
+                <form class="layui-form" >
                     <br>
 
-                    <div class="layui-form-item layui-row layui-col-xs12">
+                    <div class="layui-form-item layui-row layui-col-xs6">
                         <label class="layui-form-label">Api代付接口</label>
                         <div class="layui-input-block">
                             <input type="radio" name="api"  value="0" title="关闭"    {eq name='$api|default=false' value='0' }checked="checked" {/eq}   >
@@ -32,7 +32,7 @@
                         </div>
                     </div>
 
-                    <div class="layui-form-item layui-row layui-col-xs12">
+                    <div class="layui-form-item layui-row layui-col-xs6">
                         <label class="layui-form-label">操作代付金额</label>
                         <div class="layui-input-block">
                             <select name="type"  class="type" lay-filter="type" lay-verify="required"   >
@@ -43,7 +43,7 @@
                         </div>
                     </div>
 
-                    <div class="layui-form-item layui-row layui-col-xs12">
+                    <div class="layui-form-item layui-row layui-col-xs6">
                         <label class="layui-form-label">变动金额</label>
                         <div class="layui-input-block">
                             <input type="number" id="change" name="change" class="layui-input change"   placeholder="请输入变动金额(正数)"  >
@@ -69,7 +69,7 @@
 
                     {:token('__token__', 'sha1')}
 
-                    <div class="layui-form-item layui-row layui-col-xs12">
+                    <div class="layui-form-item layui-row layui-col-xs6">
                         <div class="layui-input-block">
                             <button type="button " lay-submit="" lay-filter="submitBtn" class="layui-btn">提交</button>
                         </div>
@@ -84,6 +84,7 @@
 {/block}
 
 {block name="script"}
+<script type="text/javascript" src="__STATIC__/plugs/jquery/jquery.md5.js"></script>
 <script >
 
     $.form.on('submitBtn', '{:url("$thisRequest")}', function (res) {
