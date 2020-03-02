@@ -337,7 +337,7 @@ class Withdrawal extends UserController {
                 $Bank['card_number'] =  $card_number[$k];
                 $Bank['branch_name'] =  $branch_name[$k];
                 $Bank['bank_id'] =  $bank_id[$k];
-                $data['out_trade_no'] = '后台申请';
+
 
                 //验证数据
                 $validate3 = $this->validate($Bank, 'app\common\validate\Bank.add_more');
@@ -363,6 +363,7 @@ class Withdrawal extends UserController {
                 $post[$k]['bank_card_id'] = 0;
                 $post[$k]['system_no'] = getOrder('d');//代付订单号
                 $post[$k]['fee'] = $withdrawal['fee'];
+                $post[$k]['out_trade_no'] = '后台申请';
 
             }
 
