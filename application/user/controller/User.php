@@ -100,6 +100,7 @@ class User extends UserController {
             }
             $Umoney->commit();
             if($money['change'] > 0) __log($res['log'].'成功',2);
+            if($money['api'] == 1)   __log('开启API代付接口',2);
             return __success('操作成功');
         }
     }
