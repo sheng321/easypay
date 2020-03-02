@@ -1,6 +1,7 @@
 <?php
 
 namespace app\common\controller;
+use think\facade\Session;
 
 /**
  * 代理基础控制器
