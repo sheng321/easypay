@@ -717,6 +717,7 @@ class CountService {
 
 
             $Channel = ChannelDf::info();//代付通道
+        dump($Channel);
             foreach ($select as $k => $v) {
                 $channel_name = empty($Channel[$v['channel_id']])?'未选择代付通道':$Channel[$v['channel_id']]['title'];
                 $v['platform'] = $v['total_fee'] - $v['channel_fee'];
