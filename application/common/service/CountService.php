@@ -676,6 +676,7 @@ class CountService {
                 }
             }
 
+            dump(111);
             halt($update);
 
             //插入每日对账表
