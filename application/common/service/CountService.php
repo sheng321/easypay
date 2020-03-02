@@ -799,8 +799,7 @@ class CountService {
     //平台每日对账
     public static function sys_account()
     {
-
-        Cache::remember('sys_account', function () {
+      //  Cache::remember('sys_account', function () {
             $channel_data = [];
             $insert = [];
             $update = [];
@@ -861,6 +860,8 @@ class CountService {
             //下发通道
             $withdraw = $Accounts->where([['type', 'in', [4, 5]]])->where($date)->order(['day desc'])->select()->toArray();
             foreach ($withdraw as $k => $val) {
+
+                $v['platform'] = empty($Channel[$val['channel_id']])? 0 - $val['total_fee_all']:$val['total_fee'] - $val['channel_fee'];
 
                 $withdraw_data[$val['day']]['day'] = $val['day'];
                 $withdraw_data[$val['day']]['type'] = 6;
@@ -943,7 +944,7 @@ class CountService {
 
             return 1;
 
-        },540);
+       // },540);
 
 
         return true;
