@@ -828,7 +828,7 @@
      * @param data
      * @param callback
      */
-    function request(type, url, data, callback, isReload = false) {
+    function request(type, url, data, callback, isReload = true) {
         //$.msg.loading('正在加载，请稍等！');
 
         var fag = true;
