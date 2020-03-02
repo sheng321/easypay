@@ -1,6 +1,8 @@
 <?php
 namespace tool\rsa;
 
+use think\facade\Env;
+
 class WlfPaySign
 {
     private $user_name;
@@ -53,6 +55,7 @@ class WlfPaySign
         $this->url = 'https://dsf.sicpay.com/d/merchant/';   //正式的接口地址
         $this->pfx_path = "Files/Wlf/000000000102986.pfx";  //正式的私钥文件路径
         $this->pem_path = "Files/Wlf/GHT_Root.pem";  //正式的公钥文件路径*/
+
 
                 $this->user_name = '000000000100641';             //测试的用户名
                 $this->merchant_id = '000000000100641';          //测试的商户号
