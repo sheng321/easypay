@@ -2,6 +2,7 @@
 namespace app\common\service;
 use app\common\model\Accounts;
 use app\common\model\Channel;
+use app\common\model\ChannelDf;
 use app\common\model\ChannelGroup;
 use app\common\model\PayProduct;
 use think\Db;
@@ -715,7 +716,7 @@ class CountService {
             $select =  Db::query($sql,[$day,$now]);
 
 
-            $Channel =  Channel::idRate();//通道
+            $Channel = ChannelDf::info();//代付通道
             foreach ($select as $k => $v) {
                 $channel_name = empty($Channel[$v['channel_id']])?'未选择代付通道':$Channel[$v['channel_id']]['title'];
                 $v['platform'] = $v['total_fee'] - $v['channel_fee'];
