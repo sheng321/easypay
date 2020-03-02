@@ -75,6 +75,9 @@
             if( $.tool.isEmpty(d.money_dec)){
                 d.money_dec = 0;
             }
+            console.log(d.channel_platform);
+            console.log(d.withdraw_platform);
+            console.log(d.money_dec);
 
             return d.channel_platform -  d.withdraw_platform - d.money_dec + d.money_inc;
         }},
