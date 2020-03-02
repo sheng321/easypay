@@ -75,11 +75,10 @@
             if( $.tool.isEmpty(d.money_dec)){
                 d.money_dec = 0;
             }
-            console.log(d.channel_platform);
-            console.log(Number(d.withdraw_platform));
-            console.log(d.money_dec);
+            console.log();
 
-            return d.channel_platform -  d.withdraw_platform - d.money_dec + d.money_inc;
+
+            return Number(d.channel_platform) +  Number(d.withdraw_platform) - Number(d.money_dec) + Number(d.money_inc);
         }},
 
 
