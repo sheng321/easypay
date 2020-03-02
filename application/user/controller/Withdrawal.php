@@ -386,12 +386,12 @@ class Withdrawal extends UserController {
 
             if (!$save || !$add || !$save1) {
                 $$this->model->rollback();
-                $msg = '数据有误，请稍后再试！';
-                return __error($msg);
+
+                return __error('数据有误，请稍后再试！');
             }
             $this->model->commit();
-            empty($msg) && $msg = '操作成功';
-            return __success($msg);
+
+            return __success('操作成功');
         }else{
 
             $basic_data = [
