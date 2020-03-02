@@ -607,7 +607,7 @@ class CountService {
             $Channel =  Channel::idRate();//通道
             foreach ($select as $k => $v) {
                 $channel_name = empty($Channel[$v['channel_id']])?'未选择下发通道':$Channel[$v['channel_id']]['title'];
-                $v['platform'] = $v['total_fee'] - $v['channel_fee'];
+                $v['platform'] = empty($Channel[$v['channel_id']])?- $v['total_fee_paid']:$v['total_fee'] - $v['channel_fee'];
 
                 //商户的下发统计
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['mch_id'] = $v['mch_id'];
@@ -629,6 +629,7 @@ class CountService {
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'] += $v['total_fee_paid'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'] += $v['total_paid'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'] += $v['total_fee'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform'] += $v['platform'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'] += $v['do_orders'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'] += $v['do_fee'];
 
@@ -658,6 +659,7 @@ class CountService {
                 $data['channel'][$v['channel_id'].$v['day']]['total_fee_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'];
                 $data['channel'][$v['channel_id'].$v['day']]['total_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'];
                 $data['channel'][$v['channel_id'].$v['day']]['total_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
+                $data['channel'][$v['channel_id'].$v['day']]['platform'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform'];
                 $data['channel'][$v['channel_id'].$v['day']]['do_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'];
                 $data['channel'][$v['channel_id'].$v['day']]['do_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'];
 
@@ -737,6 +739,7 @@ class CountService {
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'] += $v['total_fee_paid'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'] += $v['total_paid'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'] += $v['total_fee'];
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform'] += $v['platform'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'] += $v['do_orders'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'] += $v['do_fee'];
 
@@ -766,6 +769,7 @@ class CountService {
                 $data['channel'][$v['channel_id'].$v['day']]['total_fee_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_paid'];
                 $data['channel'][$v['channel_id'].$v['day']]['total_paid'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_paid'];
                 $data['channel'][$v['channel_id'].$v['day']]['total_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'];
+                $data['channel'][$v['channel_id'].$v['day']]['platform'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform'];
                 $data['channel'][$v['channel_id'].$v['day']]['do_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_orders'];
                 $data['channel'][$v['channel_id'].$v['day']]['do_fee'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['do_fee'];
 
