@@ -578,7 +578,7 @@ class CountService {
 
     //提现结算每日对账
     public static function withdraw_account(){
-        Cache::remember('withdraw_account', function () {
+      //  Cache::remember('withdraw_account', function () {
             $data = [];
             $insert = [];
             $update = [];
@@ -650,8 +650,8 @@ class CountService {
                 empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee']= 0;
                 empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['platform']= 0;
 
-                empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_orders']= 0;
-                empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_fee']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['do_orders']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_orders']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['do_fee']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_fee']= 0;
 
                 $data['channel'][$v['channel_id'].$v['day']]['total_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'];
                 $data['channel'][$v['channel_id'].$v['day']]['total_fee_all'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all'];
@@ -678,7 +678,7 @@ class CountService {
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['channel'])?'':$data['channel'];
-        },540);
+       // },540);
 
     return true;
 }
@@ -758,8 +758,8 @@ class CountService {
                 empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee']= 0;
                 empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['platform']= 0;
 
-                empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_orders']= 0;
-                empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_fee']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['do_orders']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_orders']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['do_fee']) &&  $data['channel'][$v['channel_id'].$v['day']]['do_fee']= 0;
 
                 $data['channel'][$v['channel_id'].$v['day']]['total_orders'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'];
                 $data['channel'][$v['channel_id'].$v['day']]['total_fee_all'] += $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee_all'];
