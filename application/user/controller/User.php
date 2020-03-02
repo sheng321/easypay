@@ -73,8 +73,7 @@ class User extends UserController {
 
             $money['change'] =   floatval($money['change']);
 
-            halt($money['change'] < 0 || !is_int($money['change']));
-            if(!empty($money['change']) && ($money['change'] < 0 || !is_int($money['change']))) return __error('金额不能为负数或小数');
+            if(!empty($money['change']) && ($money['change'] < 0 || (floor($money['change']) != $money['change']))) return __error('金额不能为负数或小数');
 
             if($money['change'] > 0){
                 //处理金额
