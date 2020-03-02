@@ -786,7 +786,7 @@ class CountService {
                 }
             }
 
-            halt($insert);
+halt( $Accounts->isUpdate(false)->saveAll($insert));
 
             //插入每日对账表
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
