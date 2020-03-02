@@ -578,7 +578,7 @@ class CountService {
 
     //提现结算每日对账
     public static function withdraw_account(){
-      //  Cache::remember('withdraw_account', function () {
+        Cache::remember('withdraw_account', function () {
             $data = [];
             $insert = [];
             $update = [];
@@ -676,15 +676,12 @@ class CountService {
                 }
             }
 
-            dump(111);
-            halt($update);
-
             //插入每日对账表
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
             return empty($data['channel'])?'':$data['channel'];
-       // },540);
+        },540);
 
     return true;
 }
