@@ -609,6 +609,7 @@ class CountService {
                 $channel_name = empty($Channel[$v['channel_id']])?'未选择下发通道':$Channel[$v['channel_id']]['title'];
                 $v['platform'] = empty($Channel[$v['channel_id']])? 0 - $v['total_fee_all']:$v['total_fee'] - $v['channel_fee'];
 
+
                 //商户的下发统计
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['mch_id'] = $v['mch_id'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['day'] = $v['day'];
