@@ -812,7 +812,6 @@ class CountService {
 
             //支付通道
             $channel = $Accounts->where([['channel_id', '>', 0], ['type', '=', 3]])->where($date)->order(['day desc'])->select()->toArray();
-            dump($channel);
             foreach ($channel as $k => $val) {
 
                 $channel_data[$val['day']]['day'] = $val['day'];
@@ -849,7 +848,7 @@ class CountService {
                 }
             }
 
-
+            dump($update);
             //插入每日对账表
             if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
