@@ -807,7 +807,7 @@ class CountService {
 
             //时间范围
             $end = date('Y-m-d H:i:s');
-            $star =  timeToDate( 0,0,0,-3);
+            $star =  timeToDate( 0,0,0,-2);
             $date[] = ['update_at', 'BETWEEN', ["{$star}", "{$end}"]];
 
             //支付通道
