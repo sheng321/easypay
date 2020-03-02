@@ -747,7 +747,7 @@ class CountService {
 
                 //下发通道的统计
 
-                $data['channel'][$v['channel_id'].$v['day']]['withdraw_id'] = $v['channel_id'];
+                $data['channel'][$v['channel_id'].$v['day']]['df_id'] = $v['channel_id'];
                 $data['channel'][$v['channel_id'].$v['day']]['day'] = $v['day'];
 
                 $id =  $Accounts->where(['df_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>5])->cache($v['channel_id'].$v['day'].'__',30)->value('id');
@@ -785,8 +785,6 @@ class CountService {
                     $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库没有记录的数据
                 }
             }
-
-halt( $Accounts->isUpdate(false)->saveAll($insert));
 
             //插入每日对账表
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
