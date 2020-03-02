@@ -812,6 +812,7 @@ class CountService {
 
             //支付通道
             $channel = $Accounts->where([['channel_id', '>', 0], ['type', '=', 3]])->where($date)->order(['day desc'])->select()->toArray();
+            dump($channel);
             foreach ($channel as $k => $val) {
 
                 $channel_data[$val['day']]['day'] = $val['day'];
