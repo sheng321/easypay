@@ -178,7 +178,7 @@ class UserController extends BaseController
         //处理监控结果
         if($cur_time - Session::get('last_time') < $seconds){
             if(Session::get('refresh_times') >= $refresh){
-                exceptions(['msg'=>'请求频率太快，稍候'.$seconds.'秒后再访问！','wait'=>$seconds]);
+                exceptions(['msg'=>'请求频率太快，稍候30秒后再访问！','wait'=>30]);
             }
         }else{
             Session::set('refresh_times',0);
