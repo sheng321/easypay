@@ -560,6 +560,9 @@ if (!function_exists('exceptions')) {
         if(Request()->isAjax()){
             throw new \think\exception\HttpResponseException(json($result));
         }else{
+            if(is_null($url) && app('request')->controller() == 'index' && app('request')->action() == 'index'){
+                $url = app('request')->url(true);
+            }
 
             if (is_null($url)) {
                 $url = Request()->isAjax() ? '' : 'javascript:history.back(-2);';
