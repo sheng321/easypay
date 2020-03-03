@@ -132,7 +132,7 @@ class AgentController extends BaseController
     {
         if (\app\common\service\AuthService::checkAgentNode() == false){
 
-            dump( url('@agent/index'));
+            halt( url('@agent/index'));
             $data = ['type' => 'error', 'code' => 0, 'msg' => '抱歉，您暂无该权限，请联系管理员！', 'url' => url('@agent/index')];
             exceptions($data);
         }
