@@ -169,7 +169,7 @@ class AgentController extends BaseController
         $cur_time = time();
         if(Session::has('last_time'.$uid)){
             dump(555);
-            $refresh_time = Session::get('refresh_times') + 1;
+            $refresh_time = Session::get('refresh_times'.$uid) + 1;
             Session::set('refresh_times'.$uid, $refresh_time);
         }else{
             Session::set('refresh_times'.$uid,1);
