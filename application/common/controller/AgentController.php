@@ -163,7 +163,7 @@ class AgentController extends BaseController
     //防止CC攻击 防止快速刷新
     protected function __cc($uid)
     {
-        $seconds = '45'; //时间段[秒]
+        $seconds = '5'; //时间段[秒]
         $refresh = '5'; //刷新次数
         //设置监控变量
         $cur_time = time();
