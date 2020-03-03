@@ -26,11 +26,11 @@ class Node extends AdminController {
         $k = 0;
         foreach ($module as $k1 => $val) {
 
-            if($type == 0  && ($val['node'] === 'user' || $val['node'] === 'pay' || $val['node'] === 'index' || $val['node'] === 'agent') ){
+            if($type == 0  && ($val['node'] === 'user' || $val['node'] === 'pay' || $val['node'] === 'index' || $val['node'] === 'agent'  || $val['node'] === 'common'  ) ){
                 unset($module[$k1]);
                 continue;
             }
-            if($type == 1  && ($val['node'] === 'admin' || $val['node'] === 'index') ){
+            if($type == 1  && ($val['node'] === 'admin' || $val['node'] === 'index'  || $val['node'] === 'pay' || $val['node'] === 'common' ) ){
                 unset($module[$k1]);
                 continue;
             }
