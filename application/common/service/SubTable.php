@@ -70,6 +70,9 @@ class SubTable{
             $end1 = date('Y-m-d',strtotime("-1 month")).' 59:59:59';
             $time = strtotime($end1) - strtotime($begin1);
 
+            dump($begin1);
+            dump($end1);
+
             if($time > 0){
                 $res = self::insert_table($tableName1,$begin1,$end1);
                 if(!$res) return false;//如果运行失败，下面也不执行了
