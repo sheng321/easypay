@@ -565,7 +565,7 @@ if (!function_exists('exceptions')) {
                 $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('url')->build($url);
 
             }
-            $result['url'] = app('url')->build($url);
+            $result['url'] = $url;
             dump($result['url']);
 
             $response = \think\facade\Response::create($result, 'jump')->options(['jump_template' => config('app.dispatch_error_tmpl') ]);
