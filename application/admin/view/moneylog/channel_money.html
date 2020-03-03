@@ -38,6 +38,12 @@
     <table id="currentTable" lay-filter="currentTable"></table>
     <!--主表单渲染--结束-->
 
+    <script type="text/html" id="money">
+        {if auth("$thisModule/channel/money")}
+        <span class="layui-btn layui-btn-xs layui-btn-normal "  data-open='{:url("$thisModule/channel/money")}?id={{d.channel_id}}' data-title="支付通道：{{d.channel}}">冲正</span>
+        {/if}
+    </script>
+
 </form>
 {/block}
 
@@ -56,6 +62,7 @@
         {field: 'artificial', title: '人工冻结金额', align: 'center', minWidth: 20,sort:true },
         {field: 'frozen_amount', title: '冻结金额', align: 'center', minWidth: 20,sort:true },
         {field: 'frozen_amount_t1', title: 'T1冻结金额', align: 'center', minWidth: 20,sort:true },
+        {field: 'money', title: '操作', align: 'center' , templet: '#money'},
         {field: 'update_at', title: '最近更新时间', align: 'center', minWidth: 20,sort:true },
     ]],true,'',100);
 

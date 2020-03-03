@@ -642,5 +642,55 @@ class Channel  extends AdminController
     }
 
 
+    /**
+     * 通道金额
+     * @return mixed
+     */
+    public function money(){
+        $id = $this->request->get('id/d',0);
+        $Umoney =  model('app\common\model\Umoney');
+        $user =$Umoney->quickGet(['channel_id'=>$id,'uid'=>0]);
+        if(empty($user)) return msg_error('数据错误，请重试！');
+
+        if (!$this->request->isPost()){
+            //基础数据
+            $basic_data = [
+                'status' => [9=>'人工冻结',10=>'人工解冻',3=>'添加',4=>'扣除'],
+                'user'  => $user,//通道金额
+            ];
+            return $this->fetch('', $basic_data);
+        } else {
+            $money = $this->request->only('remark,change,type,__token__','post');
+
+            //验证数据
+            $validate = $this->validate($money, 'app\common\validate\Money.edit');
+            if (true !== $validate) return __error($validate);
+
+            //处理金额
+            $res =  $Umoney->dispose($user,$money);
+            if (true !== $res['msg']) return __error($res['msg']);
+
+            unset($money['__token__']);
+
+            //使用事物保存数据
+            $Umoney->startTrans();
+
+            $save = $Umoney->saveAll($res['data']);
+            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+
+            if (!$save || !$add) {
+                $Umoney->rollback();
+
+                __log($id.$res['log'].'失败');
+                return __error('数据有误，请稍后再试！');
+            }
+            $Umoney->commit();
+
+            __log($res['log'].'成功');
+            return __success('操作成功');
+        }
+    }
+
+
 
 }

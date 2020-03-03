@@ -1,0 +1,95 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<form class="layui-form" style="width:80%;">
+    <br>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">总金额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input "   value="{$user.total_money|default=''}"  readonly  >
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">可用余额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input "  value="{$user.balance|default=''}" readonly  >
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">代付金额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input "  value="{$user.df|default=''}" readonly  >
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">人工冻结金额</label>
+        <div class="layui-input-block">
+            <input type="text"   class="layui-input " value="{$user.artificial|default=''}" readonly >
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">冻结金额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input " value="{$user.frozen_amount|default=''}" readonly >
+        </div>
+    </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">T1冻结金额</label>
+        <div class="layui-input-block">
+            <input type="text"  class="layui-input " value="{$user.frozen_amount_t1|default=''}" readonly >
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-inline">
+            <select name="type"  class="type" lay-filter="type" lay-verify="required"   >
+                {foreach $status as $k=> $vo}
+                <option value="{$k|default='0'}" >{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">变动金额</label>
+        <div class="layui-input-block">
+            <input type="number" id="change" name="change" class="layui-input change" lay-verify="required"  placeholder="请输入变动金额(正数)"  >
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-row money">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入备注信息" id="remark"  name="remark"  class="layui-textarea remark"></textarea>
+        </div>
+    </div>
+
+    {:token('__token__', 'sha1')}
+
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" id="submitBtn" lay-submit lay-filter="submitBtn">提交</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" data-close="closeOpen">取消</button>
+        </div>
+    </div>
+</form>
+{/block}
+
+{block name="script"}
+<script >
+    /**
+     * 添加、编辑
+     */
+    $.form.on('submitBtn', '{:url("$thisClass/money")}?id={$Think.get.id}', function (res) {
+        $.msg.success(res.msg, function () {
+            $.tool.reload('open');
+        });
+        return false;
+    });
+
+</script>
+{/block}
