@@ -56,10 +56,9 @@ class SubTable{
     //同步数据库
     public static function  syn_table(){
 
-
         //当天
         $d = date('d');
-        if($d < 9){
+        if($d < 2){
             //上一个月
             $tableName1 = 'cm_order_'.date('Y_m',strtotime("-1 month"));
             self::create_table($tableName1);
@@ -87,7 +86,7 @@ class SubTable{
         }else{
             $begin  = $create_at;
         }
-        $end =  timeToDate( 0,0,0,0);//只插入三天前的数据
+        $end =  timeToDate( 0,0,0,-2);//只插入三天前的数据
 
         $time = strtotime($end) - strtotime($begin);
 
