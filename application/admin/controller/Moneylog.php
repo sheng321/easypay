@@ -45,7 +45,7 @@ class Moneylog  extends AdminController
         //基础数据
         $basic_data = [
             'title' => '会员流水列表',
-            'data'  => '',
+            'type'  => config('money.'),
         ];
 
         return $this->fetch('', $basic_data);
@@ -70,7 +70,7 @@ class Moneylog  extends AdminController
         //基础数据
         $basic_data = [
             'title' => '通道流水列表',
-            'data'  => '',
+            'type'  => config('money.'),
         ];
 
         return $this->fetch('', $basic_data);
@@ -94,7 +94,7 @@ class Moneylog  extends AdminController
         //基础数据
         $basic_data = [
             'title' => '代付通道流水列表',
-            'data'  => '',
+            'type'  => config('money.'),
         ];
 
         return $this->fetch('', $basic_data);
@@ -119,7 +119,7 @@ class Moneylog  extends AdminController
         //基础数据
         $basic_data = [
             'title' => '平台流水列表',
-            'data'  => '',
+            'type'  => config('money.'),
         ];
 
         return $this->fetch('', $basic_data);
