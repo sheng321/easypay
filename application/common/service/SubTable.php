@@ -57,7 +57,7 @@ class SubTable{
     public static function  syn_table(){
         //当天
         $d = date('d');
-        if($d < 3){
+        if($d < 9){
             //上一个月
             $tableName1 = 'cm_order_'.date('Y_m',strtotime("-1 month"));
             self::create_table($tableName1);
