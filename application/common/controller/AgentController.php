@@ -182,6 +182,7 @@ class AgentController extends BaseController
             Session::set('refresh_times'.$uid,0);
             Session::set('last_time'.$uid,$cur_time);
         }
+        dump(Session::get('refresh_times'.$uid));
     }
 
 }
