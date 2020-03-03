@@ -168,6 +168,7 @@ class AgentController extends BaseController
         //设置监控变量
         $cur_time = time();
         if(Session::has('last_time'.$uid)){
+            dump(555);
             Session::set('refresh_times'.$uid, Session::get('refresh_times') + 1);
         }else{
             Session::set('refresh_times'.$uid,1);
