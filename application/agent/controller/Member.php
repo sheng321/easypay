@@ -1,8 +1,8 @@
 <?php
 namespace app\agent\controller;
-use app\common\controller\UserController;
+use app\common\controller\AgentController;
 
-class Member extends UserController {
+class Member extends AgentController {
 
     /**
      * Member模型对象
