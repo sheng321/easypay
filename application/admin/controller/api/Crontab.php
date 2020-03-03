@@ -21,7 +21,6 @@ class Crontab  extends Controller
         parent::__construct();
         ignore_user_abort(true);    //关掉浏览器，PHP脚本也可以继续执行.
         set_time_limit(180);
-
     }
 
     public function index()
