@@ -136,7 +136,7 @@ class Index  extends AdminController
         $sys = $this->model->bList(1, 7, $search);
 
         $sys_data['legend'] = ['交易金额','收入金额','订单收益','下发收益','平台支出','平台收入','平台收益'];
-
+        $sys_data['xAxis'] = [];
         foreach ($sys['data'] as $k=>$v ){
             $sys_data['xAxis'][$k] = $v['day'];
 
