@@ -79,6 +79,13 @@
             <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
         </div>
 
+
+        {if auth("$thisClass/confirm")}
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-check-all1='{:url("$thisClass/batch_process")}' data-title="批量处理未处理的代付订单"   data-table-id="currentTableId"  >批量处理未处理的代付订单</a>
+        </div>
+        {/if}
+
     </blockquote>
     <!--顶部操作栏--结束-->
 
@@ -131,8 +138,10 @@
 
 {block name="script"}
 <script >
+
     var btu ;
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
+        {type: "checkbox",fixed: "left", width: 30,},
         {field: 'id', title: 'ID', width: 30, align: "center"},
         {field: 'mch_id', title: '商户号',  width: 70,  align: "center"},
         {field: 'system_no', title: '订单号',  width: 120, align: "center"},
@@ -165,6 +174,20 @@
         {field: 'update_at', title: '更新时间', width: 100,  align: "center"},
         {field: 'record', title: '操作记录', width: 100,  align: "center"},
     ]],true,function (res,curr,count){
+
+        for (var i in res.data) {
+            var item = res.data[i];
+            if(item.status != 1 || item.lock_id != 0){
+                // checkbox 根据条件设置不可选中
+                $('tr[data-index=' + i + '] input[type="checkbox"]').prop('disabled', true);
+                $('tr[data-index=' + i + '] input[type="checkbox"]').next().remove();
+                $('tr[data-index=' + i + '] input[type="checkbox"]').remove();
+            }
+        }
+
+
+
+
         btu = function () {
             var total_orders = res.data.length;
             var total_1 = 0;

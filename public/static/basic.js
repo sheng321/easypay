@@ -51,15 +51,6 @@
             return index;
         };
 
-        this.confirm = function (msg, ok, no) {
-            var index = layer.confirm(msg, {title: '操作确认', btn: ['确认', '取消']}, function () {
-                typeof ok === 'function' && ok.call(this);
-            }, function () {
-                typeof no === 'function' && no.call(this);
-                self.close(index);
-            });
-            return index;
-        };
 
         // 显示成功类型的消息
         this.success = function (msg, callback) {
@@ -569,7 +560,47 @@
         return false;
     });
 
+    /**
+     * 注册 data-check-all1 事件
+     */
+    $('body').on('click', '[data-check-all1]', function () {
+        var url = $(this).attr('data-check-all1');
+        var checkStatus = table.checkStatus($(this).attr('data-table-id')),
+            data = checkStatus.data,
+            id = [];
+         url = url + '?test=1';
+        for (let i in data) {
+            id.push(data[i].id);
+            url += '&id[]='+data[i].id;
+        }
 
+        if(id.length < 1){
+            $.msg.error('请选择一条代付订单！！');
+            return false;
+        }
+        if(id.length > 10){
+            $.msg.error('不能超过10笔代付订单！！');
+            return false;
+        }
+
+
+        var Index = $.msg.confirm($(this).attr('data-title'), function () {
+            $.msg.close(Index);
+
+            var index = layui.layer.open({
+                title: '批量处理——选择代付通道',
+                type: 2,
+                area: ['100%', '80%'],
+                content: url,
+                success: function (layero, index) {
+                    var body = layui.layer.getChildFrame('body', index);
+                }
+            })
+
+        });
+
+        return false;
+    });
 
 
     /**
