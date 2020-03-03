@@ -788,14 +788,13 @@ class Df extends AdminController {
             if(empty($Channel) || $Channel['status'] != 1 ) return msg_error('通道数据异常');
 
 
-            $pid = $this->request->param();
+            $pid = $this->request->param('pid',[]);
             if(empty($pid) || !is_array($pid)) return __error('未选择代付订单！！');
             $num = count($pid);
             if($num > 10) return msg_error('单数不能超过10笔！');
 
             ignore_user_abort(true);    //关掉浏览器，PHP脚本也可以继续执行.
             ini_set('max_execution_time','180');
-
 
             $Payment =  Payment::factory($Channel['code']);
             foreach ($pid as $k => $v){
@@ -819,14 +818,23 @@ class Df extends AdminController {
                     continue;
                 }
 
+
+
                     //先更新系统数据，再提交数据到上游
 
+                $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $Channel['id']]); //通道金额
+                if(empty($channel_money)){
+                    echo '代付通道金额数据异常!';
+                    echo "结束运行\n";
+                    break;
+                }
+
                     //冻结通道金额
-                    $change['change'] = $order['channel_amount'] ;//变动金额
+                    $change['change'] = $channel_amount ;//变动金额
                     $change['relate'] = $order['system_no'];//关联订单号
                     $change['type'] = 5;//通道冻结金额类型
 
-                    $res = Umoney::dispose($channel_amount, $change); //处理 通道金额
+                    $res = Umoney::dispose($channel_money, $change); //处理 通道金额
                     if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额'){
                         echo '代付通道:' . $res['msg'];
                         echo "结束运行\n";
@@ -860,7 +868,9 @@ class Df extends AdminController {
                         echo  '订单号'.$order['system_no']."更新数据,失败\n";
                         continue;
                     }
+
                     //这里提交代付申请
+                     $order['channel_amount'] = $channel_amount;
                     $order['bank'] = json_decode($order['bank'],true);
                     $result = $Payment->pay($order);
                     if(empty($result)|| !is_array($result)){

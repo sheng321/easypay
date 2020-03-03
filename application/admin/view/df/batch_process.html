@@ -130,11 +130,6 @@
                 }
             })
 
-            $.request.get(url, {id: id}, function (res) {
-                $.msg.success(res.msg, function () {
-                    $.tool.reload('open');
-                })
-            })
         });
 
         return false;
