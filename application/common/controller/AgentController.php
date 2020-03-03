@@ -168,7 +168,6 @@ class AgentController extends BaseController
         //设置监控变量
         $cur_time = time();
         if(Session::has('last_time'.$uid)){
-            dump(555);
             $refresh_time = Session::get('refresh_times'.$uid) + 1;
             Session::set('refresh_times'.$uid, $refresh_time);
         }else{
@@ -181,11 +180,10 @@ class AgentController extends BaseController
                 exceptions(['msg'=>'请求频率太快，稍候20秒后再访问！','wait'=>20]);
             }
         }else{
-            dump(6666);
             Session::set('refresh_times'.$uid,0);
             Session::set('last_time'.$uid,$cur_time);
         }
-        dump(Session::get('refresh_times'.$uid));
+
     }
 
 }
