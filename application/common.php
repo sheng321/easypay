@@ -546,7 +546,7 @@ if (!function_exists('exceptions')) {
         $result['data'] = $data;
         $result['wait'] = 5;
 
-        $url = null;
+        $url = app('request')->url(true);
         if(is_array($msg)){
             if(array_key_exists('code',$msg)) $result['code'] = $msg['code'];
             if(array_key_exists('msg',$msg)) $result['msg'] = $msg['msg'];
@@ -562,7 +562,7 @@ if (!function_exists('exceptions')) {
             if (is_null($url)) {
                 $url = Request()->isAjax() ? '' : 'javascript:history.back(-2);';
             } elseif ('' !== $url) {
-                $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('url')->build($url);
+                $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('request')->build($url);
 
             }
             $result['url'] = $url;
