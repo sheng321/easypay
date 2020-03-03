@@ -76,7 +76,6 @@ class SubTable{
             }
         }
 
-
         //当月
         $tableName = 'cm_order_'.date('Y_m');
         self::create_table($tableName);
@@ -86,7 +85,7 @@ class SubTable{
         }else{
             $begin  = $create_at;
         }
-        $end =  timeToDate( 0,0,0,-2);//只插入三天前的数据
+        $end =  timeToDate( 0,0,0,0);//只插入三天前的数据
 
         $time = strtotime($end) - strtotime($begin);
 
