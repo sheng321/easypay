@@ -12,6 +12,18 @@ use think\Db;
  */
 class Crontab  extends Controller
 {
+
+    /**
+     * 初始化
+     * node constructor.
+     */
+    public function __construct() {
+        parent::__construct();
+        ignore_user_abort(true);    //关掉浏览器，PHP脚本也可以继续执行.
+        set_time_limit(180);
+
+    }
+
     public function index()
     {
        $res = SubTable::syn_table();
