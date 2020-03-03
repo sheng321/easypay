@@ -13,7 +13,7 @@ class Member extends UserController {
      * 初始化
      * Member constructor.
      */
-    public function __construct() {
+    public function __construct(){
         parent::__construct();
 
         $this->model = model('app\common\model\Umember');
