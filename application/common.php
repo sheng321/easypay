@@ -561,15 +561,11 @@ if (!function_exists('exceptions')) {
         }else{
             if (is_null($url)) {
                 $url = Request()->isAjax() ? '' : 'javascript:history.back(-2);';
-                dump(1);
-                dump($url);
             } elseif ('' !== $url) {
                 $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('url')->build($url);
-                dump($url);
-            }
 
+            }
             $result['url'] = $url;
-            halt($result['url']);
 
             $response = \think\facade\Response::create($result, 'jump')->options(['jump_template' => config('app.dispatch_error_tmpl') ]);
             throw new \think\exception\HttpResponseException( $response);
