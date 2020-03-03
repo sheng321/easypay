@@ -131,8 +131,7 @@ class AgentController extends BaseController
     protected function __checkAuth()
     {
         if (\app\common\service\AuthService::checkAgentNode() == false){
-
-            $data = ['type' => 'error', 'code' => 0, 'msg' => '抱歉，您暂无该权限，请联系管理员！', 'url' => url('@agent/index')];
+            $data = ['type' => 'error', 'code' => 0, 'msg' => '抱歉，您暂无该权限，请联系管理员！', 'url' => ''];
             exceptions($data);
         }
     }
