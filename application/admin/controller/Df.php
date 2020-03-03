@@ -902,7 +902,7 @@ class Df extends AdminController {
                         //添加异步查询订单状态
                         \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
 
-                        echo  '订单号'.$order['system_no']."已被锁定，处理成功\n";
+                        echo  '订单号 '.$order['system_no']." 处理成功\n";
                         continue;
 
                     }else{
