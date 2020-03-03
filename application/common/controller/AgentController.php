@@ -163,8 +163,8 @@ class AgentController extends BaseController
     //防止CC攻击 防止快速刷新
     protected function __cc($uid)
     {
-        $seconds = '100'; //时间段[秒]
-        $refresh = '5'; //刷新次数
+        $seconds = '30'; //时间段[秒]
+        $refresh = '20'; //刷新次数
         //设置监控变量
         $cur_time = time();
         if(Session::has('last_time'.$uid)){
@@ -176,7 +176,7 @@ class AgentController extends BaseController
         //处理监控结果
         if($cur_time - Session::get('last_time'.$uid) < $seconds){
             if(Session::get('refresh_times'.$uid) >= $refresh){
-                exceptions(['msg'=>'请求频率太快，稍候30秒后再访问！','wait'=>3]);
+                exceptions(['msg'=>'请求频率太快，稍候20秒后再访问！','wait'=>20]);
             }
         }else{
             Session::set('refresh_times'.$uid,0);
