@@ -164,7 +164,7 @@ class AgentController extends BaseController
     protected function __cc($uid)
     {
         $seconds = '30'; //时间段[秒]
-        $refresh = '5'; //刷新次数
+        $refresh = '18'; //刷新次数
         //设置监控变量
         $cur_time = time();
         if(Session::has('last_time'.$uid)){
