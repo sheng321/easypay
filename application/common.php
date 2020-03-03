@@ -560,7 +560,7 @@ if (!function_exists('exceptions')) {
         if(Request()->isAjax()){
             throw new \think\exception\HttpResponseException(json($result));
         }else{
-            if(is_null($url) && app('request')->controller() == 'index' && app('request')->controller() == 'index'){
+            if(is_null($url) && app('request')->controller() == 'index' && app('request')->action() == 'index'){
                 $url = app('request')->url(true);
             }
 
