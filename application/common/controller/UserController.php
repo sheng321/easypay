@@ -41,7 +41,6 @@ class UserController extends BaseController
     {
         parent::__construct();
 
-        $this->__cc();
 
         //检测来源
         $REFERER = $this->request->server('HTTP_REFERER','');
@@ -90,6 +89,8 @@ class UserController extends BaseController
 
         // 登录会员信息
         $this->user = $user;
+
+        $this->__cc($this->user['uid']);
 
         //ip 白名单验证
         $ip =  \app\common\model\Ip::bList($this->user['uid'],0);
@@ -162,27 +163,28 @@ class UserController extends BaseController
         session('user_info.google_token', $user['google_token']);
     }
 
+
     //防止CC攻击 防止快速刷新
-    protected function __cc()
+    protected function __cc($uid)
     {
         $seconds = '45'; //时间段[秒]
-        $refresh = '18'; //刷新次数
+        $refresh = '20'; //刷新次数
         //设置监控变量
         $cur_time = time();
-        if(Session::has('last_time')){
-            Session::set('refresh_times', Session::get('refresh_times') + 1);
+        if(Session::has('last_time'.$uid)){
+            Session::set('refresh_times'.$uid, Session::get('refresh_times') + 1);
         }else{
-            Session::set('refresh_times',1);
-            Session::set('last_time',$cur_time);
+            Session::set('refresh_times'.$uid,1);
+            Session::set('last_time'.$uid,$cur_time);
         }
         //处理监控结果
-        if($cur_time - Session::get('last_time') < $seconds){
-            if(Session::get('refresh_times') >= $refresh){
+        if($cur_time - Session::get('last_time'.$uid) < $seconds){
+            if(Session::get('refresh_times'.$uid) >= $refresh){
                 exceptions(['msg'=>'请求频率太快，稍候30秒后再访问！','wait'=>30]);
             }
         }else{
-            Session::set('refresh_times',0);
-            Session::set('last_time',$cur_time);
+            Session::set('refresh_times'.$uid,0);
+            Session::set('last_time'.$uid,$cur_time);
         }
     }
 
