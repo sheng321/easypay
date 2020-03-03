@@ -124,7 +124,7 @@ return [
     'url_convert'            => true,
     // 默认的访问控制器层
     //'url_controller_layer'   => 'controller',
-    'url_controller_layer'   => 'Index',
+    'url_controller_layer'   => 'controller/Index/index',
     // 表单请求类型伪装变量
     'var_method'             => '_method',
     // 表单ajax伪装变量
