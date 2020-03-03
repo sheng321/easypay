@@ -166,8 +166,8 @@ if (!function_exists('timeToDate')) {
      * @param int $year
      * @return false|string
      */
-    function timeToDate($second = 0,$minute = 0,$hour = 0,$day = 0,$week = 0,$month = 0,$year = 0) {
-        $t = time();//指定时间戳
+    function timeToDate($second = 0,$minute = 0,$hour = 0,$day = 0,$week = 0,$month = 0,$year = 0,$t = 0) {
+        if($t == 0)  $t = time();//指定时间戳
         $flag = false;
         if(!empty($second)) $t = strtotime("{$second}second",$t);
         if(!empty($minute)) $t = strtotime("{$minute}minute",$t);
