@@ -549,6 +549,7 @@ if (!function_exists('exceptions')) {
         $url = app('request')->url(true);
 
         dump($url);
+        halt(app('request')->build($url));
         if(is_array($msg)){
             if(array_key_exists('code',$msg)) $result['code'] = $msg['code'];
             if(array_key_exists('msg',$msg)) $result['msg'] = $msg['msg'];
