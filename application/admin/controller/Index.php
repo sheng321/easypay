@@ -128,12 +128,12 @@ class Index  extends AdminController
         }
 
         //平台盈利
-        $search['withdraw_id'] = 0;
-        $search['uid'] = 0;
-        $search['channel_id'] = 0;
-        $search['df_id'] = 0;
-        $search['type'] = 6;
-        $sys = $this->model->bList(1, 7, $search);
+        $search3['withdraw_id'] = 0;
+        $search3['uid'] = 0;
+        $search3['channel_id'] = 0;
+        $search3['df_id'] = 0;
+        $search3['type'] = 6;
+        $sys = $this->model->bList(1, 7, $search3);
 
         $sys_data['legend'] = ['交易金额','收入金额','订单收益','下发收益','平台支出','平台收入','平台收益'];
         $sys_data['xAxis'] = [];
