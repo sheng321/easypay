@@ -548,8 +548,6 @@ if (!function_exists('exceptions')) {
 
         $url = app('request')->url(true);
 
-        dump($url);
-        halt(app('url')->build($url));
         if(is_array($msg)){
             if(array_key_exists('code',$msg)) $result['code'] = $msg['code'];
             if(array_key_exists('msg',$msg)) $result['msg'] = $msg['msg'];
@@ -563,9 +561,10 @@ if (!function_exists('exceptions')) {
             throw new \think\exception\HttpResponseException(json($result));
         }else{
             if (is_null($url)) {
-                $url = Request()->isAjax() ? '' : 'javascript:history.back(-2);';
+                //$url = Request()->isAjax() ? '' : 'javascript:history.back(-2);';
+                $url = Request()->isAjax() ? '' : 'javascript:window.close();';
             } elseif ('' !== $url) {
-                $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('request')->build($url);
+                $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('url')->build($url);
 
             }
             $result['url'] = $url;
