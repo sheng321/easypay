@@ -566,7 +566,6 @@ if (!function_exists('exceptions')) {
 
             }
             $result['url'] = $url;
-            dump($result['url']);
 
             $response = \think\facade\Response::create($result, 'jump')->options(['jump_template' => config('app.dispatch_error_tmpl') ]);
             throw new \think\exception\HttpResponseException( $response);
