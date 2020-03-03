@@ -560,8 +560,13 @@ if (!function_exists('exceptions')) {
         if(Request()->isAjax()){
             throw new \think\exception\HttpResponseException(json($result));
         }else{
+            if(is_null($url) && app('request')->controller() == 'index' && app('request')->controller() == 'index'){
+                $url = app('request')->url(true);
+            }
+
             if (is_null($url)) {
-                $url = Request()->isAjax() ? '' : 'javascript:history.back(-2);';
+               // $url = Request()->isAjax() ? '' : 'javascript:history.back(-2);';
+                $url = Request()->isAjax() ? '' : "javascript:window.opener=null;window.open('','_self');window.location.href='about:blank';window.close();";
             } elseif ('' !== $url) {
                 $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : app('url')->build($url);
 
