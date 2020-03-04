@@ -5,6 +5,11 @@ use think\queue\Job;
 use app\common\model\Df;
 use app\withdrawal\service\Payment;
 
+/**
+ * 批量处理代付订单
+ * Class Dfprocess
+ * @package app\common\job
+ */
 class Dfprocess {
     /**
      * fire方法是消息队列默认调用的方法
@@ -102,12 +107,20 @@ class Dfprocess {
             }
 
         } catch (\Exception $e) {
+            $msg =  $e->getMessage();
+            if(empty($msg)){
+              $trace =   $e->getTrace();
+              if(empty($trace[0]['args']['0']['msg'])){
+                  $msg = '未知错误';
+              }else{
+                  $msg = $trace[0]['args']['0']['msg'];
+              }
+            }
+
             $this->model->rollback();
-            $this->model->save(['id'=>$data['order']['id'],'remark'=>$e->getMessage()],['id'=>$data['order']['id']]);
+            $this->model->save(['id'=>$data['order']['id'],'remark'=>$msg],['id'=>$data['order']['id']]);
             return false;
         }
-
-
 
         
         return true;

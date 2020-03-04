@@ -139,7 +139,7 @@ class ModelService extends Model {
         $getData =  $model->getData();
         if(!isset($getData['verson']) || !isset($getData['id'])) return true;
         $verson = $model::where(['id' => $getData['id']])->value('verson');
-        if ($verson !== $getData['verson']-1) exceptions('多人同时操作，请刷新再试！');
+        if ($verson !== $getData['verson']-1) exceptions(['msg'=>'多人同时操作，请刷新再试！','url'=>'','wait'=>10000]);
         return true;
     }
 
