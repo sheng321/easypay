@@ -98,7 +98,7 @@ class Dfprocess {
 
             }else{
 
-                throw new Exception($data['channel']['code'] . '申请代付失败，请检查上游订单状，上游返回：'.$result['msg']."，失败\n");
+                throw new Exception($data['channel']['code'] . '申请代付失败，请检查上游订单状，上游返回：'.$result['msg']."\n");
             }
 
         } catch (\Exception $e) {
