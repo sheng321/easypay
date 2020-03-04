@@ -846,7 +846,8 @@ class Df extends AdminController {
                     'channel_amount'=> $channel_amount,
                     'lock_id'=>$this->user['id'],
                     'record'=>empty($order['record'])?$this->user['username']."选择下发代付通道:".$Channel['title']:$order['record']."|".$this->user['username']."选择下发代付通道:".$Channel['title']."|更改状态处理中",
-                    'verson'=>$order['verson']+1, //防止多人操作
+                    //'verson'=>$order['verson']+1, //防止多人操作
+                    'verson'=>0, //防止多人操作
                 ];
 
                 //这个地方提交批量处理任务
@@ -854,11 +855,11 @@ class Df extends AdminController {
                 unset($data);
                 unset($change);
                 if( $res === false ){
-                    echo  '订单号'.$order['system_no']."提交任务失败，请稍后重试~\n";
+                    echo  "ID:{$v} 订单号".$order['system_no']."提交任务失败，请稍后重试~\n";
                     unset($order);
                     continue;
                 }
-                echo  '订单号'.$order['system_no']."提交任务成功，请稍后刷新查看订单状态~\n";
+                echo  "ID:{$v} 订单号".$order['system_no']."提交任务成功，请稍后刷新查看订单状态~\n";
                 unset($order);
                 continue;
             }
