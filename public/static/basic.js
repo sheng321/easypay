@@ -590,7 +590,7 @@
             var index = layui.layer.open({
                 title: '批量处理——选择代付通道',
                 type: 2,
-                area: ['100%', '80%'],
+                area: ['100%', '100%'],
                 content: url,
                 success: function (layero, index) {
                     var body = layui.layer.getChildFrame('body', index);
