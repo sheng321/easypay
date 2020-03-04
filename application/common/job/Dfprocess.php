@@ -117,7 +117,6 @@ class Dfprocess {
                 $Umoney->commit();
                 $UmoneyLog->commit();
 
-                sleep(2);
                 //添加异步查询订单状态
                 \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
 
