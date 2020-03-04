@@ -81,28 +81,21 @@ class Dfprocess {
         try {
             //选择通道并且处理中
             $Df->startTrans();
-            $result =  $Df->save($data['order'],['id'=>$data['order']['id']]);
-            if($result === false){
-                $Df->rollBack();
-                throw new Exception('数据更新失败1，请稍后再试!');
-            }
-
             $Umoney->startTrans();
-            $result =  $Umoney->isUpdate(true)->saveAll($data['Umoney']);
-            if($result === false){
-                $Df->rollBack();
-                $Umoney->rollBack();
-                throw new Exception('数据更新失败2，请稍后再试!');
-            }
-
             $UmoneyLog->startTrans();
+
+            $result =  $Df->save($data['order'],['id'=>$data['order']['id']]);
+            if($result === false)  throw new Exception('数据更新失败1，请稍后再试!');
+
+            $result =  $Umoney->isUpdate(true)->saveAll($data['Umoney']);
+            if($result === false)throw new Exception('数据更新失败2，请稍后再试!');
+
             $result =  $UmoneyLog->isUpdate(false)->saveAll($data['UmoneyLog']);
-            if($result === false){
-                $Df->rollBack();
-                $Umoney->rollBack();
-                $UmoneyLog->rollBack();
-                throw new Exception('数据更新失败3，请稍后再试!');
-            }
+            if($result === false) throw new Exception('数据更新失败3，请稍后再试!');
+
+            $Df->commit();
+            $Umoney->commit();
+            $UmoneyLog->commit();
 
             $Payment = Payment::factory($data['channel']['code']);
             //这里提交代付申请
@@ -113,9 +106,6 @@ class Dfprocess {
 
             //成功
             if($result['code'] == 1){
-                $Df->commit();
-                $Umoney->commit();
-                $UmoneyLog->commit();
 
                 //添加异步查询订单状态
                 \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
