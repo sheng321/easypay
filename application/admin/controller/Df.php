@@ -773,12 +773,14 @@ class Df extends AdminController {
         }
 
     }
-
         /**
          * 批量保存通道并且处理
          */
 
         public function confirm1(){
+
+            ignore_user_abort(true);    //关掉浏览器，PHP脚本也可以继续执行.
+            ini_set('max_execution_time', '120');
 
             $channel_id = $this->request->param('id/d', 0);
             if (empty($channel_id)) return msg_error('请选择一条代付通道！！');
@@ -795,9 +797,6 @@ class Df extends AdminController {
                 if (empty($pid) || !is_array($pid)) return __error('未选择代付订单！！');
                 $num = count($pid);
                 if ($num > 10) return msg_error('单数不能超过10笔！');
-
-                ignore_user_abort(true);    //关掉浏览器，PHP脚本也可以继续执行.
-                ini_set('max_execution_time', '120');
 
 
                 $orders = $this->model->where([['id', 'in', $pid]])->column('id,status,lock_id,amount,fee,system_no,verson,record', 'id');
@@ -886,8 +885,6 @@ class Df extends AdminController {
 
                 $order =  $this->model->quickGet($id);
                 if(empty($order) || $order['status'] != 1 || empty($order['channel_amount']) || !empty($order['remark']))  return __success('处理完成');
-
-
                 $Payment =  Payment::factory($Channel['code']);
                 //先更新系统数据，再提交数据到上游
 
@@ -943,7 +940,7 @@ class Df extends AdminController {
                     //添加异步查询订单状态
                     \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
 
-                    return __success('操作成功！');
+                    return __success('ID：'.$order['id'].' 单号：'.$order['system_no'].' 处理成功！');
                 }else{
                     $this->model->rollback();
                     $msg = '申请代付失败，请检查上游订单状，上游返回：'.$result['msg'];
@@ -955,6 +952,5 @@ class Df extends AdminController {
             }
 
             }
-
 
 }
