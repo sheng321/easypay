@@ -823,7 +823,7 @@ class Df extends AdminController {
                     break;
                 }
 
-                    //冻结通道金额
+                //冻结通道金额
                 $change['change'] = $channel_amount ;//变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
                 $change['type'] = 5;//通道冻结金额类型
