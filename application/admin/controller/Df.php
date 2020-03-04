@@ -849,7 +849,8 @@ class Df extends AdminController {
                 ];
 
                 //这个地方提交批量处理任务
-                $res =  \think\Queue::push('app\\common\\job\\Dfprocess', $data, 'dfprocess');
+                $time = $k*3;
+                $res =  \think\Queue::later($time,'app\\common\\job\\Dfprocess', $data, 'dfprocess');
                 unset($data);
                 unset($change);
                 if( $res === false ){
@@ -857,7 +858,7 @@ class Df extends AdminController {
                     unset($order);
                     continue;
                 }
-                echo  "ID:{$v} 订单号".$order['system_no']."提交任务成功，请稍后刷新查看订单状态~\n";
+                echo  "ID:{$v} 订单号".$order['system_no']."提交任务成功，{$time} 秒后执行，请稍后刷新查看订单状态~\n";
                 unset($order);
                 continue;
             }
