@@ -29,7 +29,7 @@ class Dfprocess {
         ini_set('max_execution_time','120');
         $order =  Df::where(['id'=>$data['order']['id']])->find();
         // 有些消息在到达消费者时,可能已经不再需要执行了
-        $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($order);
+        $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data,$order);
         if(!$isJobStillNeedToBeDone){
             $job->delete();
             return;
@@ -44,7 +44,7 @@ class Dfprocess {
                 return;
             }else{
                 //重新发起
-                \think\Queue::push('app\\common\\job\\Dfprocess', $task, 'dfprocess');
+                \think\Queue::later(1,'app\\common\\job\\Dfprocess', $task, 'dfprocess');
                 return;
             }
 
@@ -61,18 +61,23 @@ class Dfprocess {
      * @param array|mixed    $data     发布任务时自定义的数据
      * @return boolean                 任务执行的结果
      */
-    private function checkDatabaseToSeeIfJobNeedToBeDone($order){
+    private function checkDatabaseToSeeIfJobNeedToBeDone($data,$order){
 
-        if(empty($order) || $order['status'] != 1 || $order['lock_id'] != 0 || $order['remark'] == '批量操作成功'){
+        if(empty($order) || $order['status'] != 1 || $order['lock_id'] == 0 || $order['remark'] == '批量操作成功' || $order['remark'] != '处理中' || empty($order['channel_amount'])){
            return false;
         }
+        //绑定的通道不一样
+        if($order['channel_id'] != $data['channel']['id']){
+            return false;
+        }
+
         return true;
     }
 
     /**
      * 根据消息中的数据进行实际的业务处理...
      */
-    private function doHelloJob($data)
+    private function doHelloJob($data,$order)
     {
 
         $Df = model('app\common\model\Df');
@@ -80,30 +85,9 @@ class Dfprocess {
         $UmoneyLog = model('app\common\model\UmoneyLog');
 
         try {
-            //选择通道并且处理中
-            $Df->startTrans();
-            $Umoney->startTrans();
-            $UmoneyLog->startTrans();
-
-            $result =  $Df->save($data['order'],['id'=>$data['order']['id']]);
-            if($result === false)  throw new Exception('数据更新失败');
-
-            $result =  $Umoney->isUpdate(true)->saveAll($data['Umoney']);
-            if($result === false)throw new Exception('数据更新失败');
-
-            $result =  $UmoneyLog->isUpdate(false)->saveAll($data['UmoneyLog']);
-            if($result === false) throw new Exception('数据更新失败');
-
-            $Df->commit();
-            $Umoney->commit();
-            $UmoneyLog->commit();
 
             $Payment = Payment::factory($data['channel']['code']);
             //这里提交代付申请
-            $order =  Df::where(['id'=>$data['order']['id']])->find();
-            if(empty($order) || empty($order['channel_amount']) || $order['status'] != 2 ) throw new Exception('数据更新失败');
-            if($order['remark'] == '批量操作成功') throw new Exception('批量操作成功');
-
             $order['bank'] = json_decode($order['bank'],true);
             $result = $Payment->pay($order);
             if(empty($result)|| !is_array($result) || !isset($result['code'])) throw new Exception($data['channel']['code'] . '代付通道异常，请稍后再试!');
@@ -128,6 +112,31 @@ class Dfprocess {
             }else{
                 throw new Exception($data['channel']['code'] . '申请代付失败，上游返回：'.$result['msg']."\n");
             }
+
+
+
+
+
+
+            //选择通道并且处理中
+            $Df->startTrans();
+            $Umoney->startTrans();
+            $UmoneyLog->startTrans();
+
+            $result =  $Df->save($data['order'],['id'=>$data['order']['id']]);
+            if($result === false)  throw new Exception('数据更新失败');
+
+            $result =  $Umoney->isUpdate(true)->saveAll($data['Umoney']);
+            if($result === false)throw new Exception('数据更新失败');
+
+            $result =  $UmoneyLog->isUpdate(false)->saveAll($data['UmoneyLog']);
+            if($result === false) throw new Exception('数据更新失败');
+
+            $Df->commit();
+            $Umoney->commit();
+            $UmoneyLog->commit();
+
+
 
         } catch (\Exception $e) {
             $Df->rollBack();

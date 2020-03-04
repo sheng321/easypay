@@ -1,0 +1,72 @@
+{extend name="admin@public/basic" /}
+{block name="style"}{/block}
+<link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
+{block name="cotent"}
+<div class="layui-col-sm12">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12">
+            <div class="layui-card">
+                <div class="layui-card-header">{$title}</div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>单号</th>
+                            <th>状态</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {foreach $select as $k=> $vo}
+
+                            {if $vo['status'] > 1 }
+                                <tr>
+                                    <td><span class="third">{$vo['id']}</span></td>
+                                    <td>{$vo['system_no']}</td>
+                                    <td><span>已处理</span><i class="layui-icon layui-icon-ok-circle" style=" color: green;" ></i></td>
+                                </tr>
+                            {else /}
+                                {if $vo['id'] == $id }
+                                    <tr>
+                                        <td><span class="second">{$vo['id']}</span></td>
+                                        <td>{$vo['system_no']}</td>
+                                        <td><span>处理中</span> <i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop" style=" color: red;"  ></i></td>
+                                    </tr>
+                                {else /}
+                                    <tr>
+                                        <td><span class="first">{$vo['id']}</span></td>
+                                        <td>{$vo['system_no']}</td>
+                                        <td><span>待处理</span> <i class="layui-icon layui-icon-close" style=" color: #1E9FFF;"  ></i></td>
+                                    </tr>
+                                {/if}
+                            {/if}
+
+                        {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script  >
+    $.msg.loading('代付任务处理中，请不要关闭网页！');
+   $.request.post('{:url("$thisRequest")}', {'df_id':'{$id}','id':'{$channel_id}'}, function (res) {
+        $.msg.close();
+        if(res.msg == '处理完成'){
+            $.msg.success(res.msg);
+        }else{
+            $.msg.success(res.msg, function () {
+                $.tool.reload();
+            });
+        }
+    }, true);
+
+</script>
+{/block}
+
+

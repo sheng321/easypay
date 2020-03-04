@@ -777,93 +777,184 @@ class Df extends AdminController {
         /**
          * 批量保存通道并且处理
          */
+
         public function confirm1(){
 
             $channel_id = $this->request->param('id/d', 0);
-            if(empty($channel_id)) return msg_error('请选择一条代付通道！！');
+            if (empty($channel_id)) return msg_error('请选择一条代付通道！！');
 
             $Channel = model('app\common\model\ChannelDf')->quickGet($channel_id);
-            if(empty($Channel) || $Channel['status'] != 1 ) return msg_error('通道数据异常');
+            if (empty($Channel) || $Channel['status'] != 1) return msg_error('通道数据异常');
+
+            $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $Channel['id']]); //通道金额
+            if (empty($channel_money)) return msg_error('代付通道金额数据异常!');
+
+            if (!$this->request->isPost()) {
+
+                $pid = $this->request->get('pid', []);
+                if (empty($pid) || !is_array($pid)) return __error('未选择代付订单！！');
+                $num = count($pid);
+                if ($num > 10) return msg_error('单数不能超过10笔！');
+
+                ignore_user_abort(true);    //关掉浏览器，PHP脚本也可以继续执行.
+                ini_set('max_execution_time', '120');
 
 
-            $pid = $this->request->param('pid',[]);
-            if(empty($pid) || !is_array($pid)) return __error('未选择代付订单！！');
-            $num = count($pid);
-            if($num > 10) return msg_error('单数不能超过10笔！');
+                $orders = $this->model->where([['id', 'in', $pid]])->column('id,status,lock_id,amount,fee,system_no,verson,record', 'id');
 
-            ignore_user_abort(true);    //关掉浏览器，PHP脚本也可以继续执行.
+                $update = [];
+                foreach ($orders as $k => $v) {
+                    if ($v['status'] != 1 || $v['lock_id'] != 0) continue;
 
-            $task = [];
-            foreach ($pid as $k => $v){
-                $order =  $this->model->quickGet($v);
-                if(empty($order)) continue;
-                if($order['status'] != 1){
-                    echo  '订单号'.$order['system_no']."不是未处理状态,失败\n";
-                    continue;
+                    //内扣
+                    if ($Channel['inner'] == 0) $channel_amount = $v['amount'] - $v['fee'] + $Channel['fee'];
+                    //外扣
+                    if ($Channel['inner'] == 1) $channel_amount = $v['amount'] - $v['fee'];
+
+                    if ($channel_amount < $Channel['min_pay'] || $channel_amount > $Channel['max_pay']) {
+                        echo '订单号' . $v['system_no'] . "申请通道金额不在通道出款范围内！\n\n";
+                        continue;
+                    }
+
+                    //冻结通道金额
+                    $change['change'] = $channel_amount;//变动金额
+                    $change['relate'] = $v['system_no'];//关联订单号
+                    $change['type'] = 5;//通道冻结金额类型
+                    $res = Umoney::dispose($channel_money, $change); //处理 通道金额
+                    if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') {
+                        echo '代付通道:' . $res['msg'];
+                        echo "结束运行1\n";
+                        break;
+                    }
+
+                    $data['channel']['code'] = $Channel['code'];
+                    $data['channel']['id'] = $Channel['id'];
+                    $data['Umoney'] = $res['data'];
+                    $data['UmoneyLog'] = $res['change'];
+                    $data['order'] = [
+                        'id' => $v['id'],
+                        'status' => 2,
+                        'record' => empty($order['record']) ? "更改状态处理中" . $Channel['title'] : $order['record'] . "|更改状态处理中",
+                    ];
+
+                    $update[$k] = [
+                        'id' => $v['id'],
+                        'channel_id' => $Channel['id'],
+                        'channel_fee' => $Channel['fee'],
+                        'channel_amount' => $channel_amount,
+                        'lock_id' => $this->user['id'],
+                        'record' => empty($v['record']) ? $this->user['username'] . "选择下发代付通道:" . $Channel['title'] : $v['record'] . "|" . $this->user['username'] . "选择下发代付通道:" . $Channel['title'],
+                        'verson' => $v['verson'] + 1, //防止多人操作
+                    ];
+
+                    unset($data);
+                    unset($change);
+                    unset($order);
                 }
-                if($order['lock_id'] != 0){
-                    echo  '订单号'.$order['system_no']."已被锁定，失败\n";
-                    continue;
-                }
-                //内扣
-                if($Channel['inner'] == 0) $channel_amount = $order['amount'] - $order['fee'] + $Channel['fee'];
-                //外扣
-                if($Channel['inner'] == 1) $channel_amount = $order['amount'] - $order['fee'];
 
-                if( $channel_amount < $Channel['min_pay']  || $channel_amount > $Channel['max_pay']){
-                    echo  '订单号'.$order['system_no']."申请通道金额不在通道出款范围内！，失败\n";
-                    continue;
+                $this->model->startTrans();
+                $result = $this->model->saveAll($update);
+                if (!$result) {
+                    $this->model->rollback();
+                    echo "操作失败\n";
+                    echo "\n\n结束运行~\n";
+                    exit();
                 }
+                $this->model->commit();
 
+                //处理中状态
+                $select = $this->model->where([['id', 'in', $pid]])->order(['status' => 'desc'])->field('id,status,system_no,channel_amount,channel_id')->select()->toArray();
+
+                $id = 0;
+                foreach ($select as $k => $v) {
+                    if ($v['status'] == 1 && !empty($v['channel_amount']) && $v['channel_id'] == $Channel['id']){
+                        $id = $v['id'];
+                        break;
+                    }
+                }
+                //基础数据
+                $basic_data = [
+                    'title' => '代付任务列表',
+                    'select' => $select,
+                    'id' => $id,
+                    'channel_id' =>$channel_id
+                ];
+                return $this->fetch('', $basic_data);
+            }else{
+                $id = $this->request->post('df_id/d',0);
+                if(empty($id))  return __success('处理完成');
+
+                $order =  $this->model->quickGet($id);
+                if(empty($order) || $order['status'] != 1 || empty($order['channel_amount']) || !empty($order['remark']))  return __success('处理完成');
+
+
+                $Payment =  Payment::factory($Channel['code']);
                 //先更新系统数据，再提交数据到上游
-                $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $Channel['id']]); //通道金额
-                if(empty($channel_money)){
-                    echo '代付通道金额数据异常!';
-                    echo "结束运行\n";
-                    break;
-                }
 
                 //冻结通道金额
-                $change['change'] = $channel_amount ;//变动金额
+                $change['change'] = $order['channel_amount'] ;//变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
                 $change['type'] = 5;//通道冻结金额类型
                 $res = Umoney::dispose($channel_money, $change); //处理 通道金额
-                if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额'){
-                    echo '代付通道:' . $res['msg'];
-                    echo "结束运行1\n";
-                    break;
+                if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') return __error('代付通道:' . $res['msg']);
+
+                $Umoney_data = $res['data'];
+                $UmoneyLog_data = $res['change'];
+
+                $post['id'] = $order['id'];
+                $post['status'] = 2;
+
+                //使用事物保存数据
+                $this->model->startTrans();
+                $save1 = $this->model->save($post, ['id' => $post['id']]);
+
+                $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
+                $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
+
+                if (!$save1 || !$save || !$add) {
+                    $this->model->rollback();
+                    return __error('数据有误，请稍后再试!');
                 }
+                //这里提交代付申请
+                $order['bank'] = json_decode($order['bank'],true);
+                $result = $Payment->pay($order);
+                if(empty($result)|| !is_array($result)){
+                    $this->model->rollback();
+                    return __error('代付通道异常，请稍后再试!');
+                }
+                //成功
+                if($result['code'] == 1){
+                    //更新数据
+                    if(!empty($result['data']) && is_array($result['data'])){
+                        $arr = [];
+                        foreach ($result['data'] as $k => $v){
+                            if($k == 'actual_amount') $arr[$k] = $v;//实际到账
+                            if($k == 'transaction_no') $arr[$k] = $v;//上游单号
+                            if($k == 'remark') $arr[$k] = $v;//备注
+                        }
+                        if(!empty($arr)){
+                            $arr['id'] = $post['id'];
+                            $this->model->save($arr,['id'=>$post['id']]);
+                        }
+                    }
 
-               $data['channel']['code']  = $Channel['code'];
-               $data['Umoney']  = $res['data'];
-               $data['UmoneyLog'] = $res['change'];
-               $data['order'] = [
-                    'id'=>$v,
-                    'status'=>2,
-                    'channel_id'=>$Channel['id'],
-                    'channel_fee'=>$Channel['fee'],
-                    'channel_amount'=> $channel_amount,
-                    'lock_id'=>$this->user['id'],
-                    'record'=>empty($order['record'])?$this->user['username']."选择下发代付通道:".$Channel['title']:$order['record']."|".$this->user['username']."选择下发代付通道:".$Channel['title']."|更改状态处理中",
-                    'verson'=>$order['verson'] + 1, //防止多人操作
-                ];
+                    $this->model->commit();
 
-                //这个地方提交批量处理任务
-                $task[$k] = $data;
+                    //添加异步查询订单状态
+                    \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
 
-                unset($data);
-                unset($change);
-                unset($order);
+                    return __success('操作成功！');
+                }else{
+                    $this->model->rollback();
+                    $msg = '申请代付失败，请检查上游订单状，上游返回：'.$result['msg'];
+                    $arr['remark'] = $msg;
+                    $arr['id'] = $post['id'];
+                    $this->model->save($arr,['id'=>$post['id']]);
+                    return __success($msg);
+                }
             }
 
-            $res =  \think\Queue::push('app\\common\\job\\Dfprocess', $task, 'dfprocess');
-            if( $res === false ){
-                echo  "提交任务失败，请稍后重试~\n";
-                echo "\n\n结束运行~\n";
-                exit();
             }
-            echo  "提交任务成功，请稍后刷新查看订单状态~\n";
-            echo "\n\n结束运行~\n";
-            exit();
-        }
+
+
 }
