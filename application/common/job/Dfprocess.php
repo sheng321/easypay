@@ -72,7 +72,7 @@ class Dfprocess {
     /**
      * 根据消息中的数据进行实际的业务处理...
      */
-    private function doHelloJob($data,$order)
+    private function doHelloJob($data)
     {
         $Df = model('app\common\model\Df');
         $Umoney = model('app\common\model\Umoney');
@@ -99,7 +99,9 @@ class Dfprocess {
 
             $Payment = Payment::factory($data['channel']['code']);
             //这里提交代付申请
-            $order['channel_amount'] = $data['order']['channel_amount'];
+            $order =  Df::where(['id'=>$data['order']['id']])->find();
+            if(empty($order) || empty($order['channel_amount']) || $order['status'] != 2) throw new Exception('数据更新失败4，请稍后再试!');
+
             $order['bank'] = json_decode($order['bank'],true);
             $result = $Payment->pay($order);
             if(empty($result)|| !is_array($result) || !isset($result['code'])) throw new Exception($data['channel']['code'] . '代付通道异常，请稍后再试!');
