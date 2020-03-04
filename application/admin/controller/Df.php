@@ -817,9 +817,7 @@ class Df extends AdminController {
                 }
 
 
-
                 //先更新系统数据，再提交数据到上游
-
                 $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $Channel['id']]); //通道金额
                 if(empty($channel_money)){
                     echo '代付通道金额数据异常!';
@@ -828,22 +826,24 @@ class Df extends AdminController {
                 }
 
                     //冻结通道金额
-                    $change['change'] = $channel_amount ;//变动金额
-                    $change['relate'] = $order['system_no'];//关联订单号
-                    $change['type'] = 5;//通道冻结金额类型
+                $change['change'] = $channel_amount ;//变动金额
+                $change['relate'] = $order['system_no'];//关联订单号
+                $change['type'] = 5;//通道冻结金额类型
 
-                    $res = Umoney::dispose($channel_money, $change); //处理 通道金额
-                    if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额'){
-                        echo '代付通道:' . $res['msg'];
-                        echo "结束运行1\n";
-                        break;
-                    }
+                $res = Umoney::dispose($channel_money, $change); //处理 通道金额
+                if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额'){
+                    echo '代付通道:' . $res['msg'];
+                    echo "结束运行1\n";
+                    break;
+                }
+                $Umoney_data = $res['data'];
+                $UmoneyLog_data = $res['change'];
 
-                    $Umoney_data = $res['data'];
-                    $UmoneyLog_data = $res['change'];
-
-                    //使用事物保存数据
-                    $this->model->startTrans();
+                $save1 = false;
+                $save  = false;
+                $add   = false;
+                //使用事物保存数据
+                $this->model->startTrans();
 
                 //选择通道并且处理中
                 $save1 =  $this->model->save([
