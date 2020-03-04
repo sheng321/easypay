@@ -839,9 +839,7 @@ class Df extends AdminController {
                 $Umoney_data = $res['data'];
                 $UmoneyLog_data = $res['change'];
 
-                $save1 = false;
-                $save  = false;
-                $add   = false;
+
                 //使用事物保存数据
                 $this->model->startTrans();
 
@@ -896,16 +894,18 @@ class Df extends AdminController {
                     }
 
                     $this->model->commit();
-
                     //添加异步查询订单状态
                     \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
-
                     echo  '订单号 '.$order['system_no']." 处理成功\n";
+                    unset($order);
+                    unset($v);
                     continue;
 
                 }else{
                     $this->model->rollback();
                     echo  '订单号'.$order['system_no'].'申请代付失败，请检查上游订单状，上游返回：'.$result['msg']."，失败\n";
+                    unset($order);
+                    unset($v);
                     continue;
                 }
             }
