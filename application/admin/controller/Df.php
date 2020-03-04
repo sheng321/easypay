@@ -849,7 +849,7 @@ class Df extends AdminController {
                 ];
 
                 //这个地方提交批量处理任务
-                $time = $k*3;
+                $time = ($k+1)*3;
                 $res =  \think\Queue::later($time,'app\\common\\job\\Dfprocess', $data, 'dfprocess');
                 unset($data);
                 unset($change);
