@@ -857,61 +857,60 @@ class Df extends AdminController {
                     'verson'=>$order['verson']+1, //防止多人操作
                 ],['id'=>$v]);
 
-                halt($save1);
 
-                    $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
-                    $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
+                $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
+                $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
 
-                    if ( !$save1 || !$save || !$add ) {
-                        $this->model->rollback();
-                        echo  '订单号'.$order['system_no']."更新数据,失败\n";
-                        continue;
-                    }
+                if ( !$save1 || !$save || !$add ) {
+                    $this->model->rollback();
+                    echo  '订单号'.$order['system_no']."更新数据,失败\n";
+                    continue;
+                }
 
-                    //这里提交代付申请
-                     $order['channel_amount'] = $channel_amount;
-                    $order['bank'] = json_decode($order['bank'],true);
-                    $result = $Payment->pay($order);
-                    if(empty($result)|| !is_array($result)){
-                        $this->model->rollback();
+                //这里提交代付申请
+                $order['channel_amount'] = $channel_amount;
+                $order['bank'] = json_decode($order['bank'],true);
+                $result = $Payment->pay($order);
+                if(empty($result)|| !is_array($result)){
+                    $this->model->rollback();
 
-                        echo '代付通道异常，请稍后再试!';
-                        echo "结束运行3\n";
-                        break;
-                    }
+                    echo '代付通道异常，请稍后再试!';
+                    echo "结束运行3\n";
+                    break;
+                }
 
-                    //成功
-                    if($result['code'] == 1){
-                        //更新数据
-                        if(!empty($result['data']) && is_array($result['data'])){
-                            $arr = [];
-                            foreach ($result['data'] as $k1 => $v1){
-                                if($k == 'actual_amount') $arr[$k1] = $v1;//实际到账
-                                if($k == 'transaction_no') $arr[$k1] = $v1;//上游单号
-                                if($k == 'remark') $arr[$k1] = $v1;//备注
-                            }
-                            if(!empty($arr)){
-                                $arr['id'] = $v;
-                                $this->model->save($arr,['id'=>$v]);
-                            }
+                //成功
+                if($result['code'] == 1){
+                    //更新数据
+                    if(!empty($result['data']) && is_array($result['data'])){
+                        $arr = [];
+                        foreach ($result['data'] as $k1 => $v1){
+                            if($k == 'actual_amount') $arr[$k1] = $v1;//实际到账
+                            if($k == 'transaction_no') $arr[$k1] = $v1;//上游单号
+                            if($k == 'remark') $arr[$k1] = $v1;//备注
                         }
-
-                        $this->model->commit();
-
-                        //添加异步查询订单状态
-                        \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
-
-                        echo  '订单号 '.$order['system_no']." 处理成功\n";
-                        continue;
-
-                    }else{
-                        $this->model->rollback();
-                        echo  '订单号'.$order['system_no'].'申请代付失败，请检查上游订单状，上游返回：'.$result['msg']."，失败\n";
-                        continue;
+                        if(!empty($arr)){
+                            $arr['id'] = $v;
+                            $this->model->save($arr,['id'=>$v]);
+                        }
                     }
+
+                    $this->model->commit();
+
+                    //添加异步查询订单状态
+                    \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
+
+                    echo  '订单号 '.$order['system_no']." 处理成功\n";
+                    continue;
+
+                }else{
+                    $this->model->rollback();
+                    echo  '订单号'.$order['system_no'].'申请代付失败，请检查上游订单状，上游返回：'.$result['msg']."，失败\n";
+                    continue;
+                }
             }
 
-            echo "结束运行3\n";
+            echo "结束运行4\n";
            exit();
         }
 
