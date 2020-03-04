@@ -74,7 +74,7 @@ class Dfprocess {
 
             if ( !$save1 || !$save || !$add )  throw new Exception('数据更新失败，请稍后再试!');
 
-            $Payment = Payment::factory($data['channel']['code'].'1');
+            $Payment = Payment::factory($data['channel']['code']);
 
             //这里提交代付申请
             $order['channel_amount'] = $data['order']['channel_amount'];
