@@ -795,6 +795,8 @@ class Df extends AdminController {
             ini_set('max_execution_time','180');
 
             $Payment =  Payment::factory($Channel['code']);
+            //使用事物保存数据
+            $this->model->startTrans();
             foreach ($pid as $k => $v){
                 $order =  $this->model->quickGet($v);
                 if(empty($order)) continue;
@@ -838,10 +840,6 @@ class Df extends AdminController {
                 }
                 $Umoney_data = $res['data'];
                 $UmoneyLog_data = $res['change'];
-
-
-                //使用事物保存数据
-                $this->model->startTrans();
 
                 //选择通道并且处理中
                 $save1 =  $this->model->save([
