@@ -63,7 +63,7 @@ class Dfprocess {
      */
     private function checkDatabaseToSeeIfJobNeedToBeDone($order){
 
-        if(empty($order) || $order['status'] != 1 || $order['lock_id'] != 0){
+        if(empty($order) || $order['status'] != 1 || $order['lock_id'] != 0 || $order['remark'] != '批量操作成功'){
            return false;
         }
         return true;
@@ -100,7 +100,8 @@ class Dfprocess {
             $Payment = Payment::factory($data['channel']['code']);
             //这里提交代付申请
             $order =  Df::where(['id'=>$data['order']['id']])->find();
-            if(empty($order) || empty($order['channel_amount']) || $order['status'] != 2) throw new Exception('数据更新失败4，请稍后再试!');
+            if(empty($order) || empty($order['channel_amount']) || $order['status'] != 2 ) throw new Exception('数据更新失败4，请稍后再试!');
+            if($order['remark'] == '批量操作成功') throw new Exception('批量操作成功');
 
             $order['bank'] = json_decode($order['bank'],true);
             $result = $Payment->pay($order);
@@ -112,13 +113,12 @@ class Dfprocess {
                 //添加异步查询订单状态
                 \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
 
-                $arr['remark'] = '批量操作';
+                $arr['remark'] = '批量操作成功';
                 //更新数据
                 if(!empty($result['data']) && is_array($result['data'])){
                     foreach ($result['data'] as $k1 => $v1){
                         if($k1 == 'actual_amount') $arr[$k1] = $v1;//实际到账
                         if($k1 == 'transaction_no') $arr[$k1] = $v1;//上游单号
-                        if($k1 == 'remark') $arr[$k1] = $v1;//备注
                     }
                 }
                 $arr['id'] = $data['order']['id'];
@@ -134,6 +134,7 @@ class Dfprocess {
             $UmoneyLog->rollBack();
 
             $msg =  $e->getMessage();
+            if($msg == '批量操作成功') return false;
             if(empty($msg)){
                 $msg = '未知错误';
                 $trace =  $e->getTrace();
