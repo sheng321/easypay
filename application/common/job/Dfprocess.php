@@ -65,9 +65,6 @@ class Dfprocess {
         $Umoney = model('app\common\model\Umoney');
         $UmoneyLog = model('app\common\model\UmoneyLog');
 
-        //使用事物保存数据
-        $this->model->startTrans();
-
         try {
             //选择通道并且处理中
             $Df->startTrans();
