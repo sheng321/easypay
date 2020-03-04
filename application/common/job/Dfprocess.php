@@ -84,6 +84,8 @@ class Dfprocess {
             //成功
             if($result['code'] == 1){
                 $this->model->commit();
+
+                sleep(1);
                 //添加异步查询订单状态
                 \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
 
