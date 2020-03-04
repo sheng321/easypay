@@ -779,8 +779,6 @@ class Df extends AdminController {
          */
         public function confirm1(){
 
-
-
             $channel_id = $this->request->param('id/d', 0);
             if(empty($channel_id)) return msg_error('请选择一条代付通道！！');
 
@@ -820,7 +818,7 @@ class Df extends AdminController {
 
 
 
-                    //先更新系统数据，再提交数据到上游
+                //先更新系统数据，再提交数据到上游
 
                 $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $Channel['id']]); //通道金额
                 if(empty($channel_money)){
@@ -837,9 +835,8 @@ class Df extends AdminController {
                     $res = Umoney::dispose($channel_money, $change); //处理 通道金额
                     if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额'){
                         echo '代付通道:' . $res['msg'];
-                        echo "结束运行\n";
+                        echo "结束运行1\n";
                         break;
-
                     }
 
                     $Umoney_data = $res['data'];
@@ -860,6 +857,8 @@ class Df extends AdminController {
                     'verson'=>$order['verson']+1, //防止多人操作
                 ],['id'=>$v]);
 
+                halt($save1);
+
                     $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
                     $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
 
@@ -877,7 +876,7 @@ class Df extends AdminController {
                         $this->model->rollback();
 
                         echo '代付通道异常，请稍后再试!';
-                        echo "结束运行\n";
+                        echo "结束运行3\n";
                         break;
                     }
 
@@ -912,7 +911,7 @@ class Df extends AdminController {
                     }
             }
 
-            echo "结束运行\n";
+            echo "结束运行3\n";
            exit();
         }
 
