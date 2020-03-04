@@ -1,5 +1,6 @@
 <?php
 namespace app\common\job;
+use think\Exception;
 use think\queue\Job;
 use app\common\model\Df;
 use app\withdrawal\service\Payment;
@@ -58,56 +59,56 @@ class Dfprocess {
 
         //使用事物保存数据
         $this->model->startTrans();
-        //选择通道并且处理中
-        $save1 =  $this->model->save($data['order'],['id'=>$data['order']['id']]);
-        $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($data['Umoney']);
-        $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($data['UmoneyLog']);
 
-        if ( !$save1 || !$save || !$add ) {
-            $this->model->rollback();
-            $msg = '数据更新失败，请稍后再试!';
-        }
+        try {
+            //选择通道并且处理中
+            $save1 =  $this->model->save($data['order'],['id'=>$data['order']['id']]);
+            $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($data['Umoney']);
+            $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($data['UmoneyLog']);
 
-        $Payment = Payment::factory($data['channel']['code']);
+            if ( !$save1 || !$save || !$add )  throw new Exception('数据更新失败，请稍后再试!');
 
-        //这里提交代付申请
-        $order['channel_amount'] = $data['order']['channel_amount'];
-        $order['bank'] = json_decode($order['bank'],true);
-        $result = $Payment->pay($order);
-        if(empty($result)|| !is_array($result)){
-            $this->model->rollback();
-            $msg = '代付通道异常，请稍后再试!';
-        }
+            $Payment = Payment::factory($data['channel']['code']);
 
-        //成功
-        if($result['code'] == 1){
-            //更新数据
-            if(!empty($result['data']) && is_array($result['data'])){
-                $arr = [];
-                foreach ($result['data'] as $k1 => $v1){
-                    if($k1 == 'actual_amount') $arr[$k1] = $v1;//实际到账
-                    if($k1 == 'transaction_no') $arr[$k1] = $v1;//上游单号
-                    if($k1 == 'remark') $arr[$k1] = $v1;//备注
+            //这里提交代付申请
+            $order['channel_amount'] = $data['order']['channel_amount'];
+            $order['bank'] = json_decode($order['bank'],true);
+            $result = $Payment->pay($order);
+            if(empty($result)|| !is_array($result) || !isset($result['code'])) throw new Exception($data['channel']['code'] . '代付通道异常，请稍后再试!');
+
+            //成功
+            if($result['code'] == 1){
+                //更新数据
+                if(!empty($result['data']) && is_array($result['data'])){
+                    $arr = [];
+                    foreach ($result['data'] as $k1 => $v1){
+                        if($k1 == 'actual_amount') $arr[$k1] = $v1;//实际到账
+                        if($k1 == 'transaction_no') $arr[$k1] = $v1;//上游单号
+                        if($k1 == 'remark') $arr[$k1] = $v1;//备注
+                    }
+                    if(!empty($arr)){
+                        $arr['id'] = $data['order']['id'];
+                        $this->model->save($arr,['id'=>$data['order']['id']]);
+                    }
                 }
-                if(!empty($arr)){
-                    $arr['id'] = $data['order']['id'];
-                    $this->model->save($arr,['id'=>$data['order']['id']]);
-                }
+
+                $this->model->commit();
+                //添加异步查询订单状态
+                \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
+
+            }else{
+
+                throw new Exception($data['channel']['code'] . '申请代付失败，请检查上游订单状，上游返回：'.$result['msg']."，失败\n");
             }
 
-            $this->model->commit();
-            //添加异步查询订单状态
-            \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
-
-        }else{
+        } catch (\Exception $e) {
             $this->model->rollback();
-            $msg = '申请代付失败，请检查上游订单状，上游返回：'.$result['msg']."，失败\n";
-        }
-
-        if(!empty($msg)){
-            $this->model->save(['id'=>$data['order']['id'],'remark'=>$msg],['id'=>$data['order']['id']]);
+            $this->model->save(['id'=>$data['order']['id'],'remark'=>$e->getMessage()],['id'=>$data['order']['id']]);
             return false;
         }
+
+
+
         
         return true;
     }
