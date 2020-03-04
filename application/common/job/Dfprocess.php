@@ -83,6 +83,10 @@ class Dfprocess {
 
             //成功
             if($result['code'] == 1){
+                $this->model->commit();
+                //添加异步查询订单状态
+                \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
+
                 $arr['remark'] = '批量操作';
                 //更新数据
                 if(!empty($result['data']) && is_array($result['data'])){
@@ -91,14 +95,9 @@ class Dfprocess {
                         if($k1 == 'transaction_no') $arr[$k1] = $v1;//上游单号
                         if($k1 == 'remark') $arr[$k1] = $v1;//备注
                     }
-
                 }
                 $arr['id'] = $data['order']['id'];
                 $this->model->save($arr,['id'=>$data['order']['id']]);
-
-                $this->model->commit();
-                //添加异步查询订单状态
-                \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
 
             }else{
                 throw new Exception($data['channel']['code'] . '申请代付失败，上游返回：'.$result['msg']."\n");

@@ -845,7 +845,7 @@ class Df extends AdminController {
                     'channel_amount'=> $channel_amount,
                     'lock_id'=>$this->user['id'],
                     'record'=>empty($order['record'])?$this->user['username']."选择下发代付通道:".$Channel['title']:$order['record']."|".$this->user['username']."选择下发代付通道:".$Channel['title']."|更改状态处理中",
-                    'verson'=>$order['verson']+1, //防止多人操作
+                    'verson'=>$order['verson'] + 1, //防止多人操作
                 ];
 
                 //这个地方提交批量处理任务
