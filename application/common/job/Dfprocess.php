@@ -1,5 +1,6 @@
 <?php
 namespace app\common\job;
+use think\Db;
 use think\Exception;
 use think\queue\Job;
 use app\common\model\Df;
@@ -73,7 +74,7 @@ class Dfprocess {
 
             if ( !$save1 || !$save || !$add )  throw new Exception('数据更新失败，请稍后再试!');
 
-            $Payment = Payment::factory($data['channel']['code']);
+            $Payment = Payment::factory($data['channel']['code'].'1');
 
             //这里提交代付申请
             $order['channel_amount'] = $data['order']['channel_amount'];
@@ -107,18 +108,20 @@ class Dfprocess {
             }
 
         } catch (\Exception $e) {
+            $this->model->rollback();
+
             $msg =  $e->getMessage();
             if(empty($msg)){
-              $trace =   $e->getTrace();
-              if(empty($trace[0]['args']['0']['msg'])){
-                  $msg = '未知错误';
-              }else{
-                  $msg = $trace[0]['args']['0']['msg'];
-              }
+                $msg = '未知错误';
+                $trace =  $e->getTrace();
+                if(is_array($trace[0]['args'][0])  && !empty($trace[0]['args'][0]['msg'])){
+                    $msg = $trace[0]['args']['0']['msg'];
+                }elseif(is_string($trace[0]['args'][0])){
+                    $msg = $trace[0]['args'][0];
+                }
             }
 
-            $this->model->rollback();
-            $this->model->save(['id'=>$data['order']['id'],'remark'=>$msg],['id'=>$data['order']['id']]);
+            Db::table('cm_withdrawal_api')->where(['id'=>$data['order']['id']])->update(['remark'=>$msg]);
             return false;
         }
 
