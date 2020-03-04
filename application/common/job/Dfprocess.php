@@ -44,7 +44,7 @@ class Dfprocess {
                 return;
             }else{
                 //重新发起
-                \think\Queue::later(3,'app\\common\\job\\Dfprocess', $task, 'dfprocess');
+                \think\Queue::push('app\\common\\job\\Dfprocess', $task, 'dfprocess');
                 return;
             }
 
