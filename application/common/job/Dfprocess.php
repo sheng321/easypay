@@ -86,13 +86,13 @@ class Dfprocess {
             $UmoneyLog->startTrans();
 
             $result =  $Df->save($data['order'],['id'=>$data['order']['id']]);
-            if($result === false)  throw new Exception('数据更新失败1，请稍后再试!');
+            if($result === false)  throw new Exception('数据更新失败');
 
             $result =  $Umoney->isUpdate(true)->saveAll($data['Umoney']);
-            if($result === false)throw new Exception('数据更新失败2，请稍后再试!');
+            if($result === false)throw new Exception('数据更新失败');
 
             $result =  $UmoneyLog->isUpdate(false)->saveAll($data['UmoneyLog']);
-            if($result === false) throw new Exception('数据更新失败3，请稍后再试!');
+            if($result === false) throw new Exception('数据更新失败');
 
             $Df->commit();
             $Umoney->commit();
@@ -101,7 +101,7 @@ class Dfprocess {
             $Payment = Payment::factory($data['channel']['code']);
             //这里提交代付申请
             $order =  Df::where(['id'=>$data['order']['id']])->find();
-            if(empty($order) || empty($order['channel_amount']) || $order['status'] != 2 ) throw new Exception('数据更新失败4，请稍后再试!');
+            if(empty($order) || empty($order['channel_amount']) || $order['status'] != 2 ) throw new Exception('数据更新失败');
             if($order['remark'] == '批量操作成功') throw new Exception('批量操作成功');
 
             $order['bank'] = json_decode($order['bank'],true);
@@ -135,7 +135,7 @@ class Dfprocess {
             $UmoneyLog->rollBack();
 
             $msg =  $e->getMessage();
-            if($msg == '批量操作成功') return false;
+            if($msg == '批量操作成功' || $msg == '数据更新失败') return false;
             if(empty($msg)){
                 $msg = '未知错误';
                 $trace =  $e->getTrace();
