@@ -63,7 +63,7 @@ class Dfprocess {
      */
     private function checkDatabaseToSeeIfJobNeedToBeDone($order){
 
-        if(empty($order) || $order['status'] != 1 || $order['lock_id'] != 0 || $order['remark'] != '批量操作成功'){
+        if(empty($order) || $order['status'] != 1 || $order['lock_id'] != 0 || $order['remark'] == '批量操作成功'){
            return false;
         }
         return true;
@@ -74,6 +74,7 @@ class Dfprocess {
      */
     private function doHelloJob($data)
     {
+
         $Df = model('app\common\model\Df');
         $Umoney = model('app\common\model\Umoney');
         $UmoneyLog = model('app\common\model\UmoneyLog');
