@@ -792,8 +792,8 @@ class Df extends AdminController {
             if($num > 10) return msg_error('单数不能超过10笔！');
 
             ignore_user_abort(true);    //关掉浏览器，PHP脚本也可以继续执行.
-            ini_set('max_execution_time','180');
 
+            $task = [];
             foreach ($pid as $k => $v){
                 $order =  $this->model->quickGet($v);
                 if(empty($order)) continue;
@@ -849,20 +849,20 @@ class Df extends AdminController {
                 ];
 
                 //这个地方提交批量处理任务
-                $time = ($k+1)*3;
-                $res =  \think\Queue::later($time,'app\\common\\job\\Dfprocess', $data, 'dfprocess');
+                $task[$k] = $data;
+
                 unset($data);
                 unset($change);
-                if( $res === false ){
-                    echo  "ID:{$v} 订单号".$order['system_no']."提交任务失败，请稍后重试~\n";
-                    unset($order);
-                    continue;
-                }
-                echo  "ID:{$v} 订单号".$order['system_no']."提交任务成功，{$time} 秒后执行，请稍后刷新查看订单状态~\n";
                 unset($order);
-                continue;
             }
 
+            $res =  \think\Queue::push('app\\common\\job\\Dfprocess', $task, 'dfprocess');
+            if( $res === false ){
+                echo  "提交任务失败，请稍后重试~\n";
+                echo "\n\n结束运行~\n";
+                exit();
+            }
+            echo  "提交任务成功，请稍后刷新查看订单状态~\n";
             echo "\n\n结束运行~\n";
             exit();
         }

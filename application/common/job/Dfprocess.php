@@ -17,8 +17,15 @@ class Dfprocess {
      * @param Job            $job      当前的任务对象
      * @param array|mixed    $data     发布任务时自定义的数据
      */
-    public function fire(Job $job,$data)
+    public function fire(Job $job,$task)
     {
+        if(empty($task) || !is_array($task)){
+            $job->delete();
+            return;
+        }
+
+        $data =  array_shift($task);
+
         ini_set('max_execution_time','120');
         $order =  Df::where(['id'=>$data['order']['id']])->find();
         // 有些消息在到达消费者时,可能已经不再需要执行了
@@ -31,9 +38,16 @@ class Dfprocess {
         $isJobDone = $this->doHelloJob($data,$order);
         unset($order);
         if ($isJobDone) {
-            // 如果任务执行成功，删除任务
-            $job->delete();
-            return;
+             //如果没有元素了
+            if(empty($task)){
+                $job->delete();
+                return;
+            }else{
+                //重新发起
+                \think\Queue::push('app\\common\\job\\Dfprocess', $task, 'dfprocess');
+                return;
+            }
+
         }else{
             if ($job->attempts() > 1) {//只执行一次
                 $job->delete();
@@ -52,7 +66,6 @@ class Dfprocess {
         if(empty($order) || $order['status'] != 1 || $order['lock_id'] != 0){
            return false;
         }
-
         return true;
     }
 
