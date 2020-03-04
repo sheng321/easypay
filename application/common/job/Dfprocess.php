@@ -97,7 +97,7 @@ class Dfprocess {
                     }
                 }
                 $arr['id'] = $data['order']['id'];
-                $this->model->save($arr,['id'=>$data['order']['id']]);
+                Db::table('cm_withdrawal_api')->where(['id'=>$data['order']['id']])->update($arr);
 
             }else{
                 throw new Exception($data['channel']['code'] . '申请代付失败，上游返回：'.$result['msg']."\n");
