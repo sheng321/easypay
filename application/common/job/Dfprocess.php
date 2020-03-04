@@ -61,18 +61,38 @@ class Dfprocess {
      */
     private function doHelloJob($data,$order)
     {
-        $this->model = model('app\common\model\Df');
+        $Df = model('app\common\model\Df');
+        $Umoney = model('app\common\model\Umoney');
+        $UmoneyLog = model('app\common\model\UmoneyLog');
 
         //使用事物保存数据
         $this->model->startTrans();
 
         try {
             //选择通道并且处理中
-            $save1 =  $this->model->save($data['order'],['id'=>$data['order']['id']]);
-            $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($data['Umoney']);
-            $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($data['UmoneyLog']);
+            $Df->startTrans();
+            $result =  $Df->save($data['order'],['id'=>$data['order']['id']]);
+            if($result === false){
+                $Df->rollBack();
+                throw new Exception('数据更新失败1，请稍后再试!');
+            }
 
-            if ( !$save1 || !$save || !$add )  throw new Exception('数据更新失败，请稍后再试!');
+            $Umoney->startTrans();
+            $result =  $Umoney->isUpdate(true)->saveAll($data['Umoney']);
+            if($result === false){
+                $Df->rollBack();
+                $Umoney->rollBack();
+                throw new Exception('数据更新失败2，请稍后再试!');
+            }
+
+            $UmoneyLog->startTrans();
+            $result =  $UmoneyLog->isUpdate(false)->saveAll($data['UmoneyLog']);
+            if($result === false){
+                $Df->rollBack();
+                $Umoney->rollBack();
+                $UmoneyLog->rollBack();
+                throw new Exception('数据更新失败3，请稍后再试!');
+            }
 
             $Payment = Payment::factory($data['channel']['code']);
             //这里提交代付申请
@@ -83,7 +103,9 @@ class Dfprocess {
 
             //成功
             if($result['code'] == 1){
-                $this->model->commit();
+                $Df->commit();
+                $Umoney->commit();
+                $UmoneyLog->commit();
 
                 sleep(2);
                 //添加异步查询订单状态
@@ -106,7 +128,9 @@ class Dfprocess {
             }
 
         } catch (\Exception $e) {
-            $this->model->rollback();
+            $Df->rollBack();
+            $Umoney->rollBack();
+            $UmoneyLog->rollBack();
 
             $msg =  $e->getMessage();
             if(empty($msg)){
