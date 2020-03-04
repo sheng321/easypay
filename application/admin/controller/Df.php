@@ -827,8 +827,10 @@ class Df extends AdminController {
                 $change['change'] = $channel_amount ;//变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
                 $change['type'] = 5;//通道冻结金额类型
-
+                dump($channel_money);
+               dump($change);
                 $res = Umoney::dispose($channel_money, $change); //处理 通道金额
+                halt($change);
                 if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额'){
                     echo '代付通道:' . $res['msg'];
                     echo "结束运行1\n";
