@@ -13,9 +13,9 @@ class Dfprocess {
     public function fire(Job $job,$data)
     {
         ini_set('max_execution_time','120');
-        $order =  Df::quickGet($data['order']['id']);
+        $order =  Df::where(['id'=>$data['order']['id']])->find();
         // 有些消息在到达消费者时,可能已经不再需要执行了
-        $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data,$order);
+        $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($order);
         if(!$isJobStillNeedToBeDone){
             $job->delete();
             return;
@@ -40,7 +40,7 @@ class Dfprocess {
      * @param array|mixed    $data     发布任务时自定义的数据
      * @return boolean                 任务执行的结果
      */
-    private function checkDatabaseToSeeIfJobNeedToBeDone($data,$order){
+    private function checkDatabaseToSeeIfJobNeedToBeDone($order){
 
         if(empty($order) || $order['status'] != 1 || $order['lock_id'] != 0){
            return false;
