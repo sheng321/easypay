@@ -22,6 +22,7 @@ class Dfprocess {
         }
 
         $isJobDone = $this->doHelloJob($data,$order);
+        unset($order);
         if ($isJobDone) {
             // 如果任务执行成功，删除任务
             $job->delete();
@@ -96,7 +97,7 @@ class Dfprocess {
 
             $this->model->commit();
             //添加异步查询订单状态
-            \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
+            \think\Queue::later(60,'app\\common\\job\\Df', $data['order']['id'], 'df');//一分钟
 
         }else{
             $this->model->rollback();
