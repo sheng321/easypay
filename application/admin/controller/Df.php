@@ -837,7 +837,6 @@ class Df extends AdminController {
                $data['channel']['code']  = $Channel['code'];
                $data['Umoney']  = $res['data'];
                $data['UmoneyLog'] = $res['change'];
-
                $data['order'] = [
                     'id'=>$v,
                     'status'=>2,
