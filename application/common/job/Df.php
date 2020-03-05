@@ -86,7 +86,6 @@ class Df {
             $change['type'] = 1;//成功解冻入账
 
             $res1 = Umoney::dispose($Umoney, $change); //会员处理
-            dump($res1);
             if(true !== $res1['msg'] )  return false;
 
             $Umoney_data = $res1['data'];
@@ -95,7 +94,6 @@ class Df {
             $channel_money = Db::table('cm_money')->where(['uid' => 0, 'df_id' => $Order['channel_id']])->find(); //通道金额
             $change['change'] = $Order['channel_amount'];//通道变动金额
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
-            dump($res2);
             if (true !== $res2['msg'])  return false;
 
             $Umoney_data = array_merge($Umoney_data,$res2['data']);
@@ -124,6 +122,7 @@ class Df {
             $change['change'] = $Order['channel_amount'];//通道变动金额
             $change['type'] = 6;//通道失败解冻退款
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
+            dump($res2);
             if (true !== $res2['msg']) return false;
 
             $Umoney_data = array_merge($Umoney_data,$res2['data']);
