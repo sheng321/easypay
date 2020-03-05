@@ -77,7 +77,7 @@ class Df {
 
         if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
 
-        $Order = \app\common\model\Df::quickGet($Order['id']);
+        $Order = \app\common\model\Df::where(['id'=>$Order['id']])->find();
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
 
@@ -144,7 +144,7 @@ class Df {
                 if (!$add)  throw new Exception('数据更新错误');
 
                 $this->model->commit();
-                return true;
+
             }catch (\Exception $exception){
                 $this->model->rollback();
                 return false;
@@ -153,7 +153,9 @@ class Df {
 
         }
         fclose($fp);
-
+        //确认数据是否更新完成
+        $status = \app\common\model\Df::where(['id'=>$Order['id']])->value('status');
+        if($status > 2) return true;
         return false;
     }
 }
