@@ -237,7 +237,7 @@ class Df extends AdminController {
                 if($result['code'] == 0){
                     $res1  = $Payment->query($order);
                     if(!empty($res1) && !empty($res1['code']) && $res1['code'] == 1){
-                        $result['code'] == 1;//设置提交订单成功
+                        $result['code'] = 1;//设置提交订单成功
                     }
                 }
                 //成功
