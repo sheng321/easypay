@@ -865,7 +865,7 @@ class Df extends AdminController {
 
                 $id = 0;
                 foreach ($select as $k => $v) {
-                    if ($v['status'] == 1 && !empty($v['channel_amount']) && !empty($v['remark']) && $v['channel_id'] == $Channel['id']){
+                    if ($v['status'] == 1 && !empty($v['channel_amount']) && empty($v['remark']) && $v['channel_id'] == $Channel['id']){
                         $id = $v['id'];
                         break;
                     }
