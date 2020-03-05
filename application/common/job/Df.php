@@ -2,7 +2,6 @@
 namespace app\common\job;
 use app\common\model\Umoney;
 use app\withdrawal\service\Payment;
-use think\Db;
 use think\queue\Job;
 
 /**
@@ -43,9 +42,7 @@ class Df {
             return;
         }
 
-        dump(1);
         $isJobDone = $this->doHelloJob($Order,$ChannelDf,$channel_money);
-        dump($isJobDone);
         if($isJobDone === true){
             $job->delete();
             return;
@@ -75,13 +72,10 @@ class Df {
 
         if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
 
-        $Order =  Db::table('cm_withdrawal_api')->where(['id'=>$Order['id']])->find();
+        $Order = \app\common\model\Df::where(['id'=>$Order['id']])->find();
         if($Order['status'] > 2 ) return true;
-        dump(2);
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
-
-        dump($res);
 
         //处理完成
         if (  $res['data']['status'] == 3){
@@ -93,7 +87,6 @@ class Df {
             $change['type'] = 1;//成功解冻入账
 
             $res1 = Umoney::dispose($Umoney, $change); //会员处理
-            dump($res1['msg']);
             if(true !== $res1['msg'] )  return false;
 
             $Umoney_data = $res1['data'];
@@ -101,14 +94,13 @@ class Df {
 
             $change['change'] = $Order['channel_amount'];//通道变动金额
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
-            dump($res2);
             if (true !== $res2['msg'])  return false;
 
             $Umoney_data = array_merge($Umoney_data,$res2['data']);
             $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
 
             $update['actual_amount'] = $Order['amount'] - $Order['fee'];//实际到账
-            dump(7);
+
         }
 
         //失败退款
@@ -136,7 +128,7 @@ class Df {
         }
 
         //3  已完成   4失败退款
-        if (($res['data']['status'] == 4)||($res['data']['status'] == 3)){
+        if ($res['data']['status'] == 4||$res['data']['status'] == 3){
             //使用事物保存数据
             $this->model->startTrans();
             try{
@@ -148,17 +140,15 @@ class Df {
                 if (!$add)  throw new Exception('数据更新错误');
 
                 $this->model->commit();
+
             }catch (\Exception $exception){
                 $this->model->rollback();
-                dump($exception->getMessage());
                 return false;
             }
         }
 
         //确认数据是否更新完成
-        $status = Db::table('cm_withdrawal_api')->where(['id'=>$Order['id']])->value('status');
-        dump($status);
-        dump(7);
+        $status = \app\common\model\Df::where(['id'=>$Order['id']])->value('status');
         if($status > 2) return true;
         return false;
     }
