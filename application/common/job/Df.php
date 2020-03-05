@@ -48,7 +48,7 @@ class Df {
             return;
         }else{
             // 重新发布这个任务
-            $job->release(60); //一分钟
+            $job->release(30);
             return;
         }
 
@@ -66,7 +66,6 @@ class Df {
         $fp = fopen("lock/df.txt", "w+");
         if(flock($fp,LOCK_EX | LOCK_NB))
         {
-
 
         $this->model = model('app\common\model\Df');
 
