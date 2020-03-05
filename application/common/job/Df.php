@@ -80,7 +80,7 @@ class Df {
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
 
-        dump($res['data']['status']);
+        dump($res);
 
         //处理完成
         if (  $res['data']['status'] == 3){
