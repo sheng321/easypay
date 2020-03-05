@@ -131,19 +131,18 @@ class Df {
         //3  已完成   4失败退款
         if ($res['data']['status'] == 4||$res['data']['status'] == 3){
             //使用事物保存数据
-            $this->model->startTrans();
+            Db::startTrans();
             try{
+
                 $save1 = $this->model->save($update, ['id' => $update['id']]);
                 if (!$save1)  throw new Exception('数据更新错误');
                 $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
                 if (!$save)  throw new Exception('数据更新错误');
                 $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
                 if (!$add)  throw new Exception('数据更新错误');
-
-                $this->model->commit();
-
+                Db::commit();
             }catch (\Exception $exception){
-                $this->model->rollback();
+                Db::rollback();
                 return false;
             }
         }

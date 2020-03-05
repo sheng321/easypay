@@ -344,6 +344,17 @@ class ModelService extends Model {
         return $res;
     }
 
+    //删除单条redis
+    static public function delRedis($id){
+        $data = new static();
+        $obj = get_object_vars($data);
+        $redisModel = self::$redisModel;
+        $redisModel->key = $obj['redis']['key'];//设置key
+        $res =  $redisModel->newQuery()->where('id',$id)->delete();
+        return $res;
+    }
+
+
     /**
      * 添加或者更新redis
      * @param $obj  当前模型的属性

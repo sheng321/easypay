@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 
+use app\common\model\SysAdmin;
 use app\common\model\Umember;
 use app\common\model\Umoney;
 use app\common\model\Uprofile;
@@ -16,8 +17,11 @@ class Test  extends Controller
     public function index()
     {
 
+        $res = SysAdmin::delRedis(1);
 
-        \think\Queue::push('app\\common\\job\\Df', 244, 'df');
+        halt( $res);
+
+       // \think\Queue::push('app\\common\\job\\Df', 244, 'df');
         halt( 222);
 
 
