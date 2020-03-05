@@ -932,10 +932,10 @@ class Df extends AdminController {
                             if($k == 'actual_amount') $arr[$k] = $v;//实际到账
                             if($k == 'transaction_no') $arr[$k] = $v;//上游单号
                         }
-                        if(!empty($arr)){
-                            $arr['id'] = $post['id'];
-                            $this->model->save($arr,['id'=>$post['id']]);
-                        }
+                    }
+                    if(!empty($arr)){
+                        $arr['id'] = $post['id'];
+                        $this->model->save($arr,['id'=>$post['id']]);
                     }
                     $this->model->commit();
                     //添加异步查询订单状态
