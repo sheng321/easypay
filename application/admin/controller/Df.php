@@ -916,7 +916,7 @@ class Df extends AdminController {
                 //这里提交代付申请
                 $order['bank'] = json_decode($order['bank'],true);
                 //$result = $Payment->pay($order);
-
+                return __success('代付通道异常-请稍后再试');
 
                 $result['code'] = 1;
                 $result['data']['remark'] = '批量操作';
