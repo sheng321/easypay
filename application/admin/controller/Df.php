@@ -389,8 +389,6 @@ class Df extends AdminController {
 
         if (!$this->request->isPost()) {
 
-            $this->search_df();
-
             //ajax访问获取数据
             if ($this->request->get('type') == 'ajax') {
                 $page = $this->request->get('page', 1);
@@ -399,6 +397,7 @@ class Df extends AdminController {
                 return json($this->model->cList($page, $limit, $search));
             }
 
+            $this->search_df();
             //基础数据
             $basic_data = [
                 'title'  => '代付通道列表',
@@ -759,8 +758,6 @@ class Df extends AdminController {
     {
         if (!$this->request->isPost()) {
 
-            $this->search_df();
-
             $id = $this->request->get('id', []);
             $num = count($id);
             $money = $this->model->where([['id', 'in', $id]])->sum('amount');
@@ -773,6 +770,7 @@ class Df extends AdminController {
                 $pid .= '&pid[]=' . $v;
             }
 
+            $this->search_df();
             //基础数据
             $basic_data = [
                 'title' => '出款代付通道列表',
