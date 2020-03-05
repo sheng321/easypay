@@ -2,6 +2,7 @@
 namespace app\common\job;
 use app\common\model\Umoney;
 use app\withdrawal\service\Payment;
+use think\Db;
 use think\queue\Job;
 
 /**
@@ -62,7 +63,7 @@ class Df {
     /**
      * 根据消息中的数据进行实际的业务处理...
      */
-    private function doHelloJob($Order,$ChannelDf,$channel_money)
+    private function doHelloJob($Order,$ChannelDf)
     {
 
         $this->model = model('app\common\model\Df');
@@ -81,7 +82,7 @@ class Df {
         if (  $res['data']['status'] == 3){
             $update['status'] = 3;
 
-            $Umoney = Umoney::quickGet(['uid' => $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0]); //会员金额
+            $Umoney = Db::table('cm_money')->where(['uid' => $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0])->find(); //会员金额
             $change['change'] = $Order['amount'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
             $change['type'] = 1;//成功解冻入账
@@ -92,6 +93,7 @@ class Df {
             $Umoney_data = $res1['data'];
             $UmoneyLog_data = $res1['change'];
 
+            $channel_money = Db::table('cm_money')->where(['uid' => 0, 'df_id' => $Order['channel_id']])->find(); //通道金额
             $change['change'] = $Order['channel_amount'];//通道变动金额
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
             if (true !== $res2['msg'])  return false;
