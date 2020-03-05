@@ -22,7 +22,6 @@ class Df {
      */
     public function fire(Job $job,$data)
     {
-
         ini_set('max_execution_time', '120');
 
         $Order = \app\common\model\Df::quickGet($data);

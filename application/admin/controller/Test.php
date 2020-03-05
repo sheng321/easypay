@@ -16,6 +16,7 @@ class Test  extends Controller
     public function index()
     {
 
+        halt(11);
         \think\Queue::push('app\\common\\job\\Df', 244, 'df');
         halt( 1111);
 
