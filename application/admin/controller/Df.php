@@ -882,8 +882,6 @@ class Df extends AdminController {
                 return $this->fetch('', $basic_data);
             }else{
                 $id = $this->request->post('df_id/d',0);
-                halt($id);
-
                 if(empty($id))  return __success('处理完成');
 
                 $order =  $this->model->quickGet($id);
