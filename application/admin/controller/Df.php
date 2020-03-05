@@ -919,7 +919,7 @@ class Df extends AdminController {
                 $order['bank'] = json_decode($order['bank'],true);
                 //$result = $Payment->pay($order);
 
-                $result['code'] = 1;
+                $result['code'] = 0;
                 $result['data']['remark'] = '批量操作';
                 if(empty($result)|| !is_array($result)){
                     $this->model->rollback();
@@ -946,7 +946,8 @@ class Df extends AdminController {
                     return __success('ID：'.$order['id'].' 单号：'.$order['system_no'].' 处理成功1！');
                 }else{
                     $this->model->rollback();
-                    $msg = '申请代付失败，上游返回：'.$result['msg'];
+                    $msg = '申请代付失败';
+                    if(!empty($result['msg'])) $msg .= ',上游返回:'.$result['msg'];
                     $arr['remark'] = $msg;
                     $arr['id'] = $post['id'];
                     $this->model->save($arr,['id'=>$post['id']]);
