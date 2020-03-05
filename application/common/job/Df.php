@@ -153,6 +153,7 @@ class Df {
 
         //确认数据是否更新完成
         $status = \app\common\model\Df::where(['id'=>$Order['id']])->value('status');
+        dump($status);
         if($status > 2) return true;
         return false;
     }
