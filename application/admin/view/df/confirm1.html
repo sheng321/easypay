@@ -79,7 +79,7 @@
     $.msg.loading('代付任务处理中，请不要关闭网页！');
    $.request.post('{:url("$thisRequest")}', {'df_id':'{$id}','id':'{$channel_id}'}, function (res) {
         $.msg.close();
-        if(res.msg == '处理完成'){
+        if(res.msg == '处理完成' || res.msg == '代付通道异常-请稍后再试'){
             $.msg.success(res.msg);
         }else{
             $.msg.success(res.msg, function () {

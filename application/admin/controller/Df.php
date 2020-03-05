@@ -917,13 +917,12 @@ class Df extends AdminController {
                 $order['bank'] = json_decode($order['bank'],true);
                 //$result = $Payment->pay($order);
 
-                return __error('代付通道异常，请稍后再试!');
 
                 $result['code'] = 1;
                 $result['data']['remark'] = '批量操作';
                 if(empty($result)|| !is_array($result)){
                     $this->model->rollback();
-                    return __error('代付通道异常，请稍后再试!');
+                    return __success('代付通道异常-请稍后再试');
                 }
                 //成功
                 if($result['code'] == 1){
