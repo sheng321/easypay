@@ -256,7 +256,7 @@ class Df extends AdminController {
                         }
                     }
 
-                    $this->model->rollback();
+                    $this->model->commit();
 
                     //添加异步查询订单状态
                   //  \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
