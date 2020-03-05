@@ -47,9 +47,12 @@ class Df {
             $job->delete();
             return;
         }else{
-            // 重新发布这个任务
-            $job->release(30);
-            return;
+
+            if ($job->attempts() > 1) {
+                // 第2种处理方式：原任务的基础上1分钟执行一次并增加尝试次数
+                $job->failed();
+            }
+
         }
 
 
