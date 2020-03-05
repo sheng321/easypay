@@ -136,6 +136,7 @@ class Df {
 
         //3  已完成   4失败退款
         if (($res['data']['status'] == 4)||($res['data']['status'] == 3)){
+            dump(6);
             //使用事物保存数据
             $this->model->startTrans();
             try{
@@ -147,7 +148,6 @@ class Df {
                 if (!$add)  throw new Exception('数据更新错误');
 
                 $this->model->commit();
-                dump(3);
             }catch (\Exception $exception){
                 $this->model->rollback();
                 dump(4);
