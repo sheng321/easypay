@@ -16,26 +16,8 @@ class Test  extends Controller
     public function index()
     {
 
-       $res = SubTable::syn_table();
-       halt($res);
 
-      //  addTask(11,22,5);
-
-
-/*        $data =  Uprofile::get_lower(0,0);
-        halt($data);*/
-
-
-/*        $uid = 20100010;
-        \app\common\model\Umember::destroy(function($query) use ($uid){
-            $query->where('uid','=',$uid);
-        });
-        \app\common\model\Uprofile::destroy(function($query)use ($uid){
-            $query->where('uid','=',$uid);
-        });
-        \app\common\model\Umoney::destroy(function($query)use ($uid){
-            $query->where('uid','=',$uid);
-        });*/
+        halt( \think\Queue::push('app\\common\\job\\Df', 237, 'df'));
 
 
     }
