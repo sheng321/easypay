@@ -894,7 +894,9 @@ class Df extends AdminController {
                 $change['relate'] = $order['system_no'];//关联订单号
                 $change['type'] = 5;//通道冻结金额类型
                 $res = Umoney::dispose($channel_money, $change); //处理 通道金额
+
                 if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') return __error('代付通道:' . $res['msg']);
+
 
                 $Umoney_data = $res['data'];
                 $UmoneyLog_data = $res['change'];
@@ -942,7 +944,7 @@ class Df extends AdminController {
                     $this->model->commit();
 
                     //添加异步查询订单状态
-                    \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
+                    //\think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
 
                     return __success('ID：'.$order['id'].' 单号：'.$order['system_no'].' 处理成功！');
                 }else{
