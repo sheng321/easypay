@@ -108,7 +108,7 @@ class Api extends WithdrawalController
 
         $res = Umoney::dispose($Umoney,$change); //处理
         if (true !== $res['msg']) __jerror($res['msg']);
-        
+
         //插入数据库
         //文件排它锁 阻塞模式
         $fp = fopen("lock/withdrawal.txt", "w+");

@@ -21,6 +21,9 @@ class Df {
      */
     public function fire(Job $job,$data)
     {
+
+        ini_set('max_execution_time', '120');
+
         $Order = \app\common\model\Df::quickGet($data);
         // 有些消息在到达消费者时,可能已经不再需要执行了
         if(empty($Order) || $Order['status'] != 2 || empty($Order['channel_id'])){
@@ -58,6 +61,12 @@ class Df {
      */
     private function doHelloJob($Order,$ChannelDf,$channel_money)
     {
+
+        //文件排它锁 非阻塞模式
+        $fp = fopen("lock/df.txt", "w+");
+        if(flock($fp,LOCK_EX | LOCK_NB))
+        {
+
 
         $this->model = model('app\common\model\Df');
 
@@ -139,6 +148,9 @@ class Df {
                 return false;
             }
         }
+
+        }
+        fclose($fp);
 
         return false;
     }
