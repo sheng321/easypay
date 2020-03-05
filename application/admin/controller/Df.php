@@ -232,6 +232,15 @@ class Df extends AdminController {
                     $this->model->rollback();
                     return __error('代付通道异常，请稍后再试!');
                 }
+
+                //如果失败，保险一点，查看提交的订单上游是否存在
+                if($result['code'] == 0){
+                    $res1  = $Payment->query($order);
+                    if(!empty($res1) && !empty($res1['code']) && $res1['code'] == 1){
+                        $result['code'] == 1;//设置提交订单成功
+                    }
+                }
+
                 //成功
                 if($result['code'] == 1){
                     //更新数据
@@ -923,6 +932,15 @@ class Df extends AdminController {
                     $this->model->rollback();
                     return __success('代付通道异常-请稍后再试');
                 }
+
+                //如果失败，保险一点，查看提交的订单上游是否存在
+                if($result['code'] == 0){
+                    $res1  = $Payment->query($order);
+                    if(!empty($res1) && !empty($res1['code']) && $res1['code'] == 1){
+                        $result['code'] == 1;//设置提交订单成功
+                    }
+                }
+
                 //成功
                 if($result['code'] == 1){
                     $arr['remark'] = '批量操作';
