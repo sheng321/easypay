@@ -60,13 +60,13 @@ class T1 {
         $Umoney->startTrans();
         try{
             $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
-            if (!$save ) throw new Exception('更新数据失败');
+            if (!$save ) throw new Exception('T1解冻，更新数据失败');
             $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
-            if (!$save1 ) throw new Exception('更新数据失败');
+            if (!$save1 ) throw new Exception('T1解冻，更新数据失败');
             $Umoney->commit();
         }catch (\Exception $exception){
             $Umoney->rollback();
-            $res['msg'] = 'T1解冻，更新数据失败';
+            $res['msg'] = $exception->getMessage();
             return $res;
         }
 
