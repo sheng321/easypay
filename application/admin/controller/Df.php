@@ -917,23 +917,21 @@ class Df extends AdminController {
                 }
                 //这里提交代付申请
                 $order['bank'] = json_decode($order['bank'],true);
-                //$result = $Payment->pay($order);
+                $result = $Payment->pay($order);
 
-                $result['code'] = 1;
-                $result['data']['remark'] = '批量操作';
                 if(empty($result)|| !is_array($result)){
                     $this->model->rollback();
                     return __success('代付通道异常-请稍后再试');
                 }
                 //成功
                 if($result['code'] == 1){
+                    $result['data']['remark'] = '批量操作';
                     //更新数据
                     if(!empty($result['data']) && is_array($result['data'])){
                         $arr = [];
                         foreach ($result['data'] as $k => $v){
                             if($k == 'actual_amount') $arr[$k] = $v;//实际到账
                             if($k == 'transaction_no') $arr[$k] = $v;//上游单号
-                            if($k == 'remark') $arr[$k] = $v;//备注
                         }
                         if(!empty($arr)){
                             $arr['id'] = $post['id'];
