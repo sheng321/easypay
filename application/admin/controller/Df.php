@@ -918,7 +918,7 @@ class Df extends AdminController {
                 //$result = $Payment->pay($order);
 
                 $result['code'] = 1;
-                $result['data']['remark'] = 'aaaa';
+                $result['data']['remark'] = '批量操作';
                 if(empty($result)|| !is_array($result)){
                     $this->model->rollback();
                     return __error('代付通道异常，请稍后再试!');
