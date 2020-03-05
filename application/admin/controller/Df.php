@@ -919,7 +919,7 @@ class Df extends AdminController {
                 $order['bank'] = json_decode($order['bank'],true);
                 //$result = $Payment->pay($order);
 
-                $result['code'] = 0;
+                $result['code'] = 1;
                 $result['data']['remark'] = '批量操作';
                 if(empty($result)|| !is_array($result)){
                     $this->model->rollback();
