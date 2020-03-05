@@ -309,7 +309,7 @@ class Df extends AdminController {
                 $Umoney_data = $res1['data'];
                 $UmoneyLog_data = $res1['change'];
 
-
+                //如果是处理中状态
                 if($order['status'] == 2){
                     $change['change'] = $order['channel_amount'];//通道变动金额
                     $change['type'] = 6;//通道失败解冻退款
