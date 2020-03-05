@@ -18,7 +18,7 @@ class Test  extends Controller
 
 
         \think\Queue::push('app\\common\\job\\Df', 244, 'df');
-        halt( 1111);
+        halt( 222);
 
 
     }
