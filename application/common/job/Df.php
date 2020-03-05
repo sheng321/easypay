@@ -22,6 +22,8 @@ class Df {
      */
     public function fire(Job $job,$data)
     {
+        dump(22222);
+
         ini_set('max_execution_time', '120');
         $Order = \app\common\model\Df::quickGet($data);
         // 有些消息在到达消费者时,可能已经不再需要执行了
@@ -87,7 +89,6 @@ class Df {
             $Umoney_data = $res1['data'];
             $UmoneyLog_data = $res1['change'];
 
-            halt(111111111111);
             $channel_money = Db::table('cm_money')->where(['uid' => 0, 'df_id' => $Order['channel_id']])->find(); //通道金额
             $change['change'] = $Order['channel_amount'];//通道变动金额
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
