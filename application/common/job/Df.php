@@ -100,14 +100,13 @@ class Df {
 
             $change['change'] = $Order['channel_amount'];//通道变动金额
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
-            dump($res2);
             if (true !== $res2['msg'])  return false;
 
             $Umoney_data = array_merge($Umoney_data,$res2['data']);
             $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
 
             $update['actual_amount'] = $Order['amount'] - $Order['fee'];//实际到账
-
+            dump(7);
         }
 
         //失败退款
