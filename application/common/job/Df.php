@@ -22,7 +22,7 @@ class Df {
      */
     public function fire(Job $job,$data)
     {
-        dump(22222);
+
 
         ini_set('max_execution_time', '120');
         $Order = \app\common\model\Df::quickGet($data);
@@ -73,6 +73,8 @@ class Df {
         if($Order['status'] > 2 ) return true;
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
+
+        dump(333);
 
         //处理完成
         if (  $res['data']['status'] == 3){
