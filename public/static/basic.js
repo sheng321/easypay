@@ -58,7 +58,7 @@
                 callback = function () {
                 }
             }
-            var index = layer.msg(msg, {icon: 1, shade: this.shade, scrollbar: false, time: 2000, shadeClose: true}, callback);
+            var index = layer.msg(msg, {icon: 1, shade: this.shade, scrollbar: false, time: 3000, shadeClose: true}, callback);
             return this.dialogIndexs.push(index), index;
         };
         //显示失败类型的消息
