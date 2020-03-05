@@ -87,14 +87,13 @@ class Df {
         if (  $res['data']['status'] == 3){
             $update['status'] = 3;
 
-            dump(5);
-
             $Umoney = Umoney::quickGet(['uid' => $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0]); //会员金额
             $change['change'] = $Order['amount'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
             $change['type'] = 1;//成功解冻入账
 
             $res1 = Umoney::dispose($Umoney, $change); //会员处理
+            dump($res1);
             if(true !== $res1['msg'] )  return false;
 
             $Umoney_data = $res1['data'];
