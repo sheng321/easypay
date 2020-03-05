@@ -942,7 +942,7 @@ class Df extends AdminController {
                     }
                     $this->model->commit();
                     //添加异步查询订单状态
-                    //\think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
+                    \think\Queue::later(1,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
                     return __success('ID：'.$order['id'].' 单号：'.$order['system_no'].' 处理成功1！');
                 }else{
                     $this->model->rollback();
