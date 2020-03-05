@@ -74,7 +74,7 @@ class Df {
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
 
-        dump(333);
+
 
         //处理完成
         if (  $res['data']['status'] == 3){
@@ -118,6 +118,7 @@ class Df {
             $Umoney_data = $res1['data'];
             $UmoneyLog_data = $res1['change'];
 
+            $channel_money = Db::table('cm_money')->where(['uid' => 0, 'df_id' => $Order['channel_id']])->find(); //通道金额
             $change['change'] = $Order['channel_amount'];//通道变动金额
             $change['type'] = 6;//通道失败解冻退款
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
