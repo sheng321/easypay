@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 return [
     'connector'  => 'Redis',		    // 可选驱动类型：sync(默认)、Redis、database、topthink等其他自定义类型
-    'expire'     => 60,				    // 任务的过期时间，默认为60秒; 若要禁用，则设置为 null
+    'expire'     => 120,				    // 任务的过期时间，默认为60秒; 若要禁用，则设置为 null
     'default'    => 'default',		    // 默认的队列名称
     'host'       => \think\facade\Env::get('redis.host'),	    // redis 主机ip
     'port'       => \think\facade\Env::get('redis.port'),			    // redis 端口
