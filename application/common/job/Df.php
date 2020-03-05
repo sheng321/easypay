@@ -42,7 +42,9 @@ class Df {
             return;
         }
 
+        dump(1);
         $isJobDone = $this->doHelloJob($Order,$ChannelDf,$channel_money);
+        dump($isJobDone);
         if($isJobDone === true){
             $job->delete();
             return;
@@ -74,6 +76,7 @@ class Df {
 
         $Order = \app\common\model\Df::where(['id'=>$Order['id']])->find();
         if($Order['status'] > 2 ) return true;
+        dump(2);
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
 
@@ -140,9 +143,10 @@ class Df {
                 if (!$add)  throw new Exception('数据更新错误');
 
                 $this->model->commit();
-
+                dump(3);
             }catch (\Exception $exception){
                 $this->model->rollback();
+                dump(4);
                 return false;
             }
         }
