@@ -43,7 +43,7 @@ class Df {
             return;
         }
 
-        $isJobDone = $this->doHelloJob($Order,$ChannelDf,$channel_money);
+        $isJobDone = $this->doHelloJob($Order,$ChannelDf);
         if($isJobDone === true){
             $job->delete();
             return;
