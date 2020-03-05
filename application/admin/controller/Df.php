@@ -228,7 +228,7 @@ class Df extends AdminController {
                 //这里提交代付申请
                 $order['bank'] = json_decode($order['bank'],true);
                 $result = $Payment->pay($order);
-                if(empty($result)|| !is_array($result)){
+                if(empty($result)|| !is_array($result) || !isset($result['code'])){
                     $this->model->rollback();
                     return __error('代付通道异常，请稍后再试!');
                 }
