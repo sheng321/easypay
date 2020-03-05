@@ -21,7 +21,7 @@ class Test  extends Controller
 
         //halt( $res);
 
-        $res = \think\Queue::push('app\\common\\job\\Df', 283, 'df');
+        $res = \think\Queue::push('app\\common\\job\\Df', 289, 'df');
         halt( $res);
 
 
