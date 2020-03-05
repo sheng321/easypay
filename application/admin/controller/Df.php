@@ -240,7 +240,6 @@ class Df extends AdminController {
                         $result['code'] == 1;//设置提交订单成功
                     }
                 }
-
                 //成功
                 if($result['code'] == 1){
                     //更新数据
