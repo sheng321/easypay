@@ -75,6 +75,8 @@ class Df {
         $Payment = Payment::factory($ChannelDf['code']);
         $res  = $Payment->query($Order);
 
+        return false;
+
         if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
 
         $Order = \app\common\model\Df::quickGet($Order['id']);
