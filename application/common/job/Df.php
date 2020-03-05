@@ -44,11 +44,13 @@ class Df {
             $job->delete();
             return;
         }else{
-            if ($job->attempts() > 1) {
-                // 重新发布这个任务
-                $job->release(60); //一分钟
+            if ($job->attempts() > 200) {
+                $job->delete();
                 return;
             }
+             // 重新发布这个任务
+            $job->release(60); //一分钟
+            return;
         }
 
 
