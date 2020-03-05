@@ -10,6 +10,10 @@ use think\queue\Job;
  * @package app\common\job
  */
 class Df {
+
+
+    protected $model;
+
     /**
      * fire方法是消息队列默认调用的方法
      * @param Job            $job      当前的任务对象
@@ -62,8 +66,9 @@ class Df {
         $Payment = Payment::factory($ChannelDf['code']);
         $res  = $Payment->query($Order);
 
-        if($res['code'] == 0) return false;
+        if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
 
+        $Order = \app\common\model\Df::quickGet($Order['id']);
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
 
@@ -118,22 +123,25 @@ class Df {
 
         }
 
+        //3  已完成   4失败退款
         if (isset($res['data']['status']) && ($res['data']['status'] == 4||$res['data']['status'] == 3)){
             //使用事物保存数据
             $this->model->startTrans();
-            $save1 = $this->model->save($update, ['id' => $update['id']]);
+            try{
+                $save1 = $this->model->save($update, ['id' => $update['id']]);
+                $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
+                $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
 
-            $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
-            $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
-
-            if (!$save1 || !$save || !$add) {
+                if (!$save1 || !$save || !$add) {
+                    throw new Exception('数据更新错误');
+                }
+                $this->model->commit();
+            }catch (\Exception $exception){
                 $this->model->rollback();
                 return false;
             }
-            $this->model->commit();
             return true;
         }
-
 
         return false;
     }
