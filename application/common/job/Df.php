@@ -2,6 +2,7 @@
 namespace app\common\job;
 use app\common\model\Umoney;
 use app\withdrawal\service\Payment;
+use think\Db;
 use think\queue\Job;
 
 /**
@@ -74,7 +75,7 @@ class Df {
 
         if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
 
-        $Order = \app\common\model\Df::where(['id'=>$Order['id']])->find();
+        $Order =  Db::table('cm_withdrawal_api')->where(['id'=>$Order['id']])->find();
         if($Order['status'] > 2 ) return true;
         dump(2);
         $update['id'] = $Order['id'];
@@ -156,7 +157,7 @@ class Df {
         }
 
         //确认数据是否更新完成
-        $status = \app\common\model\Df::where(['id'=>$Order['id']])->value('status');
+        $status = Db::table('cm_withdrawal_api')->where(['id'=>$Order['id']])->value('status');
         dump($status);
         dump(7);
         if($status > 2) return true;
