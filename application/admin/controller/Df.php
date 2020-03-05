@@ -947,7 +947,7 @@ class Df extends AdminController {
                     return __success('ID：'.$order['id'].' 单号：'.$order['system_no'].' 处理成功！');
                 }else{
                     $this->model->rollback();
-                    $msg = '申请代付失败，请检查上游订单状，上游返回：'.$result['msg'];
+                    $msg = '申请代付失败，上游返回：'.$result['msg'];
                     $arr['remark'] = $msg;
                     $arr['id'] = $post['id'];
                     $this->model->save($arr,['id'=>$post['id']]);

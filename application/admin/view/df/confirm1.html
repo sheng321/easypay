@@ -42,13 +42,13 @@
                                         <td><span>处理中</span> <i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop" style=" color: red;"  ></i></td>
                                         <td>{$vo['remark']}</td>
                                     </tr>
-                                {elseif !empty($vo['channelgroup_name'])}
+                                {elseif !empty($vo['remark'])}
 
                                     <tr>
                                         <td><span class="four">{$vo['id']}</span></td>
                                         <td>{$vo['system_no']}</td>
                                         <td>{$vo['channel_amount']} 元</td>
-                                        <td><span>处理失败</span> <i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop" style=" color: red;"  ></i></td>
+                                        <td><span>处理失败</span> <i class="layui-icon layui-icon-close-fill" style=" color: red;"  ></i></td>
                                         <td>{$vo['remark']}</td>
                                     </tr>
 
