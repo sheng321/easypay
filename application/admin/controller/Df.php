@@ -870,6 +870,8 @@ class Df extends AdminController {
                         break;
                     }
                 }
+                dump($select);
+                halt($id);
                 //基础数据
                 $basic_data = [
                     'title' => '代付任务列表',
@@ -881,6 +883,8 @@ class Df extends AdminController {
                 return $this->fetch('', $basic_data);
             }else{
                 $id = $this->request->post('df_id/d',0);
+                halt($id);
+
                 if(empty($id))  return __success('处理完成');
 
                 $order =  $this->model->quickGet($id);
