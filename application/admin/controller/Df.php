@@ -221,7 +221,7 @@ class Df extends AdminController {
                 $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
                 $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
 
-                if (!$save1 || !$save || $add) {
+                if (!$save1 || !$save || !$add) {
                     $this->model->rollback();
                     return __error('数据有误，请稍后再试!');
                 }
@@ -256,7 +256,7 @@ class Df extends AdminController {
                         }
                     }
 
-                    $this->model->commit();
+                    $this->model->rollback();
 
                     //添加异步查询订单状态
                   //  \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
