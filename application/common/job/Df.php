@@ -86,6 +86,8 @@ class Df {
         if (  $res['data']['status'] == 3){
             $update['status'] = 3;
 
+            dump(5);
+
             $Umoney = Umoney::quickGet(['uid' => $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0]); //会员金额
             $change['change'] = $Order['amount'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
@@ -133,7 +135,7 @@ class Df {
         }
 
         //3  已完成   4失败退款
-        if ($res['data']['status'] == 4||$res['data']['status'] == 3){
+        if (($res['data']['status'] == 4)||($res['data']['status'] == 3)){
             //使用事物保存数据
             $this->model->startTrans();
             try{
