@@ -167,6 +167,7 @@ class MoneyService {
             $Umoney->commit();
         }catch (\Exception $exception){
             $Umoney->rollback();
+            return $exception->getMessage();
         }
 
         //添加到异步T1处理 --支付通道
