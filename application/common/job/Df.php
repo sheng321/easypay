@@ -78,6 +78,7 @@ class Df {
         if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
 
         $Order = \app\common\model\Df::where(['id'=>$Order['id']])->find();
+        if($Order['status'] > 2 ) return true;
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
 
