@@ -315,6 +315,7 @@ class Wlf extends WithdrawalController
             case ($RET_CODE2 === "0002")://商户审核不通过
             case ($RET_CODE2 === "0003")://不通过受理
             case ($RET_CODE2 === 0)://交易结果状态不存在
+                halt($RET_CODE2);
                 return __suc($res['INFO']['ERR_MSG'],['status'=>4]);//失败退款
                 break;
             //处理中
