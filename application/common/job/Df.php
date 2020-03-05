@@ -65,8 +65,6 @@ class Df {
     private function doHelloJob($Order,$ChannelDf,$channel_money)
     {
 
-        //文件排它锁 非阻塞模式
-
         $this->model = model('app\common\model\Df');
 
         $Payment = Payment::factory($ChannelDf['code']);
