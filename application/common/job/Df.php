@@ -150,7 +150,7 @@ class Df {
                 $this->model->commit();
             }catch (\Exception $exception){
                 $this->model->rollback();
-                dump(4);
+                dump($exception->getMessage());
                 return false;
             }
         }
