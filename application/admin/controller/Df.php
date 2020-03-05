@@ -917,8 +917,8 @@ class Df extends AdminController {
                 $order['bank'] = json_decode($order['bank'],true);
                 //$result = $Payment->pay($order);
 
-                $result['code'] = 0;
-                $result['msg'] = 'aaaa';
+                $result['code'] = 1;
+                $result['data']['remark'] = 'aaaa';
                 if(empty($result)|| !is_array($result)){
                     $this->model->rollback();
                     return __error('代付通道异常，请稍后再试!');
