@@ -389,6 +389,8 @@ class Df extends AdminController {
 
         if (!$this->request->isPost()) {
 
+            $this->search_df();
+
             //ajax访问获取数据
             if ($this->request->get('type') == 'ajax') {
                 $page = $this->request->get('page', 1);
@@ -756,6 +758,8 @@ class Df extends AdminController {
     public function batch_process()
     {
         if (!$this->request->isPost()) {
+
+            $this->search_df();
 
             $id = $this->request->get('id', []);
             $num = count($id);
