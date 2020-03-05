@@ -138,13 +138,19 @@ class MoneyService {
         /***事务处理***/
         $Umoney->startTrans();
 
-        $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
-        $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
-        $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
+        try{
+            $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
+            if (!$save ) throw new Exception('订单入账事务更新数据失败');
 
-        //添加到处理订单列表  在后台处理订单列表显示
-        $save3 = true;
-        if (app('request')->module() == 'admin') {
+            $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
+            if (!$save1 ) throw new Exception('订单入账事务更新数据失败');
+
+            $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
+            if (!$save2 ) throw new Exception('订单入账事务更新数据失败');
+
+            //添加到处理订单列表  在后台处理订单列表显示
+            $save3 = true;
+            if (app('request')->module() == 'admin') {
                 if(empty($Dispose)){
                     $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动补单']);
                 }else{
@@ -155,13 +161,13 @@ class MoneyService {
                         'record'=>$Dispose['record']."|".session('admin_info.username').'-手动补单'
                     ],['id'=>$Dispose['id']]);
                 }
-        }
+            }
+            if (!$save3) throw new Exception('订单入账事务更新数据失败');
 
-        if (!$save || !$save1|| !$save2|| !$save3){
+            $Umoney->commit();
+        }catch (\Exception $exception){
             $Umoney->rollback();
-            return '订单入账事务更新数据失败';
         }
-        $Umoney->commit();
 
         //添加到异步T1处理 --支付通道
         //T1 结算
@@ -259,28 +265,34 @@ class MoneyService {
         $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
 
         $Umoney->startTrans();
-        $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
-        $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
-        $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
 
-        //添加到处理订单列表
-        if(empty($Dispose)){
-            $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动退单']);
-        }else{
-            $save3 = $OrderDispose->isUpdate(true)->save([
-                'id'=>$Dispose['id'],
-                'system_no'=>$system_no,
-                'pid'=>$Order['id'],
-                'record'=>$Dispose['record']."|".session('admin_info.username').'-手动退单'
-            ],['id'=>$Dispose['id']]);
-        }
+        try{
 
-        if (!$save || !$save1|| !$save2|| !$save3) {
+            $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
+            if (!$save ) throw new Exception('订单入账事务更新数据失败');
+            $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
+            if (!$save1 ) throw new Exception('订单入账事务更新数据失败');
+            $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
+            if (!$save2 ) throw new Exception('订单入账事务更新数据失败');
+
+            //添加到处理订单列表
+            if(empty($Dispose)){
+                $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动退单']);
+            }else{
+                $save3 = $OrderDispose->isUpdate(true)->save([
+                    'id'=>$Dispose['id'],
+                    'system_no'=>$system_no,
+                    'pid'=>$Order['id'],
+                    'record'=>$Dispose['record']."|".session('admin_info.username').'-手动退单'
+                ],['id'=>$Dispose['id']]);
+            }
+            if (!$save3) throw new Exception('订单入账事务更新数据失败');
+
+            $Umoney->commit();
+            return true;
+        }catch (\Exception $exception){
             $Umoney->rollback();
             return false;
         }
-        $Umoney->commit();
-        return true;
-
     }
 }
