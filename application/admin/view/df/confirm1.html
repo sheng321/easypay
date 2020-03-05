@@ -6,6 +6,10 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12">
             <div class="layui-card">
+                <blockquote style="text-align: center;color: red"    >
+                    {$msg|raw}
+                </blockquote>
+
                 <div class="layui-card-header">{$title}</div>
                 <div class="layui-card-body">
                     <table class="layui-table layuiadmin-page-table" lay-skin="line">
@@ -13,7 +17,9 @@
                         <tr>
                             <th>ID</th>
                             <th>单号</th>
+                            <th>申请通道金额</th>
                             <th>状态</th>
+                            <th>备注</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -23,20 +29,36 @@
                                 <tr>
                                     <td><span class="third">{$vo['id']}</span></td>
                                     <td>{$vo['system_no']}</td>
+                                    <td>{$vo['channel_amount']} 元</td>
                                     <td><span>已处理</span><i class="layui-icon layui-icon-ok-circle" style=" color: green;" ></i></td>
+                                    <td>{$vo['remark']}</td>
                                 </tr>
                             {else /}
                                 {if $vo['id'] == $id }
                                     <tr>
                                         <td><span class="second">{$vo['id']}</span></td>
                                         <td>{$vo['system_no']}</td>
+                                        <td>{$vo['channel_amount']} 元</td>
                                         <td><span>处理中</span> <i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop" style=" color: red;"  ></i></td>
+                                        <td>{$vo['remark']}</td>
                                     </tr>
+                                {elseif !empty($vo['channelgroup_name'])}
+
+                                    <tr>
+                                        <td><span class="four">{$vo['id']}</span></td>
+                                        <td>{$vo['system_no']}</td>
+                                        <td>{$vo['channel_amount']} 元</td>
+                                        <td><span>处理失败</span> <i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop" style=" color: red;"  ></i></td>
+                                        <td>{$vo['remark']}</td>
+                                    </tr>
+
                                 {else /}
                                     <tr>
                                         <td><span class="first">{$vo['id']}</span></td>
                                         <td>{$vo['system_no']}</td>
+                                        <td>{$vo['channel_amount']} 元</td>
                                         <td><span>待处理</span> <i class="layui-icon layui-icon-close" style=" color: #1E9FFF;"  ></i></td>
+                                        <td>{$vo['remark']}</td>
                                     </tr>
                                 {/if}
                             {/if}

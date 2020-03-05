@@ -583,7 +583,6 @@
             return false;
         }
 
-
         var Index = $.msg.confirm($(this).attr('data-title'), function () {
             $.msg.close(Index);
 

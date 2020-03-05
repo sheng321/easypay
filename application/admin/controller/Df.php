@@ -791,6 +791,8 @@ class Df extends AdminController {
             $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $Channel['id']]); //通道金额
             if (empty($channel_money)) return msg_error('代付通道金额数据异常!');
 
+            $Payment =  Payment::factory($Channel['code']);
+
             if (!$this->request->isPost()) {
 
                 $pid = $this->request->get('pid', []);
@@ -801,6 +803,7 @@ class Df extends AdminController {
 
                 $orders = $this->model->where([['id', 'in', $pid]])->column('id,status,lock_id,amount,fee,system_no,verson,record', 'id');
 
+                $msg = '';
                 $update = [];
                 foreach ($orders as $k => $v) {
                     if ($v['status'] != 1 || $v['lock_id'] != 0) continue;
@@ -811,7 +814,8 @@ class Df extends AdminController {
                     if ($Channel['inner'] == 1) $channel_amount = $v['amount'] - $v['fee'];
 
                     if ($channel_amount < $Channel['min_pay'] || $channel_amount > $Channel['max_pay']) {
-                        echo '订单号' . $v['system_no'] . "申请通道金额不在通道出款范围内！\n\n";
+                        $msg .= "<br/>";
+                        $msg .= " ID：{$v['id']} 订单号 " . $v['system_no'] . " 申请通道金额不在通道出款范围内！<br/>";
                         continue;
                     }
 
@@ -821,20 +825,10 @@ class Df extends AdminController {
                     $change['type'] = 5;//通道冻结金额类型
                     $res = Umoney::dispose($channel_money, $change); //处理 通道金额
                     if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') {
-                        echo '代付通道:' . $res['msg'];
-                        echo "结束运行1\n";
+                        $msg .= '代付通道:' . $res['msg'] . " <br/>";
                         break;
                     }
 
-                    $data['channel']['code'] = $Channel['code'];
-                    $data['channel']['id'] = $Channel['id'];
-                    $data['Umoney'] = $res['data'];
-                    $data['UmoneyLog'] = $res['change'];
-                    $data['order'] = [
-                        'id' => $v['id'],
-                        'status' => 2,
-                        'record' => empty($order['record']) ? "更改状态处理中" . $Channel['title'] : $order['record'] . "|更改状态处理中",
-                    ];
 
                     $update[$k] = [
                         'id' => $v['id'],
@@ -852,21 +846,26 @@ class Df extends AdminController {
                 }
 
                 $this->model->startTrans();
-                $result = $this->model->saveAll($update);
-                if (!$result) {
-                    $this->model->rollback();
-                    echo "操作失败\n";
-                    echo "\n\n结束运行~\n";
-                    exit();
+                if(!empty($update)){
+                    $result = $this->model->saveAll($update);
+                    if (!$result) {
+                        $this->model->rollback();
+                        $msg .= "操作失败<br/>";
+                        $msg .= "结束运行~";
+                    }
                 }
+
                 $this->model->commit();
 
                 //处理中状态
-                $select = $this->model->where([['id', 'in', $pid]])->order(['status' => 'desc'])->field('id,status,system_no,channel_amount,channel_id')->select()->toArray();
+                $select = $this->model->where([
+                    ['id', 'in', $pid],
+                    ['lock_id','=',$this->user['id']]
+                ])->order(['status' => 'desc'])->field('id,status,system_no,channel_amount,channel_id,remark')->select()->toArray();
 
                 $id = 0;
                 foreach ($select as $k => $v) {
-                    if ($v['status'] == 1 && !empty($v['channel_amount']) && $v['channel_id'] == $Channel['id']){
+                    if ($v['status'] == 1 && !empty($v['channel_amount']) && !empty($v['remark']) && $v['channel_id'] == $Channel['id']){
                         $id = $v['id'];
                         break;
                     }
@@ -876,7 +875,8 @@ class Df extends AdminController {
                     'title' => '代付任务列表',
                     'select' => $select,
                     'id' => $id,
-                    'channel_id' =>$channel_id
+                    'channel_id' =>$channel_id,
+                    'msg' =>$msg
                 ];
                 return $this->fetch('', $basic_data);
             }else{
@@ -885,7 +885,7 @@ class Df extends AdminController {
 
                 $order =  $this->model->quickGet($id);
                 if(empty($order) || $order['status'] != 1 || empty($order['channel_amount']) || !empty($order['remark']))  return __success('处理完成');
-                $Payment =  Payment::factory($Channel['code']);
+
                 //先更新系统数据，再提交数据到上游
 
                 //冻结通道金额
@@ -914,7 +914,10 @@ class Df extends AdminController {
                 }
                 //这里提交代付申请
                 $order['bank'] = json_decode($order['bank'],true);
-                $result = $Payment->pay($order);
+                //$result = $Payment->pay($order);
+
+                $result['code'] = 0;
+                $result['msg'] = 'aaaa';
                 if(empty($result)|| !is_array($result)){
                     $this->model->rollback();
                     return __error('代付通道异常，请稍后再试!');
