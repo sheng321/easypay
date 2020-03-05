@@ -870,8 +870,7 @@ class Df extends AdminController {
                         break;
                     }
                 }
-                dump($select);
-                halt($id);
+
                 //基础数据
                 $basic_data = [
                     'title' => '代付任务列表',
