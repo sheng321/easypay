@@ -17,11 +17,11 @@ class Test  extends Controller
     public function index()
     {
 
-        $res = SysAdmin::delRedis(1);
+        //$res = SysAdmin::delRedis(1);
 
-        halt( $res);
+        //halt( $res);
 
-       // \think\Queue::push('app\\common\\job\\Df', 244, 'df');
+        \think\Queue::push('app\\common\\job\\Df', 283, 'df');
         halt( 222);
 
 
