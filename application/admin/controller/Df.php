@@ -236,7 +236,7 @@ class Df extends AdminController {
                 //如果失败，保险一点，查看提交的订单上游是否存在
                 if($result['code'] == 0){
                     $res1  = $Payment->query($order);
-                    if(!empty($res1) && !empty($res1['code']) && $res1['code'] == 1){
+                    if(!empty($res1) && !empty($res1['code']) && $res1['code'] == 1 && isset($res1['data']['status']) && $res1['data']['status'] > 0 ){
                         $result['code'] = 1;//设置提交订单成功
                     }
                 }
@@ -935,8 +935,8 @@ class Df extends AdminController {
                 //如果失败，保险一点，查看提交的订单上游是否存在
                 if($result['code'] == 0){
                     $res1  = $Payment->query($order);
-                    if(!empty($res1) && !empty($res1['code']) && $res1['code'] == 1){
-                        $result['code'] == 1;//设置提交订单成功
+                    if(!empty($res1) && !empty($res1['code']) && $res1['code'] == 1 && isset($res1['data']['status']) && $res1['data']['status'] > 0 ){
+                        $result['code'] = 1;//设置提交订单成功
                     }
                 }
 

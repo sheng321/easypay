@@ -319,6 +319,7 @@ class Wlf extends WithdrawalController
                 break;
             //处理中
             case ($RET_CODE1 === "1002")://未查询到该订单号对应的交易
+                return __suc($res['INFO']['ERR_MSG'],['status'=>0]);//未查询到该订单号对应的交易
             default:
                 return __suc($res['INFO']['ERR_MSG'],['status'=>2]);//处理中
                 break;
