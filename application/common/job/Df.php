@@ -66,9 +66,6 @@ class Df {
     {
 
         //文件排它锁 非阻塞模式
-        $fp = fopen("lock/df.txt", "w+");
-        if(flock($fp,LOCK_EX | LOCK_NB))
-        {
 
         $this->model = model('app\common\model\Df');
 
@@ -152,8 +149,6 @@ class Df {
             }
         }
 
-        }
-        fclose($fp);
         //确认数据是否更新完成
         $status = \app\common\model\Df::where(['id'=>$Order['id']])->value('status');
         if($status > 2) return true;
