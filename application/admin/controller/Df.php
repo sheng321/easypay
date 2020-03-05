@@ -221,7 +221,7 @@ class Df extends AdminController {
                 $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
                 $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
 
-                if (!$save1 || !$save || !$add) {
+                if (!$save1 || !$save || $add) {
                     $this->model->rollback();
                     return __error('数据有误，请稍后再试!');
                 }
