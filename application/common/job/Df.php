@@ -93,6 +93,7 @@ class Df {
             $change['type'] = 1;//成功解冻入账
 
             $res1 = Umoney::dispose($Umoney, $change); //会员处理
+            dump($res1['msg']);
             if(true !== $res1['msg'] )  return false;
 
             $Umoney_data = $res1['data'];
