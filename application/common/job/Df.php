@@ -49,8 +49,8 @@ class Df {
                     return $isJobDone;
                  },$lock_val);
         }catch (\Exception $e){
+            halt($e->getMessage().'2222');
             $job->failed();
-            halt($e->getMessage());
             return;
         }
 
@@ -138,7 +138,7 @@ class Df {
                     Db::commit();
                 }catch (\Exception $exception){
                     Db::rollback();
-                    dump($exception->getMessage());
+                    dump($exception->getMessage().'111');
                     return false;
                 }
         }
