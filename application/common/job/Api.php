@@ -1,6 +1,7 @@
 <?php
 namespace app\common\job;
 use app\common\model\Order;
+use Lock\Lock;
 use think\queue\Job;
 
 class Api {
@@ -31,7 +32,16 @@ class Api {
     private function doHelloJob($data)
     {
 
-        $res = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
+        //多线程添加锁
+        try{
+            $lock_val = 'Api:'.$data['order']['system_no'];
+            $res =  Lock::lock(function ($res)use($data){
+                $result = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
+                return $result;
+            },$lock_val);
+        }catch (\Exception $e){
+            return  false;//出现异常
+        }
 
         if($res === true){
             //获取回调数据

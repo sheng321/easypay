@@ -3,7 +3,9 @@
 namespace app\common\service;
 use app\common\model\Channel;
 use app\common\model\Order;
+use app\common\model\OrderDispose;
 use app\common\model\Umoney;
+use app\common\model\UmoneyLog;
 use think\Db;
 
 
@@ -25,12 +27,11 @@ class MoneyService {
      */
     public static function api($system_no,$transaction_no = '',$amount = ''){
 
-      // $Order = Order::quickGet(['system_no'=>$system_no]);
         $Order = Order::where(['system_no'=>$system_no])->order(['id'=>'desc'])->find();
 
        //不存在 或者下单失败 已支付
        if(empty($Order) || $Order['pay_status'] == 1  || $Order['pay_status'] == 3   ) return '订单不存在或者下单失败或者订单已关闭';
-
+        \app\common\model\Order::delRedis($Order['id']);
         //已支付
         if($Order['pay_status'] == 2 ) return true;
 
@@ -51,8 +52,9 @@ class MoneyService {
         $update = [];
         $log = [];
         //处理金额
-        $user  = $Umoney::quickGet(['uid'=>$Order['mch_id'],'channel_id'=>0]); //商户金额
+        $user  = $Umoney::where(['uid'=>$Order['mch_id'],'channel_id'=>0])->field(['update_at'],true)->find(); //商户金额
         if(empty($user)) $user = $Umoney->create(['uid'=>$Order['mch_id'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+        \app\common\model\Umoney::delRedis($user['id']);
 
         $change['change'] = $Order['settle'];//变动金额
         $change['relate'] = $Order['system_no'];//关联订单号
@@ -65,8 +67,9 @@ class MoneyService {
 
         //上级代理
         if(!empty($Order['agent_amount']) && !empty($Order['mch_id1']) ){
-            $agent1 = $Umoney::quickGet(['uid'=>$Order['mch_id1'],'channel_id'=>0]);
+            $agent1 = $Umoney::where(['uid'=>$Order['mch_id1'],'channel_id'=>0])->field(['update_at'],true)->find();
             if(empty($agent1)) $agent1 = $Umoney->create(['uid'=>$Order['mch_id1'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+            \app\common\model\Umoney::delRedis($agent1['id']);
 
 
             $change['change'] = $Order['agent_amount'];//变动金额
@@ -80,8 +83,9 @@ class MoneyService {
         }
         //上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
-            $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
+            $agent2  = $Umoney::where(['uid'=>$Order['mch_id2'],'channel_id'=>0])->field(['update_at'],true)->find();
             if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+            \app\common\model\Umoney::delRedis($agent2['id']);
 
             $change['change'] = $Order['agent_amount2'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
@@ -93,8 +97,10 @@ class MoneyService {
 
         }
 
-        $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
+
+        $channel_money  = $Umoney::where(['uid'=>0,'channel_id'=>$Channel['id']])->field(['update_at'],true)->find(); //通道金额
         if(empty($channel_money))  $channel_money = $Umoney->create(['uid'=>0,'channel_id'=>$Channel['id'],'type1'=>1,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+        \app\common\model\Umoney::delRedis($channel_money['id']);
 
         //T1 结算
         if($Channel['account'] == 1){
@@ -131,26 +137,26 @@ class MoneyService {
 
         //添加到处理订单列表
         if (app('request')->module() == 'admin') {
-            $OrderDispose =  model('app\common\model\OrderDispose');
+            $OrderDispose =  new OrderDispose();
             $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
         }
 
         /***事务处理***/
-        $Umoney->startTrans();
-
+        Db::startTrans();
         try{
-            $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
-            if (!$save ) throw new Exception('订单入账事务更新数据失败');
+            $save = (new Umoney())->isUpdate(true)->saveAll($update);//批量修改金额
+            if (!$save ) throw new \Exception('订单入账事务更新数据失败');
 
-            $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
-            if (!$save1 ) throw new Exception('订单入账事务更新数据失败');
+            $save1 = (new UmoneyLog())->isUpdate(false)->saveAll($log);//批量添加变动记录
+            if (!$save1 ) throw new \Exception('订单入账事务更新数据失败');
 
-            $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
-            if (!$save2 ) throw new Exception('订单入账事务更新数据失败');
+            $save2 = (new Order())->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
+            if (!$save2 ) throw new \Exception('订单入账事务更新数据失败');
 
             //添加到处理订单列表  在后台处理订单列表显示
             $save3 = true;
             if (app('request')->module() == 'admin') {
+
                 if(empty($Dispose)){
                     $save3 = $OrderDispose->create(['system_no'=>$system_no,'pid'=>$Order['id'],'record'=>session('admin_info.username').'-手动补单']);
                 }else{
@@ -162,11 +168,11 @@ class MoneyService {
                     ],['id'=>$Dispose['id']]);
                 }
             }
-            if (!$save3) throw new Exception('订单入账事务更新数据失败');
+            if (!$save3) throw new \Exception('订单入账事务更新数据失败');
 
-            $Umoney->commit();
+            Db::commit();
         }catch (\Exception $exception){
-            $Umoney->rollback();
+            Db::rollback();
             return $exception->getMessage();
         }
 
@@ -184,11 +190,11 @@ class MoneyService {
      * 只修改商户，代理，通道的金额
      */
     public static function back($system_no){
-       // $Order = Order::quickGet(['system_no'=>$system_no]);
+
         $Order = Order::where(['system_no'=>$system_no])->order(['id'=>'desc'])->find();
 
         if(empty($Order) || $Order['pay_status'] !== 2) __jerror('该订单不存在，或者未支付');
-
+        \app\common\model\Order::delRedis($Order['id']);
         //通道
         $Channel =  Channel::alias('a')->where(['a.id'=>$Order['channel_id']])
             ->join('channel w','a.pid = w.id')
@@ -203,8 +209,11 @@ class MoneyService {
         $update = [];
         $log = [];
         //处理金额
-        $user  = $Umoney::quickGet(['uid'=>$Order['mch_id'],'channel_id'=>0]); //商户金额
+
+        $user  = $Umoney::where(['uid'=>$Order['mch_id'],'channel_id'=>0])->field(['update_at'],true)->find(); //商户金额
         if(empty($user)) $user = $Umoney->create(['uid'=>$Order['mch_id'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+        \app\common\model\Umoney::delRedis($user['id']);
+
 
         $change['change'] = $Order['settle'];//变动金额
         $change['relate'] = $Order['system_no'];//关联订单号
@@ -216,8 +225,9 @@ class MoneyService {
 
         //上级代理
         if(!empty($Order['agent_amount']) && !empty($Order['mch_id1']) ){
-            $agent1 = $Umoney::quickGet(['uid'=>$Order['mch_id1'],'channel_id'=>0]);
+            $agent1 = $Umoney::where(['uid'=>$Order['mch_id1'],'channel_id'=>0])->field(['update_at'],true)->find();
             if(empty($agent1)) $agent1 = $Umoney->create(['uid'=>$Order['mch_id1'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+            \app\common\model\Umoney::delRedis($agent1['id']);
 
             $change['change'] = $Order['agent_amount'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
@@ -230,8 +240,9 @@ class MoneyService {
 
         //上上级代理
         if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
-            $agent2  = $Umoney::quickGet(['uid'=>$Order['mch_id2'],'channel_id'=>0]);
+            $agent2  = $Umoney::where(['uid'=>$Order['mch_id2'],'channel_id'=>0])->field(['update_at'],true)->find();
             if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+            \app\common\model\Umoney::delRedis($agent2['id']);
 
             $change['change'] = $Order['agent_amount2'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
@@ -243,8 +254,9 @@ class MoneyService {
         }
 
 
-        $channel_money  = $Umoney::quickGet(['uid'=>0,'channel_id'=>$Channel['id']]); //通道金额
+        $channel_money  = $Umoney::where(['uid'=>0,'channel_id'=>$Channel['id']])->field(['update_at'],true)->find(); //通道金额
         if(empty($channel_money))  $channel_money = $Umoney->create(['uid'=>0,'channel_id'=>$Channel['id'],'type1'=>1,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
+        \app\common\model\Umoney::delRedis($channel_money['id']);
 
         $change['change'] = $Order['upstream_settle'];//变动金额
         $change['relate'] = $Order['system_no'];//关联订单号
@@ -262,19 +274,18 @@ class MoneyService {
 
 
         //添加到处理订单列表
-        $OrderDispose =  model('app\common\model\OrderDispose');
-        $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
+        $OrderDispose =  new OrderDispose();
+        $Dispose =   $OrderDispose->where(['system_no'=>$system_no])->value('id');
 
-        $Umoney->startTrans();
-
+        Db::startTrans();
         try{
 
-            $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
-            if (!$save ) throw new Exception('订单入账事务更新数据失败');
-            $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
-            if (!$save1 ) throw new Exception('订单入账事务更新数据失败');
-            $save2 = model('app\common\model\Order')->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
-            if (!$save2 ) throw new Exception('订单入账事务更新数据失败');
+            $save = (new Umoney())->isUpdate(true)->saveAll($update);//批量修改金额
+            if (!$save ) throw new \Exception('订单退单,更新数据失败');
+            $save1 = (new UmoneyLog())->isUpdate(false)->saveAll($log);//批量添加变动记录
+            if (!$save1 ) throw new \Exception('订单退单,更新数据失败');
+            $save2 = (new Order())->isUpdate(true)->save($Order_update,['id'=>$Order['id']]);
+            if (!$save2 ) throw new \Exception('订单退单,更新数据失败');
 
             //添加到处理订单列表
             if(empty($Dispose)){
@@ -287,12 +298,12 @@ class MoneyService {
                     'record'=>$Dispose['record']."|".session('admin_info.username').'-手动退单'
                 ],['id'=>$Dispose['id']]);
             }
-            if (!$save3) throw new Exception('订单入账事务更新数据失败');
+            if (!$save3) throw new \Exception('订单退单,更新数据失败');
 
-            $Umoney->commit();
+            Db::commit();
             return true;
         }catch (\Exception $exception){
-            $Umoney->rollback();
+            Db::rollback();
             return false;
         }
     }

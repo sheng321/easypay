@@ -11,7 +11,8 @@ class Notify {
      */
     public function fire(Job $job,$data)
     {
-        $Order =  Order::quickGet($data['order']['id']);
+        $Order =  Order::where(['id'=>$data['order']['id']])->find();
+
 
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($Order);
@@ -20,8 +21,18 @@ class Notify {
             return;
         }
 
-        $isJobDone = $this->doHelloJob($data,$Order);
-        $job->delete();//执行一次
+        //多线程添加锁
+        try{
+            $lock_val = 'Notify:'.$Order['id'];
+            $isJobDone =  Lock::lock(function ($res) use ($data,$Order){
+                            $isJobDone = $this->doHelloJob($data,$Order);
+                            return $isJobDone;
+                        },$lock_val);
+        }catch (\Exception $e){
+                //出现异常
+        }
+
+        $job->delete();//只执行一次
         return;
 
     }

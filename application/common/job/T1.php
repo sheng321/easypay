@@ -12,14 +12,19 @@ class T1 {
      */
     public function fire(Job $job,$data)
     {
-        if ($job->attempts() > 1) {
+        //多线程添加锁
+        try{
+            $lock_val = 'T1:'.$data['id'];
+            $isJobDone =  Lock::lock(function ($res)use($data){
+                $isJobDone = $this->doHelloJob($data);
+                return $isJobDone;
+            },$lock_val);
+        }catch (\Exception $e){
             $job->delete();//执行一次
-            return;
         }
-
-        $isJobDone = $this->doHelloJob($data);
         if($isJobDone !== true ) __log(json_encode($isJobDone,320),3);//记录到异常日志列表
-
+        $job->delete();//只执行一次
+        return;
     }
 
 
@@ -37,8 +42,8 @@ class T1 {
         $t1['id'] = $channel_money['id'];//金额账户ID
         $t1['system_no'] = $system_no;//关联订单号
          */
-        $Umoney = model('app\common\model\Umoney');
-        $channel_money  = $Umoney::quickGet($data['id']); //通道金额
+
+        $channel_money  = Umoney::where(['id'=>$data['id']])->find(); //通道金额
         $res['channel_money'] = $channel_money;
         if(empty($channel_money) || empty($channel_money['frozen_amount_t1'])){
             $res['msg'] = 'T1解冻，通道金额不存在';
@@ -48,6 +53,7 @@ class T1 {
             $res['msg'] = 'T1解冻，T1冻结金额小于解冻金额';
             return $res;
         }
+        Umoney::delRedis($data['id']);
 
         $change['change'] = $data['money'];//变动金额
         $change['relate'] = $data['system_no'];//关联订单号
@@ -57,15 +63,16 @@ class T1 {
         $update = $res4['data'];
         $log = $res4['change'];
 
-        $Umoney->startTrans();
+
+        Db::startTrans();
         try{
-            $save = $Umoney->isUpdate(true)->saveAll($update);//批量修改金额
-            if (!$save ) throw new Exception('T1解冻，更新数据失败');
-            $save1 = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($log);//批量添加变动记录
-            if (!$save1 ) throw new Exception('T1解冻，更新数据失败');
-            $Umoney->commit();
+            $save = (new Umoney())->isUpdate(true)->saveAll($update);//批量修改金额
+            if (!$save ) throw new \Exception('T1解冻，更新数据失败');
+            $save1 = (new UmoneyLog())->isUpdate(false)->saveAll($log);//批量添加变动记录
+            if (!$save1 ) throw new \Exception('T1解冻，更新数据失败');
+            Db::commit();
         }catch (\Exception $exception){
-            $Umoney->rollback();
+            Db::rollback();
             $res['msg'] = $exception->getMessage();
             return $res;
         }
