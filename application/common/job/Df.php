@@ -27,6 +27,7 @@ class Df {
         ini_set('max_execution_time', '120');
         $Order = \app\common\model\Df::where(['id'=>$data])->field(['id','status','channel_id'])->find();
 
+        dump($Order);
         // 有些消息在到达消费者时,可能已经不再需要执行了
         if(empty($Order) || $Order['status'] != 2 || empty($Order['channel_id'])){
             $job->delete();
@@ -38,11 +39,13 @@ class Df {
             $job->delete();
             return;
         }
+        dump($ChannelDf);
         $channel_money = Umoney::where(['uid' => 0, 'df_id' => $Order['channel_id']])->value('id'); //通道金额
         if(empty($channel_money)){
             $job->delete();
             return;
         }
+        dump($channel_money);
 
         try{
             $lock_val = 'Df:'.$data;
