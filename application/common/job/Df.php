@@ -54,7 +54,7 @@ class Df {
                     return $isJobDone;
                  },$lock_val);
         }catch (\Exception $e){
-            halt($e);
+            halt($e->getMessage());
             $job->delete();//出现异常
             return;
         }
