@@ -142,26 +142,18 @@ class Df {
 
                 //使用事物保存数据
                 $this->model->startTrans();
-                $Umoney = model('app\common\model\Umoney');
-                $UmoneyLog = model('app\common\model\UmoneyLog');
-                $Umoney->startTrans();
-                $UmoneyLog->startTrans();
+
                 try{
                     $save1 = $this->model->save($update, ['id' => $update['id']]);
                     if (!$save1)  throw new Exception('数据更新错误');
-                    $save = $Umoney->isUpdate(true)->saveAll($Umoney_data);
+                    $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
                     if (!$save)  throw new Exception('数据更新错误');
-                    $add = $UmoneyLog->isUpdate(false)->saveAll($UmoneyLog_data);
+                    $add =  model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
                     if (!$add)  throw new Exception('数据更新错误');
 
                     $this->model->commit();
-                    $Umoney->commit();
-                    $UmoneyLog->commit();
-
                 }catch (\Exception $exception){
                     $this->model->rollback();
-                    $Umoney->rollback();
-                    $UmoneyLog->rollback();
                 }
         }
 
