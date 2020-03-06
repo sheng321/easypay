@@ -136,7 +136,7 @@ class Df {
         //3  已完成   4失败退款
         if ($res['data']['status'] == 4||$res['data']['status'] == 3){
 
-            $Umoney = Db::table('cm_money')->where(['uid' => $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0])->find(); //会员金额
+            $Umoney = Db::table('cm_money')->field(['update_at'],true)->where(['uid' => $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0])->find(); //会员金额
             $change['change'] = $Order['amount'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
             $change['type'] = $change_user;//成功解冻入账
