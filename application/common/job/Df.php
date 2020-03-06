@@ -126,7 +126,6 @@ class Df {
 
             //使用事物保存数据
             Db::startTrans();
-
                 try{
                     $save1 = (new \app\common\model\Df)->save($update, ['id' => $update['id']]);
                     if (!$save1)  throw new \Exception('数据更新错误');
