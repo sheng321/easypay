@@ -9,6 +9,7 @@ use app\common\model\Ulevel;
 use app\common\model\Uprofile;
 use app\common\service\RateService;
 use app\pay\service\Payment;
+use Lock\Lock;
 use redis\StringModel;
 
 /**
@@ -377,22 +378,25 @@ class Api extends PayController
 
         unset($param);
         //插入数据库
-        //文件排它锁 阻塞模式
-        $fp = fopen("lock/api.txt", "w+");
-        if(flock($fp,LOCK_EX))
-        {
-            $model = new Order();
-            //使用事物保存数据
-            $model->startTrans();
-            $create = $model->create($data);
-            if (!$create) {
-                $model->rollback();
-            }else{
-                $model->commit();
-            }
-            flock($fp,LOCK_UN);
+
+        try{
+            $lock_val = 'pay:api:'.$data['system_no'];
+            $create = Lock::queueLock(function ($res)  use ($data){
+                        $model = new Order();
+                        //使用事物保存数据
+                        $model->startTrans();
+                        $create = $model->create($data);
+                        if (!$create) {
+                            $model->rollback();
+                        }else{
+                            $model->commit();
+                        }
+                        return $create;
+                    },$lock_val, 100, 45);
+        }catch (\Exception $e){
+            //出现异常
+            exceptions(['msg'=>'当前访问人数过多，请稍后再试~','url'=>'http://www.baidu.com']);
         }
-        fclose($fp);
 
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
         unset($data);
