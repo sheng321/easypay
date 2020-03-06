@@ -42,6 +42,7 @@ class Df {
             return;
         }
 
+        dump(22222);
         try{
             $lock_val = 'Df:'.$data;
             $isJobDone =  Lock::lock(function ($res)use($Order,$ChannelDf){
