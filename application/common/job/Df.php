@@ -1,5 +1,6 @@
 <?php
 namespace app\common\job;
+use app\common\model\ChannelDf;
 use app\common\model\Umoney;
 use app\withdrawal\service\Payment;
 use think\Db;
@@ -24,21 +25,20 @@ class Df {
     public function fire(Job $job,$data)
     {
         ini_set('max_execution_time', '120');
-        $Order = \app\common\model\Df::where(['id'=>$data])->field(['extends','ip','bank','update_by','create_by','create_by','create_at','update_at','remark','record','bank','remark1'],true)->find();
-        dump($Order);
+        $Order = \app\common\model\Df::where(['id'=>$data])->field(['id','status','channel_id'])->find();
 
         // 有些消息在到达消费者时,可能已经不再需要执行了
         if(empty($Order) || $Order['status'] != 2 || empty($Order['channel_id'])){
             $job->delete();
             return;
         }
-        $ChannelDf = \app\common\model\ChannelDf::quickGet($Order['channel_id']);
+
+        $ChannelDf = ChannelDf::where(['id'=>$Order['channel_id']])->field('code')->find();
         if(empty($ChannelDf) || empty($ChannelDf['code'])){
             $job->delete();
             return;
         }
-
-        $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $Order['channel_id']]); //通道金额
+        $channel_money = Umoney::where(['uid' => 0, 'df_id' => $Order['channel_id']])->value('id'); //通道金额
         if(empty($channel_money)){
             $job->delete();
             return;
@@ -106,15 +106,13 @@ class Df {
      */
     private function doHelloJob($Order,$ChannelDf)
     {
-        $this->model = model('app\common\model\Df');
 
         $Payment = Payment::factory($ChannelDf['code']);
         $res  = $Payment->query($Order);
 
         if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
 
-
-        $Order = \app\common\model\Df::where(['id'=>$Order['id']])->find();
+        $Order = \app\common\model\Df::where(['id'=>$Order['id']])->field(['extends','ip','bank','update_by','create_by','create_by','create_at','update_at','remark','record','bank','remark1'],true)->find();
         if($Order['status'] > 2 ) return true;
 
         $update['id'] = $Order['id'];
@@ -149,7 +147,7 @@ class Df {
             $Umoney_data = $res1['data'];
             $UmoneyLog_data = $res1['change'];
 
-            $channel_money = Db::table('cm_money')->where(['uid' => 0, 'df_id' => $Order['channel_id']])->find(); //通道金额
+            $channel_money = Db::table('cm_money')->field(['update_at'],true)->where(['uid' => 0, 'df_id' => $Order['channel_id']])->find(); //通道金额
             $change['change'] = $Order['channel_amount'];//通道变动金额
             $change['type'] = $change_channel;//成功解冻入账
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
@@ -167,9 +165,9 @@ class Df {
                     if (!$save)  throw new \Exception('数据更新错误');
                     $add = (new \app\common\model\UmoneyLog)->isUpdate(false)->saveAll($UmoneyLog_data1);
                     if (!$add)  throw new \Exception('数据更新错误');
+                    throw new \Exception('数据更新错误');
                     Db::commit();
                 }catch (\Exception  $exception){
-                    if (!$add)  throw new \Exception('数据更新错误');
                     Db::rollback();
                     return false;
                 }
