@@ -27,7 +27,6 @@ class Df {
         ini_set('max_execution_time', '120');
         $Order = \app\common\model\Df::where(['id'=>$data])->field(['extends','ip','bank','update_by','create_by','create_by','create_at','update_at','remark','record','bank','remark1'],true)->find();
 
-
         // 有些消息在到达消费者时,可能已经不再需要执行了
         if(empty($Order) || $Order['status'] != 2 || empty($Order['channel_id'])){
             $job->delete();
@@ -54,7 +53,6 @@ class Df {
                     return $isJobDone;
                  },$lock_val);
         }catch (\Exception $e){
-            halt($e->getMessage());
             $job->delete();//出现异常
             return;
         }
@@ -141,7 +139,6 @@ class Df {
                     Db::commit();
                 }catch (\Exception  $exception){
                     Db::rollback();
-                    halt($exception->getMessage());
                     return false;
                 }
         }
