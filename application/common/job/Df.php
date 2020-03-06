@@ -54,8 +54,6 @@ class Df {
             $job->delete();//出现异常
             return;
         }
-        halt($isJobDone);
-
 
         if($isJobDone === true){
             $job->delete();
@@ -69,36 +67,6 @@ class Df {
         }
 
     }
-
-    /*
-     * array(25) {
-  ["id"] => int(334)
-  ["system_no"] => string(20) "d2003061536446162645"
-  ["mch_id"] => string(8) "20100008"
-  ["lock_id"] => int(1)
-  ["record"] => string(67) "admin选择下发代付通道:备用金|admin更新状态:处理中"
-  ["remark"] => string(0) ""
-  ["status"] => int(2)
-  ["create_at"] => string(19) "2020-03-06 15:36:44"
-  ["update_at"] => string(19) "2020-03-06 15:56:10"
-  ["amount"] => string(6) "10.000"
-  ["fee"] => string(5) "5.000"
-  ["actual_amount"] => string(5) "0.000"
-  ["create_by"] => int(55)
-  ["update_by"] => int(1)
-  ["bank"] => string(140) "{"account_name":"\u6d4b\u8bd599","bank_name":"\u4e2d\u56fd\u5de5\u5546\u94f6\u884c","card_number":"123456","branch_name":"","bank_id":"102"}"
-  ["channel_id"] => int(63)
-  ["channel_fee"] => string(5) "1.000"
-  ["verson"] => int(2)
-  ["transaction_no"] => string(0) ""
-  ["remark1"] => string(0) ""
-  ["out_trade_no"] => string(12) "后台申请"
-  ["ip"] => string(12) "113.61.61.77"
-  ["extends"] => NULL
-  ["card_number"] => string(0) ""
-  ["channel_amount"] => string(5) "6.000"
-}*/
-
 
 
     /**
