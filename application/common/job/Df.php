@@ -141,7 +141,7 @@ class Df {
                     if (!$add)  throw new \Exception('数据更新错误');
                     throw new Exception('数据更新错误');
                     Db::commit();
-                }catch (\Exception |\think\exception\ErrorExceptio $exception){
+                }catch (\Exception |\think\exception $exception){
                     Db::rollback();
                     dump($exception->getMessage().'111');
                     return false;
