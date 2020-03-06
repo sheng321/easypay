@@ -20,7 +20,7 @@ class Test  extends Controller
     public function index()
     {
 
-        $res = \think\Queue::push('app\\common\\job\\Df', 334, 'df');
+        $res = \think\Queue::push('app\\common\\job\\Df', 342, 'df');
         halt( $res);
 
 
