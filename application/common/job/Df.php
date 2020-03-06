@@ -137,6 +137,7 @@ class Df {
                     Db::commit();
                 }catch (\Exception  $exception){
                     Db::rollback();
+                    halt($exception->getMessage());
                     return false;
                 }
         }
