@@ -44,7 +44,6 @@ class Df {
             return;
         }
 
-        dump(22222);
         try{
             $lock_val = 'Df:'.$data;
             $isJobDone =  Lock::lock(function ($res)use($Order,$ChannelDf){
@@ -52,9 +51,7 @@ class Df {
                     return $isJobDone;
                  },$lock_val);
         }catch (\Exception $e){
-            dump($e);
-            halt($e->getMessage().'2222');
-            $job->failed();
+            $job->delete();//出现异常
             return;
         }
         halt($isJobDone);
@@ -144,7 +141,6 @@ class Df {
                     Db::commit();
                 }catch (\Exception  $exception){
                     Db::rollback();
-                    dump($exception->getMessage().'111');
                     return false;
                 }
         }
