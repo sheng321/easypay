@@ -52,6 +52,7 @@ class Df {
                     return $isJobDone;
                  },$lock_val);
         }catch (\Exception $e){
+            dump($e);
             halt($e->getMessage().'2222');
             $job->failed();
             return;
