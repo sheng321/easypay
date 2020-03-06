@@ -24,7 +24,7 @@ class Df {
     public function fire(Job $job,$data)
     {
         ini_set('max_execution_time', '120');
-        $Order = \app\common\model\Df::where(['id'=>$data])->find();
+        $Order = \app\common\model\Df::where(['id'=>$data])->field(['extends','ip','bank','update_by','create_by','create_by','create_at','update_at','remark','record','bank'],true)->find();
         dump($Order);
 
         // 有些消息在到达消费者时,可能已经不再需要执行了
