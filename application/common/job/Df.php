@@ -25,6 +25,7 @@ class Df {
     {
         ini_set('max_execution_time', '120');
         $Order = \app\common\model\Df::where(['id'=>$data])->find();
+        dump($Order);
 
         // 有些消息在到达消费者时,可能已经不再需要执行了
         if(empty($Order) || $Order['status'] != 2 || empty($Order['channel_id'])){
@@ -168,6 +169,7 @@ class Df {
                     if (!$add)  throw new \Exception('数据更新错误');
                     Db::commit();
                 }catch (\Exception  $exception){
+                    if (!$add)  throw new \Exception('数据更新错误');
                     Db::rollback();
                     return false;
                 }
