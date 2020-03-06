@@ -4,6 +4,7 @@ use app\common\model\Umoney;
 use app\withdrawal\service\Payment;
 use think\Db;
 use think\queue\Job;
+use Lock\Lock;
 
 /**
  * 查询代付订单状态，一分钟一次
@@ -43,7 +44,17 @@ class Df {
             return;
         }
 
-        $isJobDone = $this->doHelloJob($Order,$ChannelDf);
+        try{
+            $lock_val = 'Df:'.$data;
+            $isJobDone =  Lock::lock(function ($res)use($Order,$ChannelDf){
+                    $isJobDone = $this->doHelloJob($Order,$ChannelDf);
+                    return $isJobDone;
+                 },$lock_val);
+        }catch (\Exception $e){
+            $job->failed();
+            return;
+        }
+
         if($isJobDone === true){
             $job->delete();
             return;
@@ -51,6 +62,7 @@ class Df {
             if ($job->attempts() > 1) {
                 // 第2种处理方式：原任务的基础上1分钟执行一次并增加尝试次数
                 $job->failed();
+                return;
             }
         }
 
@@ -73,7 +85,6 @@ class Df {
         if($Order['status'] > 2 ) return true;
         $update['id'] = $Order['id'];
         $update['verson'] = $Order['verson'] + 1;//版本号
-
 
 
         //处理完成
@@ -130,10 +141,7 @@ class Df {
 
         //3  已完成   4失败退款
         if ($res['data']['status'] == 4||$res['data']['status'] == 3){
-            //文件排它锁 阻塞模式
-            $fp = fopen("lock/df.txt", "w+");
-            if(flock($fp,LOCK_EX))
-            {
+
                 //使用事物保存数据
                 $this->model->startTrans();
                 $Umoney = model('app\common\model\Umoney');
@@ -157,10 +165,6 @@ class Df {
                     $Umoney->rollback();
                     $UmoneyLog->rollback();
                 }
-
-                flock($fp,LOCK_UN);
-            }
-            fclose($fp);
         }
 
         //确认数据是否更新完成
