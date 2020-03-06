@@ -33,6 +33,9 @@ class ComposerStaticInit50627e7b83feda0642d2a013e58fc540
         ),
         'L' => 
         array (
+            'Lock\\Lock\\' => 10,
+            'Lock\\Factory\\' => 13,
+            'Lock\\' => 5,
             'Limen\\Redisun\\' => 14,
         ),
         'E' => 
@@ -67,6 +70,18 @@ class ComposerStaticInit50627e7b83feda0642d2a013e58fc540
         'Predis\\' => 
         array (
             0 => __DIR__ . '/..' . '/predis/predis/src',
+        ),
+        'Lock\\Lock\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nabao/lock/src/Lock',
+        ),
+        'Lock\\Factory\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nabao/lock/src/Factory',
+        ),
+        'Lock\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nabao/lock/src',
         ),
         'Limen\\Redisun\\' => 
         array (

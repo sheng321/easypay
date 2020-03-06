@@ -12,6 +12,9 @@ return array(
     'app\\' => array($baseDir . '/application'),
     'Symfony\\Component\\OptionsResolver\\' => array($vendorDir . '/symfony/options-resolver'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
+    'Lock\\Lock\\' => array($vendorDir . '/nabao/lock/src/Lock'),
+    'Lock\\Factory\\' => array($vendorDir . '/nabao/lock/src/Factory'),
+    'Lock\\' => array($vendorDir . '/nabao/lock/src'),
     'Limen\\Redisun\\' => array($vendorDir . '/limen/redisun/src'),
     'Endroid\\QrCode\\' => array($vendorDir . '/endroid/qrcode/src'),
 );

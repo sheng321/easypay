@@ -114,6 +114,51 @@
         ]
     },
     {
+        "name": "nabao/lock",
+        "version": "1.2.6",
+        "version_normalized": "1.2.6.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zhaocong6/lock.git",
+            "reference": "50d8ff761af410c9d645ac98bea87f2f335d966f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zhaocong6/lock/zipball/50d8ff761af410c9d645ac98bea87f2f335d966f",
+            "reference": "50d8ff761af410c9d645ac98bea87f2f335d966f",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.0",
+            "predis/predis": "^1.1"
+        },
+        "time": "2019-10-18T11:05:45+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Lock\\": "src/",
+                "Lock\\Lock\\": "src/Lock",
+                "Lock\\Factory\\": "src/Factory"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "ZhaoCong",
+                "email": "1140253608@qq.com"
+            }
+        ],
+        "description": "高性能, 分布式, 并发抢占锁, 队列锁",
+        "keywords": [
+            "lock",
+            "并发锁"
+        ]
+    },
+    {
         "name": "predis/predis",
         "version": "v1.1.1",
         "version_normalized": "1.1.1.0",
@@ -167,8 +212,8 @@
     },
     {
         "name": "symfony/options-resolver",
-        "version": "v3.4.37",
-        "version_normalized": "3.4.37.0",
+        "version": "v3.4.38",
+        "version_normalized": "3.4.38.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/options-resolver.git",

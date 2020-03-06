@@ -17,6 +17,13 @@ class Test  extends Controller
     public function index()
     {
 
+        halt(defined('THINK_VERSION'));
+
+
+
+       halt( config('lock.'));
+
+
         //$res = SysAdmin::delRedis(1);
 
         //halt( $res);
