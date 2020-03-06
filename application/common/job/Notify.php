@@ -13,13 +13,13 @@ class Notify {
     {
         $Order =  Order::where(['id'=>$data['order']['id']])->find();
 
-
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($Order);
         if($isJobStillNeedToBeDone === false ){
             $job->delete();
             return;
         }
+        Order::delRedis($Order['id']);
 
         //多线程添加锁
         try{
