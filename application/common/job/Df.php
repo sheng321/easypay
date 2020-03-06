@@ -121,20 +121,20 @@ class Df {
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
             if (true !== $res2['msg'])  return false;
 
-            $Umoney_data = array_merge($Umoney_data,$res2['data']);
-            $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
+            $Umoney_data1 = array_merge($Umoney_data,$res2['data']);
+            $UmoneyLog_data1 = array_merge($UmoneyLog_data,$res2['change']);
 
             //使用事物保存数据
             Db::startTrans();
 
                 try{
-                    $save1 = model('app\common\model\Df')->save($update, ['id' => $update['id']]);
-                    if (!$save1)  throw new Exception('数据更新错误');
-                    $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
-                    if (!$save)  throw new Exception('数据更新错误');
-                    $add =  model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
-                    if (!$add)  throw new Exception('数据更新错误');
-
+                    $save1 = (new \app\common\model\Df)->save($update, ['id' => $update['id']]);
+                    if (!$save1)  throw new \Exception('数据更新错误');
+                    throw new \Exception('数据更新错误');
+                    $save = (new \app\common\model\Umoney)->isUpdate(true)->saveAll($Umoney_data1);
+                    if (!$save)  throw new \Exception('数据更新错误');
+                    $add = (new \app\common\model\UmoneyLog)->isUpdate(false)->saveAll($UmoneyLog_data1);
+                    if (!$add)  throw new \Exception('数据更新错误');
                     Db::commit();
                 }catch (\Exception $exception){
                     Db::rollback();
