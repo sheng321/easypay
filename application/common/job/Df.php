@@ -50,6 +50,7 @@ class Df {
                  },$lock_val);
         }catch (\Exception $e){
             $job->failed();
+            halt($e->getMessage());
             return;
         }
 
