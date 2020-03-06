@@ -139,9 +139,9 @@ class Df {
                     if (!$save)  throw new \Exception('数据更新错误');
                     $add = (new \app\common\model\UmoneyLog)->isUpdate(false)->saveAll($UmoneyLog_data1);
                     if (!$add)  throw new \Exception('数据更新错误');
-                    throw new Exception('数据更新错误');
+                    throw new \Exception('数据更新错误');
                     Db::commit();
-                }catch (\Exception |\think\exception\ThrowableError $exception){
+                }catch (\Exception  $exception){
                     Db::rollback();
                     dump($exception->getMessage().'111');
                     return false;
