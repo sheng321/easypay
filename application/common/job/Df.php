@@ -53,6 +53,8 @@ class Df {
             $job->failed();
             return;
         }
+        halt($isJobDone);
+
 
         if($isJobDone === true){
             $job->delete();
