@@ -129,7 +129,6 @@ class Df {
                 try{
                     $save1 = (new \app\common\model\Df)->save($update, ['id' => $update['id']]);
                     if (!$save1)  throw new \Exception('数据更新错误');
-                    throw new \Exception('数据更新错误');
                     $save = (new \app\common\model\Umoney)->isUpdate(true)->saveAll($Umoney_data1);
                     if (!$save)  throw new \Exception('数据更新错误');
                     $add = (new \app\common\model\UmoneyLog)->isUpdate(false)->saveAll($UmoneyLog_data1);
