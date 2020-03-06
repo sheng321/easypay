@@ -142,6 +142,10 @@ class Df {
                 }
         }
 
+        \app\common\model\Df::delRedis($Order['id']);
+        \app\common\model\Umoney::delRedis($Umoney['id']);
+        \app\common\model\Umoney::delRedis($channel_money['id']);
+
         //确认数据是否更新完成
         $status = \app\common\model\Df::where(['id'=>$Order['id']])->value('status');
         if($status > 2) return true;
