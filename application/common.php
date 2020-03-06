@@ -578,6 +578,26 @@ if (!function_exists('exceptions')) {
     }
 }
 
+if (!function_exists('exceptions_api')) {
+    /**
+     * 抛出接口自定义异常
+     */
+    function exceptions_api($msg = '未知错误~',$data=[]) {
+
+        $result['code'] = 0;
+        $result['msg'] = $msg;
+        $result['data'] = $data;
+
+        if(Request()->isAjax()){
+            throw new \think\exception\HttpResponseException(json($result));
+        }else{
+
+            $response = \think\facade\Response::create($result, 'jump')->options(['jump_template' => config('app.dispatch_api_tmpl') ]);
+            throw new \think\exception\HttpResponseException( $response);
+        }
+    }
+}
+
 if (!function_exists('alert')) {
 
     /**
