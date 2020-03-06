@@ -79,24 +79,38 @@ class Df {
 
         if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
 
-        $Order = \app\common\model\Df::where(['id'=>$Order['id']])->find();
-        if($Order['status'] > 2 ) return true;
-        $update['id'] = $Order['id'];
-        $update['verson'] = $Order['verson'] + 1;//版本号
-
-
 
         //使用事物保存数据
         Db::startTrans();
 
+        $Order = \app\common\model\Df::lock(true)->where(['id'=>$Order['id']])->find();
+        if($Order['status'] > 2 ) return true;
+
+        $update['id'] = $Order['id'];
+        $update['verson'] = $Order['verson'] + 1;//版本号
+
         //处理完成
         if (  $res['data']['status'] == 3){
             $update['status'] = 3;
+            $change_user = 1;
+            $change_channel = 1;
+            $update['actual_amount'] = $Order['amount'] - $Order['fee'];//实际到账
+        }
+        //失败退款
+        if (  $res['data']['status'] == 4){
+            $update['status'] = 4;
+            $change_user = 16;
+            $change_channel = 6;
+        }
+
+
+        //3  已完成   4失败退款
+        if ($res['data']['status'] == 4||$res['data']['status'] == 3){
 
             $Umoney = Db::table('cm_money')->lock(true)->where(['uid' => $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0])->find(); //会员金额
             $change['change'] = $Order['amount'];//变动金额
             $change['relate'] = $Order['system_no'];//关联订单号
-            $change['type'] = 1;//成功解冻入账
+            $change['type'] = $change_user;//成功解冻入账
 
             $res1 = Umoney::dispose($Umoney, $change); //会员处理
             if(true !== $res1['msg'] )  return false;
@@ -106,43 +120,12 @@ class Df {
 
             $channel_money = Db::table('cm_money')->lock(true)->where(['uid' => 0, 'df_id' => $Order['channel_id']])->find(); //通道金额
             $change['change'] = $Order['channel_amount'];//通道变动金额
+            $change['type'] = $change_channel;//成功解冻入账
             $res2 = Umoney::dispose($channel_money, $change); //通道处理
             if (true !== $res2['msg'])  return false;
 
             $Umoney_data = array_merge($Umoney_data,$res2['data']);
             $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
-
-            $update['actual_amount'] = $Order['amount'] - $Order['fee'];//实际到账
-
-        }
-
-        //失败退款
-        if ( $res['data']['status'] == 4){
-            $update['status'] = 4;
-
-            $Umoney = Db::table('cm_money')->lock(true)->where(['uid' => $Order['mch_id'], 'channel_id' =>0, 'df_id' =>0])->find(); //会员金额
-            $change['change'] = $Order['amount'];//变动金额
-            $change['relate'] = $Order['system_no'];//关联订单号
-            $change['type'] = 16;//会员代付失败解冻退款
-
-            $res1 = Umoney::dispose($Umoney, $change); //会员处理
-            if (true !== $res1['msg'] ) return false;
-
-            $Umoney_data = $res1['data'];
-            $UmoneyLog_data = $res1['change'];
-
-            $channel_money = Db::table('cm_money')->lock(true)->where(['uid' => 0, 'df_id' => $Order['channel_id']])->find(); //通道金额
-            $change['change'] = $Order['channel_amount'];//通道变动金额
-            $change['type'] = 6;//通道失败解冻退款
-            $res2 = Umoney::dispose($channel_money, $change); //通道处理
-            if (true !== $res2['msg']) return false;
-
-            $Umoney_data = array_merge($Umoney_data,$res2['data']);
-            $UmoneyLog_data = array_merge($UmoneyLog_data,$res2['change']);
-        }
-
-        //3  已完成   4失败退款
-        if ($res['data']['status'] == 4||$res['data']['status'] == 3){
 
                 try{
                     $save1 = model('app\common\model\Df')->save($update, ['id' => $update['id']]);
