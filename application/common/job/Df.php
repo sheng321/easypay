@@ -107,7 +107,7 @@ class Df {
     {
         $this->model = model('app\common\model\Df');
 
-        $Payment = Payment::factory($ChannelDf['code'].'1');
+        $Payment = Payment::factory($ChannelDf['code']);
         $res  = $Payment->query($Order);
 
         if(empty($res)  || !is_array($res) || !isset($res['code']) || !isset($res['data']['status']) || $res['code'] == 0) return false;
