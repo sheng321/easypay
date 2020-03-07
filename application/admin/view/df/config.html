@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="__STATIC__/css/admin/public.css" media="all"/>
 {block name="cotent"}
 
-<form class="layui-form" style="width:80%;" method="post"  >
+<form class="layui-form form-width-99admin"  method="post" >
     <br>
     <div class="layui-card">
         <div class="layui-card-header">{$title|default=''}</div>
@@ -104,17 +104,22 @@
 
     <div class="layui-form-item layui-row layui-col-xs12">
         <div class="layui-inline">
-            <label class="layui-form-label">会员单日额度：</label>
+            <label class="layui-form-label">默认会员单日额度</label>
             <div class="layui-input-block">
                 <input type="text" id="total_money"  name="total_money"    lay-verify="number"  value="{$data.total_money|default='0'}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
 
+    <div class="layui-form-item layui-row layui-col-xs6">
+        <label class="layui-form-label">排除默认单日额度</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入商户号 格式：2000|1999 " id="excpet_uid"  name="excpet_uid"   class="layui-textarea">{$data.excpet_uid|default=''}</textarea>
+        </div>
+    </div>
 
 
-
-    <div class="layui-form-item layui-row layui-col-xs12">
+    <div class="layui-form-item layui-row layui-col-xs6">
         <label class="layui-form-label">提现时间</label>
         <div class="layui-input-block">
             <input type="text" id="time" name="time"  class="layui-input " value="{$data.time|default=''}" placeholder="请输入提现时间 格式：02:00|11:00 不填表示任何时间都可以提现">

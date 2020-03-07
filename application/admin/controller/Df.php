@@ -140,6 +140,7 @@ class Df extends AdminController {
      * @return \think\response\Json|\think\response\View
      */
     public function config(){
+
         $this->assign(['data'  => config('custom.df')]);
         if ($this->request->isPost()) {
             $post= $this->request->post();
@@ -150,7 +151,6 @@ class Df extends AdminController {
         //基础数据
         $basic_data = [
             'title' => '代付设置',
-
         ];
         return $this->fetch('', $basic_data);
     }
