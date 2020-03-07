@@ -243,8 +243,8 @@ class Df extends AdminController {
                         }
                     }
 
-                    dump($post);
-                    dump($Umoney_data);
+
+                    dump($UmoneyLog_data);
                     //使用事物保存数据
                     try{
                         Db::startTrans();
