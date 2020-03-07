@@ -4,6 +4,7 @@
 namespace app\user\controller;
 use app\common\controller\UserController;
 use app\common\model\Bank;
+use app\common\model\Df;
 use app\common\model\Umoney;
 use app\common\model\UmoneyLog;
 use think\Db;
@@ -180,11 +181,6 @@ class Withdrawal extends UserController {
             $validate2 = $this->validate($data2, 'app\common\validate\Umember.paypwd');
             if (true !== $validate2) return __error($validate2);
 
-            //token
-            $__token__ = $this->request->param('__token__/s','');
-            $__hash__ = Session::pull('__token__');
-            if($__token__ !== $__hash__)  return __error("令牌验证无效，请刷新重试");
-
 
             $amount =  $this->request->post('amount/d',0);
 
@@ -195,11 +191,29 @@ class Withdrawal extends UserController {
             $bank_card_id =  $this->request->post('bank_card_id/d',0);
             if(empty($bank[$bank_card_id])) return __error('选择银行卡不存在！');
 
+
+            //单卡单日次数
+            $day_card =  Df::where([['status','<',4],['card_number','=',$bank[$bank_card_id]['card_number']]])->whereBetween('create_at',[timeToDate(0,0,-24),date('Y-m-d H:i:s')])->field("COALESCE(sum(amount),0) as amounts,count(1) as num ")->select();
+            if(empty($day_card[0])) return __error('数据异常！');
+            if(($day_card[0]['amounts'] + $amount) > $withdrawal['limit_money']){
+                return __error("此银行卡： {$bank[$bank_card_id]['card_number']} 超过单卡单日限额 {$withdrawal['limit_money']} 元");
+            }
+            if(($day_card[0]['num'] + 1) > $withdrawal['limit_times']){
+                return __error("此银行卡： {$bank[$bank_card_id]['card_number']} 超过单卡单日次数 {$withdrawal['limit_times']}");
+            }
+
+            //token
+            $__token__ = $this->request->param('__token__/s','');
+            $__hash__ = Session::pull('__token__');
+            if($__token__ !== $__hash__)  return __error("令牌验证无效，请刷新重试");
+
+
             $data['mch_id'] = $uid;
             $data['out_trade_no'] = '后台申请';
             $data['system_no'] = getOrder('d');//代付订单号
             $data['amount'] = $amount;
             $data['bank_card_id'] = $bank_card_id;
+            $data['card_number'] = $bank[$bank_card_id]['card_number'];
             $data['bank'] = json_encode($bank[$bank_card_id]);
             $data['fee'] = $withdrawal['fee'];
 
@@ -211,7 +225,8 @@ class Withdrawal extends UserController {
             if (true !== $res['msg']) return __error($res['msg']);
 
 
-            $this->model = model('app\common\model\Df');
+
+            $this->model = new Df();
 
             //使用事物保存数据
             $this->model->startTrans();
@@ -378,7 +393,7 @@ class Withdrawal extends UserController {
 
 
 
-            $this->model = model('app\common\model\Df');
+           $this->model = new Df();;
             //使用事物保存数据
             $this->model->startTrans();
 
