@@ -18,5 +18,4 @@ return [
     'select'     => 3,				    // 使用哪一个 db，默认为 db0
     'timeout'    => 60,				    // redis连接的超时时间
     'persistent' => false,			    // 是否是长连接
-
 ];
