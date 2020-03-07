@@ -374,8 +374,8 @@ class Withdrawal extends UserController {
 
                 //单卡单日次数
                 if(empty($check[$post[$k]['card_number']])) $check[$post[$k]['card_number']] = 0;
-                $check[$post[$k]['card_number']] = bcadd($post[$k]['card_number'],$post[$k]['amount'],2);//单卡金额
-                $card_times_money = Df::card_times_money($post[$k]['card_number'],$check[$post[$k]['card_number']]);
+                $check[$post[$k]['card_number']] = bcadd($check[$post[$k]['card_number']],$post[$k]['amount'],2);//单卡金额
+                $card_times_money = Df::card_times_money($post[$k]['card_number'],$check[$post[$k]['card_number']],count($post[$k]));
                 if($card_times_money !== true){
                     return __error($card_times_money);
                     break;

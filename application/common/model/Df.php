@@ -116,16 +116,16 @@ class Df extends ModelService {
     }
 
     //单卡 单日次数 单日金额
-    public static function card_times_money($cardnumber,$amount){
+    public static function card_times_money($cardnumber,$amount,$cardnums = 1){
         $result =  self::where([['status','<',4],['card_number','=',$cardnumber]])->whereBetween('create_at',[timeToDate(0,0,-24),date('Y-m-d H:i:s')])->cache('card_times__money'.$cardnumber,1)->field("COALESCE(sum(amount),0) as amounts,count(1) as num ")->select();
         if(empty($result[0])) return '数据异常！';
 
         $withdrawal = config("custom.df");
         if(($result[0]['amounts'] + $amount) > $withdrawal['limit_money']){
-            return "此银行卡： {$cardnumber} 超过单卡单日限额 {$withdrawal['limit_money']} 元";
+            return "此银行卡： {$cardnumber} 超过了单卡单日限额 {$withdrawal['limit_money']} 元";
         }
-        if(($result[0]['num'] + 1) > $withdrawal['limit_times']){
-            return "此银行卡： {$cardnumber} 超过单卡单日次数 {$withdrawal['limit_times']} 次";
+        if(($result[0]['num'] + $cardnums) > $withdrawal['limit_times']){
+            return "此银行卡： {$cardnumber} 超过了单卡单日次数 {$withdrawal['limit_times']} 次";
         }
        return true;
     }
@@ -138,7 +138,7 @@ class Df extends ModelService {
             if(!in_array($mch_id,$excpet_uid)){
                 $amounts = self::where([['mch_id','=',$mch_id],['status','<',4]])->whereBetween('create_at',[timeToDate(0,0,-24),date('Y-m-d H:i:s')])->sum('amount');
                 if(($amounts + $amount) > $withdrawal['total_money']){
-                    return "超过会员单日限额 {$withdrawal['total_money']} 元，请联系客服处理。";
+                    return "超过了会员单日限额 {$withdrawal['total_money']} 元，请联系客服处理。";
                 }
             }
         }
