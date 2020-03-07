@@ -4,7 +4,9 @@ use app\common\controller\WithdrawalController;
 use app\common\model\Df;
 use app\common\model\Ip;
 use app\common\model\Umoney;
+use app\common\model\UmoneyLog;
 use app\common\model\Uprofile;
+use Lock\Lock;
 
 /**
  * 代付下单接口
@@ -110,25 +112,28 @@ class Api extends WithdrawalController
         if (true !== $res['msg']) __jerror($res['msg']);
 
         //插入数据库
-        //文件排它锁 阻塞模式
-        $fp = fopen("lock/withdrawal.txt", "w+");
-        if(flock($fp,LOCK_EX))
-        {
-            $model = new Df();
-            //使用事物保存数据
-            $model->startTrans();
-            $create = $model->create($data);
-            $save = model('app\common\model\Umoney')->saveAll($res['data']);
-            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
 
-            if (!$create ||!$save ||!$add) {
-                $model->rollback();
-            }else{
-                $model->commit();
-            }
-            flock($fp,LOCK_UN);
+        try{
+            $lock_val = 'withdrawal:api:'.$data['system_no'];
+            $create = Lock::queueLock(function ($res)  use ($data){
+                $model = new Df();
+                //使用事物保存数据
+                $model->startTrans();
+                $create = $model->create($data);
+                $save = (new Umoney())->saveAll($res['data']);
+                $add = (new UmoneyLog())->saveAll($res['change']);
+
+                if (!$create ||!$save ||!$add) {
+                    $model->rollback();
+                }else{
+                    $model->commit();
+                }
+                return $create;
+            },$lock_val, 100, 45);
+        }catch (\Exception $e){
+            //出现异常
+            exceptions(['msg'=>'当前访问人数过多，请稍后再试~','url'=>'http://www.baidu.com']);
         }
-        fclose($fp);
 
         if(empty($create) || !$create)  __jerror('系统繁忙，请重试~');
 

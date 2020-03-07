@@ -3,6 +3,7 @@
 namespace app\user\controller;
 use app\common\controller\UserController;
 use app\common\model\Umoney;
+use app\common\model\UmoneyLog;
 use app\common\model\Uprofile;
 use think\facade\Session;
 
@@ -29,7 +30,8 @@ class User extends UserController {
      * @return mixed|string|\think\response\Json
      */
     public function df_set() {
-        $Umoney =  model('app\common\model\Umoney');
+       
+        $Umoney = (new Umoney());
         $user =$Umoney->quickGet(['uid'=>$this->user['uid']]);
         if(empty($user)) return exceptions('数据错误，请重试！');
 
@@ -85,7 +87,7 @@ class User extends UserController {
             $Umoney->startTrans();
             if($money['change'] > 0) {
                 $save = $Umoney->saveAll($res['data']);
-                $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+                $add = (new UmoneyLog())->saveAll($res['change']);
             }else{
                 $save = true;
                 $add = true;

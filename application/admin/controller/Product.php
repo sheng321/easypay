@@ -2,6 +2,9 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\ChannelGroup;
+use app\common\model\ChannelProduct;
+use app\common\model\PayProduct;
 
 /**
  * 支付产品管理
@@ -22,7 +25,8 @@ class Product  extends AdminController
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\PayProduct');
+      
+        $this->model =(new PayProduct());
     }
 
 
@@ -82,7 +86,8 @@ class Product  extends AdminController
             $this->model->startTrans();
             $save = $this->model->save(['status' => $status,'id' => $get['id']],['id'=>$get['id']]);
 
-            $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
+          
+            $del = (new ChannelProduct())->destroy(function($query) use ($get){
                 $query->where(['p_id'=>$get['id']]);
             });
 
@@ -218,7 +223,7 @@ class Product  extends AdminController
         $del1 = $this->model->destroy($get['id']);
 
         //删除关联数据
-        $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
+        $del = (new ChannelProduct())->destroy(function($query) use ($get){
             $query->where(['p_id'=>$get['id']]);
         });
 

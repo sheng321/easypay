@@ -4,6 +4,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\SysRate;
 
 
 /**用户费率
@@ -23,8 +24,8 @@ class Rate extends AdminController{
      */
     public function __construct() {
         parent::__construct();
-        
-        $this->model = model('app\common\model\SysRate');
+      
+        $this->model = (new SysRate());
     }
 
 

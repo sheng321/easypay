@@ -3,9 +3,11 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 use app\common\model\ChannelGroup;
+use app\common\model\ChannelProduct;
 use app\common\model\PayProduct;
 use app\common\model\Ulevel;
 use app\common\model\Umoney;
+use app\common\model\UmoneyLog;
 use app\common\model\Uprofile;
 
 /**
@@ -26,7 +28,7 @@ class Channel  extends AdminController
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\Channel');
+        $this->model = new \app\common\model\Channel();
     }
 
     //通道列表
@@ -110,7 +112,8 @@ class Channel  extends AdminController
 
         $del = true;
         if($status == 0 && !empty($channel_id) ){
-            $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($channel_id){
+
+            $del = (new ChannelProduct())->destroy(function($query) use ($channel_id){
                 $query->where([['channel_id','in',$channel_id]]);
             });
         }
@@ -530,7 +533,7 @@ class Channel  extends AdminController
 
         $del = true;
         if(!empty($channel_id) ){
-            $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($channel_id){
+            $del = (new ChannelProduct())->destroy(function($query) use ($channel_id){
                 $query->where([['channel_id','in',$channel_id]]);
             });
         }
@@ -648,7 +651,8 @@ class Channel  extends AdminController
      */
     public function money(){
         $id = $this->request->get('id/d',0);
-        $Umoney =  model('app\common\model\Umoney');
+
+        $Umoney =  new Umoney();
         $user =$Umoney->quickGet(['channel_id'=>$id,'uid'=>0]);
         if(empty($user)) return msg_error('数据错误，请重试！');
 
@@ -676,7 +680,8 @@ class Channel  extends AdminController
             $Umoney->startTrans();
 
             $save = $Umoney->saveAll($res['data']);
-            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+
+            $add = (new UmoneyLog())->saveAll($res['change']);
 
             if (!$save || !$add) {
                 $Umoney->rollback();

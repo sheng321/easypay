@@ -21,7 +21,7 @@ class Agent extends AgentController {
     public function __construct() {
         parent::__construct();
 
-        $this->model = model('app\common\model\Umember');
+        $this->model = (new Umember());
     }
 
     /**
@@ -141,7 +141,7 @@ class Agent extends AgentController {
     public function agent_rate() {
 
         $group_id = (int)$this->request->get('id',0);
-        $model = model('app\common\model\SysRate');
+        $model = (new SysRate());
         $this->model = model('app\common\model\Ulevel');
         if (!$this->request->isPost()) {
             //ajax访问获取数据
@@ -289,7 +289,7 @@ class Agent extends AgentController {
             $max = $this->model->getMaxRate($group_id,$post['id']);
             if($max >$post['value']) return __error('费率小于用户分组默认费率：'.$max);
 
-            $model = model('app\common\model\SysRate');
+            $model = (new SysRate());
             $temp['p_id'] =  $post['id'];
             $temp['group_id'] = $group_id;
             $temp['type'] =  $level['type'];
@@ -332,7 +332,7 @@ class Agent extends AgentController {
         $data['group_id'] = $get['group_id'];
         $data['type'] = $find['type'];
 
-        $model = model('app\common\model\SysRate');
+        $model = (new SysRate());
 
         $SysRate = $model->where($data)->find();
 
@@ -380,7 +380,7 @@ class Agent extends AgentController {
                 ['uid','=',$this->user['uid']]
             ]);
         });
-        model('app\common\model\SysRate')->destroy(function($query) use ($get){
+        (new SysRate())->destroy(function($query) use ($get){
             $query->where([
                 ['group_id','in',$get['id']],
                 ['uid','=',$this->user['uid']],

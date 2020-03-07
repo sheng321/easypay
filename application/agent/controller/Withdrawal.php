@@ -5,6 +5,7 @@ namespace app\agent\controller;
 use app\common\controller\AgentController;
 use app\common\model\Bank;
 use app\common\model\Umoney;
+use app\common\model\UmoneyLog;
 
 class Withdrawal extends AgentController {
     /**
@@ -18,7 +19,7 @@ class Withdrawal extends AgentController {
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\Withdrawal');
+        $this->model = new \app\common\model\Withdrawal();
     }
 
     /**
@@ -115,8 +116,9 @@ class Withdrawal extends AgentController {
             $this->model->startTrans();
 
             $save1 = $this->model->create($data);
-            $save = model('app\common\model\Umoney')->saveAll($res['data']);
-            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+
+            $save = (new Umoney())->saveAll($res['data']);
+            $add = (new UmoneyLog())->saveAll($res['change']);
 
             if (!$save || !$add  || !$save1) {
                 $$this->model->rollback();

@@ -24,7 +24,7 @@ class Order extends AdminController {
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\Order');
+        $this->model = new \app\common\model\Order();
     }
     /**
      *  订单列表
@@ -290,7 +290,7 @@ class Order extends AdminController {
             $thisOrder = $this->model->quickGet($id);
             if(empty($thisOrder) ||$thisOrder['pay_status'] == 1 ||$thisOrder['pay_status'] == 2 ) return __error('订单状态为下单失败和已支付不可以更改');
 
-            $OrderDispose = model('app\common\model\OrderDispose');
+            $OrderDispose = new \app\common\model\OrderDispose();
 
             $Dispose = $OrderDispose->quickGet(['pid'=>$id]);
 

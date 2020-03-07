@@ -188,7 +188,7 @@ class Moneylog  extends AdminController
 
     public function sys_money()
     {
-        $Umoney =  model('app\common\model\Umoney');
+        $Umoney = (new Umoney());
         $user =$Umoney->where(['uid'=>0,'channel_id'=>0,'id'=>1])->field('id,uid,balance,total_money,frozen_amount,frozen_amount_t1,artificial,channel_id,df')->find();
         if(empty($user)) return msg_error('系统异常，请通知技术');
         $user = $user->toArray();
@@ -218,7 +218,7 @@ class Moneylog  extends AdminController
             $Umoney->startTrans();
 
             $save = $Umoney->saveAll($res['data']);
-            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+            $add = (new UmoneyLog())->saveAll($res['change']);
 
             if (!$save || !$add) {
                 $Umoney->rollback();

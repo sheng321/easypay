@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\SysAdmin;
 
 
 class User extends AdminController {
@@ -18,7 +19,8 @@ class User extends AdminController {
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\SysAdmin');
+       
+        $this->model = (new SysAdmin());
     }
 
     /**

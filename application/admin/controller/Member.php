@@ -3,7 +3,9 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\Umember;
 use app\common\model\Uprofile;
+use app\common\model\Urelations;
 
 class Member extends AdminController {
 
@@ -18,7 +20,7 @@ class Member extends AdminController {
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\Umember');
+        $this->model = (new Umember());
     }
 
     /**
@@ -27,7 +29,7 @@ class Member extends AdminController {
      */
     public function money(){
         $uid = $this->request->get('uid/d',0);
-        $Umoney =  model('app\common\model\Umoney');
+        $Umoney =  (new Umoney());
         $user =$Umoney->where(['uid'=>$uid])->field('id,uid,balance,total_money,frozen_amount,frozen_amount_t1,artificial,channel_id,df')->find();
         if(empty($user)) return msg_error('数据错误，请重试！');
         $user = $user->toArray();
@@ -56,7 +58,7 @@ class Member extends AdminController {
             $Umoney->startTrans();
 
             $save = $Umoney->saveAll($res['data']);
-            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+            $add = (new UmoneyLog())->saveAll($res['change']);
 
             if (!$save || !$add) {
                 $Umoney->rollback();
@@ -121,7 +123,7 @@ class Member extends AdminController {
     public function relations() {
         if (!$this->request->isPost()) {
             $uid =  $this->request->get('uid/d', 0);
-            $model = model('app\common\model\Uprofile');
+            $model = (new Uprofile());
             //ajax访问
             if ($this->request->get('type') == 'ajax') {
                 $page = $this->request->get('page', 1);
@@ -131,7 +133,7 @@ class Member extends AdminController {
                 return json($model->aList($page, $limit, $search));
             }
 
-            $model1 = model('app\common\model\Urelations');
+            $model1 = (new Urelations());
             $agent = $model1->where([
                 ['pid','=',$uid],
                 ['level','=',1],
@@ -611,7 +613,8 @@ class Member extends AdminController {
                 $this->model->rollback();
                 return __error('数据有误，请稍后再试!');
             }
-            $Uprofile =  model('app\common\model\Uprofile')->save(['pid'=>$pid,'id'=>$result['profile']['id']],['id'=>$result['profile']['id']]);
+           
+            $Uprofile =  (new Uprofile())->save(['pid'=>$pid,'id'=>$result['profile']['id']],['id'=>$result['profile']['id']]);
 
 
             if($result['profile']['level'] > 1){
@@ -631,7 +634,8 @@ class Member extends AdminController {
                 ] ;
             }//上上级
             $relations = true;
-           if(!empty($Urelations)) $relations =  model('app\common\model\Urelations')->saveAll($Urelations);
+          
+           if(!empty($Urelations)) $relations =  (new Urelations())->saveAll($Urelations);
 
             if (!$Uprofile || !$relations ) {
                 $this->model->rollback();
@@ -786,7 +790,7 @@ class Member extends AdminController {
                         'pid' => \app\common\model\Uprofile::where(['uid'=>$profile['pid']])->value('pid'),
                     ] ;
                 }//上上级
-                if(!empty($Urelations)) $relations =  model('app\common\model\Urelations')->saveAll($Urelations);
+                if(!empty($Urelations)) $relations =  (new Urelations())->saveAll($Urelations);
 
             }
             return  $res;

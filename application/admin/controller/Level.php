@@ -4,6 +4,8 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\ChannelGroup;
+use app\common\model\ChannelProduct;
 use app\common\model\Uprofile;
 use app\common\service\RateService;
 
@@ -551,8 +553,7 @@ class Level extends AdminController {
             if(!empty($mode)) $data = $mode1;
         }
 
-
-        $model = model('app\common\model\ChannelGroup');
+        $model = new ChannelGroup();
         if(!empty($get['search']['title'])){
             $title = trim($get['search']['title']);
             $id =  $model->where([

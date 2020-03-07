@@ -3,7 +3,9 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\Umember;
 use app\common\model\Umoney;
+use app\common\model\UmoneyLog;
 use think\Db;
 use think\facade\Env;
 
@@ -22,7 +24,7 @@ class Withdrawal extends AdminController {
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\Withdrawal');
+        $this->model = new \app\common\model\Withdrawal();
     }
 
     /**
@@ -236,9 +238,10 @@ class Withdrawal extends AdminController {
             $post['lock_id'] = $this->user['id'];
             $save1 = $this->model->save($post, ['id' => $post['id']]);
 
+           
 
-                $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
-                $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
+                $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
+                $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
 
             if (!$save1 || !$save || !$add) {
                 $this->model->rollback();

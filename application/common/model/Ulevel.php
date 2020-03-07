@@ -154,7 +154,7 @@ class Ulevel extends ModelService {
             }
         }
         $res = true;
-        if(!empty($needel)) $res =  model('app\common\model\Ulevel')->saveAll($needel);
+        if(!empty($needel)) $res =  (new Ulevel())->saveAll($needel);
         return $res;
     }
 

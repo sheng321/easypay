@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\common\controller\AdminController;
 use app\common\model\ChannelDf;
 use app\common\model\Umoney;
+use app\common\model\UmoneyLog;
 use app\withdrawal\service\Payment;
 use think\Db;
 
@@ -24,7 +25,7 @@ class Df extends AdminController {
      */
     public function __construct() {
         parent::__construct();
-        $this->model = model('app\common\model\Df');
+        $this->model = new \app\common\model\Df();
     }
 
     /**
@@ -218,8 +219,8 @@ class Df extends AdminController {
                 $this->model->startTrans();
                 $save1 = $this->model->save($post, ['id' => $post['id']]);
 
-                $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
-                $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
+                $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
+                $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
 
                 if (!$save1 || !$save || !$add) {
                     $this->model->rollback();
@@ -327,9 +328,9 @@ class Df extends AdminController {
                 $this->model->startTrans();
                 $save1 = $this->model->save($post, ['id' => $post['id']]);
 
-                $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
-                $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
-
+                $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
+                $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
+                
                 if (!$save1 || !$save || !$add) {
                     $this->model->rollback();
                     return __error('数据有误，请稍后再试!');
@@ -427,7 +428,7 @@ class Df extends AdminController {
      */
     public function money(){
         $id = $this->request->get('id/d',0);
-        $Umoney =  model('app\common\model\Umoney');
+        $Umoney =  new Umoney();
         $user =$Umoney->quickGet(['df_id'=>$id,'uid'=>0]);
         if(empty($user)) return msg_error('数据错误，请重试！');
 
@@ -455,7 +456,7 @@ class Df extends AdminController {
             $Umoney->startTrans();
 
             $save = $Umoney->saveAll($res['data']);
-            $add = model('app\common\model\UmoneyLog')->saveAll($res['change']);
+            $add = (new UmoneyLog())->saveAll($res['change']);
 
             if (!$save || !$add) {
                 $Umoney->rollback();
@@ -520,9 +521,9 @@ class Df extends AdminController {
             //创建代付通道金额账户
             $money['df_id'] = $channel['id'];
             if(empty($money['id'])){
-                $Umoney = model('app\common\model\Umoney')->save($money);
+                $Umoney = (new Umoney())->save($money);
             }else{
-                $Umoney = model('app\common\model\Umoney')->save($money,['id'=>$money['id']]);
+                $Umoney = (new Umoney())->save($money,['id'=>$money['id']]);
             }
 
             if (!$channel || !$Umoney ) {
@@ -918,8 +919,8 @@ class Df extends AdminController {
                 $this->model->startTrans();
                 $save1 = $this->model->save($post, ['id' => $post['id']]);
 
-                $save = model('app\common\model\Umoney')->isUpdate(true)->saveAll($Umoney_data);
-                $add = model('app\common\model\UmoneyLog')->isUpdate(false)->saveAll($UmoneyLog_data);
+                $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
+                $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
 
                 if (!$save1 || !$save || !$add) {
                     $this->model->rollback();

@@ -2,7 +2,10 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\model\ChannelGroup;
+use app\common\model\ChannelProduct;
 use app\common\model\Uprofile;
+use think\Db;
 
 /**
  * 支付通道分组
@@ -161,11 +164,11 @@ class Cgroup  extends AdminController
 
         if($status == 0){
             //使用事物保存数据
-            $this->model->startTrans();
-            $save = $this->model->save(['status' => $status,'id' => $get['id']],['id'=>$get['id']]);
+            Db::startTrans();
+            $save = (new ChannelGroup())->save(['status' => $status,'id' => $get['id']],['id'=>$get['id']]);
 
             //权重和并发表
-            $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
+            $del = (new ChannelProduct())->destroy(function($query) use ($get){
                 $query->where(['group_id'=>$get['id']]);
             });
 
@@ -173,11 +176,11 @@ class Cgroup  extends AdminController
             $res = \app\common\model\Ulevel::delChennelGroupID(0,$data['p_id'],$get['id']);
 
             if (!$save || !$del || !$res) {
-                $this->model->rollback();
+                Db::rollback();
                 $msg = '数据有误，请稍后再试！';
                 return __error($msg);
             }
-            $this->model->commit();
+            Db::commit();
 
             return __success($msg);
 
@@ -288,20 +291,20 @@ class Cgroup  extends AdminController
         }
 
         //使用事物保存数据
-        $this->model->startTrans();
-        $del1 = $this->model->destroy($get['id']);
+        Db::startTrans();
+        $del1 = (new ChannelGroup())->destroy($get['id']);
 
         //删除关联数据
-        $del = model('app\common\model\ChannelProduct')->destroy(function($query) use ($get){
+        $del = (new ChannelProduct())->destroy(function($query) use ($get){
             $query->where(['group_id'=>$get['id']]);
         });
 
         if (!$del1 || !$del) {
-            $this->model->rollback();
+            Db::rollback();
             $msg = '数据有误，请稍后再试！';
             return __error($msg);
         }
-        $this->model->commit();
+        Db::commit();
         return __success('删除成功');
     }
 
@@ -317,7 +320,7 @@ class Cgroup  extends AdminController
         $p_id = $this->model->where(['id'=>$get['pid']])->value('p_id');
         if(empty($p_id)) return __error('该通道未选着支付产品！');
 
-        $ChannelProduct = model('app\common\model\ChannelProduct');
+        $ChannelProduct = new ChannelProduct();
 
         $mode = [];
         $id = [];
@@ -407,7 +410,7 @@ class Cgroup  extends AdminController
            if(!empty($mode)) $data = $mode;
         }
 
-        $model = model('app\common\model\Channel');
+        $model = new \app\common\model\Channel();
 
         if(!empty($get['search']['title'])){
             $title = trim($get['search']['title']);
