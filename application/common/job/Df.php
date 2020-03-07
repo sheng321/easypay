@@ -48,10 +48,10 @@ class Df {
 
         try{
             $lock_val = 'Df:'.$data;
-            $isJobDone =  Lock::lock(function ($res)use($Order,$ChannelDf){
+            $isJobDone =  Lock::queueLock(function ($res)use($Order,$ChannelDf){
                     $isJobDone = $this->doHelloJob($Order,$ChannelDf);
                     return $isJobDone;
-                 },$lock_val);
+                 },$lock_val,60, 60);
         }catch (\Exception $e){
             $job->failed();//出现异常
             return;
