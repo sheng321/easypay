@@ -23,10 +23,8 @@ class Test  extends Controller
        // exceptions_api('当前访问人数过多，请稍后再试~');
 
 
-        $res = \think\Queue::later(10,'app\\common\\job\\Df', 348, 'df');
-        $res = \think\Queue::later(10,'app\\common\\job\\Df', 347, 'df');
-        $res = \think\Queue::later(10,'app\\common\\job\\Df', 346, 'df');
-        $res = \think\Queue::later(10,'app\\common\\job\\Df', 345, 'df');
+        $res = \think\Queue::later(10,'app\\common\\job\\Df', 361, 'df');
+
 
         halt( $res);
 
