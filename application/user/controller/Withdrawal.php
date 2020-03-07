@@ -193,25 +193,13 @@ class Withdrawal extends UserController {
 
 
             //单卡单日次数
-            $day_card =  Df::where([['status','<',4],['card_number','=',$bank[$bank_card_id]['card_number']]])->whereBetween('create_at',[timeToDate(0,0,-24),date('Y-m-d H:i:s')])->field("COALESCE(sum(amount),0) as amounts,count(1) as num ")->select();
-            if(empty($day_card[0])) return __error('数据异常！');
-            if(($day_card[0]['amounts'] + $amount) > $withdrawal['limit_money']){
-                return __error("此银行卡： {$bank[$bank_card_id]['card_number']} 超过单卡单日限额 {$withdrawal['limit_money']} 元");
-            }
-            if(($day_card[0]['num'] + 1) > $withdrawal['limit_times']){
-                return __error("此银行卡： {$bank[$bank_card_id]['card_number']} 超过单卡单日次数 {$withdrawal['limit_times']} 次");
-            }
+            $card_times_money = Df::card_times_money($bank[$bank_card_id]['card_number'],$amount);
+            if($card_times_money !== true) return __error($card_times_money);
+
 
             //会员单日提现额度
-            if(!empty($withdrawal['excpet_uid'])){
-                $excpet_uid = explode("|",$withdrawal['excpet_uid']);
-                if(in_array($uid,$excpet_uid)){
-                    $amounts =  Df::where([['status','<',4],['mch_id','=',$uid]])->whereBetween('create_at',[timeToDate(0,0,-24),date('Y-m-d H:i:s')])->sum('amount');
-                    if(($amounts + $amount) > $withdrawal['total_money']){
-                        return __error("超过会员单日限额 {$withdrawal['total_money']} 元，请联系客服处理。");
-                    }
-                }
-            }
+            $mch_id_money = Df::mch_id_money($uid,$amount);
+            if($mch_id_money !== true) return __error($mch_id_money);
 
             //token
             $__token__ = $this->request->param('__token__/s','');

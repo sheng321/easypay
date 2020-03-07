@@ -43,6 +43,7 @@ class User extends UserController {
                 'status' => [13=>'余额转代付金额',14=>'代付金额转余额'],
                 'user'  => $user,//用户金额
                 'api'  => $this->user['profile']['df_api'],
+                'api1'  => $this->user['profile']['df_api1'],
             ];
             return $this->fetch('', $basic_data);
         } else {

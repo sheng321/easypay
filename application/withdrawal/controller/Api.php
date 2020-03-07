@@ -72,14 +72,13 @@ class Api extends WithdrawalController
             unset($period_time);
         }
 
-        $mch_id_money =  Df::mch_id_money($param['mchid']);
-        if($mch_id_money > $df['total_money']) __jerror('已超过会员单日代付额度，请联系客服处理');
+        //单卡单日次数
+        $card_times_money = Df::card_times_money($param['cardnumber'],$param['money']);
+        if($card_times_money !== true) return __error($card_times_money);
 
-        $card_money =  Df::card_money($param['cardnumber']);
-        if($card_money > $df['limit_money']) __jerror('已超过单卡单日限额，请联系客服处理');
-
-        $times =  Df::times($param['cardnumber']);
-        if($times > $df['limit_times']) __jerror('已超过单卡单日次数，请联系客服处理');
+        //会员单日提现额度
+        $mch_id_money = Df::mch_id_money($param['mchid'],$param['money']);
+        if($mch_id_money !== true) return __error($mch_id_money);
 
 
         //下一步选择创建订单，冻结金额，返回客户端信息

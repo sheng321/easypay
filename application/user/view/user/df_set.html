@@ -24,6 +24,7 @@
                 <form class="layui-form" >
                     <br>
 
+                    {if $api1 == 1 }
                     <div class="layui-form-item layui-row layui-col-xs6">
                         <label class="layui-form-label">Api代付接口</label>
                         <div class="layui-input-block">
@@ -31,6 +32,7 @@
                             <input type="radio" name="api"  value="1" title="开启"     {eq name='$api|default=false' value='1' }checked="checked" {/eq}    >
                         </div>
                     </div>
+                    {/if}
 
                     <div class="layui-form-item layui-row layui-col-xs6">
                         <label class="layui-form-label">操作代付金额</label>
