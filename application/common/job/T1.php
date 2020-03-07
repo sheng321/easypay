@@ -42,8 +42,8 @@ class T1 {
         $t1['id'] = $channel_money['id'];//金额账户ID
         $t1['system_no'] = $system_no;//关联订单号
          */
-
-        $channel_money  = Umoney::where(['id'=>$data['id']])->find(); //通道金额
+        
+        $channel_money  = Db::table('cm_money')->where(['id'=>$data['id']])->find(); //通道金额
         $res['channel_money'] = $channel_money;
         if(empty($channel_money) || empty($channel_money['frozen_amount_t1'])){
             $res['msg'] = 'T1解冻，通道金额不存在';

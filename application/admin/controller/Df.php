@@ -194,7 +194,8 @@ class Df extends AdminController {
 
             if(empty($order['channel_id'])) return __error('请先选择出款通道！');
 
-             $channel_money = Umoney::where(['uid' => 0, 'df_id' => $order['channel_id']])->field(['update_at'],true)->find()->toArray(); //通道金额
+            
+             $channel_money = Db::table('cm_money')->where(['uid' => 0, 'df_id' => $order['channel_id']])->field(['update_at'],true)->find(); //通道金额
             if(empty($channel_money)) __error('代付通道金额数据异常!');
 
             //处理中
