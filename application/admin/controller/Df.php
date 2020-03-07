@@ -176,7 +176,7 @@ class Df extends AdminController {
             $validate = $this->validate($post, 'app\common\validate\Withdrawal.status_df');
             if (true !== $validate) return __error($validate);
 
-            $order = $this->model->where(['id'=>$post['id']])->find()->toArray();
+            $order = $this->model->where(['id'=>$post['id']])->find();
             if ($order['status'] >= $post['status']) return __error('选择状态重复或者错误！');
 
             //解除订单锁定
@@ -194,7 +194,7 @@ class Df extends AdminController {
 
             if(empty($order['channel_id'])) return __error('请先选择出款通道！');
 
-             $channel_money = Umoney::where(['uid' => 0, 'df_id' => $order['channel_id']])->field(['update_at'],true)->find(); //通道金额
+             $channel_money = Umoney::where(['uid' => 0, 'df_id' => $order['channel_id']])->field(['update_at'],true)->find()->toArray(); //通道金额
             if(empty($channel_money)) __error('代付通道金额数据异常!');
 
             //处理中
