@@ -22,7 +22,7 @@ class Test  extends Controller
 
        // exceptions_api('当前访问人数过多，请稍后再试~');
 
-        $res = \think\Queue::push('app\\common\\job\\Df', 349, 'df');
+        $res = \think\Queue::later('app\\common\\job\\Df', 349, 'df');
         halt( $res);
 
 

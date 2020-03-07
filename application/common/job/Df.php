@@ -53,7 +53,7 @@ class Df {
                     return $isJobDone;
                  },$lock_val);
         }catch (\Exception $e){
-            $job->delete();//出现异常
+            $job->failed();//出现异常
             return;
         }
 
@@ -61,7 +61,7 @@ class Df {
             $job->delete();
             return;
         }else{
-            if ($job->attempts() > 1) {
+            if ($job->attempts() > 2000) {
                 // 第2种处理方式：原任务的基础上1分钟执行一次并增加尝试次数
                 $job->failed();
                 return;
