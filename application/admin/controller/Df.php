@@ -254,6 +254,8 @@ class Df extends AdminController {
                         \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
                     }catch (\Exception $e){
                         Db::rollback();
+                        dump($e->getMessage());
+                        halt($e);
                         $post['status'] = 1;
                         $post['remark'] = '提交成功,更新数据失败，请手动操作一次，不能切换通道！！';
                         $this->model->save($post, ['id' => $post['id']]);
