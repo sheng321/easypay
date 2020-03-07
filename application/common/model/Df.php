@@ -142,6 +142,25 @@ class Df extends ModelService {
                 }
             }
         }
+        return true;
+    }
+
+
+    //会员 单日限额
+    public static function check_df($amount){
+        $withdrawal = config("custom.df");
+        if(empty($withdrawal) || $withdrawal['status'] != 1) return '未开启代付功能，请联系客服处理~';
+
+        //运营时间
+        if(!empty($withdrawal['time'])){
+            $period_time = explode("|",$withdrawal['time']);
+            $time = strtotime(date('H:i',time()));//当前时间
+            if($time > strtotime($period_time[0]) && $time > strtotime($period_time[1])) return '请在 '.$period_time[0].' - '.$period_time[1].' 内进行提现申请';
+            unset($period_time);
+        }
+
+        if($amount <= $withdrawal['fee'])   __jerror("代付申请金额必须大于手续费 {$withdrawal['fee']} 元");
+        if($amount >  $withdrawal['max_pay'] || $amount < $withdrawal['min_pay']) return "单笔限额为：{$withdrawal['min_pay']} 到 {$withdrawal['max_pay']}";
 
         return true;
     }

@@ -151,14 +151,6 @@ class Withdrawal extends UserController {
         $bank = Bank::bList($uid);
 
         if($this->request->isPost()){
-            //判断时间
-            if(!empty($withdrawal['time'])){
-                $period_time = explode("|",$withdrawal['time']);
-                $time = strtotime(date('H:i',time()));//当前时间
-                if($time > strtotime($period_time[0]) && $time > strtotime($period_time[1])){
-                    return __error('请在 '.$period_time[0].' - '.$period_time[1].' 内进行提现申请');
-                }
-            }
 
             $ip =  \app\common\model\Ip::bList($this->user['uid'],2);
             if(!in_array(get_client_ip(),$ip)) return __error('代付IP白名单不包含此IP:'.get_client_ip());
@@ -182,13 +174,13 @@ class Withdrawal extends UserController {
 
             $amount =  $this->request->post('amount/d',0);
 
-            if($withdrawal['min_pay'] > $amount) return __error('不能小于最小提现金额！');
-            if($withdrawal['max_pay'] < $amount) return __error('不能大于最高提现金额！');
-            if(($Umoney['df'] - $amount < 0) || ($amount - $withdrawal['fee'] <= 0)) return __error('金额不正确！');
 
             $bank_card_id =  $this->request->post('bank_card_id/d',0);
             if(empty($bank[$bank_card_id])) return __error('选择银行卡不存在！');
 
+
+            $check_df =  Df::check_df($amount);
+            if($check_df !== true) return __error($check_df);
 
             //单卡单日次数
             $card_times_money = Df::card_times_money($bank[$bank_card_id]['card_number'],$amount);
@@ -278,14 +270,6 @@ class Withdrawal extends UserController {
         $Umoney = Umoney::quickGet(['uid' => $uid]);
 
         if ($this->request->isPost()) {
-            //判断时间
-            if (!empty($withdrawal['time'])) {
-                $period_time = explode("|", $withdrawal['time']);
-                $time = strtotime(date('H:i', time()));//当前时间
-                if ($time > strtotime($period_time[0]) && $time > strtotime($period_time[1])) {
-                    return __error('请在 ' . $period_time[0] . ' - ' . $period_time[1] . ' 内进行提现申请');
-                }
-            }
 
              $ip =  \app\common\model\Ip::bList($this->user['uid'],2);
             if(!in_array(get_client_ip(),$ip)) return __error('代付IP白名单不包含此IP:'.get_client_ip());
@@ -354,17 +338,9 @@ class Withdrawal extends UserController {
                 $post[$k]['bank'] = json_encode($Bank);
 
                 $post[$k]['amount'] = floatval($amount[$k]);
-                if ($withdrawal['min_pay'] > $post[$k]['amount']){
-                    return __error('不能小于最小提现金额！');
-                    break;
-                }
-                if ($withdrawal['max_pay'] < $post[$k]['amount']){
-                    return __error('不能大于最高提现金额！');
-                    break;
-                }
+
                 $change['change'] = bcadd($change['change'],$post[$k]['amount'],2);
                 $sum = bcadd($sum,$withdrawal['fee'],2);
-
                 $post[$k]['mch_id'] =  $this->user['uid'];
                 $post[$k]['bank_card_id'] = 0;
                 $post[$k]['card_number'] =  $card_number[$k];
@@ -372,6 +348,12 @@ class Withdrawal extends UserController {
                 $post[$k]['fee'] = $withdrawal['fee'];
                 $post[$k]['out_trade_no'] = '后台申请';
 
+
+                $check_df =  Df::check_df($post[$k]['amount']);
+                if($check_df !== true){
+                    return __error($check_df);
+                    break;
+                }
                 //单卡单日次数
                 if(empty($check[$post[$k]['card_number']])) $check[$post[$k]['card_number']] = 0;
                 $check[$post[$k]['card_number']] = bcadd($check[$post[$k]['card_number']],$post[$k]['amount'],2);//单卡金额

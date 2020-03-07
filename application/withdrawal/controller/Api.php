@@ -43,42 +43,19 @@ class Api extends WithdrawalController
         if(empty($Umoney) || $Umoney['df'] < $param['money']) __jerror('代付金额不足！');
 
 
-
         //平台代付通道属性
         $df = config('custom.df');
-        /*
-          'rate'=>'0.01',//  充值费率
-        'fee'=>'5',//手续费 不填默认为0
-        'min_pay'=>'1',//单笔最低 不填表示不限制
-        'max_pay'=>'49900',//单笔最高 不填表示不限制
-        'limit_times'=>'0',//单卡单日次数
-        'limit_money'=>'0',//单卡单日限额
-        'visit'=>'对私',//付款方式
-        'inner'=>'外扣',//下发方式
-        'total_money'=>'0',//会员单日提现额度
-        'time'=>'',//格式：02:00|11:00 提现时间 不填表示任何时间都可以提现
-         */
 
-        if($param['money'] > $df['max_pay'] || $param['money'] < $df['min_pay'])   __jerror("代付金额在  {$df['min_pay']} 和 {$df['max_pay']} 范围内");
-        if($param['money'] <= $df['fee'])   __jerror("代付金额小于手续费");
-
-        //运营时间
-        if(!empty($df['time'])){
-            $period_time = explode("|",$df['time']);
-            $time = strtotime(date('H:i',time()));//当前时间
-            if($time > strtotime($period_time[0]) && $time > strtotime($period_time[1])){
-                __jerror('请在 '.$period_time[0].' - '.$period_time[1].' 内进行提现申请');
-            }
-            unset($period_time);
-        }
+        $check_df =  Df::check_df($param['money']);
+        if($check_df !== true) return __jerror($check_df);
 
         //单卡单日次数
         $card_times_money = Df::card_times_money($param['cardnumber'],$param['money']);
-        if($card_times_money !== true) return __error($card_times_money);
+        if($card_times_money !== true) return __jerror($card_times_money);
 
         //会员单日提现额度
         $mch_id_money = Df::mch_id_money($param['mchid'],$param['money']);
-        if($mch_id_money !== true) return __error($mch_id_money);
+        if($mch_id_money !== true) return __jerror($mch_id_money);
 
 
         //下一步选择创建订单，冻结金额，返回客户端信息
