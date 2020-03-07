@@ -47,7 +47,6 @@ class Withdrawal extends UserController {
      */
     public function addWithdrawal(){
 
-
         //获取提现配置
         $withdrawal = config("custom.withdrawal");
         $uid = $this->user['uid'];
@@ -173,11 +172,6 @@ class Withdrawal extends UserController {
                 if (true !== $validate1) return __error($validate1);
             }
 
-            //token
-            $__token__ = $this->request->param('__token__/s','');
-            $__hash__ = Session::pull('__token__');
-            if($__token__ !== $__hash__)  return __error("令牌验证无效，请刷新重试");
-
 
             //支付密码
             $data2['paypwd1'] =  $this->user['profile']['pay_pwd'];
@@ -185,6 +179,11 @@ class Withdrawal extends UserController {
             //验证数据
             $validate2 = $this->validate($data2, 'app\common\validate\Umember.paypwd');
             if (true !== $validate2) return __error($validate2);
+
+            //token
+            $__token__ = $this->request->param('__token__/s','');
+            $__hash__ = Session::pull('__token__');
+            if($__token__ !== $__hash__)  return __error("令牌验证无效，请刷新重试");
 
 
             $amount =  $this->request->post('amount/d',0);
