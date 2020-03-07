@@ -310,18 +310,13 @@ class Withdrawal extends UserController {
             $validate2 = $this->validate($data2, 'app\common\validate\Umember.paypwd');
             if (true !== $validate2) return __error($validate2);
 
-
-            //token
-            $__token__ = $this->request->param('__token__/s', '');
-            $__hash__ = Session::pull('__token__');
-            if ($__token__ !== $__hash__) return __error("令牌验证无效，请刷新重试");
-
             $account_name = $this->request->post('account_name/a', []);
             $bank_name = $this->request->post('bank_name/a', []);
             $card_number = $this->request->post('card_number/a', []);
             $branch_name = $this->request->post('branch_name/a', []);
             $amount = $this->request->post('amount/a', []);
             if(empty($account_name)) return __error('无数据');
+
 
 
             $bank = config('bank.');
@@ -342,6 +337,8 @@ class Withdrawal extends UserController {
             $post = [];
             $change['change'] = 0;//变动金额
             $sum = 0;//手续费之和
+
+            $check = [];
             foreach ($account_name as $k => $v){
                 $Bank['account_name'] =  $account_name[$k];
                 $Bank['bank_name'] =  $bank_name[$k];
@@ -367,26 +364,47 @@ class Withdrawal extends UserController {
                     return __error('不能大于最高提现金额！');
                     break;
                 }
-                $change['change'] +=  $post[$k]['amount'];
-                $sum += $withdrawal['fee'];
+                $change['change'] = bcadd($change['change'],$post[$k]['amount'],2);
+                $sum = bcadd($sum,$withdrawal['fee'],2);
 
                 $post[$k]['mch_id'] =  $this->user['uid'];
                 $post[$k]['bank_card_id'] = 0;
+                $post[$k]['card_number'] =  $card_number[$k];
                 $post[$k]['system_no'] = getOrder('d');//代付订单号
                 $post[$k]['fee'] = $withdrawal['fee'];
                 $post[$k]['out_trade_no'] = '后台申请';
 
+                //单卡单日次数
+                if(empty($check[$post[$k]['card_number']])) $check[$post[$k]['card_number']] = 0;
+                $check[$post[$k]['card_number']] = bcadd($post[$k]['card_number'],$post[$k]['amount'],2);//单卡金额
+                $card_times_money = Df::card_times_money($post[$k]['card_number'],$check[$post[$k]['card_number']]);
+                if($card_times_money !== true){
+                    return __error($card_times_money);
+                    break;
+                }
+
+                //会员单日提现额度
+                $mch_id_money = Df::mch_id_money($post[$k]['mch_id'],$change['change']);
+                if($mch_id_money !== true){
+                    return __error($mch_id_money);
+                    break;
+                }
             }
 
             if (($Umoney['df'] - $change['change'] < 0) || ($change['change'] - $sum <= 0)) return __error('代付金额之和不正确！');
+
+
+            //token
+            $__token__ = $this->request->param('__token__/s', '');
+            $__hash__ = Session::pull('__token__');
+            if ($__token__ !== $__hash__) return __error("令牌验证无效，请刷新重试");
+
 
             $change['relate'] = $this->user['uid'];//关联uid
             $change['type'] = 15;//代付冻结金额类型
 
             $res = Umoney::dispose($Umoney, $change); //处理
             if (true !== $res['msg']) return __error($res['msg']);
-
-
 
            $this->model = new Df();;
             //使用事物保存数据
