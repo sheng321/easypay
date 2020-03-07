@@ -176,7 +176,7 @@ class Df extends AdminController {
             $validate = $this->validate($post, 'app\common\validate\Withdrawal.status_df');
             if (true !== $validate) return __error($validate);
 
-            $order = $this->model->quickGet($post['id']);
+            $order = $this->model->where(['id'=>$post['id']])->find();
             if ($order['status'] >= $post['status']) return __error('选择状态重复或者错误！');
 
             //解除订单锁定
@@ -194,7 +194,7 @@ class Df extends AdminController {
 
             if(empty($order['channel_id'])) return __error('请先选择出款通道！');
 
-             $channel_money = Umoney::quickGet(['uid' => 0, 'df_id' => $order['channel_id']]); //通道金额
+             $channel_money = Umoney::where(['uid' => 0, 'df_id' => $order['channel_id']])->find(); //通道金额
             if(empty($channel_money)) __error('代付通道金额数据异常!');
 
             //处理中
@@ -215,17 +215,7 @@ class Df extends AdminController {
                 $Umoney_data = $res['data'];
                 $UmoneyLog_data = $res['change'];
 
-                //使用事物保存数据
-                $this->model->startTrans();
-                $save1 = $this->model->save($post, ['id' => $post['id']]);
 
-                $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
-                $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
-
-                if (!$save1 || !$save || !$add) {
-                    $this->model->rollback();
-                    return __error('数据有误，请稍后再试!');
-                }
                 //这里提交代付申请
                 $order['bank'] = json_decode($order['bank'],true);
                 $result = $Payment->pay($order);
@@ -243,29 +233,35 @@ class Df extends AdminController {
                 }
                 //成功
                 if($result['code'] == 1){
+                    $post['upload'] = 1;//已上传到上游
                     //更新数据
                     if(!empty($result['data']) && is_array($result['data'])){
-                        $arr = [];
                         foreach ($result['data'] as $k => $v){
-                            if($k == 'actual_amount') $arr[$k] = $v;//实际到账
-                            if($k == 'transaction_no') $arr[$k] = $v;//上游单号
-                            if($k == 'remark') $arr[$k] = $v;//备注
+                            if($k == 'actual_amount') $post[$k] = $v;//实际到账
+                            if($k == 'transaction_no') $post[$k] = $v;//上游单号
+                            if($k == 'remark') $post[$k] = $v;//备注
                         }
-                        if(!empty($arr)){
-                            $arr['id'] = $post['id'];
-                            $this->model->save($arr,['id'=>$post['id']]);
-                        }
+                    //使用事物保存数据
+                    try{
+                        Db::startTrans();
+                        $save1 = $this->model->save($post, ['id' => $post['id']]);
+                        $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
+                        $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
+                        if (!$save1 || !$save || !$add) throw new \Exception('数据有误，请稍后再试!');
+                        Db::commit();
+                        //添加异步查询订单状态
+                        \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
+                    }catch (\Exception $e){
+                        Db::rollback();
+                        $post['status'] = 1;
+                        $post['remark'] = '提交成功,更新数据失败，请手动操作一次，不能切换通道！！';
+                        $this->model->save($post, ['id' => $post['id']]);
+                        return __error('提交成功,更新数据失败，请手动操作一次，不能切换通道！！');
                     }
-
-                    $this->model->commit();
-
-                    //添加异步查询订单状态
-                    \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
-                    // \think\Queue::push('app\\common\\job\\Df', $order['id'], 'df');//一分钟);
-                    return __success('操作成功！');
-                }else{
-                    $this->model->rollback();
-                    return __error('申请代付失败，请检查上游订单状，上游返回：'.$result['msg']);
+                      return __success('操作成功！');
+                    }else{
+                        return __error('申请代付失败，请检查上游订单状，上游返回：'.$result['msg']);
+                    }
                 }
             }
 
@@ -895,11 +891,8 @@ class Df extends AdminController {
                 $id = $this->request->post('df_id/d',0);
                 if(empty($id))  return __success('处理完成');
 
-                $order =  $this->model->quickGet($id);
+                $order =  $this->model->where(['id'=>$id])->find();//最新订单数据
                 if(empty($order) || $order['status'] != 1 || empty($order['channel_amount']) || !empty($order['remark']))  return __success('处理完成');
-
-                //先更新系统数据，再提交数据到上游
-
                 //冻结通道金额
                 $change['change'] = $order['channel_amount'] ;//变动金额
                 $change['relate'] = $order['system_no'];//关联订单号
@@ -908,25 +901,10 @@ class Df extends AdminController {
 
                 if (true !== $res['msg'] && $res['msg'] != '申请金额冻结大于可用金额') return __error('代付通道:' . $res['msg']);
 
-
                 $Umoney_data = $res['data'];
                 $UmoneyLog_data = $res['change'];
 
-                $post['id'] = $order['id'];
-                $post['status'] = 2;
-
-                //使用事物保存数据
-                $this->model->startTrans();
-                $save1 = $this->model->save($post, ['id' => $post['id']]);
-
-                $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
-                $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
-
-                if (!$save1 || !$save || !$add) {
-                    $this->model->rollback();
-                    return __error('数据有误，请稍后再试!');
-                }
-                //这里提交代付申请
+                //这里提交代付申请到上游
                 $order['bank'] = json_decode($order['bank'],true);
                 $result = $Payment->pay($order);
                 if(empty($result)|| !is_array($result)){
@@ -944,29 +922,43 @@ class Df extends AdminController {
 
                 //成功
                 if($result['code'] == 1){
-                    $arr['remark'] = '批量操作';
+                    $post['id'] = $order['id'];
+                    $post['upload'] = 1;//已上传到上游
+
                     //更新数据
                     if(!empty($result['data']) && is_array($result['data'])){
                         foreach ($result['data'] as $k => $v){
-                            if($k == 'actual_amount') $arr[$k] = $v;//实际到账
-                            if($k == 'transaction_no') $arr[$k] = $v;//上游单号
+                            if($k == 'actual_amount') $post[$k] = $v;//实际到账
+                            if($k == 'transaction_no') $post[$k] = $v;//上游单号
                         }
                     }
-                    if(!empty($arr)){
-                        $arr['id'] = $post['id'];
-                        $this->model->save($arr,['id'=>$post['id']]);
+
+                    //使用事物保存数据
+                    try{
+                        Db::startTrans();
+                        $post['status'] = 2;
+                        $post['remark'] = '批量操作';
+                        $save1 = $this->model->save($post, ['id' => $post['id']]);
+                        $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
+                        $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
+                        if (!$save1 || !$save || !$add)  throw new \Exception('数据有误，请稍后再试!');
+                        Db::commit();
+                        //添加异步查询订单状态
+                        \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');
+                    }catch (\Exception $e){
+                        Db::rollback();
+                        $post['remark'] = '提交成功,更新数据失败，请手动操作一次，不能切换通道！！';
+                        $this->model->save($post, ['id' => $post['id']]);
+                        return __error('ID：'.$order['id'].' 单号：'.$order['system_no'].'提交成功,更新数据失败，请手动操作一次，不能切换通道！！');
                     }
-                    $this->model->commit();
-                    //添加异步查询订单状态
-                    \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');
-                    return __success('ID：'.$order['id'].' 单号：'.$order['system_no'].' 处理成功1！');
+
+                    return __success('ID：'.$order['id'].' 单号：'.$order['system_no'].' 处理成功！');
                 }else{
-                    $this->model->rollback();
                     $msg = '申请代付失败';
                     if(!empty($result['msg'])) $msg .= ',上游返回:'.$result['msg'];
                     $arr['remark'] = $msg;
-                    $arr['id'] = $post['id'];
-                    $this->model->save($arr,['id'=>$post['id']]);
+                    $arr['id'] = $order['id'];
+                    $this->model->save($arr,['id'=>$order['id']]);
                     return __success($msg);
                 }
             }
