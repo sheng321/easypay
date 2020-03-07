@@ -176,7 +176,7 @@ class Df extends AdminController {
             $validate = $this->validate($post, 'app\common\validate\Withdrawal.status_df');
             if (true !== $validate) return __error($validate);
 
-            $order = $this->model->where(['id'=>$post['id']])->find();
+            $order = $this->model->where(['id'=>$post['id']])->find()->toArray();
             if ($order['status'] >= $post['status']) return __error('选择状态重复或者错误！');
 
             //解除订单锁定
@@ -214,7 +214,6 @@ class Df extends AdminController {
 
                 $Umoney_data = $res['data'];
                 $UmoneyLog_data = $res['change'];
-                 halt($Umoney_data);
 
                 //这里提交代付申请
                 $order['bank'] = json_decode($order['bank'],true);
