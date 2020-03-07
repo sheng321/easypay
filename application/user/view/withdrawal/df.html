@@ -20,20 +20,20 @@
                             <div class="layui-form-item layui-inline">
                                 <label class="layui-form-label-99admin">开户人</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" id="account_name" class="layui-input" placeholder="请输入开户人"/>
+                                    <input type="text" id="account_name" class="layui-input" autocomplete="off"   placeholder="请输入开户人"/>
                                 </div>
                             </div>
                             <div class="layui-form-item layui-inline">
                                 <label class="layui-form-label-99admin">商户单号</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" id="out_trade_no" class="layui-input" placeholder="商户单号"/>
+                                    <input type="text" id="out_trade_no" class="layui-input"  autocomplete="off"  placeholder="商户单号"/>
                                 </div>
                             </div>
 
                             <div class="layui-form-item layui-inline">
                                 <label class="layui-form-label-99admin">系统单号</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" id="system_sn" class="layui-input" placeholder="请输入系统单号"/>
+                                    <input type="text" id="system_sn" class="layui-input" autocomplete="off"   placeholder="请输入系统单号"/>
                                 </div>
                             </div>
                             <div class="layui-form-item layui-inline">
@@ -50,7 +50,7 @@
                             <div class="layui-form-item layui-inline">
                                 <label class="layui-form-label-99admin">创建时间</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" id="create_at" class="layui-input " placeholder="请选择创建时间">
+                                    <input type="text" id="create_at" class="layui-input "  autocomplete="off" placeholder="请选择创建时间">
                                 </div>
                             </div>
 
@@ -95,13 +95,13 @@ $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
         {field: 'fee', title: '手续费', width: 80, align: "center"},
         {field: 'actual_amount', title: '实际到账',width: 100,align: 'center'},
         {field: 'card_number', title: '银行卡号', width: 150,  unresize: true, align: "center"},
-        {field: 'account_name', title: '开户人', width: 80,  unresize: true, align: "center"},
-        {field: 'bank_name', title: '银行名称', width: 100,  unresize: true, align: "center"},
+        {field: 'account_name', title: '开户人', width: 100,  unresize: true, align: "center"},
+        {field: 'bank_name', title: '银行名称', width: 120,  unresize: true, align: "center"},
         {field: 'location', title: '开卡地区', width: 190, unresize: true, align: "center"},
-        {field: 'status', title: '状态', width: 90, templet: '#checkStatus', unresize: true, align: "center"},
+        {field: 'status', title: '状态', width: 100, templet: '#checkStatus', align: "center"},
         {field: 'create_at', title: '申请时间', width: 170, unresize: true, align: "center"},
         {field: 'remark1', title: '备注', width: 80,  align: "center"},
-        {field: 'ip', title: 'IP', width: 80, align: "center"},
+        {field: 'ip', title: 'IP', width: 110, align: "center"},
     ]]);
     /**
      * 日期范围
