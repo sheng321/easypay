@@ -235,18 +235,20 @@ class Withdrawal extends UserController {
             $res = Umoney::dispose($Umoney,$change); //处理
             if (true !== $res['msg']) return __error($res['msg']);
 
-            //使用事物保存数据
-            Db::startTrans();
+            $this->model = new Df();
 
-            $save1 = (new Df())->create($data);
+            //使用事物保存数据
+            $this->model->startTrans();
+
+            $save1 = $this->model->create($data);
             $save = (new Umoney())->saveAll($res['data']);
             $add = (new UmoneyLog())->saveAll($res['change']);
 
             if (!$save || $add  || !$save1 ) {
-                Db::rollback();
+                $this->model->rollback();
                 return __error('数据有误，请稍后再试！');
             }
-            Db::commit();
+            $this->model->commit();
             return __success('操作成功');
         }
 
