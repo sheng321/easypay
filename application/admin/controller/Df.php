@@ -194,7 +194,7 @@ class Df extends AdminController {
 
             if(empty($order['channel_id'])) return __error('请先选择出款通道！');
 
-             $channel_money = Umoney::where(['uid' => 0, 'df_id' => $order['channel_id']])->find(); //通道金额
+             $channel_money = Umoney::where(['uid' => 0, 'df_id' => $order['channel_id']])->field(['update_at'],true)->find(); //通道金额
             if(empty($channel_money)) __error('代付通道金额数据异常!');
 
             //处理中
@@ -242,22 +242,18 @@ class Df extends AdminController {
                             if ($k == 'remark') $post[$k] = $v;//备注
                         }
                     }
-
-
-                    dump($UmoneyLog_data);
                     //使用事物保存数据
                     try{
                         Db::startTrans();
                         $save1 = $this->model->save($post, ['id' => $post['id']]);
                         $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
-                        $add = (new UmoneyLog())->insertAll($UmoneyLog_data);
+                        $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
                         if (!$save1 || !$save || !$add) throw new \Exception('数据有误，请稍后再试!');
                         Db::commit();
                         //添加异步查询订单状态
                         \think\Queue::later(60,'app\\common\\job\\Df', $order['id'], 'df');//一分钟
                     }catch (\Exception $e){
                         Db::rollback();
-                        dump($e->getMessage());
                         $post['status'] = 1;
                         $post['remark'] = '提交成功,更新数据失败，请手动操作一次，不能切换通道！！';
                         $this->model->save($post, ['id' => $post['id']]);
