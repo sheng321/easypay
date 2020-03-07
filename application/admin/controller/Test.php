@@ -20,10 +20,10 @@ class Test  extends Controller
     public function index()
     {
 
-        exceptions_api('当前访问人数过多，请稍后再试~');
+       // exceptions_api('当前访问人数过多，请稍后再试~');
 
-      //  $res = \think\Queue::push('app\\common\\job\\Df', 342, 'df');
-       // halt( $res);
+        $res = \think\Queue::push('app\\common\\job\\Df', 349, 'df');
+        halt( $res);
 
 
     }
