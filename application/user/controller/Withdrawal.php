@@ -199,7 +199,18 @@ class Withdrawal extends UserController {
                 return __error("此银行卡： {$bank[$bank_card_id]['card_number']} 超过单卡单日限额 {$withdrawal['limit_money']} 元");
             }
             if(($day_card[0]['num'] + 1) > $withdrawal['limit_times']){
-                return __error("此银行卡： {$bank[$bank_card_id]['card_number']} 超过单卡单日次数 {$withdrawal['limit_times']}");
+                return __error("此银行卡： {$bank[$bank_card_id]['card_number']} 超过单卡单日次数 {$withdrawal['limit_times']} 次");
+            }
+
+            //会员单日提现额度
+            if(!empty($withdrawal['excpet_uid'])){
+                $excpet_uid = explode("|",$withdrawal['excpet_uid']);
+                if(in_array($uid,$excpet_uid)){
+                    $amounts =  Df::where([['status','<',4],['mch_id','=',$uid]])->whereBetween('create_at',[timeToDate(0,0,-24),date('Y-m-d H:i:s')])->sum('amount');
+                    if(($amounts + $amount) > $withdrawal['total_money']){
+                        return __error("超过会员单日限额 {$withdrawal['total_money']} 元，请联系客服处理。");
+                    }
+                }
             }
 
             //token
@@ -235,7 +246,7 @@ class Withdrawal extends UserController {
             $save = (new Umoney())->saveAll($res['data']);
             $add = (new UmoneyLog())->saveAll($res['change']);
 
-            if (!$save || !$add  || !$save1) {
+            if (!$save || $add  || !$save1) {
                 $$this->model->rollback();
                 $msg = '数据有误，请稍后再试！';
                 return __error($msg);
