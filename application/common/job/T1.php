@@ -15,15 +15,20 @@ class T1 {
         //多线程添加锁
         try{
             $lock_val = 'T1:'.$data['id'];
-            $isJobDone =  Lock::lock(function ($res)use($data){
+            $isJobDone =  Lock::queueLock(function ($res)use($data){
                 $isJobDone = $this->doHelloJob($data);
                 return $isJobDone;
-            },$lock_val);
+            },$lock_val,60,60);
         }catch (\Exception $e){
-            $job->delete();//执行一次
+            $job->failed();
+            return;
         }
         if($isJobDone !== true ) __log(json_encode($isJobDone,320),3);//记录到异常日志列表
-        $job->delete();//只执行一次
+        if ($job->attempts() > 3) {
+            $job->delete();
+            return;
+        }
+        $job->failed();
         return;
     }
 

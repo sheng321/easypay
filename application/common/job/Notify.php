@@ -24,10 +24,10 @@ class Notify {
         //多线程添加锁
         try{
             $lock_val = 'Notify:'.$Order['id'];
-            $isJobDone =  Lock::lock(function ($res) use ($data,$Order){
+            $isJobDone =  Lock::queueLock(function ($res) use ($data,$Order){
                             $isJobDone = $this->doHelloJob($data,$Order);
                             return $isJobDone;
-                        },$lock_val);
+                        },$lock_val,60,60);
         }catch (\Exception $e){
                 //出现异常
         }

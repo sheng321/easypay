@@ -62,10 +62,13 @@ class Df {
             return;
         }else{
             if ($job->attempts() > 2000) {
-                // 第2种处理方式：原任务的基础上1分钟执行一次并增加尝试次数
-                $job->failed();
+                $job->delete();
                 return;
             }
+
+            // 原任务的基础上1分钟执行一次并增加尝试次数
+            $job->failed();
+            return;
         }
 
     }
