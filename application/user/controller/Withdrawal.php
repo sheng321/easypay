@@ -244,7 +244,7 @@ class Withdrawal extends UserController {
             $save = (new Umoney())->saveAll($res['data']);
             $add = (new UmoneyLog())->saveAll($res['change']);
 
-            if (!$save || $add  || !$save1 ) {
+            if (!$save || !$add  || !$save1 ) {
                 $this->model->rollback();
                 return __error('数据有误，请稍后再试！');
             }
