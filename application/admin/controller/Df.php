@@ -235,12 +235,13 @@ class Df extends AdminController {
                 if($result['code'] == 1){
                     $post['upload'] = 1;//已上传到上游
                     //更新数据
-                    if(!empty($result['data']) && is_array($result['data'])){
-                        foreach ($result['data'] as $k => $v){
-                            if($k == 'actual_amount') $post[$k] = $v;//实际到账
-                            if($k == 'transaction_no') $post[$k] = $v;//上游单号
-                            if($k == 'remark') $post[$k] = $v;//备注
+                    if(!empty($result['data']) && is_array($result['data'])) {
+                        foreach ($result['data'] as $k => $v) {
+                            if ($k == 'actual_amount') $post[$k] = $v;//实际到账
+                            if ($k == 'transaction_no') $post[$k] = $v;//上游单号
+                            if ($k == 'remark') $post[$k] = $v;//备注
                         }
+                    }
                     //使用事物保存数据
                     try{
                         Db::startTrans();
@@ -259,9 +260,8 @@ class Df extends AdminController {
                         return __error('提交成功,更新数据失败，请手动操作一次，不能切换通道！！');
                     }
                       return __success('操作成功！');
-                    }else{
-                        return __error('申请代付失败，请检查上游订单状，上游返回：'.$result['msg']);
-                    }
+                }else{
+                    return __error('申请代付失败，请检查上游订单状，上游返回：'.$result['msg']);
                 }
             }
 

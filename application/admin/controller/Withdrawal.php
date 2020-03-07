@@ -238,8 +238,6 @@ class Withdrawal extends AdminController {
             $post['lock_id'] = $this->user['id'];
             $save1 = $this->model->save($post, ['id' => $post['id']]);
 
-           
-
                 $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
                 $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
 
