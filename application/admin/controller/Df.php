@@ -250,7 +250,7 @@ class Df extends AdminController {
                         Db::startTrans();
                         $save1 = $this->model->save($post, ['id' => $post['id']]);
                         $save = (new Umoney())->isUpdate(true)->saveAll($Umoney_data);
-                        $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data);
+                        $add = (new UmoneyLog())->isUpdate(false)->saveAll($UmoneyLog_data,true);
                         throw new \Exception('数据有误，请稍后再试!');
                         if (!$save1 || !$save || !$add) throw new \Exception('数据有误，请稍后再试!');
                         Db::commit();
