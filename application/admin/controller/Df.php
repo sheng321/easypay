@@ -214,7 +214,7 @@ class Df extends AdminController {
 
                 $Umoney_data = $res['data'];
                 $UmoneyLog_data = $res['change'];
-
+                 halt($Umoney_data);
 
                 //这里提交代付申请
                 $order['bank'] = json_decode($order['bank'],true);
