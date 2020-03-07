@@ -242,6 +242,9 @@ class Df extends AdminController {
                             if ($k == 'remark') $post[$k] = $v;//备注
                         }
                     }
+
+                    dump($post);
+                    dump($Umoney_data);
                     //使用事物保存数据
                     try{
                         Db::startTrans();
@@ -255,7 +258,6 @@ class Df extends AdminController {
                     }catch (\Exception $e){
                         Db::rollback();
                         dump($e->getMessage());
-                        halt($e);
                         $post['status'] = 1;
                         $post['remark'] = '提交成功,更新数据失败，请手动操作一次，不能切换通道！！';
                         $this->model->save($post, ['id' => $post['id']]);
