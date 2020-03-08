@@ -5,8 +5,6 @@ use app\common\controller\WithdrawalController;
 class Test extends WithdrawalController
 {
     public function index(){
-
-
         $order =[
           'money'=> 100,
           'bankname'=>'103',

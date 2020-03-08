@@ -21,7 +21,7 @@ return [
 
     'DfMd5key'=> '4e10c1434813ac1ad65f82b608dbfe1f73204948',//代付测试秘钥
     'df_api'=>'http://120.24.166.163:66/withdrawal.php/api',
-    'df_qurey'=>'http://120.24.166.163:66/withdrawal.php/api',
+    'df_qurey'=>'http://120.24.166.163:66/withdrawal.php/query',
     'df_balance'=>'http://120.24.166.163:66/withdrawal.php/api',
 
    // 'df_api'=>'http://www.test4.com/withdrawal.php/api',

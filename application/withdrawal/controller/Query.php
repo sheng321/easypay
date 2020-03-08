@@ -3,6 +3,7 @@ namespace app\withdrawal\controller;
 use app\common\controller\WithdrawalController;
 use app\common\model\Df;
 use app\common\model\Uprofile;
+use think\Db;
 
 
 /**
@@ -27,7 +28,7 @@ class Query extends WithdrawalController
 
         if(!check_sign($param,$Uprofile['df_secret']))  __jerror('签名错误');
 
-        $Order =  Df::quickGet(['out_trade_no'=>$param['out_trade_no']]);
+        $Order = Db::table('cm_withdrawal_api')->where(['out_trade_no'=>$param['out_trade_no']])->find();
         if(empty($Order) || $Order['mch_id'] !== $param['mchid'] )   __jerror('交易不存在');
 
         $data = array();
@@ -35,7 +36,6 @@ class Query extends WithdrawalController
         $data['out_trade_no'] = $param['out_trade_no'];
         $data['amount'] = $Order['amount'];
         $data['transaction_id'] = $Order['system_no'];
-        $data['success_time'] = $Order['success_time'];
 
         switch ($Order['status']){
             //未处理
@@ -52,6 +52,7 @@ class Query extends WithdrawalController
             case 3:
                 $data['refCode'] = '1';//成功
                 $data['refMsg'] = '成功';
+                $data['success_time'] = $Order['update_at'];
                 break;
             //失败退款
             case 4:
