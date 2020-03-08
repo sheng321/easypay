@@ -12,12 +12,7 @@
     <tr><td>交易金额：</td><td><strong class="text-danger">{$order.amount}</strong></td></tr>
     <tr><td>手续费：</td><td><strong class="">{$order.total_fee}</strong></td></tr>
     <tr><td>实际金额：</td><td><strong class="text-success">{$order.actual_amount}</strong></td></tr>
-    <tr><td>提交时间：</td><td><strong class="text-warning">{$order.create_time}</strong></td></tr>
-    <tr><td>过期时间：</td><td><strong class="text-warning">{$order.over_time}</strong></td></tr>
-    <tr><td>成功时间：</td><td><strong class="text-danger">{$order.pay_time}</strong></td></tr>
-    <tr><td>交易通道：</td><td>{$order.channel_name}</td></tr>
-    <tr><td>交易通道分组：</td><td>{$order.channelgroup_name}</td></tr>
-    <tr><td>支付类型：</td><td>{$order.product_name}</td></tr>
+
     <tr><td>提交地址：</td><td>{$order.callback_url}</td></tr>
     <tr><td>回调地址：</td><td>{$order.notify_url}</td></tr>
     <tr><td>支付状态：</td><td>
@@ -44,6 +39,12 @@
             {/if}
         </strong>
     </td></tr>
+    <tr><td>提交时间：</td><td><strong class="text-warning">{$order.create_time}</strong></td></tr>
+    <tr><td>过期时间：</td><td><strong class="text-warning">{$order.over_time}</strong></td></tr>
+    <tr><td>成功时间：</td><td><strong class="text-danger">{$order.pay_time}</strong></td></tr>
+    <tr><td>交易通道：</td><td>{$order.channel_name}</td></tr>
+    <tr><td>交易通道分组：</td><td>{$order.channelgroup_name}</td></tr>
+    <tr><td>支付类型：</td><td>{$order.product_name}</td></tr>
 
     <tr><td>ID：</td><td>{$order.id}</td></tr>
     <tr><td>商户编号：</td><td>{$order.mch_id}</td></tr>
