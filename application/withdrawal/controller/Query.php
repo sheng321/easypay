@@ -1,7 +1,6 @@
 <?php
 namespace app\withdrawal\controller;
 use app\common\controller\WithdrawalController;
-use app\common\model\Df;
 use app\common\model\Ip;
 use app\common\model\Uprofile;
 use think\Db;
