@@ -877,6 +877,8 @@ class CountService {
             //插入每日对账表
             if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
+            unset($insert);
+            unset($update);
 
 
             $withdraw_data = [];
@@ -931,6 +933,8 @@ class CountService {
             //插入每日对账表
             if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
+            unset($insert);
+            unset($update);
 
             //支出/收入
             $money_data = [];
@@ -961,11 +965,10 @@ class CountService {
                     $insert[$val['day']]['day'] = $val['day'];
                     $insert[$val['day']]['type'] = 6;
                 }
-
-                //插入每日对账表
-                if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
-                if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
             }
+            //插入每日对账表
+            if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
+            if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
 
 
         return true;
