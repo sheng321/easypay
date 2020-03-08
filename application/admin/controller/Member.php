@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 use app\common\model\Umember;
+use app\common\model\Umoney;
 use app\common\model\Uprofile;
 use app\common\model\Urelations;
 
