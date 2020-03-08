@@ -114,7 +114,7 @@ class CountService {
             $Accounts = model('app\common\model\Accounts');
 
             //$day = $Accounts->where([['uid','>',0],['type','=',0]])->order(['day desc'])->cache('account_uid',60)->value('day');
-            $last = $Accounts->where([['uid','>',0],['type','=',0]])->order(['day desc'])->cache('account_uid',3)->field('day,update_at')->find();
+            $last = $Accounts->where([['uid','>',0],['type','=',0]])->order(['day desc'])->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
             if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
@@ -217,7 +217,7 @@ class CountService {
             $Accounts = model('app\common\model\Accounts');
 
            // $day = $Accounts->where([['uid', '>', 0],['type', '=', 1]])->order(['day desc'])->cache('agent_account_id',1)->value('day');
-            $last = $Accounts->where([['uid','>',0],['type','=',1]])->order(['day desc'])->cache('agent_account_id',3)->field('day,update_at')->find();
+            $last = $Accounts->where([['uid','>',0],['type','=',1]])->order(['day desc'])->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
             if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
@@ -386,7 +386,7 @@ class CountService {
             $update = [];
             $Accounts = model('app\common\model\Accounts');
 
-            $last = $Accounts->where([['channel_id','>',0],['type','=',3]])->order(['day desc'])->cache('account_channel_id',3)->field('day,update_at')->find();
+            $last = $Accounts->where([['channel_id','>',0],['type','=',3]])->order(['day desc'])->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
             if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
@@ -496,7 +496,7 @@ class CountService {
             $Accounts = model('app\common\model\Accounts');
 
             // $day = $Accounts->where([['channel_id','>',0],['type','>',3]])->order(['day desc'])->cache('account_channel_id',1)->value('day');
-            $last = $Accounts->where([['channel_id','>',0],['type','=',3]])->order(['day desc'])->cache('account_channel_id',3)->field('day,update_at')->find();
+            $last = $Accounts->where([['channel_id','>',0],['type','=',3]])->order(['day desc'])->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
             if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
@@ -586,7 +586,7 @@ class CountService {
             $Accounts = model('app\common\model\Accounts');
 
             //$day = $Accounts->where([['withdraw_id','>',0]])->order(['day desc'])->cache('account_withdraw_id',3)->value('day');
-            $last = $Accounts->where([['type','=',4]])->order(['day desc'])->cache('account_withdraw_id',3)->field('day,update_at')->find();
+            $last = $Accounts->where([['type','=',4]])->order(['day desc'])->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
             if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
@@ -697,7 +697,7 @@ class CountService {
             $Accounts = model('app\common\model\Accounts');
 
            // $day = $Accounts->where([['df_id','>',0]])->order(['day desc'])->cache('account_df_id',3)->value('day');
-            $last = $Accounts->where([['type','=',5]])->order(['day desc'])->cache('account_df_id',3)->field('day,update_at')->find();
+            $last = $Accounts->where([['type','=',5]])->order(['day desc'])->field('day,update_at')->find();
             $now = date('Y-m-d H:i:s',time());//现在 需要统计的结束时间
             if(empty($last['day'])){
                 $day = '2019-01-01 00:00:00';
