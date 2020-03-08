@@ -33,7 +33,7 @@ class Accounts extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3,
         'key'=> "String:table:Accounts:day:{day}:withdraw_id:{withdraw_id}:df_id:{df_id}:channel_id:{channel_id}:uid:{uid}:id:{id}",
         'keyArr'=> ['id','uid','channel_id','df_id','day'],

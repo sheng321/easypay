@@ -21,7 +21,7 @@ class OrderDispose extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3600,
         'key'=> "String:table:OrderDispose:pid:{pid}:system_no:{system_no}:id:{id}",
         'keyArr'=> ['id','pid','system_no'],

@@ -18,7 +18,7 @@ class Withdrawal extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 60,
         'key'=> "String:table:Withdrawal:system_no:{system_no}:id:{id}",
         'keyArr'=> ['id','system_no'],

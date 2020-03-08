@@ -23,7 +23,7 @@ class PayProduct extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3360 ,
         'key'=> "String:table:PayProduct:title:{title}:code:{code}:id:{id}",
         'keyArr'=> ['id','title','code'],

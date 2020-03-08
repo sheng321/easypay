@@ -23,7 +23,7 @@ class Urelations extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3360 ,
         'key'=> "String:table:Urelations:pid:{pid}:uid:{uid}:id:{id}",
         'keyArr'=> ['id','uid','pid'],

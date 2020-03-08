@@ -100,10 +100,7 @@ class ModelService extends Model {
 
         //一定要用模型方法
         self::event('after_insert', function (ModelService $model) {
-
             $model->clearCachebyModel($model);
-
-            $model->redisEvent($model);
         });
 
         self::event('before_update', function (ModelService $model) {
@@ -115,8 +112,7 @@ class ModelService extends Model {
         self::event('after_update', function (ModelService $model) {
 
             $model->clearCachebyModel($model);
-
-            $model->redisEvent($model);
+            $model->deleteRedis($model);
 
         });
 
@@ -157,91 +153,8 @@ class ModelService extends Model {
 
 
 
-    //更新插入redis
-    static protected function redisEvent(ModelService $model){
-        $obj = get_object_vars($model);
-        $getData =  $model->getData();
-        switch (true){
-            case (!empty($model->id)):
-                $id = $model->id;
-                break;
-            case (!empty($getData['id'])):
-                $id = $getData['id'];
-                break;
-            default:
-                return false;
-                break;
-        }
-
-        //判断
-        if(!isset($obj['redis']) || !isset($obj['redis']['is_open']) || $obj['redis']['is_open'] == false) return false;
-
-
-        //防止缓存穿透
-        $lockKey = 'lock:'.$obj['name'].':'.$id;
-        $random = mt_rand(1,100000);
-        $ok =  $model->lockRedis($lockKey,$random);
-        if ($ok) {
-
-            //获取到锁
-            try {
-                $data = $model::get($id);//查询数据库获取所有数据
-                if(empty($data)) throw new Exception("未查询到数据！");
-
-                $res = self::saveRedis($obj,$data->toArray());
-                if(!$res) throw new Exception("更新redis失败！");
-
-                // 相关联模型删除
-                if(isset($obj['redis']['relate'])){
-
-                    foreach ($obj['redis']['relate'] as $k => $v){
-
-                        if(!isset($data[$v]))  return false;
-                        $model1 = model($k);
-                        $obj1 = get_object_vars($model1);
-                        if(!isset($obj1['redis']) || !isset($obj1['redis']['is_open']) || $obj1['redis']['is_open'] == false) return false;
-                        self::clearRedis($obj1,[$v=>$data[$v]]);
-                    }
-
-                }
-
-            } catch (\Exception $e) {
-                logs($e->getMessage().'|'.$obj['name'].'更新插入'.$id."|".json_encode($data),'redis');
-
-                self::clearRedis($obj,$id);
-            }
-
-            $model->lockRedis($lockKey,$random,1);
-        }
-
-    }
-
-    //删除redis
-    static protected function clearRedis($obj,$data){
-
-        if(!isset($obj['redis']) || !isset($obj['redis']['is_open']) || $obj['redis']['is_open'] == false) return false;
-
-        $redisModel =  self::$redisModel;
-        $redisModel->key = $obj['redis']['key'];//设置key
-
-        $quick = $redisModel->newQuery();
-        if(is_array($data)){
-            foreach ($data as $k => $v){
-                $quick =  $quick->where($k,$v);
-            }
-        }elseif(is_string($data)){
-            $quick = $quick->where('id', $data);
-        }
-
-        $res = $quick->delete();
-
-        return true;
-    }
-
-
     static protected function deleteRedis(ModelService $model){
 
-        //防止缓存穿透
         $obj = get_object_vars($model);
         $getData =  $model->getData();
         switch (true){
@@ -257,97 +170,8 @@ class ModelService extends Model {
         }
 
         //判断
-        if(!isset($obj['redis']) || !isset($obj['redis']['is_open']) || $obj['redis']['is_open'] == false) return false;
+        if(!isset($obj['redis']) || empty($obj['redis']['key']) || empty($id)) return false;
 
-
-        $lockKey = 'lock:'.$obj['name'].':'.$id;
-        $random = mt_rand(1,100000);
-        $ok =  $model->lockRedis($lockKey,$random);
-        if ($ok) {
-            //获取到锁
-            try {
-                self::clearRedis($obj,$id);
-            } catch (\Exception $e) {
-                logs($e->getMessage().'|'.$obj['name'].'删除'.$id,'redis');
-                self::clearRedis($obj,$id); //失败删除旧数据
-            }
-
-            $model->lockRedis($lockKey,$random,1);
-        }
-
-        return true;
-    }
-
-    /**
-     * @param $lockKey
-     * @param $random 随机数
-     * @param int $ttl 过期时间
-     * @param int $type 建立锁 1 解锁
-     * @return bool|int 0
-     * 引入了一个随机数，这是为了防止逻辑处理时间过长导致锁的过期时间已经失效，这时候下一个请求就获得了锁，但是前一个请求在逻辑处理完直接删除了锁。
-     */
-    static public function lockRedis($lockKey,$random,$type = 0,$ttl = 3){
-
-        $redisModel =  self::$redisModel->instance();
-
-        if($type == 0){
-            $ok = false;
-            if(!($redisModel->exists($lockKey))){
-                $redisModel->setex( $lockKey , $ttl , $random );
-                $ok = $redisModel->exists($lockKey);
-            }
-            return $ok;
-        }else{
-            if ($redisModel->get($lockKey) == $random) {
-                $redisModel->del([$lockKey]);
-            }
-        }
-    }
-
-    /**
-     * 获取单条redis记录
-     * @param $where  单个ID 或者数组
-     * @return bool|mixed|null
-     */
-    static public function quickGet($where){
-       $data = new static();
-        $obj = get_object_vars($data);
-
-        $redisModel = self::$redisModel;
-
-        $redisModel->key = $obj['redis']['key'];//设置key
-        $quickGet =  $redisModel->newQuery();
-
-        if(is_array($where)){
-            if(!is_array($obj['redis']['keyArr'])) return false;
-            foreach ($obj['redis']['keyArr'] as $k =>$v){
-                if(isset($where[$v]))  $quickGet =  $quickGet->where($v,$where[$v]);
-            }
-            $search = $where;
-        }else{
-            //传入为ID的时候
-            $quickGet =  $quickGet->where('id',$where);
-            $search['id'] = $where;
-        }
-
-        $res =  $quickGet->first();
-
-        //调试模式 先关闭
-       if(!empty($res))  return json_decode($res,true);
-
-        //查询数据库
-        $res = $data::where($search)->order(['id'=>'desc'])->find();
-        if(empty($res))  return false;
-        $res = $res->toArray();
-        self::saveRedis($obj,$res);
-
-        return $res;
-    }
-
-    //删除单条redis
-    static public function delRedis($id){
-        $data = new static();
-        $obj = get_object_vars($data);
         $redisModel = self::$redisModel;
         $redisModel->key = $obj['redis']['key'];//设置key
         $res =  $redisModel->newQuery()->where('id',$id)->delete();
@@ -356,34 +180,73 @@ class ModelService extends Model {
 
 
     /**
-     * 添加或者更新redis
-     * @param $obj  当前模型的属性
-     * @param $data  要更新的数据
-     * @return bool
+     * 获取单条redis记录
+     * @param $where  单个ID 或者数组
+     * @return bool|mixed|null
      */
-    static public function saveRedis($obj,$data){
+    static public function quickGet($where){
+        $data = new static();
+        $obj = get_object_vars($data);
 
-        if(!isset($obj['redis']['keyArr'])) return false;
-        if(empty($obj['redis']['key'])) return false;
-        if(!isset($data['id'])) return false;
+        halt($obj);
 
-        $redisModel = self::$redisModel;
+        if(!empty($obj['redis']['key']) && is_array($obj['redis']['keyArr'])){
+            $redisModel = self::$redisModel;
+            $redisModel->key = $obj['redis']['key'];//设置key
+            $quickGet =  $redisModel->newQuery();
 
-        $redisModel->key = $obj['redis']['key'];//设置key
-        if(!empty($obj['redis']['ttl'])) $redisModel->ttl = $obj['redis']['ttl'];//设置过期时间
+            if(is_array($where)){
 
-        $keyArr = [];
-        foreach ($obj['redis']['keyArr'] as $k => $v){
-            $keyArr[$v] = '';
-            if(isset($data[$v])) $keyArr[$v] = empty($data[$v])?0:$data[$v];
+                foreach ($obj['redis']['keyArr'] as $k =>$v){
+                    if(isset($where[$v]))  $quickGet =  $quickGet->where($v,$where[$v]);
+                }
+                $search = $where;
+            }else{
+                //传入为ID的时候
+                $quickGet =  $quickGet->where('id',$where);
+                $search['id'] = $where;
+            }
+            $res =  $quickGet->first();
+
+            //调试模式 先关闭
+            if(!empty($res))  return json_decode($res,true);
+
+            //查询数据库
+            $res = $data::where($search)->order(['id'=>'desc'])->find();
+            if(empty($res))  return false;
+            $res = $res->toArray();
+            self::saveRedis($obj,$res);
+        }else{
+
+            $res = $data::where($where)->order(['id'=>'desc'])->find();
+            if(empty($res))  return false;
+            $res = $res->toArray();
         }
-        //先删除
-        $redisModel->newQuery()->where('id',$data['id'])->delete();
 
-        //再插入
-        $redisModel->insert($keyArr,json_encode($data));
+        return $res;
+    }
 
-        return true;
+    //删除 redis
+    static public function delRedis($id){
+        $data = new static();
+        $obj = get_object_vars($data);
+        //判断
+        if(!isset($obj['redis']) || empty($obj['redis']['key']) || empty($id)) return false;
+        $redisModel = self::$redisModel;
+        $redisModel->key = $obj['redis']['key'];//设置key
+
+        $quick = $redisModel->newQuery();
+        if(is_array($id)){
+            foreach ($id as $k => $v){
+                $quick = $quick->where($k,$v);
+            }
+        }elseif(is_string($id)){
+            $quick = $quick->where('id', $id);
+        }else{
+            return false;
+        }
+        $res = $quick->delete();
+        return $res;
     }
 
 
@@ -451,7 +314,6 @@ class ModelService extends Model {
 
         empty($msg) && $msg = '修改成功';
         return __success($msg);
-
     }
 
 

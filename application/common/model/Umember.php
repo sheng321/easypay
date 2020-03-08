@@ -18,7 +18,7 @@ class Umember extends UserService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3360 ,
         'key'=> "String:table:Umember:username:{username}:uid:{uid}:id:{id}",
         'keyArr'=> ['id','username','uid'],

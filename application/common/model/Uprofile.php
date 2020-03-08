@@ -33,7 +33,7 @@ class Uprofile extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 60 ,
         'key'=> "String:table:Uprofile:uid:{uid}:id:{id}",
         'keyArr'=> ['uid','id'],

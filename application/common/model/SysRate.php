@@ -27,7 +27,7 @@ class SysRate extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3360 ,
         'key'=> "String:table:SysRate:type:{type}:group_id:{group_id}:uid:{uid}:p_id:{p_id}:channel_id:{channel_id}:id:{id}",
         'keyArr'=> ['id','group_id','uid','p_id','channel_id','type'],

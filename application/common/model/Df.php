@@ -20,7 +20,7 @@ class Df extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3,
         'key'=> "String:table:Df:out_trade_no:{out_trade_no}:transaction_no:{transaction_no}:system_no:{system_no}:id:{id}",
         'keyArr'=> ['id','system_no'],

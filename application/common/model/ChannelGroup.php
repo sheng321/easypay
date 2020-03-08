@@ -22,7 +22,7 @@ class ChannelGroup extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 60 ,
         'key'=> "String:table:ChannelGroup:title:{title}:id:{id}",
         'keyArr'=> ['id','title'],

@@ -22,7 +22,7 @@ class ChannelDf extends ModelService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3360 ,
         'key'=> "String:table:ChannelDf:code:{code}:id:{id}",
         'keyArr'=> ['id'],

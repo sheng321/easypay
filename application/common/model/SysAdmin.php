@@ -36,7 +36,7 @@ class SysAdmin extends AdminService {
      * @var array
      */
     protected $redis = [
-        'is_open'=> true,
+
         'ttl'=> 3360 ,
         'key'=> "String:table:SysAdmin:id:{id}:username:{username}",
         'keyArr'=> ['id','username'],
