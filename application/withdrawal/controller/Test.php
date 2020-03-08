@@ -78,7 +78,7 @@ class Test extends WithdrawalController
         $sign = strtoupper(md5($md5str . "key=" . config('set.DfMd5key')));
         $param["pay_md5sign"] = $sign;
 
-        $res = Curl::post(config('set.df_qurey'), http_build_query($param));
+        $res = Curl::post(config('set.df_balance'), http_build_query($param));
         $result = json_decode($res,true);
         halt($result);
     }
