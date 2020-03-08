@@ -604,6 +604,22 @@ class CountService {
             $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(status=3,channel_amount,0)),0) as total_fee_paid,COALESCE(sum(if(status=3,1,0)),0) as total_paid,COALESCE(sum(if(status=3,fee,0)),0) as total_fee,COALESCE(sum(if(status=3,channel_fee,0)),0) as channel_fee,COALESCE(sum(if(status<3,1,0)),0) as do_orders,COALESCE(sum(if(status<3,amount,0)),0) as do_fee,channel_id,mch_id from cm_withdrawal where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
             $select =  Db::query($sql,[$day,$now]);
 
+            //清除为处理订单数据
+            $sql1 = "select count(1) as total_orders, left(create_at, 10) as day, from cm_withdrawal where channel_id = 0 AND  create_at BETWEEN ? AND ? GROUP BY day ORDER BY id DESC ";//每个通道的成功率
+            $select1 =  Db::query($sql1,[$day,$now]);
+            foreach ($select1 as $k => $v){
+                if(empty($v['total_orders'])){
+                    Db::where(['withdraw_id'=>0,'day'=>$v['day'],'type'=>4])->update([
+                        'total_orders'=>0,
+                        'total_fee_all'=>0,
+                        'total_fee_paid'=>0,
+                        'total_paid'=>0,
+                        'total_fee'=>0,
+                        'do_orders'=>0,
+                        'do_fee'=>0,
+                    ]);
+                }
+            }
 
             $Channel =  Channel::idRate();//通道
             foreach ($select as $k => $v) {
