@@ -52,6 +52,10 @@ class Test extends WithdrawalController
         $param['out_trade_no'] = 'c2003081358197735236';
         $param['mchid'] = config('set.memberid');
 
+        $ips = Ip::bList($param['mchid'],2);
+
+        halt($ips);
+
         ksort($param);
         $md5str = "";
         foreach ($param as $key => $val) {
