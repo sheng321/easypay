@@ -15,6 +15,7 @@ class Query extends WithdrawalController
 {
     public function index(){
         $param =   $this->request->only(["out_trade_no" ,"mchid","pay_md5sign"],'post');
+        if(empty($param))  __jerror('未接收到参数~');
 
         //商户属性
        $Uprofile =  Uprofile::quickGet(['uid'=>$param['mchid']]);

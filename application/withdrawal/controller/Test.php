@@ -1,6 +1,7 @@
 <?php
 namespace app\withdrawal\controller;
 use app\common\controller\WithdrawalController;
+use tool\Curl;
 
 class Test extends WithdrawalController
 {
@@ -44,6 +45,23 @@ class Test extends WithdrawalController
         $param["pay_md5sign"] = $sign;
 
         return msg_post(config('set.df_api'), $param);
+    }
+
+
+    public function query(){
+        $param['out_trade_no'] = 'c2003081358197735236';
+        $param['mchid'] = config('set.memberid');
+
+        ksort($param);
+        $md5str = "";
+        foreach ($param as $key => $val) {
+            $md5str = $md5str . $key . "=" . $val . "&";
+        }
+        $sign = strtoupper(md5($md5str . "key=" . config('set.DfMd5key')));
+        $param["pay_md5sign"] = $sign;
+
+        $res = Curl::post(config('set.df_qurey'), http_build_query($param));
+        halt($res);
     }
 
 }
