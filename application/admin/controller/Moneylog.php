@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 
+use app\common\model\Umoney;
 use app\common\model\UmoneyLog;
 
 /**  金额流水
@@ -222,15 +223,13 @@ class Moneylog  extends AdminController
 
             if (!$save || !$add) {
                 $Umoney->rollback();
-                $msg = '数据有误，请稍后再试！';
                 __log($res['log'].'失败');
-                return __error($msg);
+                return __error('数据有误，请稍后再试！');
             }
             $Umoney->commit();
 
             __log($res['log'].'成功');
-            empty($msg) && $msg = '操作成功';
-            return __success($msg);
+            return __success('操作成功');
         }
     }
 
