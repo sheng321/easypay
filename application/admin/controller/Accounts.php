@@ -273,6 +273,11 @@ class Accounts  extends AdminController
      */
     public function sys()
     {
+        CountService::mem_account();//商户统计
+        CountService::agent_account();//代理统计
+        CountService::channel_account();//通道统计
+        CountService::withdraw_account();//提现下发统计
+        CountService::df_account();//代付下发统计
         CountService::sys_account();//平台统计
 
         //ajax访问

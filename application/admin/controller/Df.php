@@ -361,6 +361,11 @@ class Df extends AdminController {
 
         if( $channel_amount < $Channel['min_pay']  || $channel_amount > $Channel['max_pay'])  return __error('申请通道金额不在通道出款范围内！');
 
+
+        //代付通道单卡单日次数
+        $channel_card_times_money = \app\common\model\Df::channel_card_times_money($Channel,$order['card_number'],$channel_amount);
+        if($channel_card_times_money !== true) return __error($channel_card_times_money);
+
         $res =  $this->model->save([
             'id'=>$pid,
             'channel_id'=>$Channel['id'],
@@ -808,10 +813,11 @@ class Df extends AdminController {
                 if ($num > 10) return msg_error('单数不能超过10笔！');
 
 
-                $orders = $this->model->where([['id', 'in', $pid]])->column('id,status,lock_id,amount,fee,system_no,verson,record', 'id');
+                $orders = $this->model->where([['id', 'in', $pid]])->column('id,status,lock_id,amount,fee,system_no,verson,record,card_number', 'id');
 
                 $msg = '';
                 $update = [];
+                $channel_amounts = 0;
                 foreach ($orders as $k => $v) {
                     if ($v['status'] != 1 || $v['lock_id'] != 0) continue;
 
@@ -825,6 +831,16 @@ class Df extends AdminController {
                         $msg .= " ID：{$v['id']} 订单号 " . $v['system_no'] . " 申请通道金额不在通道出款范围内！<br/>";
                         continue;
                     }
+
+                    $channel_amounts = bcadd($channel_amounts,$channel_amount);
+                    //代付通道单卡单日次数
+                    $channel_card_times_money = \app\common\model\Df::channel_card_times_money($Channel,$v['card_number'],$channel_amounts,$k+1);
+                    if($channel_card_times_money !== true){
+                        $msg .= "<br/>";
+                        $msg .= $channel_card_times_money;
+                        break;
+                    }
+
 
                     //冻结通道金额
                     $change['change'] = $channel_amount;//变动金额

@@ -130,6 +130,27 @@ class Df extends ModelService {
        return true;
     }
 
+
+    // 通道 单日次数 单日金额
+    public static function channel_card_times_money($withdrawal,$cardnumber,$amount,$cardnums = 1){
+        if(empty($withdrawal)) return '数据异常！';
+        if($withdrawal['status'] != 1) return '代付通道已关闭~';
+
+        $result =  self::where([['channel_id','=',$withdrawal['id']],['status','<',4],['card_number','=',$cardnumber]])->whereBetween('create_at',[timeToDate(0,0,-24),date('Y-m-d H:i:s')])->cache('card_times__money'.$cardnumber,1)->field("COALESCE(sum(amount),0) as amounts,count(1) as num ")->select();
+        if(empty($result[0])) return '数据异常！';
+
+        if(($result[0]['amounts'] + $amount) > $withdrawal['limit_money']){
+            return "此银行卡： {$cardnumber} 超过了代付通道单卡单日限额 {$withdrawal['limit_money']} 元";
+        }
+        if(($result[0]['num'] + $cardnums) > $withdrawal['limit_times']){
+            return "此银行卡： {$cardnumber} 超过了代付通道单卡单日次数 {$withdrawal['limit_times']} 次";
+        }
+        return true;
+    }
+
+
+
+
     //会员 单日限额
     public static function mch_id_money($mch_id,$amount){
         $withdrawal = config("custom.df");
