@@ -31,7 +31,7 @@ class Test extends WithdrawalController
         $_POST['mchid'] = config('set.memberid');
 
         if(empty( $_POST['mchid'])||empty($_POST['money'])||empty($_POST['bankname'])  || empty($_POST['accountname']) || empty($_POST['cardnumber'])){
-            return exceptions("信息不完整！");
+            return exceptions_api("信息不完整！");
         }
         if($_POST['extends']) {
             $_POST['extends'] = base64_encode(json_encode($_POST['extends']));
@@ -45,7 +45,7 @@ class Test extends WithdrawalController
         $param = $_POST;
         $param["pay_md5sign"] = $sign;
 
-        return  msg_post(config('set.df_api'), $param);
+        return msg_post(config('set.df_api'), $param);
     }
 
 }
