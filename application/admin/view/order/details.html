@@ -3,20 +3,7 @@
 
 {block name="cotent"}
 <table class="layui-table">
-    <tr><td>ID：</td><td>{$order.id}</td></tr>
-    <tr><td>商户编号：</td><td>{$order.mch_id}</td></tr>
-    <tr><td>商户费率：</td><td>{$order.run_rate}</td></tr>
 
-    {if !empty($order['mch_id1'])}
-        <tr><td>上级代理编号：</td><td>{$order.mch_id1}</td></tr>
-        <tr><td>上级代理费率：</td><td>{$order.agent_rate}</td></tr>
-        <tr><td>上级代理结算：</td><td>{$order.agent_amount}</td></tr>
-    {/if}
-    {if !empty($order['mch_id2'])}
-        <tr><td>上上级代理编号：</td><td>{$order.mch_id2}</td></tr>
-        <tr><td>上上级代理费率：</td><td>{$order.agent_rate2}</td></tr>
-        <tr><td>上上级代理结算：</td><td>{$order.agent_amount2}</td></tr>
-    {/if}
     <tr><td>系统订单号：</td><td><strong class="text-success">{$order.system_no}</strong></td></tr>
     <tr><td>商户订单号：</td><td><strong class="text-success">{$order.out_trade_no}</strong></td></tr>
     <tr><td>上游订单号：</td><td><strong class="text-success">{$order.transaction_no}</strong></td></tr>
@@ -57,6 +44,21 @@
             {/if}
         </strong>
     </td></tr>
+
+    <tr><td>ID：</td><td>{$order.id}</td></tr>
+    <tr><td>商户编号：</td><td>{$order.mch_id}</td></tr>
+    <tr><td>商户费率：</td><td>{$order.run_rate}</td></tr>
+
+    {if !empty($order['mch_id1'])}
+    <tr><td>上级代理编号：</td><td>{$order.mch_id1}</td></tr>
+    <tr><td>上级代理费率：</td><td>{$order.agent_rate}</td></tr>
+    <tr><td>上级代理结算：</td><td>{$order.agent_amount}</td></tr>
+    {/if}
+    {if !empty($order['mch_id2'])}
+    <tr><td>上上级代理编号：</td><td>{$order.mch_id2}</td></tr>
+    <tr><td>上上级代理费率：</td><td>{$order.agent_rate2}</td></tr>
+    <tr><td>上上级代理结算：</td><td>{$order.agent_amount2}</td></tr>
+    {/if}
 </table>
 {/block}
 
