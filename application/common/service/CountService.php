@@ -727,7 +727,8 @@ class CountService {
             $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(status=3,channel_amount,0)),0) as total_fee_paid,COALESCE(sum(if(status=3,1,0)),0) as total_paid,COALESCE(sum(if(status=3,fee,0)),0) as total_fee,COALESCE(sum(if(status=3,channel_fee,0)),0) as channel_fee,COALESCE(sum(if(status<3,1,0)),0) as do_orders,COALESCE(sum(if(status<3,amount,0)),0) as do_fee,channel_id,mch_id from cm_withdrawal_api where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
             $select =  Db::query($sql,[$day,$now]);
 
-
+            $ids = [];
+            $days = [];
             $Channel = ChannelDf::info();//代付通道
             foreach ($select as $k => $v) {
                 $channel_name = empty($Channel[$v['channel_id']])?'未选择代付通道':$Channel[$v['channel_id']]['title'];
@@ -792,12 +793,25 @@ class CountService {
                 $data['channel'][$v['channel_id'].$v['day']]['type'] = 5;
 
                 if(!empty($id)){
+                    $ids[] = $id;
                     $data['channel'][$v['channel_id'].$v['day']]['id'] = $id;
                     $update[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库更新记录的数据
                 }else{
                     $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库没有记录的数据
                 }
+                $days[] = $v['day'];
             }
+
+            if(!empty($ids)){
+                $Accounts->destroy(function($query) use ($ids,$days){
+                    $query->where([
+                        ['id','not in',array_unique($ids)],
+                        ['day','in',array_unique($days)],
+                    ]);
+                });
+            }
+
+
             //插入每日对账表
             if(!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
             if(!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
