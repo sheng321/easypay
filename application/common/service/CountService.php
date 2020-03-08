@@ -607,6 +607,8 @@ class CountService {
             //清除为处理订单数据
             $sql1 = "select count(1) as total_orders, left(create_at, 10) as day, from cm_withdrawal where channel_id = 0 AND  create_at BETWEEN ? AND ? GROUP BY day ORDER BY id DESC ";//每个通道的成功率
             $select1 =  Db::query($sql1,[$day,$now]);
+
+            halt($select1);
             foreach ($select1 as $k => $v){
                 if(empty($v['total_orders'])){
                     Db::where(['withdraw_id'=>0,'day'=>$v['day'],'type'=>4])->update([
