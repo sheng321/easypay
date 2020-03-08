@@ -604,25 +604,8 @@ class CountService {
             $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(status=3,channel_amount,0)),0) as total_fee_paid,COALESCE(sum(if(status=3,1,0)),0) as total_paid,COALESCE(sum(if(status=3,fee,0)),0) as total_fee,COALESCE(sum(if(status=3,channel_fee,0)),0) as channel_fee,COALESCE(sum(if(status<3,1,0)),0) as do_orders,COALESCE(sum(if(status<3,amount,0)),0) as do_fee,channel_id,mch_id from cm_withdrawal where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
             $select =  Db::query($sql,[$day,$now]);
 
-            //清除为处理订单数据
-            $sql1 = "select count(1) as total_orders, left(create_at, 10) as day from cm_withdrawal where channel_id = 0 AND create_at BETWEEN ? AND ? GROUP BY day ORDER BY id DESC ";//每个通道的成功率
-            $select1 =  Db::query($sql1,[$day,$now]);
-
-            halt($select1);
-            foreach ($select1 as $k => $v){
-                if(empty($v['total_orders'])){
-                    Db::where(['withdraw_id'=>0,'day'=>$v['day'],'type'=>4])->update([
-                        'total_orders'=>0,
-                        'total_fee_all'=>0,
-                        'total_fee_paid'=>0,
-                        'total_paid'=>0,
-                        'total_fee'=>0,
-                        'do_orders'=>0,
-                        'do_fee'=>0,
-                    ]);
-                }
-            }
-
+            $ids = [];
+            $days = [];
             $Channel =  Channel::idRate();//通道
             foreach ($select as $k => $v) {
                 $channel_name = empty($Channel[$v['channel_id']])?'未选择下发通道':$Channel[$v['channel_id']]['title'];
@@ -659,7 +642,7 @@ class CountService {
                 $data['channel'][$v['channel_id'].$v['day']]['withdraw_id'] = $v['channel_id'];
                 $data['channel'][$v['channel_id'].$v['day']]['day'] = $v['day'];
 
-                $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>4])->cache($v['channel_id'].$v['day'].'_',10)->value('id');
+                $id =  $Accounts->where(['withdraw_id'=>$v['channel_id'],'day'=>$v['day'],'type'=>4])->cache($v['channel_id'].$v['day'].'_',1)->value('id');
 
                 $data['channel'][$v['channel_id'].$v['day']]['title'] = $channel_name;
 
@@ -688,11 +671,21 @@ class CountService {
                 $data['channel'][$v['channel_id'].$v['day']]['type'] = 4;
 
                 if(!empty($id)){
+                    $ids[] = $id;
                     $data['channel'][$v['channel_id'].$v['day']]['id'] = $id;
                     $update[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库更新记录的数据
                 }else{
                     $insert[$v['channel_id'].$v['day']] = $data['channel'][$v['channel_id'].$v['day']]; //数据库没有记录的数据
                 }
+                $days[] = $v['day'];
+            }
+            if(empty($ids)){
+                $Accounts->destroy(function($query) use ($ids,$days){
+                    $query->where([
+                        ['channel_id','not in',array_unique($ids)],
+                        ['day','in',array_unique($days)],
+                    ]);
+                });
             }
 
             //插入每日对账表
