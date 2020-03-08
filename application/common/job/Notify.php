@@ -1,6 +1,7 @@
 <?php
 namespace app\common\job;
 use app\common\model\Order;
+use Lock\Lock;
 use think\queue\Job;
 
 class Notify {
@@ -20,6 +21,7 @@ class Notify {
             return;
         }
         Order::delRedis($Order['id']);
+
 
         //多线程添加锁
         try{
