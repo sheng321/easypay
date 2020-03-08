@@ -28,7 +28,7 @@ class Query extends WithdrawalController
 
         if(!check_sign($param,$Uprofile['df_secret']))  __jerror('签名错误');
 
-        $Order = Db::table('cm_withdrawal_api')->where(['out_trade_no'=>$param['out_trade_no']])->find();
+        $Order = Db::table('cm_withdrawal_api')->where(['out_trade_no'=>$param['out_trade_no']])->order(['id'=>'desc'])->find();
         if(empty($Order) || $Order['mch_id'] !== $param['mchid'] )   __jerror('交易不存在');
 
         $data = array();
