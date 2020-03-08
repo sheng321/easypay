@@ -834,7 +834,7 @@ class Df extends AdminController {
 
                     $channel_amounts = bcadd($channel_amounts,$channel_amount);
                     //代付通道单卡单日次数
-                    $channel_card_times_money = \app\common\model\Df::channel_card_times_money($Channel,$v['card_number'],$channel_amounts,$k+1);
+                    $channel_card_times_money = \app\common\model\Df::channel_card_times_money($Channel,$v['card_number'],$channel_amounts,count($update)+1);
                     if($channel_card_times_money !== true){
                         $msg .= "<br/>";
                         $msg .= $channel_card_times_money;
