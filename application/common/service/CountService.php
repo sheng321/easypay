@@ -825,7 +825,7 @@ class CountService {
     //平台每日对账
     public static function sys_account()
     {
-        Cache::remember('sys_account', function () {
+
             $channel_data = [];
             $insert = [];
             $update = [];
@@ -966,10 +966,6 @@ class CountService {
                 if (!empty($insert)) $Accounts->isUpdate(false)->saveAll($insert);
                 if (!empty($update)) $Accounts->isUpdate(true)->saveAll($update);
             }
-
-            return 1;
-
-        },10);
 
 
         return true;
