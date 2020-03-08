@@ -887,6 +887,7 @@ class CountService {
             $update = [];
             //下发通道
             $withdraw = $Accounts->where([['type', 'in', [4,5]]])->where($date)->order(['day desc'])->select()->toArray();
+            halt($withdraw);
             foreach ($withdraw as $k => $val) {
 
                 $v['platform'] = empty($Channel[$val['channel_id']])? 0 - $val['total_fee_all']:$val['total_fee'] - $val['channel_fee'];
