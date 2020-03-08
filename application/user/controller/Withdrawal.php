@@ -386,7 +386,7 @@ class Withdrawal extends UserController {
             $res = Umoney::dispose($Umoney, $change); //处理
             if (true !== $res['msg']) return __error($res['msg']);
 
-           $this->model = new Df();;
+           $this->model = new Df();
             //使用事物保存数据
             $this->model->startTrans();
 
