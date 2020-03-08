@@ -4,6 +4,7 @@ use app\common\controller\WithdrawalController;
 use app\common\model\Ip;
 use app\common\model\Uprofile;
 use think\Db;
+use think\helper\Str;
 
 
 /**
@@ -15,7 +16,6 @@ class Query extends WithdrawalController
 {
     public function index(){
         $param =   $this->request->only(["out_trade_no" ,"mchid","pay_md5sign"],'post');
-        if(empty($param))  __jerror('未接收到参数~');
 
         //商户属性
        $Uprofile =  Uprofile::quickGet(['uid'=>$param['mchid']]);
@@ -74,6 +74,40 @@ class Query extends WithdrawalController
         $data['sign'] = strtoupper(md5($md5str . "key=" . $Uprofile['df_secret']));
 
          __jsuccess('查询成功',$data);
+    }
+
+
+    public function balance(){
+        $param =   $this->request->only(["nonce_str" ,"mchid","pay_md5sign"],'post');
+
+        //商户属性
+        $Uprofile =  Uprofile::quickGet(['uid'=>$param['mchid']]);
+        if(empty($Uprofile) || $Uprofile['who'] != 0 )  __jerror('商户号不存在');
+        if(empty($Uprofile['df_api1']) || $Uprofile['df_api1'] != '1' )  __jerror('API代付接口未开通，请联系客服处理。');
+        if( $Uprofile['df_api'] != '1' )  __jerror('商户未开启API代付接口功能。。。');
+
+        //白名单验证
+        $ips = Ip::bList($param['mchid'],2);
+        if(!in_array(get_client_ip(),$ips))  __jerror('异常IP');
+
+        if(!check_sign($param,$Uprofile['df_secret']))  __jerror('签名错误');
+
+        $user  = Db::table('cm_money')->where(['uid'=>$param['mchid'],'channel_id'=>0])->find(); //商户金额
+        if(empty($user))   __jerror('数据异常！');
+
+        $data = array();
+        $data['mchid'] = $param['mchid'];
+        $data['nonce_str'] = Str::random(20);
+        $data['balance'] = $user['df'];
+
+        ksort($data);
+        $md5str = "";
+        foreach ($data as $key => $val) {
+            $md5str = $md5str . $key . "=" . $val . "&";
+        }
+        $data['sign'] = strtoupper(md5($md5str . "key=" . $Uprofile['df_secret']));
+
+        __jsuccess('查询成功',$data);
     }
 
 }

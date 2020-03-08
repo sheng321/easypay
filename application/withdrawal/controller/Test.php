@@ -66,4 +66,21 @@ class Test extends WithdrawalController
         halt($result);
     }
 
+    public function balance(){
+        $param['nonce_str'] = md5(1);
+        $param['mchid'] = config('set.memberid');
+
+        ksort($param);
+        $md5str = "";
+        foreach ($param as $key => $val) {
+            $md5str = $md5str . $key . "=" . $val . "&";
+        }
+        $sign = strtoupper(md5($md5str . "key=" . config('set.DfMd5key')));
+        $param["pay_md5sign"] = $sign;
+
+        $res = Curl::post(config('set.df_qurey'), http_build_query($param));
+        $result = json_decode($res,true);
+        halt($result);
+    }
+
 }

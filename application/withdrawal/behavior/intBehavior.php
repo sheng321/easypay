@@ -24,9 +24,13 @@ class intBehavior extends Controller
             $this->check_api();
         }elseif($this->request->controller() == 'Query' && $this->request->action() == 'index') {
             $this->check_query();
+        }elseif($this->request->controller() == 'Query' && $this->request->action() == 'balance') {
+            $this->check_balance();
         }else{
             $this->check_param();
         }
+
+
     }
 
     /**
@@ -57,6 +61,19 @@ class intBehavior extends Controller
 
         //验证数据
         $validate = $this->validate($param, 'app\common\validate\Pay.check_query');
+        if (true !== $validate)   __jerror($validate);
+
+        return true;
+    }
+    /**
+     * 验证查询代付余额接口
+     */
+    protected function check_balance(){
+        $param =   $this->request->only(["nonce_str" ,"mchid","pay_md5sign"],'post');
+        if(empty($param))  __jerror('提交方式错误！');
+
+        //验证数据
+        $validate = $this->validate($param, 'app\common\validate\Pay.check_balance');
         if (true !== $validate)   __jerror($validate);
 
         return true;

@@ -30,6 +30,7 @@ class Pay extends Validate {
         "mchid" => 'require|number',
         "money" => 'require|checkAmount',
         "out_trade_no" => 'require|alphaDash|max:25',
+        "nonce_str" => 'require|chsDash|length:32',
 
         "accountname" => 'require|chsAlphaNum|max:25',//汉字、字母和数字
         "bankname" => 'require|number|max:5|checkBank',
@@ -111,6 +112,9 @@ class Pay extends Validate {
         'subbranch.chsAlphaNum' => '支行名称不正确',
         'subbranch.max' => '支行名称不能多于50个字符',
 
+        'nonce_str.require' => '随机数不存在',
+        'nonce_str.chsDash' => '随机数格式不正确',
+        'nonce_str.length' => '随机数长度为32个字符',
     ];
 
 
@@ -123,6 +127,7 @@ class Pay extends Validate {
     protected $scene = [
          'check_api' => ["pay_memberid" ,"pay_orderid","pay_amount","pay_applydate","pay_bankcode" ,"pay_notifyurl","pay_callbackurl","pay_md5sign","pay_productname","pay_attach"],
         'check_query' => ["out_trade_no" ,"mchid","pay_md5sign"],
+        'check_balance' => ["nonce_str" ,"mchid","pay_md5sign"],
 
         //代付
          'check_withdrawal' => ["accountname" ,"bankname","cardnumber","city","extends" ,"mchid","money","out_trade_no","province","subbranch","pay_md5sign"],
