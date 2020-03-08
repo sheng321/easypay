@@ -12,13 +12,13 @@ class Api {
      */
     public function fire(Job $job,$data)
     {
-        $isJobDone = $this->doHelloJob($data);
+        $isJobDone = $this->doHelloJob($job,$data);
         if ($isJobDone) {
             // 如果任务执行成功，记得删除任务
             $job->delete();
             return;
         }else{
-            if ($job->attempts() > 3) {
+            if ($job->attempts() > 4) {
                 //通过这个方法可以检查这个任务已经重试了几次了
                 $job->delete();
                 return;
@@ -29,7 +29,7 @@ class Api {
     /**
      * 根据消息中的数据进行实际的业务处理...
      */
-    private function doHelloJob($data)
+    private function doHelloJob($job,$data)
     {
 
         //多线程添加锁
@@ -40,7 +40,8 @@ class Api {
                 return $result;
             },$lock_val,60,60);
         }catch (\Exception $e){
-            return  false;//出现异常
+            $job->release(10);;//出现异常
+            return;
         }
 
         if($res === true){
