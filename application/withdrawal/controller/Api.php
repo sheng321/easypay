@@ -7,6 +7,7 @@ use app\common\model\Umoney;
 use app\common\model\UmoneyLog;
 use app\common\model\Uprofile;
 use Lock\Lock;
+use think\Db;
 
 /**
  * 代付下单接口
@@ -39,7 +40,7 @@ class Api extends WithdrawalController
 
 
         //商户金额
-        $Umoney =  Umoney::quickGet(['uid'=>$param['mchid'],'channel_id'=>0,'df_id'=>0]);
+        $Umoney =  Db::table('cm_money')->where(['uid'=>$param['mchid'],'channel_id'=>0,'df_id'=>0])->find();
         if(empty($Umoney) || $Umoney['df'] < $param['money']) __jerror('代付金额不足！');
 
 
