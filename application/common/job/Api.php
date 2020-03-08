@@ -40,8 +40,6 @@ class Api {
                 return $result;
             },$lock_val,60,60);
         }catch (\Exception $e){
-
-            dump($e->getMessage());
             return  false;//出现异常
         }
 
