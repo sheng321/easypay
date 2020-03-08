@@ -143,27 +143,34 @@ class Index  extends AdminController
 
 
             $sys_data['series']['channel_total_fee_all']['name'] = '交易金额';
-            $sys_data['series']['channel_total_fee_all']['data'][] =!empty($v['channel_total_fee_all'])?$v['channel_total_fee_all']:0;
+            $channel_total_fee_all = !empty($v['channel_total_fee_all'])?$v['channel_total_fee_all']:0;
+            $sys_data['series']['channel_total_fee_all']['data'][] =$channel_total_fee_all;
 
             $sys_data['series']['channel_total_fee_paid']['name'] = '收入金额';
-            $sys_data['series']['channel_total_fee_paid']['data'][] =!empty($v['channel_total_fee_paid'])?$v['channel_total_fee_paid']:0;
+            $channel_total_fee_paid = !empty($v['channel_total_fee_paid'])?$v['channel_total_fee_paid']:0;
+            $sys_data['series']['channel_total_fee_paid']['data'][] =$channel_total_fee_paid;
 
 
             $sys_data['series']['channel_platform']['name'] = '订单收益';
-            $sys_data['series']['channel_platform']['data'][] =!empty($v['channel_platform'])?$v['channel_platform']:0;
+            $channel_platform = !empty($v['channel_platform'])?$v['channel_platform']:0;
+            $sys_data['series']['channel_platform']['data'][] =$channel_platform;
 
             $sys_data['series']['withdraw_platform']['name'] = '下发收益';
-            $sys_data['series']['withdraw_platform']['data'][] =!empty($v['withdraw_platform'])?$v['withdraw_platform']:0;
+            $withdraw_platform = !empty($v['withdraw_platform'])?$v['withdraw_platform']:0;
+            $sys_data['series']['withdraw_platform']['data'][] =$withdraw_platform;
 
 
             $sys_data['series']['money_dec']['name'] = '平台支出';
-            $sys_data['series']['money_dec']['data'][] =!empty($v['money_dec'])?$v['money_dec']:0;
+            $money_dec = !empty($v['money_dec'])?$v['money_dec']:0;
+            $sys_data['series']['money_dec']['data'][] = $money_dec;
 
             $sys_data['series']['money_inc']['name'] = '平台收入';
-            $sys_data['series']['money_inc']['data'][] =!empty($v['money_inc'])?$v['money_inc']:0;
+            $money_inc = !empty($v['money_inc'])?$v['money_inc']:0;
+            $sys_data['series']['money_inc']['data'][] =$money_inc;
 
             $sys_data['series']['total']['name'] = '平台收益';
-            $sys_data['series']['total']['data'][] =!empty($v['total'])?$v['total']:0;
+            $total = bcsub(bcadd(bcadd($channel_platform,$withdraw_platform),$money_inc),$money_dec,2);
+            $sys_data['series']['total']['data'][] = $total;
 
         }
 
