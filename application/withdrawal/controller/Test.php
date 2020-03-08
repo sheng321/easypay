@@ -1,6 +1,7 @@
 <?php
 namespace app\withdrawal\controller;
 use app\common\controller\WithdrawalController;
+use app\common\model\Ip;
 use tool\Curl;
 
 class Test extends WithdrawalController
@@ -51,10 +52,6 @@ class Test extends WithdrawalController
     public function query(){
         $param['out_trade_no'] = 'c2003081358197735236';
         $param['mchid'] = config('set.memberid');
-
-        $ips = Ip::bList($param['mchid'],2);
-
-        halt($ips);
 
         ksort($param);
         $md5str = "";
