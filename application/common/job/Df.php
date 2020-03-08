@@ -24,6 +24,12 @@ class Df {
      */
     public function fire(Job $job,$data)
     {
+        if ($job->attempts() > 2000) {
+            $job->delete();
+            return;
+        }
+
+
         ini_set('max_execution_time', '120');
         $Order = \app\common\model\Df::where(['id'=>$data])->field(['extends','ip','bank','update_by','create_by','create_by','create_at','update_at','remark','record','bank','remark1'],true)->find();
 
@@ -61,11 +67,6 @@ class Df {
             $job->delete();
             return;
         }else{
-            if ($job->attempts() > 2000) {
-                $job->delete();
-                return;
-            }
-
             // 原任务的基础上1分钟执行一次并增加尝试次数
             $job->failed();
             return;
