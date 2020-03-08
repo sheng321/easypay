@@ -92,7 +92,7 @@ class Query extends WithdrawalController
 
         if(!check_sign($param,$Uprofile['df_secret']))  __jerror('签名错误');
 
-        $user  = Db::table('cm_money')->where(['uid'=>$param['mchid'],'channel_id'=>0])->field('update_at')->find(); //商户金额
+        $user  = Db::table('cm_money')->where(['uid'=>$param['mchid'],'channel_id'=>0])->field('df,update_at')->find(); //商户金额
         if(empty($user))   __jerror('数据异常！');
 
         $data = array();
