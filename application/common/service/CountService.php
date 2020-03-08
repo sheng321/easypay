@@ -679,6 +679,7 @@ class CountService {
                 }
                 $days[] = $v['day'];
             }
+            halt($ids);
             if(empty($ids)){
                 $Accounts->destroy(function($query) use ($ids,$days){
                     $query->where([
