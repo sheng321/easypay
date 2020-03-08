@@ -142,6 +142,9 @@ class Df extends ModelService {
         if(($result[0]['amounts'] + $amount) > $withdrawal['limit_money']){
             return "此银行卡： {$cardnumber} 超过了代付通道单卡单日限额 {$withdrawal['limit_money']} 元";
         }
+        dump($withdrawal['limit_times']);
+        dump($result[0]['num'] + $cardnums);
+
         if(($result[0]['num'] + $cardnums) > $withdrawal['limit_times']){
             return "此银行卡： {$cardnumber} 超过了代付通道单卡单日次数 {$withdrawal['limit_times']} 次";
         }

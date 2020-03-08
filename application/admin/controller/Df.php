@@ -364,6 +364,8 @@ class Df extends AdminController {
 
         //代付通道单卡单日次数
         $channel_card_times_money = \app\common\model\Df::channel_card_times_money($Channel,$order['card_number'],$channel_amount);
+
+        halt($channel_card_times_money);
         if($channel_card_times_money !== true) return __error($channel_card_times_money);
 
         $res =  $this->model->save([
