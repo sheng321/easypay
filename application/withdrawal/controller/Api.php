@@ -92,7 +92,7 @@ class Api extends WithdrawalController
 
         try{
             $lock_val = 'withdrawal:api:'.$data['system_no'];
-            $create = Lock::queueLock(function ($res)  use ($data){
+            $create = Lock::queueLock(function ($redis)  use ($data,$res){
                 $model = new Df();
                 //使用事物保存数据
                 $model->startTrans();
