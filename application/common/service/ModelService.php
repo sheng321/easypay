@@ -2,6 +2,7 @@
 
 namespace app\common\service;
 
+use Lock\Lock;
 use think\Model;
 
 use redis\StringModel;
@@ -188,8 +189,6 @@ class ModelService extends Model {
         $data = new static();
         $obj = get_object_vars($data);
 
-        halt($obj);
-
         if(!empty($obj['redis']['key']) && is_array($obj['redis']['keyArr'])){
             $redisModel = self::$redisModel;
             $redisModel->key = $obj['redis']['key'];//设置key
@@ -211,20 +210,56 @@ class ModelService extends Model {
             //调试模式 先关闭
             if(!empty($res))  return json_decode($res,true);
 
-            //查询数据库
-            $res = $data::where($search)->order(['id'=>'desc'])->find();
-            if(empty($res))  return false;
-            $res = $res->toArray();
-            self::saveRedis($obj,$res);
+            //查询数据库 防止缓存穿透
+            try{
+                $lock_val = 'model:'.$data['system_no'];
+                $res = Lock::queueLock(function ($redis)  use ($data,$search){
+                        $res = $data::where($search)->order(['id'=>'desc'])->find();
+                        if(empty($res))  return false;
+                        return $res->toArray();
+                },$lock_val, 100, 20);
+            }catch (\Exception $e){
+                return false;
+            }
+            if($res) self::saveRedis($obj,$res);
         }else{
-
-            $res = $data::where($where)->order(['id'=>'desc'])->find();
-            if(empty($res))  return false;
-            $res = $res->toArray();
+            $res = Db::table($obj['table'])->where($where)->order(['id'=>'desc'])->find();
         }
-
         return $res;
     }
+
+    /**
+     * 添加或者更新redis
+     * @param $obj  当前模型的属性
+     * @param $data  要更新的数据
+     * @return bool
+     */
+    static public function saveRedis($obj,$data){
+
+        if(!isset($obj['redis']['keyArr'])) return false;
+        if(empty($obj['redis']['key'])) return false;
+        if(!isset($data['id'])) return false;
+
+        $redisModel = self::$redisModel;
+
+        $redisModel->key = $obj['redis']['key'];//设置key
+        if(!empty($obj['redis']['ttl'])) $redisModel->ttl = $obj['redis']['ttl'];//设置过期时间
+
+        $keyArr = [];
+        foreach ($obj['redis']['keyArr'] as $k => $v){
+            $keyArr[$v] = '';
+            if(isset($data[$v])) $keyArr[$v] = empty($data[$v])?0:$data[$v];
+        }
+        //先删除
+        $redisModel->newQuery()->where('id',$data['id'])->delete();
+        //再插入
+        $redisModel->insert($keyArr,json_encode($data));
+
+        return true;
+    }
+
+
+
 
     //删除 redis
     static public function delRedis($id){
