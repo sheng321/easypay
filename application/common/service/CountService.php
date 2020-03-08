@@ -680,7 +680,7 @@ class CountService {
                 $days[] = $v['day'];
             }
 
-            if(empty($ids)){
+            if(!empty($ids)){
                 $Accounts->destroy(function($query) use ($ids,$days){
                     $query->where([
                         ['channel_id','not in',array_unique($ids)],
