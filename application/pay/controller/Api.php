@@ -45,7 +45,7 @@ class Api extends PayController
         }
 
 
-        $redis1 = (new StringModel())->instance();
+        $redis1 = StringModel::instance();
         $redis1->select(2);
 
         //当前访问量
@@ -159,7 +159,7 @@ class Api extends PayController
         //排除
         foreach ($ChannelProduct as $k =>$v){
 
-            //通过后台屏蔽商户
+            //通过后台屏蔽成功率低的商户
             $merch = 'merch_'.$v['channel_id'].$param['pay_memberid'];
             if($redis1->exists($merch)){
                 unset($ChannelProduct[$k]);
@@ -405,7 +405,6 @@ class Api extends PayController
         unset($Channel);
         //提交上游
         $Payment = Payment::factory($Channel_father['code']);
-        // $Payment = Payment::factory('Index');
         $html  = $Payment->pay($create);
 
         //到这里表示请求下单成功，给给客户端一个标识，处理刷单的情况
