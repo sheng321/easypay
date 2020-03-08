@@ -44,14 +44,14 @@ class Crontab  extends Controller
         CountService::success_rate();
         //提醒下发订单
         $num = Db::table('cm_withdrawal')
-            ->where('id', 'IN', function ($query) {
-                $query->table('cm_withdrawal')->where([['status', '>',1]])->field('id')->order(['id'=>'desc']);
+            ->where('id', '>', function ($query) {
+                $query->table('cm_withdrawal')->where([['status', '>',1]])->order(['id'=>'desc'])->value('id');
             })->count(1);
         if(!empty($num))  addTask('结算提现通知',"有{$num}笔提现订单未处理。",6,3);
 
         $num1 = Db::table('cm_withdrawal_api')
-            ->where('id', 'IN', function ($query) {
-                $query->table('cm_withdrawal_api')->where([['status', '>',1]])->field('id')->order(['id'=>'desc']);
+            ->where('id', '>', function ($query) {
+                $query->table('cm_withdrawal_api')->where([['status', '>',1]])->order(['id'=>'desc'])->value('id');
             })->count(1);
         if(!empty($num1))  addTask('代付提现通知',"有{$num1}笔代付提现订单未处理。",6,3);
 
