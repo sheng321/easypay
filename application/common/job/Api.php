@@ -35,7 +35,7 @@ class Api {
         //多线程添加锁
         try{
             $lock_val = 'Api:'.$data['order']['system_no'];
-            $res =  Lock::queueLock(function ($res)use($data){
+            $res =  Lock::queueLock(function ($redis)use($data){
                 $result = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
                 return $result;
             },$lock_val,60,60);
