@@ -12,6 +12,7 @@ class Notify {
      */
     public function fire(Job $job,$data)
     {
+        ini_set('max_execution_time', '100');
         $Order =  Order::where(['id'=>$data['order']['id']])->find();
 
         // 有些消息在到达消费者时,可能已经不再需要执行了
