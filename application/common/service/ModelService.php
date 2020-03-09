@@ -210,11 +210,22 @@ class ModelService extends Model {
             //调试模式 先关闭
             if(!empty($res))  return json_decode($res,true);
 
-            //查询数据库
-            $res = $data::where($search)->order(['id'=>'desc'])->find();
+            //查询数据库 防止缓存穿透
+            try{
+                $lock_val = 'model:'.$obj['table'];
+                $res = Lock::queueLock(function ($redis)  use ($data,$search){
+                    $res = $data::where($search)->order(['id'=>'desc'])->find();
+                    if(empty($res))  return false;
+                    return $res->toArray();
+                },$lock_val, 200, 20);
+            }catch (\Exception $e){
+                return false;
+            }
+            if(!!$res) self::saveRedis($obj,$res);
+/*            $res = $data::where($search)->order(['id'=>'desc'])->find();
             if(empty($res))  return false;
-            $res = $res->toArray();
-            self::saveRedis($obj,$res);
+            $res = $res->toArray();*/
+           // self::saveRedis($obj,$res);
         }else{
             $res = Db::table($obj['table'])->where($where)->order(['id'=>'desc'])->find();
         }
