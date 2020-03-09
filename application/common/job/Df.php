@@ -24,7 +24,7 @@ class Df {
      */
     public function fire(Job $job,$data)
     {
-        if ($job->attempts() > 2000) {
+        if ($job->attempts() > 300) {
             $job->delete();
             return;
         }

@@ -12,18 +12,21 @@ class Api {
      */
     public function fire(Job $job,$data)
     {
+
+        if ($job->attempts() > 5) {
+            //通过这个方法可以检查这个任务已经重试了几次了
+            $job->delete();
+            return;
+        }
+
         $isJobDone = $this->doHelloJob($job,$data);
         if ($isJobDone) {
             // 如果任务执行成功，记得删除任务
             $job->delete();
             return;
-        }else{
-            if ($job->attempts() > 4) {
-                //通过这个方法可以检查这个任务已经重试了几次了
-                $job->delete();
-                return;
-            }
         }
+        $job->release(1);
+        return;
     }
 
     /**
@@ -40,7 +43,7 @@ class Api {
                 return $result;
             },$lock_val,60,60);
         }catch (\Exception $e){
-            $job->release(10);;//出现异常
+            $job->release(10);//出现异常
             return;
         }
 
