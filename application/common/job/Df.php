@@ -60,7 +60,7 @@ class Df {
                  },$lock_val,60, 60);
         }catch (\Exception $e){
             $job->release(100);//出现异常
-            return;
+            return $e->getMessage();
         }
 
         if($isJobDone === true){
