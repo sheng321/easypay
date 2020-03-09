@@ -13,7 +13,7 @@
 // | 缓存设置
 // +----------------------------------------------------------------------
 
-return [
+/*return [
 
     // 缓存类型为File
     'type'  =>  'file',
@@ -24,9 +24,9 @@ return [
     // 缓存目录
     'path'  =>  '../runtime/cache/',
 
-];
+];*/
 
-/*return [
+return [
     // 缓存配置为复合类型
     'type'  =>  'complex',
     'default'	=>	[
@@ -49,4 +49,4 @@ return [
         'path'  =>  '../runtime/cache/',
     ],
 
-];*/
+];
