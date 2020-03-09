@@ -200,10 +200,12 @@ class ModelService extends Model {
                     if(isset($where[$v]))  $quickGet =  $quickGet->where($v,$where[$v]);
                 }
                 $search = $where;
+                $lock_val = 'model:'.$obj['table'];
             }else{
                 //传入为ID的时候
                 $quickGet =  $quickGet->where('id',$where);
                 $search['id'] = $where;
+                $lock_val = 'model:'.$obj['table'].$search['id'];
             }
             $res =  $quickGet->first();
 
@@ -212,7 +214,7 @@ class ModelService extends Model {
 
             //查询数据库 防止缓存穿透
             try{
-                $lock_val = 'model:'.$obj['table'];
+
                 $res = Lock::queueLock(function ($redis)  use ($data,$search){
                     $res = $data::where($search)->order(['id'=>'desc'])->find();
                     if(empty($res))  return false;
