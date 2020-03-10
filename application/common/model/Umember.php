@@ -285,7 +285,7 @@ class Umember extends UserService {
         $group =  \app\common\model\Ulevel::idArr();
 
         $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single';
-        $count = $this->where($where)->count();
+        $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) use ($group)  {
                 $item['auth_title'] =  $item['auth'];
