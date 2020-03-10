@@ -634,7 +634,7 @@ class Channel  extends AdminController
         model('app\common\model\ChannelProduct')->create($ChannelProduct);
 
         $token = mt_rand(1000,999999999).$this->user['username'];
-        cache('pay_token'.$token,$token,60*30);//缓存token
+        cache('pay_token',$token,60*30);//缓存token
         //支付编码
         $code = PayProduct::where(['id'=>$p_id])->value('code');
 
