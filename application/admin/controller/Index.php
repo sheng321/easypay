@@ -49,6 +49,11 @@ class Index  extends AdminController
             $info = [];
         }else{
             $info = $redis1->mget($keys);
+            //数组排序
+            $last_names = array_column($info,'timestamp');
+            array_multisort($last_names,SORT_ASC,$info);
+
+
         }
 
         $option['legend'] = [];
