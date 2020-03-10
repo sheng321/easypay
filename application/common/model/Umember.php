@@ -293,13 +293,9 @@ class Umember extends UserService {
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
-                halt(111);
             });
-
-
-
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
-
+        halt(222);
         $info = [
             'limit'        => $limit,
             'page_current' => $page,
