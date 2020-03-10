@@ -67,8 +67,7 @@ class MoneyService {
 
         //上级代理
         $Order['agent_amount'] = (float)$Order['agent_amount'];
-        halt( $Order['agent_amount']);
-        if(!empty($agent_amount) && !empty($Order['mch_id1']) ){
+        if(!empty($Order['agent_amount']) && !empty($Order['mch_id1']) ){
             $agent1 = Db::table('cm_money')->where(['uid'=>$Order['mch_id1'],'channel_id'=>0])->field(['update_at'],true)->find();
             if(empty($agent1)) $agent1 = $Umoney->create(['uid'=>$Order['mch_id1'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
             \app\common\model\Umoney::delRedis($agent1['id']);
@@ -85,8 +84,7 @@ class MoneyService {
         }
         //上上级代理
         $Order['agent_amount2'] = (float)$Order['agent_amount2'];
-        halt( $Order['agent_amount2']);
-        if(!empty($agent_amount2) && !empty($Order['mch_id2'])){
+        if(!empty($Order['agent_amount2']) && !empty($Order['mch_id2'])){
             $agent2  = Db::table('cm_money')->where(['uid'=>$Order['mch_id2'],'channel_id'=>0])->field(['update_at'],true)->find();
             if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
             \app\common\model\Umoney::delRedis($agent2['id']);
