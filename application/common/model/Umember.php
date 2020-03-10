@@ -295,6 +295,7 @@ class Umember extends UserService {
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
             });
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
+
         halt(222);
         $info = [
             'limit'        => $limit,
