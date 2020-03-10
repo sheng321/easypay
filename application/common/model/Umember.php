@@ -285,23 +285,18 @@ class Umember extends UserService {
         $group =  \app\common\model\Ulevel::idArr();
 
         $field = 'id, auth_id,uid, username,nickname, qq, phone, remark, status, create_at,create_by,google_token,pid,who,is_single';
-        $count = $this->where($where)->count(1);
+        $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) use ($group)  {
-
+                $item['auth_title'] =  $item['auth'];
+                $item['group_title'] = isset($item['profile']['group_id'])&&isset($group[$item['profile']['group_id']])?$group[$item['profile']['group_id']]:'未分组' ;
+                $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
+                empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
+                !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
             });
+
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
-        foreach ($data as $k =>&$item){
-            $item['auth_title'] =  $item['auth'];
-           // $item['group_title'] = isset($group[$item['profile']['group_id']])?$group[$item['profile']['group_id']]:'未分组' ;
-           $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
-            empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
-            !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
-        }
 
-
-       dump(111);
-        halt($data);
         $info = [
             'limit'        => $limit,
             'page_current' => $page,
