@@ -63,14 +63,11 @@ class Index  extends AdminController
         $option['xAxis'] = [];
         $option['series'] = [];
         foreach($info as $k=>$v){
-            $des = $v;
-
-            $option['legend'] = $des['title'];
-            $option['xAxis'][$k] = $des['time'];
-
-            foreach ($des['num'] as $k1 => $v1){
-                $option['series'][$k1]['name'] = $des['title'][$k1];
-                $option['series'][$k1]['data'][] = $des['num'][$k1];
+            $option['legend'] = $v['title'];
+            $option['xAxis'][$k] = $v['time'];
+            foreach ($v['num'] as $k1 => $v1){
+                $option['series'][$k1]['name'] = $v['title'][$k1];
+                $option['series'][$k1]['data'][] = $v['num'][$k1];
             }
         }
 
