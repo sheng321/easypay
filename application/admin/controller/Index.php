@@ -50,8 +50,8 @@ class Index  extends AdminController
         }else{
             $info = $redis1->mget($keys);
 
-            foreach($info as $k=>&$v){
-                $v = json_decode($v,true);
+            foreach($info as $k=>$v){
+                $info[$k] = json_decode($v,true);
             }
             //数组排序
             $last_names = array_column($info,'timestamp');
