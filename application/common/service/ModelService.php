@@ -215,10 +215,9 @@ class ModelService extends Model {
             //查询数据库 防止缓存穿透
             try{
 
-                $res = Lock::queueLock(function ($redis)  use ($data,$search){
-                    $res = $data::where($search)->order(['id'=>'desc'])->find();
-                    if(empty($res))  return false;
-                    return $res->toArray();
+                $res = Lock::queueLock(function ($redis)  use ($obj,$data,$search){
+                    $res = Db::table($obj['table'])->where($search)->order(['id'=>'desc'])->find();
+                    return $res;
                 },$lock_val, 200, 20);
             }catch (\Exception $e){
                 return false;
@@ -228,8 +227,6 @@ class ModelService extends Model {
             if(empty($res))  return false;
             $res = $res->toArray();*/
            // self::saveRedis($obj,$res);
-
-            dump($res);
         }else{
             $res = Db::table($obj['table'])->where($where)->order(['id'=>'desc'])->find();
         }
