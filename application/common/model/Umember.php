@@ -288,14 +288,14 @@ class Umember extends UserService {
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) use ($group)  {
-
-                halt($item);
                 $item['auth_title'] =  $item['auth'];
                 $item['group_title'] = isset($group[$item['profile']['group_id']])?$group[$item['profile']['group_id']]:'未分组' ;
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
                 empty($create_by_username) ? $item['create_by_username'] = '无创建者信息' : $item['create_by_username'] = $create_by_username;
                 !empty($item['google_token']) ? $item['google_token'] = 1 : $item['google_token'] = 0;
             });
+
+        halt($data);
 
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
