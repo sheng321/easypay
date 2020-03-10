@@ -228,6 +228,8 @@ class ModelService extends Model {
             if(empty($res))  return false;
             $res = $res->toArray();*/
            // self::saveRedis($obj,$res);
+
+            halt($res);
         }else{
             $res = Db::table($obj['table'])->where($where)->order(['id'=>'desc'])->find();
         }

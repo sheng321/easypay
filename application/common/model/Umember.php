@@ -288,7 +288,6 @@ class Umember extends UserService {
         $count = $this->where($where)->count();
         $data = $this->where($where)->field($field)->page($page, $limit)->select()
             ->each(function ($item, $key) use ($group)  {
-                dump($item);
                 $item['auth_title'] =  $item['auth'];
                 $item['group_title'] = isset($item['profile']['group_id'])&&isset($group[$item['profile']['group_id']])?$group[$item['profile']['group_id']]:'未分组' ;
                 $create_by_username =   getNamebyId($item['create_by']);  //获取后台用户名
