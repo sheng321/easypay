@@ -84,6 +84,7 @@ class MoneyService {
         }
         //上上级代理
         $agent_amount2 = (float)$Order['agent_amount2'];
+        halt($agent_amount2);
         if(!empty($agent_amount2) && !empty($Order['mch_id2'])){
             $agent2  = Db::table('cm_money')->where(['uid'=>$Order['mch_id2'],'channel_id'=>0])->field(['update_at'],true)->find();
             if(empty($agent2)) $agent2 = $Umoney->create(['uid'=>$Order['mch_id2'],'channel_id'=>0,'type1'=>0,'total_money'=>0,'frozen_amount_t1'=>0,'balance'=>0]);
