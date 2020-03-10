@@ -213,7 +213,7 @@ class ModelService extends Model {
             if(!empty($res))  return json_decode($res,true);
 
             //查询数据库 防止缓存穿透
-            try{
+/*            try{
                 $res = Lock::queueLock(function ($redis)  use ($data,$search){
                     $res = $data::where($search)->order(['id'=>'desc'])->find();
                     if(empty($res))  return false;
@@ -222,11 +222,11 @@ class ModelService extends Model {
             }catch (\Exception $e){
                 return false;
             }
-            if(!!$res) self::saveRedis($obj,$res);
-/*            $res = $data::where($search)->order(['id'=>'desc'])->find();
+            if(!!$res) self::saveRedis($obj,$res);*/
+            $res = $data::where($search)->order(['id'=>'desc'])->find();
             if(empty($res))  return false;
-            $res = $res->toArray();*/
-           // self::saveRedis($obj,$res);
+            $res = $res->toArray();
+            self::saveRedis($obj,$res);
         }else{
             $res = Db::table($obj['table'])->where($where)->order(['id'=>'desc'])->find();
         }
