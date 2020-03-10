@@ -229,7 +229,7 @@ class ModelService extends Model {
             $res = $res->toArray();*/
            // self::saveRedis($obj,$res);
 
-            halt($res);
+            dump($res);
         }else{
             $res = Db::table($obj['table'])->where($where)->order(['id'=>'desc'])->find();
         }
