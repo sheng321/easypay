@@ -300,7 +300,7 @@ class Umember extends UserService {
         }
 
 
-
+       dump(111);
         halt($data);
         $info = [
             'limit'        => $limit,
