@@ -9,7 +9,7 @@ class Test extends Controller
     public function index(){
       $token = $this->request->get('token/s','原样返回字段');
       $has = Cache::get('pay_token','');
-      if(md5($has) != md5($token)) $this->redirect('http://www.baidu.com');
+      if(md5($has) != md5($token)) __jerror('链接无效，请重新获取~');
 
         $pay_memberid = config('set.memberid');   //商户ID
         $Md5key =  config('set.Md5key');   //密钥
