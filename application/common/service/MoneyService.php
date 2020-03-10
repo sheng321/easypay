@@ -140,7 +140,8 @@ class MoneyService {
             $OrderDispose =  new OrderDispose();
             $Dispose =   $OrderDispose->quickGet(['system_no'=>$system_no]);
         }
-
+        dump($log);
+        halt($update);
         /***事务处理***/
         Db::startTrans();
         try{
