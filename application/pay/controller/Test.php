@@ -9,6 +9,8 @@ class Test extends Controller
     public function index(){
       $token = $this->request->get('token/s','原样返回字段');
       $has = Cache::get('pay_token','');
+      dump($token);
+      halt($has);
       if(md5($has) != md5($has)) $this->redirect('http://www.baidu.com');
 
         $pay_memberid = config('set.memberid');   //商户ID
