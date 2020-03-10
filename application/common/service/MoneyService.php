@@ -33,7 +33,7 @@ class MoneyService {
        if(empty($Order) || $Order['pay_status'] == 1  || $Order['pay_status'] == 3   ) return '订单不存在或者下单失败或者订单已关闭';
         \app\common\model\Order::delRedis($Order['id']);
         //已支付
-        if($Order['pay_status'] == 2 ) return true;
+      //  if($Order['pay_status'] == 2 ) return true;
 
         $Channel =  Channel::alias('a')->where(['a.id'=>$Order['channel_id']])
                         ->join('channel w','a.pid = w.id')
