@@ -542,7 +542,7 @@ class Member extends AdminController {
 
             //基础数据
             $basic_data = [
-                'title' => '商户列表',
+                'title' => '代理列表',
                 'data'  => '',
             ];
 
