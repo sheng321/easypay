@@ -214,10 +214,10 @@ class ModelService extends Model {
 
             //查询数据库 防止缓存穿透
             try{
-
-                $res = Lock::queueLock(function ($redis)  use ($obj,$data,$search){
-                    $res = Db::table($obj['table'])->where($search)->order(['id'=>'desc'])->find();
-                    return $res;
+                $res = Lock::queueLock(function ($redis)  use ($data,$search){
+                    $res = $data::where($search)->order(['id'=>'desc'])->find();
+                    if(empty($res))  return false;
+                    return $res->toArray();
                 },$lock_val, 200, 20);
             }catch (\Exception $e){
                 return false;
