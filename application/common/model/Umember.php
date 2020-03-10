@@ -3,6 +3,7 @@
 namespace app\common\model;
 
 use app\common\service\UserService;
+use think\Db;
 
 class Umember extends UserService {
 
@@ -92,22 +93,24 @@ class Umember extends UserService {
             $find = $Uprofile->quickGet(['uid'=>$data['uid']]);
 
             if(empty($find)){
-                $profile = [
-                    'uid'=>$data['uid'],
-                    'who'=>$data['who'],
-                    'pay_pwd'=>password(md5(123456)),
-                    'secret'=>password($data['uid'],mt_rand(1,200)),
-                    'df_secret'=>password($data['uid'],mt_rand(1,200))
-                ];
+                $find = Db::table('cm_member_profile')->where(['uid'=>$data['uid']])->find();
+                if(empty($find)){
+                    $profile = [
+                        'uid'=>$data['uid'],
+                        'who'=>$data['who'],
+                        'pay_pwd'=>password(md5(123456)),
+                        'secret'=>password($data['uid'],mt_rand(1,200)),
+                        'df_secret'=>password($data['uid'],mt_rand(1,200))
+                    ];
 
-
-                if(!empty($data['profile_pid'])){
-                    $agent_level  = $Uprofile->where('uid',$data['profile_pid'])->value('level');//代理等级
-                    $profile['pid']  = $data['profile_pid'];
+                    if(!empty($data['profile_pid'])){
+                        $agent_level  = $Uprofile->where('uid',$data['profile_pid'])->value('level');//代理等级
+                        $profile['pid']  = $data['profile_pid'];
+                    }
+                    if(empty($agent_level)) $agent_level = 0;
+                    $profile['level'] = $agent_level + 1;
+                    $find = $Uprofile->create($profile);
                 }
-                if(empty($agent_level)) $agent_level = 0;
-                $profile['level'] = $agent_level + 1;
-                $find = $Uprofile->create($profile);
             }
             return $find;
         }
@@ -124,7 +127,10 @@ class Umember extends UserService {
         if(isset($data['uid'])){
             $Umoney =  model('app\common\model\Umoney');
             $find = $Umoney->quickGet(['uid'=>$data['uid']]);
-            if(empty($find)) $find = $Umoney->create(['uid'=>$data['uid']]);
+            if(empty($find)){
+                $find = Db::table('cm_money')->where(['uid'=>$data['uid']])->find();
+                if(empty($find))  $find = $Umoney->create(['uid'=>$data['uid']]);
+            }
             return $find;
         }
     }

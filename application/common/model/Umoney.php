@@ -51,6 +51,7 @@ class Umoney extends ModelService {
         if($type == 0){
             //会员
             $where[] = ['channel_id', '=', 0];
+            $where[] = ['df_id', '=', 0];
             $where[] = ['uid', '>', 0];
         }elseif($type == 1){
             //支付通道
