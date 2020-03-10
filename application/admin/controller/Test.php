@@ -23,7 +23,6 @@ class Test  extends Controller
 
         $res =  MoneyService::api('s2003091536151522649');
 
-
        // exceptions_api('当前访问人数过多，请稍后再试~');
 
 
