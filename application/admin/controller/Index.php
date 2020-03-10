@@ -49,10 +49,13 @@ class Index  extends AdminController
             $info = [];
         }else{
             $info = $redis1->mget($keys);
+
+            foreach($info as $k=>&$v){
+                $v = json_decode($v,true);
+            }
             //数组排序
             $last_names = array_column($info,'timestamp');
             array_multisort($last_names,SORT_ASC,$info);
-
 
         }
 
