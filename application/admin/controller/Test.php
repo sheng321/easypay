@@ -21,7 +21,9 @@ class Test  extends Controller
     public function index()
     {
 
-        halt(get_client_ip());
+
+
+        halt('您当前的IP是 '.get_client_ip());
 
 
     }
