@@ -74,6 +74,13 @@
             <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
         </div>
 
+
+        {if auth("$thisClass/export") }
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm layui-btn-normal " data-export='{:url("$thisClass/export")}'>导出</a>
+        </div>
+        {/if}
+
        
 
     </blockquote>
@@ -133,10 +140,10 @@
         {field: 'id', title: 'ID', width: 30, align: "center"},
         {field: 'mch_id', title: '商户号',  width: 70,  align: "center"},
         {field: 'system_no', title: '订单号',  width: 120, align: "center"},
-        {field: 'amount', title: '申请金额',  width: 100, align: "center"},
+                {field: 'amount', title: '申请金额',  width: 100, align: "center"},
         {field: 'channel_amount', title: '通道申请金额',  width: 100, align: "center"},
 
-        {field: 'card_number', title: '银行卡号', width: 100,  align: "center"},
+            {field: 'card_number', title: '银行卡号', width: 100,  align: "center"},
         {field: 'account_name', title: '开户人', align: 'center', width: 60},
         {field: 'bank_name', title: '银行名称', width: 100, align: "center"},
         {field: 'branch_name', title: '支行', width: 100,  align: "center"},
@@ -158,7 +165,6 @@
         {field: 'remark1', title: '商户说明', width: 100,edit: 'text',   align: "center",style: 'background-color: #009688; color: #fff; border-radius: 15px;'},
 
         {field: 'actual_amount', title: '实际到账', align: 'center', width: 100,edit: 'text',style: 'background-color: #009688; color: #fff; '},
-        {field: 'location', title: '开卡地址', width: 100, align: "center"},
         {field: 'create_at', title: '申请时间', width: 100,  align: "center"},
         {field: 'update_at', title: '更新时间', width: 100,  align: "center"},
         {field: 'record', title: '操作记录', width: 100,  align: "center"},

@@ -82,9 +82,16 @@
 
         {if auth("$thisClass/confirm")}
         <div class="layui-form-item layui-inline">
-            <a class="layui-btn layui-btn-normal  layui-btn-sm " data-check-all1='{:url("$thisClass/batch_process")}' data-title="批量处理未处理的代付订单"   data-table-id="currentTableId"  >批量处理未处理的代付订单</a>
+            <a class="layui-btn layui-btn-warm  layui-btn-sm " data-check-all1='{:url("$thisClass/batch_process")}' data-title="批量处理未处理的代付订单"   data-table-id="currentTableId"  >批量处理未处理的代付订单</a>
         </div>
         {/if}
+
+        {if auth("$thisClass/export") }
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm layui-btn-normal " data-export='{:url("$thisClass/export")}'>导出</a>
+        </div>
+        {/if}
+
 
     </blockquote>
     <!--顶部操作栏--结束-->
@@ -169,7 +176,6 @@
         {field: 'out_trade_no', title: '商户单号', width: 100,   align: "center",},
         {field: 'transaction_no', title: '上游订单号', width: 100,   align: "center",},
         {field: 'actual_amount', title: '实际到账', align: 'center', width: 100,},
-        {field: 'location', title: '开卡地址', width: 100, align: "center"},
         {field: 'create_at', title: '申请时间', width: 100,  align: "center"},
         {field: 'update_at', title: '更新时间', width: 100,  align: "center"},
         {field: 'record', title: '操作记录', width: 100,  align: "center"},

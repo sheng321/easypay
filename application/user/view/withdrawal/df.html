@@ -60,7 +60,13 @@
 
                             {if auth("$thisClass/add_df")}
                             <div class="layui-form-item layui-inline">
-                                <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/add_df")}' data-title="申请代付">申请代付</a>
+                                <a class="layui-btn layui-btn-warm layui-btn-sm" data-open='{:url("$thisClass/add_df")}' data-title="申请代付">申请代付</a>
+                            </div>
+                            {/if}
+
+                            {if auth("$thisClass/export2") }
+                            <div class="layui-form-item layui-inline">
+                                <a class="layui-btn layui-btn-sm layui-btn-normal " data-export='{:url("$thisClass/export2")}'>导出</a>
                             </div>
                             {/if}
                         </blockquote>

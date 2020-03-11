@@ -52,7 +52,14 @@
 
                         {if auth("$thisClass/addWithdrawal")}
                         <div class="layui-form-item layui-inline">
-                            <a class="layui-btn layui-btn-normal layui-btn-sm" data-open='{:url("$thisClass/addWithdrawal")}' data-title="申请提现">申请提现</a>
+                            <a class="layui-btn layui-btn-warm layui-btn-sm" data-open='{:url("$thisClass/addWithdrawal")}' data-title="申请提现">申请提现</a>
+                        </div>
+                        {/if}
+
+
+                        {if auth("$thisClass/export1") }
+                        <div class="layui-form-item layui-inline">
+                            <a class="layui-btn layui-btn-sm layui-btn-normal " data-export='{:url("$thisClass/export1")}'>导出</a>
                         </div>
                         {/if}
                     </blockquote>

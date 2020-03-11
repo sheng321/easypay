@@ -22,7 +22,6 @@ class Test  extends Controller
     {
 
 
-
         halt('您当前的IP是 '.get_client_ip());
 
 

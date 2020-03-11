@@ -61,6 +61,86 @@ class Df extends AdminController {
         }
     }
 
+
+
+    /**
+     * 下载代付订单
+     * @return void
+     */
+    public function export(){
+
+        $field = [
+            "mch_id",
+            'system_no',
+            "amount",
+            "channel_amount",
+            "bank",
+
+            "status",
+
+            "channel_id",
+            "fee",
+            "channel_fee",
+            "transaction_no",
+
+            "remark",
+            "remark1",
+            "actual_amount",
+            "create_at",
+            "update_at",
+            "record",
+        ];
+
+
+        $title = [
+            "mch_id"=>'商户号',
+            'system_no'=>'订单号',
+            "amount"=>'申请金额',
+            "channel_amount"=>'通道申请金额',
+
+            "card_number"=>'银行卡号',
+            "account_name"=>'开户人',
+            "bank_name"=>'银行名称',
+            "branch_name"=>'支行',
+            "status_title"=>'状态',
+
+            "channel_title"=>'出款通道',
+            "fee"=>'手续费',
+            "channel_fee"=>'通道手续费',
+            "transaction_no"=>'上游订单号',
+
+            "remark"=>'备注',
+            "remark1"=>'商户说明',
+            "actual_amount"=>'实际到账',
+            "create_at"=>'申请时间',
+            "update_at"=>'更新时间',
+            "record"=>'操作记录',
+        ];
+
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 3000);
+            $search = (array)$this->request->get('search', []);
+            $search['field'] = $field;
+            return json(model('app\common\model\Df')->alist($page, $limit, $search));
+        }
+
+        $field[] = 'channel_title';
+        $field[] = 'status_title';
+        $field[] = 'card_number';
+        $field[] = 'account_name';
+        $field[] = 'bank_name';
+
+        //基础数据
+        $basic_data = [
+            'title'  => '代付列表',
+            'url'  =>request() -> url(),
+            'data'   => ['field'=>json_encode($field),'title'=>json_encode($title)],
+        ];
+
+        return $this->fetch('common@export/index', $basic_data);
+    }
+
     /**处理中代付订单
      * @return mixed|\think\response\Json
      */

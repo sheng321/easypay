@@ -44,6 +44,64 @@ class Withdrawal extends UserController {
     }
 
     /**
+     * 下载
+     * @return void
+     */
+    public function export1(){
+
+        $field = [
+            "system_no",
+            "amount",
+            'actual_amount',
+            "fee",
+            "bank_card_id",
+            "bank",
+            "status",
+            "create_at",
+            "remark1",
+            "ip",
+        ];
+
+        $title = [
+            "system_no"=>'订单号',
+            "amount"=>'申请金额',
+            "fee"=>'手续费',
+            "actual_amount"=>'实际到账',
+            "card_number"=>'银行卡号',
+            "account_name"=>'开户人',
+            "bank_name"=>'银行名称',
+            "status_title"=>'状态',
+            "create_at"=>'申请时间',
+            "remark1"=>'备注',
+            "ip"=>'IP',
+        ];
+
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 3000);
+            $search = (array)$this->request->get('search', []);
+            $search['mch_id'] = $this->user['uid'];
+            $search['field'] = $field;
+            return json($this->model->alist($page, $limit, $search));
+        }
+
+        $field[] = 'status_title';
+        $field[] = 'card_number';
+        $field[] = 'account_name';
+        $field[] = 'bank_name';
+
+        //基础数据
+        $basic_data = [
+            'title'  => '提现列表',
+            'url'  =>request() -> url(),
+            'data'   => ['field'=>json_encode($field),'title'=>json_encode($title)],
+        ];
+
+        return $this->fetch('common@export/index', $basic_data);
+    }
+
+
+    /**
      *  申请提现
      */
     public function addWithdrawal(){
@@ -259,6 +317,68 @@ class Withdrawal extends UserController {
     }
 
 
+
+    /**
+     * 下载代付订单
+     * @return void
+     */
+    public function export2(){
+
+        $field = [
+            'out_trade_no',
+            "system_no",
+            "amount",
+            'actual_amount',
+            "fee",
+            "bank",
+            "status",
+            "create_at",
+            "remark1",
+            "ip",
+        ];
+
+        $title = [
+            "out_trade_no"=>'商户单号',
+            "system_no"=>'订单号',
+            "amount"=>'申请金额',
+            "fee"=>'手续费',
+            "actual_amount"=>'实际到账',
+            "card_number"=>'银行卡号',
+            "account_name"=>'开户人',
+            "bank_name"=>'银行名称',
+            "status_title"=>'状态',
+            "create_at"=>'申请时间',
+            "remark1"=>'备注',
+            "ip"=>'IP',
+        ];
+
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 3000);
+            $search = (array)$this->request->get('search', []);
+            $search['mch_id'] = $this->user['uid'];
+            $search['field'] = $field;
+            return json(model('app\common\model\Df')->alist($page, $limit, $search));
+        }
+
+        $field[] = 'status_title';
+        $field[] = 'card_number';
+        $field[] = 'account_name';
+        $field[] = 'bank_name';
+
+        //基础数据
+        $basic_data = [
+            'title'  => '代付列表',
+            'url'  =>request() -> url(),
+            'data'   => ['field'=>json_encode($field),'title'=>json_encode($title)],
+        ];
+
+        return $this->fetch('common@export/index', $basic_data);
+    }
+
+
+
+
     /**批量添加代付
      * @return mixed|\think\response\Json
      */
@@ -413,6 +533,9 @@ class Withdrawal extends UserController {
 
         }
     }
+
+
+
 
 
 }

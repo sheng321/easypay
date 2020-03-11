@@ -62,7 +62,14 @@ class Withdrawal extends ModelService {
             $where[] = ['amount', 'BETWEEN', ["{$value_list[0]}", "{$value_list[1]}"]];
         }
 
-        $field = "*";
+        if(empty($search['field'])){
+            $field = "*";
+        }else{
+            //下载
+            $field =  $search['field'];
+        }
+
+
         $where = search($search,$searchField,$where);
         //获取总数
         $count = $this->where($where)->count();
@@ -113,6 +120,8 @@ class Withdrawal extends ModelService {
             'info'  => ['limit'=>$limit,'page_current'=>$page,'page_sum'=>ceil($count / $limit)],
             'data'  => $data,
         ];
+        if(!empty($search['field'])) $list['code'] = 1 && $list['msg'] = $msg.'本页数据不显示。'; //下载
+
         return $list;
     }
 
