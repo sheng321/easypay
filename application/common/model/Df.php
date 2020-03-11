@@ -66,7 +66,7 @@ class Df extends ModelService {
         }
 
         if(empty($search['field'])){
-            $field = "*";
+            $field = "extends";
         }else{
             //下载
             $field =  $search['field'];
@@ -75,7 +75,7 @@ class Df extends ModelService {
         $where = search($search,$searchField,$where);
         //获取总数
         $count = $this->where($where)->count();
-        $data = $this->alias('a')->where($where)->order(['id'=>'desc'])->page($page,$limit)->field($field)->select()->toArray();
+        $data = $this->alias('a')->where($where)->order(['id'=>'desc'])->page($page,$limit)->field($field,true)->select()->toArray();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
         $status =   config('custom.status');
