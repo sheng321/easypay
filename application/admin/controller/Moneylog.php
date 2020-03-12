@@ -52,6 +52,63 @@ class Moneylog  extends AdminController
         return $this->fetch('', $basic_data);
     }
 
+    /**
+     * 下载
+     * @return void
+     */
+    public function export_index(){
+
+        $field = [
+            'id',
+            'uid',
+            'before_balance',
+            'change',
+            'balance',
+            'remark',
+            'relate',
+            'create_at',
+            'type2',
+            'type',
+            'create_by'
+        ];
+
+        $title = [
+            'id'=>'ID',
+            'uid'=>'商户号',
+            'auth_title'=>'权限组',
+            'nickname'=>'操作人',
+            'title'=>'操作类型',
+            'before_balance'=>'变动前金额',
+            'change'=>'变动金额',
+            'balance'=>'变动后金额',
+            'remark'=>'备注',
+            'relate'=>'关联',
+            'create_at'=>'创建时间',
+        ];
+
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 3000);
+            $search = (array)$this->request->get('search', []);
+            $search['type1'] = 0;
+            $search['field'] = $field;
+            return json($this->model->aList($page, $limit, $search));
+        }
+        $field[] =  'title';
+        $field[] = 'nickname';
+        $field[] = 'auth_title';
+
+
+        //基础数据
+        $basic_data = [
+            'title'  => '会员流水列表',
+            'url'  =>request() -> url(),
+            'data'   => ['field'=>json_encode($field),'title'=>json_encode($title)],
+        ];
+
+        return $this->fetch('common@export/index', $basic_data);
+    }
+
 
     /**
      * 通道流水
@@ -75,6 +132,64 @@ class Moneylog  extends AdminController
         ];
 
         return $this->fetch('', $basic_data);
+    }
+
+    /**
+     * 下载
+     * @return void
+     */
+    public function export_channel(){
+
+
+        $field = [
+            'id',
+            'channel_id',
+            'before_balance',
+            'change',
+            'balance',
+            'remark',
+            'relate',
+            'create_at',
+            'type2',
+            'type',
+            'create_by'
+        ];
+
+        $title = [
+            'id'=>'ID',
+            'channel_id'=>'通道ID',
+            'auth_title'=>'权限组',
+            'nickname'=>'操作人',
+            'title'=>'操作类型',
+            'before_balance'=>'变动前金额',
+            'change'=>'变动金额',
+            'balance'=>'变动后金额',
+            'remark'=>'备注',
+            'relate'=>'关联',
+            'create_at'=>'创建时间',
+        ];
+
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 3000);
+            $search = (array)$this->request->get('search', []);
+            $search['type1'] = 1;
+            $search['field'] = $field;
+            return json($this->model->aList($page, $limit, $search));
+        }
+        $field[] =  'title';
+        $field[] = 'nickname';
+        $field[] = 'auth_title';
+
+
+        //基础数据
+        $basic_data = [
+            'title'  => '通道流水列表',
+            'url'  =>request() -> url(),
+            'data'   => ['field'=>json_encode($field),'title'=>json_encode($title)],
+        ];
+
+        return $this->fetch('common@export/index', $basic_data);
     }
 
     /**
@@ -103,6 +218,65 @@ class Moneylog  extends AdminController
 
 
     /**
+     * 下载
+     * @return void
+     */
+    public function export_df(){
+
+
+        $field = [
+            'id',
+            'df_id',
+            'before_balance',
+            'change',
+            'balance',
+            'remark',
+            'relate',
+            'create_at',
+            'type2',
+            'type',
+            'create_by'
+        ];
+
+        $title = [
+            'id'=>'ID',
+            'df_id'=>'代付通道ID',
+            'auth_title'=>'权限组',
+            'nickname'=>'操作人',
+            'title'=>'操作类型',
+            'before_balance'=>'变动前金额',
+            'change'=>'变动金额',
+            'balance'=>'变动后金额',
+            'remark'=>'备注',
+            'relate'=>'关联',
+            'create_at'=>'创建时间',
+        ];
+
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 3000);
+            $search = (array)$this->request->get('search', []);
+            $search['type1'] = 3;
+            $search['field'] = $field;
+            return json($this->model->aList($page, $limit, $search));
+        }
+        $field[] =  'title';
+        $field[] = 'nickname';
+        $field[] = 'auth_title';
+
+
+        //基础数据
+        $basic_data = [
+            'title'  => '代付通道流水列表',
+            'url'  =>request() -> url(),
+            'data'   => ['field'=>json_encode($field),'title'=>json_encode($title)],
+        ];
+
+        return $this->fetch('common@export/index', $basic_data);
+    }
+
+
+    /**
      * 平台流水
      * @return mixed
      */
@@ -124,6 +298,62 @@ class Moneylog  extends AdminController
         ];
 
         return $this->fetch('', $basic_data);
+    }
+
+    /**
+     * 下载
+     * @return void
+     */
+    public function export_sys(){
+
+
+        $field = [
+            'id',
+            'before_balance',
+            'change',
+            'balance',
+            'remark',
+            'relate',
+            'create_at',
+            'type2',
+            'type',
+            'create_by'
+        ];
+
+        $title = [
+            'id'=>'ID',
+            'auth_title'=>'权限组',
+            'nickname'=>'操作人',
+            'title'=>'操作类型',
+            'before_balance'=>'变动前金额',
+            'change'=>'变动金额',
+            'balance'=>'变动后金额',
+            'remark'=>'备注',
+            'relate'=>'关联',
+            'create_at'=>'创建时间',
+        ];
+
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 3000);
+            $search = (array)$this->request->get('search', []);
+            $search['type1'] = 2;
+            $search['field'] = $field;
+            return json($this->model->aList($page, $limit, $search));
+        }
+        $field[] =  'title';
+        $field[] = 'nickname';
+        $field[] = 'auth_title';
+
+
+        //基础数据
+        $basic_data = [
+            'title'  => '平台流水列表',
+            'url'  =>request() -> url(),
+            'data'   => ['field'=>json_encode($field),'title'=>json_encode($title)],
+        ];
+
+        return $this->fetch('common@export/index', $basic_data);
     }
 
 

@@ -52,33 +52,6 @@ class Order extends AdminController {
     }
 
     /**
-     *  历史订单列表
-     * @return void
-     */
-    public function history(){
-
-        if ($this->request->get('type') == 'ajax'){
-
-            $page = $this->request->get('page', 1);
-            $limit = $this->request->get('limit', 10);
-            $search = (array)$this->request->get('search', []);
-            return json($this->model->hlist($page, $limit, $search));
-        }
-
-        //基础数据
-        $basic_data = [
-            'title'  => '历史订单列表',
-            'data'   => '',
-            'order' => config('order.'),
-            'product' => PayProduct::idArr(),//支付产品
-        ];
-
-        return $this->fetch('', $basic_data);
-    }
-
-
-
-    /**
      * 下载
      * @return void
      */
@@ -188,6 +161,35 @@ class Order extends AdminController {
 
         return $this->fetch('common@export/index', $basic_data);
     }
+
+    /**
+     *  历史订单列表
+     * @return void
+     */
+    public function history(){
+
+        if ($this->request->get('type') == 'ajax'){
+
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 10);
+            $search = (array)$this->request->get('search', []);
+            return json($this->model->hlist($page, $limit, $search));
+        }
+
+        //基础数据
+        $basic_data = [
+            'title'  => '历史订单列表',
+            'data'   => '',
+            'order' => config('order.'),
+            'product' => PayProduct::idArr(),//支付产品
+        ];
+
+        return $this->fetch('', $basic_data);
+    }
+
+
+
+
 
 
     /**

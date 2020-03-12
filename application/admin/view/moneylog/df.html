@@ -62,6 +62,12 @@
             <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
         </div>
 
+        {if auth("$thisClass/export_df") }
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm layui-btn-normal " data-export='{:url("$thisClass/export_df")}'>导出</a>
+        </div>
+        {/if}
+
     </blockquote>
     <!--顶部操作栏--结束-->
 

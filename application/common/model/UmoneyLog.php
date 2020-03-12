@@ -53,9 +53,16 @@ class UmoneyLog extends ModelService {
 
         $money  =  config('money.');
 
-        $field = ['id','uid','create_at','create_by','balance','before_balance','change','type','remark','relate','type1','channel_id','df_id','type2'];
 
-        $count = $this->where($where)->count();
+        if(empty($search['field'])){
+            $field = ['id','uid','create_at','create_by','balance','before_balance','change','type','remark','relate','type1','channel_id','df_id','type2'];
+        }else{
+            //下载
+            $field =  $search['field'];
+        }
+
+
+        $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['create_at'=>'desc'])->select()->each(function ($item, $key)use ($money) {
             $item['nickname'] = 0;
             $item['auth_title'] = 0;
@@ -83,6 +90,8 @@ class UmoneyLog extends ModelService {
             'info'  => $info,
             'data'  => $data,
         ];
+
+       if(!empty($search['field'])) $list['code'] = 1 && $list['msg'] = $msg.'本页数据不显示。'; //下载
 
         return $list;
     }
