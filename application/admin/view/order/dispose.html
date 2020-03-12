@@ -104,6 +104,11 @@
         <div class="layui-form-item layui-inline">
             <a class="layui-btn layui-btn-sm" data-search="currentTableId">搜索</a>
         </div>
+
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm layui-btn-normal " onclick="btu()">导出当前页数据</a>
+        </div>
+
     </blockquote>
     <!--顶部操作栏--结束-->
 
@@ -166,6 +171,7 @@
 
 {block name="script"}
 <script  >
+    var btu ;
     function query_order(url) {
         var Index = $.msg.confirm('确定要查询订单吗？', function () {
             $.msg.close(Index);
@@ -224,7 +230,11 @@
         /**{if auth("$thisClass/details") || auth("$thisClass/replacement") }**/
         {title: '操作', minWidth: 130, templet: '#barDemo', fixed: "right", align: "center"},
         /**{/if}**/
-    ]], true , '',100);
+    ]], true ,function (res,curr,count){
+        btu = function () {
+            $.form.exportFile('currentTableId',res.data,"{$title|default=''}.csv");
+        }
+    },100);
 
     /**
      * 日期范围
