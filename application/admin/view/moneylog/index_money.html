@@ -30,6 +30,11 @@
             <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
         </div>
 
+        {if auth("$thisClass/export_index_money") }
+            <div class="layui-form-item layui-inline">
+                <a class="layui-btn layui-btn-sm layui-btn-normal " data-export='{:url("$thisClass/export_index_money")}'>导出</a>
+            </div>
+        {/if}
     </blockquote>
     <!--顶部操作栏--结束-->
 
@@ -48,7 +53,7 @@
      * 生成表单
      */
     $.form.table('current', '{:url("$thisRequest")}?type=ajax', [[
-       // {field: 'id', title: 'ID', minWidth: 1, align: "center"},
+        {field: 'id', title: 'ID', minWidth: 1, align: "center"},
         {field: 'uid', title: '商户号', minWidth: 1, align: "center"},
         {field: 'total_money', title: '总金额', minWidth: 1, align: "center" ,sort:true },
         {field: 'balance', title: '可用余额', minWidth: 1, align: "center",sort:true },

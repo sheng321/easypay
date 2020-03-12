@@ -377,6 +377,60 @@ class Moneylog  extends AdminController
         return $this->fetch('', $basic_data);
     }
 
+
+    /**
+     * 下载
+     * @return void
+     */
+    public function export_index_money(){
+
+        $field = [
+                'id',
+               'uid',
+               'total_money',
+               'balance',
+               'df',
+               'artificial',
+               'frozen_amount',
+               'frozen_amount_t1',
+               'update_at',
+        ];
+
+        $title = [
+                 'id'=>'ID',
+                   'uid'=>'商户号',
+                   'total_money'=>'总金额',
+                   'balance'=>'可用余额',
+                   'df'=>'代付金额',
+                   'artificial'=>'人工冻结金额',
+                   'frozen_amount'=>'冻结金额',
+                   'frozen_amount_t1'=>'T1冻结金额',
+                   'update_at'=>'最近更新时间',
+        ];
+
+
+        if ($this->request->get('type') == 'ajax') {
+            $page = $this->request->get('page', 1);
+            $limit = $this->request->get('limit', 3000);
+            $search = (array)$this->request->get('search', []);
+            $search['field'] = $field;
+            return json(model('app\common\model\Umoney')->aList($page, $limit, $search,0));
+        }
+
+
+        //基础数据
+        $basic_data = [
+            'title'  => '商户资金',
+            'url'  =>request() -> url(),
+            'data'   => ['field'=>json_encode($field),'title'=>json_encode($title)],
+        ];
+
+        return $this->fetch('common@export/index', $basic_data);
+    }
+
+
+
+
     //通道资金
     public function channel_money()
     {

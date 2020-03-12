@@ -87,9 +87,16 @@ class Umoney extends ModelService {
         $searchField['eq'] = ['uid','channel_id'];
         $searchField['time'] = ['update_at'];
         $where = search($search,$searchField,$where);
-        $field = ['id','uid','update_at','balance','total_money','frozen_amount','frozen_amount_t1','artificial','channel_id,df,df_id'];
 
-        $count = $this->where($where)->count();
+
+        if(empty($search['field'])){
+            $field = ['id','uid','update_at','balance','total_money','frozen_amount','frozen_amount_t1','artificial','channel_id,df,df_id'];
+        }else{
+            //下载
+            $field =  $search['field'];
+        }
+
+        $count = $this->where($where)->count(1);
         $data = $this->where($where)->field($field)->page($page, $limit)->order(['total_money'=>'desc','update_at'=>'desc'])->select();
         empty($data) ? $msg = '暂无数据！' : $msg = '查询成功！';
 
@@ -116,7 +123,7 @@ class Umoney extends ModelService {
             'info'  => $info,
             'data'  => $data,
         ];
-
+        if(!empty($search['field'])) $list['code'] = 1 && $list['msg'] = $msg.'本页数据不显示。'; //下载
         return $list;
     }
 
