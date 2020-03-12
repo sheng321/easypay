@@ -160,9 +160,9 @@
             }
         }},
         {field: 'amount', title: '申请金额',  width: 100, align: "center"},
-        {field: 'channel_amount', title: '代付通道金额',  width: 100, align: "center"},
+
         {field: 'fee', title: '手续费',  width: 50,align: 'center'},
-        {field: 'channel_fee', title: '通道手续费', width: 70, align: "center"},
+
 
         {field: 'card_number', title: '银行卡号', width: 100,  align: "center"},
         {field: 'account_name', title: '开户人', align: 'center', width: 60},
@@ -177,9 +177,12 @@
         {field: 'out_trade_no', title: '商户单号', width: 100,   align: "center",},
         {field: 'transaction_no', title: '上游订单号', width: 100,   align: "center",},
         {field: 'actual_amount', title: '实际到账', align: 'center', width: 100,},
+        {field: 'channel_amount', title: '代付通道金额',  width: 100, align: "center"},
+        {field: 'channel_fee', title: '通道手续费', width: 70, align: "center"},
         {field: 'create_at', title: '申请时间', width: 100,  align: "center"},
         {field: 'update_at', title: '更新时间', width: 100,  align: "center"},
         {field: 'record', title: '操作记录', width: 100,  align: "center"},
+
     ]],true,function (res,curr,count){
 
         for (var i in res.data) {
