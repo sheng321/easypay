@@ -44,7 +44,7 @@ class Api {
             },$lock_val,60,60);
         }catch (\Exception $e){
             $job->release(10);//出现异常
-            return;
+            return $e->getMessage();
         }
 
         if($res === true){
