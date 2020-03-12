@@ -243,8 +243,6 @@ class PayController extends BaseController
             ],
         ];//传入的数据
 
-        var_export($data);
-
         $queue = 'api';//队列名，可以理解为组名
         //push()方法是立即执行
         $res =  Queue::push($job, $data, $queue);
