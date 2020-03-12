@@ -145,6 +145,16 @@
     $.form = new function () {
 
         /**
+         * 下载
+         * @param id
+         * @param data
+         * @param type
+         */
+        this.exportFile = function (id,data,type = 'csv') {
+            table.exportFile(id,data, type);
+        }
+
+        /**
          * 表单自动提交
          * @param elem
          * @param url

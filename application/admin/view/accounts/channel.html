@@ -33,6 +33,9 @@
         <div class="layui-form-item layui-inline">
             <a class="layui-btn layui-btn-sm " data-search="currentTableId">搜索</a>
         </div>
+        <div class="layui-form-item layui-inline">
+            <a class="layui-btn layui-btn-sm layui-btn-normal " onclick="btu()">导出当前页数据</a>
+        </div>
 
     </blockquote>
     <!--顶部操作栏--结束-->
@@ -53,6 +56,7 @@
 {block name="script"}
 
 <script >
+    var btu ;
     /**
      * 生成表单
      */
@@ -72,7 +76,10 @@
         {field: 'info', title: '详情', align: 'center', minWidth: 20, templet: '#info'},
         {field: 'update_at', title: '最近更新时间', align: 'center', minWidth: 20},
     ]], true,function (res,curr,count){
-        merge(res)
+        merge(res);
+        btu = function () {
+            $.form.exportFile('currentTableId',res.data,"{$title|default=''}.csv");
+        }
     },25);
 
     function merge(res) {
