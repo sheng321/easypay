@@ -28,21 +28,24 @@ class Api extends PayController
 
         if(!empty($orderId) && is_array($orderId)){
             $num1 = count($orderId);
-            if($num1 > 10){
+            if($num1 > 10 && $num1 < 15){
                 $orderIdType = is_numeric(implode('',$orderId)); //是否数字
                 if($orderIdType){
-                    $num =  Order::where([['id','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
+                    $num =  Order::where([['out_trade_no','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
                     if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试1！！');
                     $orderId = [];//有支付的情况
-                }else{
-                    //不是数字，表明受到了攻击
-                    __jerror('系统检测到存在刷单的情况，请稍后在试2！！');
                 }
-
+            }else{
+                //不是数字，表明受到了攻击
+                __jerror('系统检测到存在刷单的情况，请稍后在试2！！');
             }
         }else{
             $orderId = [];
         }
+
+        $orderId[] = $param['pay_orderid'];
+        cookie($cookieName,json_encode($orderId),[ 'samesite' => "None",'expire'=>15*60]);//15分钟
+
 
 
         $redis1 = StringModel::instance();
@@ -410,11 +413,8 @@ class Api extends PayController
         $html  = $Payment->pay($create);
 
         //到这里表示请求下单成功，给给客户端一个标识，处理刷单的情况
-        $orderId[] = $create['id'];
+
         $orderId_ip_record[] = $create['id'];
-
-        cookie($cookieName,json_encode($orderId),[ 'samesite' => "None",'expire'=>15*60]);//15分钟
-
         //实时记录IP的下单情况
         $redis1->set($ip_record,json_encode($orderId_ip_record));
         $redis1->expire($ip_record,60*30);//三十分钟
