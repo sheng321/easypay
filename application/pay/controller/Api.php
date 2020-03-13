@@ -28,16 +28,21 @@ class Api extends PayController
 
         if(!empty($orderId) && is_array($orderId)){
             $num1 = count($orderId);
-            if($num1 > 10 && $num1 < 15){
-                $orderIdType = is_numeric(implode('',$orderId)); //是否数字
-                if($orderIdType){
-                    $num =  Order::where([['out_trade_no','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
-                    if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试1！！');
-                    $orderId = [];//有支付的情况
+            if($num1 > 9){
+                if($num1 < 16){
+                    $orderIdType = is_numeric(implode('',$orderId)); //是否数字
+                    if($orderIdType){
+                        $num =  Order::where([['out_trade_no','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
+                        if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试1！！');
+                        $orderId = [];//有支付的情况
+                    }else{
+                        //不是数字，表明受到了攻击
+                        __jerror('系统检测到存在刷单的情况，请稍后在试2！！');
+                    }
+                }else{
+                    //提交太多了，一定不正常
+                    __jerror('系统检测到存在刷单的情况，请稍后在试3！！');
                 }
-            }else{
-                //不是数字，表明受到了攻击
-                __jerror('系统检测到存在刷单的情况，请稍后在试2！！');
             }
         }else{
             $orderId = [];
