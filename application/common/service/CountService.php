@@ -379,7 +379,7 @@ class CountService {
     //支付通道每日对账
     public static function channel_account(){
 
-       // Cache::remember('channel_account', function () {
+        Cache::remember('channel_account', function () {
 
             $data = [];
             $insert = [];
@@ -493,7 +493,7 @@ class CountService {
 
            return empty( $data['channel'])?'': $data['channel'];
 
-       // },10);
+        },10);
 
         return true;
     }
