@@ -13,7 +13,7 @@ class Api {
     public function fire(Job $job,$data)
     {
 
-        sleep(3);
+        sleep(1);
         if ($job->attempts() > 5) {
             //通过这个方法可以检查这个任务已经重试了几次了
             $job->delete();
