@@ -17,7 +17,6 @@ class T1 {
             return;
         }
 
-        sleep(1);
         //多线程添加锁
         try{
             $lock_val = 'T1:'.$data['id'];

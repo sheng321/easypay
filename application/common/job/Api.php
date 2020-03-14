@@ -18,8 +18,6 @@ class Api {
             $job->delete();
             return;
         }
-        sleep(1);
-
         $isJobDone = $this->doHelloJob($job,$data);
         if ($isJobDone) {
             // 如果任务执行成功，记得删除任务
