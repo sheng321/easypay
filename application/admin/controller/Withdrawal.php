@@ -119,9 +119,7 @@ class Withdrawal extends AdminController {
             $page = $this->request->get('page', 1);
             $limit = $this->request->get('limit', 3000);
             $search = (array)$this->request->get('search', []);
-            dump($search);
             $search['field'] = $field;
-            halt($search);
             return json($this->model->alist($page, $limit, $search));
         }
 

@@ -526,14 +526,8 @@
         var searchData = new Array();
         var searchInput = $('#searchBlock div div input');
         var searchSelect = $('#searchBlock div div select');
-        $.each(searchInput, function (i, obj) {
-            id = $(obj).attr('id');
-            if (id != undefined) {
-                searchData[id] = $("#" + id).val();
-            }
-        });
         var name = '';
-        $.each(searchSelect, function (i, obj) {
+        $.each(searchInput, function (i, obj) {
             id = $(obj).attr('id');
             if (id != undefined) {
                 name = 'search['+id+']';
@@ -541,8 +535,14 @@
             }
         });
 
+        $.each(searchSelect, function (i, obj) {
+            id = $(obj).attr('id');
+            if (id != undefined) {
+                name = 'search['+id+']';
+                searchData[name] = $("#" + id).val();
+            }
+        });
         var url = $(this).attr('data-export');
-        console.log(searchData);
         formCall( 'get',url, searchData, '_blank');
         return false;
 
