@@ -42,7 +42,7 @@ class Api {
             $res =  Lock::queueLock(function ($redis)use($data){
                 $result = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
                 return $result;
-            },$lock_val,60,60);
+            },$lock_val,60,9);
         }catch (\Exception $e){
             $job->release(10);//出现异常
             return $e->getMessage();
