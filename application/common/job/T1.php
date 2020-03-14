@@ -12,6 +12,7 @@ class T1 {
      */
     public function fire(Job $job,$data)
     {
+        sleep(1);
         if ($job->attempts() > 3) {
             $job->delete();
             return;
