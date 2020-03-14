@@ -402,7 +402,7 @@ class CountService {
 
 
             //商户每天的 通道支付订单统计
-            $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,upstream_settle,0)),0) as total_fee,COALESCE(sum(if(pay_status=2,platform,0)),0) as platform,COALESCE(sum(if(pay_status=2,agent_amount,0)),0) as agent_amount,COALESCE(sum(if(pay_status=2,agent_amount2,0)),0) as agent_amount2,channel_id,mch_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
+            $sql = "select count(1) as total_orders, left(create_at, 10) as day,COALESCE(sum(amount),0) as total_fee_all,COALESCE(sum(if(pay_status=2,if(actual_amount=0,amount,actual_amount),0)),0) as total_fee_paid,COALESCE(sum(if(pay_status=2,1,0)),0) as total_paid,COALESCE(sum(if(pay_status=2,upstream_settle,0)),0) as upstream,COALESCE(sum(if(pay_status=2,total_fee,0)),0) as total_fee,COALESCE(sum(if(pay_status=2,platform,0)),0) as platform,COALESCE(sum(if(pay_status=2,agent_amount,0)),0) as agent_amount,COALESCE(sum(if(pay_status=2,agent_amount2,0)),0) as agent_amount2,channel_id,mch_id,payment_id from cm_order where create_at BETWEEN ? AND ? GROUP BY day,channel_id,mch_id ORDER BY id DESC ";//每个通道的成功率
             $select =  Db::query($sql,[$day,$now]);
 
             $Channel =  Channel::idRate();//通道
@@ -430,7 +430,8 @@ class CountService {
                 empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee']= 0;
                 empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform']= 0;
                 empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['agent']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['agent']= 0;
-                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['agent']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['agent']= 0;//实际支付
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['agent']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['agent']= 0;
+                empty( $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['upstream']) &&  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['upstream']= 0;
 
 
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'] +=  $v['total_orders'];
@@ -441,6 +442,7 @@ class CountService {
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_fee'] +=  $v['total_fee'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform'] +=  $v['platform'];
                 $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['agent'] +=  $v['agent'];//代理收益
+                $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['upstream'] +=  $v['upstream'];//上游收益
 
 
                 //单日 支付通道分析
@@ -458,6 +460,7 @@ class CountService {
                 empty( $data['channel'][$v['channel_id'].$v['day']]['total_fee']) &&  $data['channel'][$v['channel_id'].$v['day']]['total_fee']= 0;
                 empty( $data['channel'][$v['channel_id'].$v['day']]['platform']) &&  $data['channel'][$v['channel_id'].$v['day']]['platform']= 0;
                 empty( $data['channel'][$v['channel_id'].$v['day']]['agent']) &&  $data['channel'][$v['channel_id'].$v['day']]['agent']= 0;
+                empty( $data['channel'][$v['channel_id'].$v['day']]['upstream']) &&  $data['channel'][$v['channel_id'].$v['day']]['upstream']= 0;
 
 
                 $data['channel'][$v['channel_id'].$v['day']]['total_orders'] +=  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['total_orders'];
@@ -469,6 +472,7 @@ class CountService {
 
                 $data['channel'][$v['channel_id'].$v['day']]['platform'] +=  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['platform'];
                 $data['channel'][$v['channel_id'].$v['day']]['agent'] +=  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['agent'];
+                $data['channel'][$v['channel_id'].$v['day']]['upstream'] +=  $data['merch'][$v['day']][$v['channel_id']][$v['mch_id']]['upstream'];
                 $data['channel'][$v['channel_id'].$v['day']]['title'] = $v['channel_name'];
 
                 $data['channel'][$v['channel_id'].$v['day']]['info'] = json_encode(!isset($data['merch'][$v['day']][$v['channel_id']])?'':$data['merch'][$v['day']][$v['channel_id']]);
