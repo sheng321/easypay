@@ -542,7 +542,7 @@
         });
 
         var url = $(this).attr('data-export');
-
+        console.log(searchData);
         formCall( 'get',url, searchData, '_blank');
         return false;
 
