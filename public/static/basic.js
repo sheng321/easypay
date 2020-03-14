@@ -981,7 +981,8 @@
         }
         for (var x in params) {
             var opt = document.createElement("input");
-            opt.name = x;
+           // opt.name = x;
+            opt.name = 'search['+x+']';
             opt.value = params[x];
             tempform.appendChild(opt);
         }
