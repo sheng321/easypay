@@ -34,6 +34,7 @@ class Api {
      */
     private function doHelloJob($job,$data)
     {
+        if(empty($data)  || empty($data['order']['system_no'])) return false;
 
         //多线程添加锁
         try{

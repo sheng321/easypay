@@ -109,7 +109,7 @@ abstract class Connection
         // Query类
         'query'           => '\\think\\db\\Query',
         // 是否需要断线重连
-        'break_reconnect' => true,
+        'break_reconnect' => false,
         // 断线标识字符串
         'break_match_str' => [],
     ];
