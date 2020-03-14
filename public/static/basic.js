@@ -532,10 +532,12 @@
                 searchData[id] = $("#" + id).val();
             }
         });
+        var name = '';
         $.each(searchSelect, function (i, obj) {
             id = $(obj).attr('id');
             if (id != undefined) {
-                searchData[id] = $("#" + id).val();
+                name = 'search['+id+']';
+                searchData[name] = $("#" + id).val();
             }
         });
 
@@ -981,8 +983,7 @@
         }
         for (var x in params) {
             var opt = document.createElement("input");
-           // opt.name = x;
-            opt.name = 'search['+x+']';
+            opt.name = x;
             opt.value = params[x];
             tempform.appendChild(opt);
         }
