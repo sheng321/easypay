@@ -18,6 +18,7 @@ class Api {
             $job->delete();
             return;
         }
+        sleep(1);
 
         $isJobDone = $this->doHelloJob($job,$data);
         if ($isJobDone) {
