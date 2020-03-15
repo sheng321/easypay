@@ -6,6 +6,7 @@ use app\common\model\Order;
 use app\common\model\Umoney;
 use app\common\model\UmoneyLog;
 use app\pay\service\Payment;
+use Lock\Lock;
 use redis\StringModel;
 use think\facade\Url;
 use think\helper\Str;
@@ -257,14 +258,14 @@ class PayController extends BaseController
     protected function async($order){
         ignore_user_abort();
 
-      //  echo $this->config['returnBack'];
+        echo $this->config['returnBack'];
 
         //断开连接的代码
-/*        $size=ob_get_length();
+        $size=ob_get_length();
         header("Content-Length: $size");  //告诉浏览器数据长度,浏览器接收到此长度数据后就不再接收数据
         header("Connection: Close");      //告诉浏览器关闭当前连接,即为短连接
         ob_flush();
-        flush();*/
+        flush();
 
         //删除实时记录IP
         $redis1 = (new StringModel())->instance();
