@@ -231,9 +231,8 @@ class PayController extends BaseController
      return $order;
     }
 
-    protected function async($order){
+    protected function async1($order){
         //加入异步队列
-        $job = 'app\\common\\job\\Api';//调用的任务名
         $data = [
             'order'=>['system_no'=>$order['system_no']],
             'config'=>[
@@ -243,14 +242,8 @@ class PayController extends BaseController
             ],
         ];//传入的数据
 
-        $queue = 'api';//队列名，可以理解为组名
-        //push()方法是立即执行
-        $res =  Queue::push($job, $data, $queue);
+        $res =  Queue::push('app\\common\\job\\Api', $data, 'api');
         if( $res === false ) __jerror('fail');
-
-        //同步
-        //$res = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
-       // halt($res);
 
         //删除实时记录IP
         $redis1 = (new StringModel())->instance();
@@ -259,6 +252,61 @@ class PayController extends BaseController
         $redis1->del($ip_record);
 
         return  $this->config['returnBack'];
+    }
+
+    protected function async($order){
+
+        echo $this->config['returnBack'];
+
+        //断开连接的代码
+        $size=ob_get_length();
+        header("Content-Length: $size");  //告诉浏览器数据长度,浏览器接收到此长度数据后就不再接收数据
+        header("Connection: Close");      //告诉浏览器关闭当前连接,即为短连接
+        ob_flush();
+        flush();
+
+        //删除实时记录IP
+        $redis1 = (new StringModel())->instance();
+        $redis1->select(2);
+        $ip_record = 'recordIP_'.$order['mch_id'].$order['ip'];
+        $redis1->del($ip_record);
+
+
+        $data = [
+            'order'=>['system_no'=>$order['system_no']],
+            'config'=>[
+                'transaction_no'=>empty($this->config['transaction_no'])?'':htmlspecialchars($this->config['transaction_no']),
+                'amount'=>empty($this->config['amount'])?0:floatval($this->config['amount']),
+                'code'=>$this->config['code']
+            ],
+         ];
+        //加锁
+        try{
+            $lock_val = 'Api:'.$data['order']['system_no'];
+            $res =  Lock::queueLock(function ($redis)use($data){
+                $result = \app\common\service\MoneyService::api($data['order']['system_no'],$data['config']['transaction_no'],$data['config']['amount']);
+                return $result;
+            },$lock_val,60,10);
+        }catch (\Exception $e){
+           exit($e->getMessage());
+        }
+
+
+        if($res === true){
+            //获取回调数据
+            $notify = Order::notify($data['order']['system_no'],$data['config']['code']);
+            \think\Queue::push('app\\common\\job\\Notify', $notify, 'notify');//立即
+            \think\Queue::later(30,'app\\common\\job\\Notify', $notify, 'notify');//30秒
+            \think\Queue::later(60,'app\\common\\job\\Notify', $notify, 'notify');//一分钟
+            \think\Queue::later(240,'app\\common\\job\\Notify', $notify, 'notify');//二分钟
+            \think\Queue::later(540,'app\\common\\job\\Notify', $notify, 'notify');//五分钟
+            exit();//操作完成！
+        }
+
+        $data['金额更新'] = $res;
+        //错误添加到订单回调日志
+        logs($data,$type = 'order/notify/'.$data['config']['code']);
+        exit();
     }
 
 
