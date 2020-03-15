@@ -48,10 +48,6 @@ class Api extends PayController
             $orderId = [];
         }
 
-        $orderId[] = $param['pay_orderid'];
-        cookie($cookieName,json_encode($orderId),[ 'samesite' => "None",'expire'=>15*60]);//15分钟
-
-
 
         $redis1 = StringModel::instance();
         $redis1->select(2);
@@ -382,9 +378,11 @@ class Api extends PayController
         $data['productname'] = $param1['pay_productname'];//商品名称
         $data['attach'] = $param1['pay_attach'];//备注
 
+        $orderId[] = $param['pay_orderid'];
+        cookie($cookieName,json_encode($orderId),[ 'samesite' => "None",'expire'=>15*60]);//15分钟 添加到cookie
         unset($param);
-        //插入数据库
 
+        //插入数据库
         try{
             $lock_val = 'pay:api:'.$data['system_no'];
             $create = Lock::queueLock(function ($res)  use ($data){
