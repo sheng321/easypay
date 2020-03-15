@@ -32,7 +32,8 @@ class Api extends PayController
                 if($num1 < 16){
                     $orderIdType = ctype_alnum(implode('',$orderId)); //检查字符串是否是数字和字母，或者两者混合
                     if($orderIdType){
-                        $num =  Order::where([['out_trade_no','in',$orderId],['pay_status','=',2]])->count(1);//是否有支付的情况
+                        //检测订单好是否重复
+                        $num =  Order::where([['out_trade_no','in',$orderId],['pay_status','=',2], ['create_at','>',timeToDate(0,-20)]])->order(['id'=>'desc'])->count(1);//是否有支付的情况
                         if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试1！！');
                         $orderId = [];//有支付的情况
                     }else{
@@ -325,7 +326,7 @@ class Api extends PayController
         $id =  Order::where([
             ['out_trade_no','=',$param['pay_orderid']],
             ['create_at','>',$date],
-        ])->value('id');
+        ])->order(['id'=>'desc'])->value('id');
         if(!empty($id)) __jerror('订单号重复！');
 
 
@@ -378,8 +379,6 @@ class Api extends PayController
         $data['productname'] = $param1['pay_productname'];//商品名称
         $data['attach'] = $param1['pay_attach'];//备注
 
-        $orderId[] = $param['pay_orderid'];
-        cookie($cookieName,json_encode($orderId),[ 'samesite' => "None",'expire'=>15*60]);//15分钟 添加到cookie
         unset($param);
 
         //插入数据库
@@ -412,6 +411,8 @@ class Api extends PayController
         $html  = $Payment->pay($create);
 
         //到这里表示请求下单成功，给给客户端一个标识，处理刷单的情况
+        $orderId[] = $create['out_trade_no'];
+        cookie($cookieName,json_encode($orderId),[ 'samesite' => "None",'expire'=>15*60]);//15分钟 添加到cookie
 
         $orderId_ip_record[] = $create['id'];
         //实时记录IP的下单情况
