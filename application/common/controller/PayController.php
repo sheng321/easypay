@@ -257,7 +257,7 @@ class PayController extends BaseController
     protected function async($order){
         ignore_user_abort();
 
-        echo $this->config['returnBack'];
+      //  echo $this->config['returnBack'];
 
         //断开连接的代码
 /*        $size=ob_get_length();
