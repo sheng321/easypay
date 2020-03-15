@@ -89,11 +89,7 @@ class Api extends PayController
         $orderId_ip_record = json_decode($redis1->get($ip_record),true);
         if(!empty($orderId_ip_record) && is_array($orderId_ip_record)){
             $num1 = count($orderId_ip_record);
-            if($num1 > 10){
-                $num =  Order::where([['id','in',$orderId_ip_record],['pay_status','=',2]])->count(1);//是否有支付的情况
-                if(empty($num)) __jerror('系统检测到存在刷单的情况，请稍后在试3！！');
-                $orderId_ip_record = [];//有支付的情况
-            }
+            if($num1 > 10) __jerror('系统检测到存在刷单的情况，请稍后在试3！！');
         }else{
             $orderId_ip_record = [];
         }
