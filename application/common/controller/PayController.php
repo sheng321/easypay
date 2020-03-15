@@ -255,7 +255,7 @@ class PayController extends BaseController
     }
 
     protected function async($order){
-        ignore_user_abort(true);
+        ignore_user_abort();
 
         echo $this->config['returnBack'];
 
