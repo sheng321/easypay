@@ -23,7 +23,7 @@ class Test  extends Controller
 
 
         dump('您当前的IP是 '.get_client_ip());
-        $ip = get_client_ip();
+        $ip = bindec(decbin(ip2long(get_client_ip()))) ;
 
         $ip_start = bindec(decbin(ip2long('175.176.40.1'))); //起始ip
         $ip_end = bindec(decbin(ip2long('175.176.41.255')));//结束ip
