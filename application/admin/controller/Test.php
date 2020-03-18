@@ -22,7 +22,7 @@ class Test  extends Controller
     {
 
 
-        dump('您当前的IP是 '.get_client_ip());
+        dump('您当前的IP是 '.$_SERVER["REMOTE_ADDR"]);
         $ip = bindec(decbin(ip2long('175.176.41.7'))) ;
         $ip_start = bindec(decbin(ip2long('175.176.40.1'))); //起始ip
         $ip_end = bindec(decbin(ip2long('175.176.41.255')));//结束ip
